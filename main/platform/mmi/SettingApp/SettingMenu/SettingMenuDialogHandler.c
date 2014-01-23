@@ -383,6 +383,19 @@ static boolean Handle_ANSWER_MODE_DialogEveng(CSettingMenu *pMe,
     uint32 dwParam
 );
 
+#ifdef FEATURE_VERSION_K232_Y101
+static boolean Handle_Prefix_DialogEveng(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+static boolean Handle_PrefixEdit_DialogEveng(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+
+#endif
 static boolean  HandleFMModeDialogEvent(CSettingMenu *pMe,
     AEEEvent eCode,
     uint16 wParam,
@@ -638,6 +651,13 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
         case IDD_ANSWER_MODE:
             return Handle_ANSWER_MODE_DialogEveng(pMe,eCode,wParam,dwParam);
 
+#ifdef FEATURE_VERSION_K232_Y101
+        case IDD_PREFIX:
+            return Handle_Prefix_DialogEveng(pMe,eCode,wParam,dwParam);
+        case IDD_PREFIX_EDIT:
+            return Handle_PrefixEdit_DialogEveng(pMe,eCode,wParam,dwParam);     
+#endif
+
         case IDD_FM_MENU:
 			return HandleFMModeDialogEvent(pMe,eCode,wParam,dwParam);
 
@@ -793,7 +813,13 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 #ifndef FEATURE_VERSION_EC99
 #ifndef FEATURE_VERSION_K212_HUALU
 #ifndef FEATURE_VERSION_K232_Y100A
+
+#ifdef FEATURE_VERSION_K232_Y101    
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_LIST_PROFILE, IDS_LIST_PROFILE, NULL, 0);
+#else
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SCENEMODE_TITLE, IDS_SCENEMODE_TITLE, NULL, 0);
+#endif
+
 #endif
 #endif
 #endif
@@ -875,7 +901,12 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_SET_SCENEMODE
 
 #ifndef FEATURE_VERSION_H19C  
+
+#ifdef FEATURE_VERSION_K232_Y101
+                case IDS_LIST_PROFILE:
+#else
                 case IDS_SCENEMODE_TITLE:    //情景模式
+#endif
                     (void) ISHELL_StartApplet(pMe->m_pShell,
                                               AEECLSID_APP_SOUNDMENU);
                     break;
@@ -1008,7 +1039,9 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
 			#if defined( FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K202_LM129C)
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALL_TIME_REMINDER, IDS_CALL_TIME_REMINDER, NULL, 0);
 			#else
+#ifndef FEATURE_VERSION_K232_Y101            
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_MINUTE_ALERT, IDS_MINUTE_ALERT, NULL, 0);
+#endif
 			#endif
 			#endif
 			#endif
@@ -1024,7 +1057,9 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
 #endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH
 
 #ifdef FEATURE_OEMOMH
+#ifndef FEATURE_VERSION_K232_Y101 
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_KEYTONE_LENGTH, IDS_KEYTONE_LENGTH, NULL, 0);
+#endif
 #endif
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALL_RESTRICT, IDS_CALL_RESTRICT, NULL, 0);   
             #if defined(FEATURE_CALL_RECORDER)&&defined(FEATURE_VERSION_W317A)//def FEATURE_VERSION_W317A
@@ -1032,9 +1067,15 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLSETTING_CALLRECORD, IDS_CALLSETTING_CALLRECORD, NULL, 0);
 			//Add End
 			#endif
-			#ifndef FEATURE_VERSION_K202_LM129C //xxzhen
+            
+#ifndef FEATURE_VERSION_K202_LM129C //xxzhen
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_VOICE_PRIVACY, IDS_VOICE_PRIVACY, NULL, 0);
-			#endif
+#endif
+
+#ifdef FEATURE_VERSION_K232_Y101            
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PREFIX, IDS_PREFIX, NULL, 0);
+#endif
+
 #ifndef FEATURE_VERSION_W208S            
             //IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_FMRADIO_OPTION_MENU_PLAY_MODLE, IDS_FMRADIO_OPTION_MENU_PLAY_MODLE, NULL, 0);
 #endif
@@ -1092,6 +1133,13 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
                 case IDS_ANSWER_MODE:
                     CLOSE_DIALOG(DLGRET_AUTO_ANSWER_MODE)
                     break;
+                    
+#ifdef FEATURE_VERSION_K232_Y101
+                case IDS_PREFIX:
+                    CLOSE_DIALOG(DLGRET_PREFIX)
+                    break;
+#endif    
+
 #ifdef FEATURE_CARRIER_THAILAND_HUTCH                          
                 case IDS_AUTOANSWER_TITLE:
                     CLOSE_DIALOG(DLGRET_AUTO_ANSWER_MODE_SUB)
@@ -7845,6 +7893,273 @@ static boolean Handle_ANSWER_MODE_DialogEveng(CSettingMenu *pMe,
     return FALSE;
 }
 #endif //FEATURE_CARRIER_THAILAND_HUTCH
+
+
+#ifdef FEATURE_VERSION_K232_Y101
+static boolean Handle_Prefix_DialogEveng(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+{
+    PARAM_NOT_REF(dwParam)
+
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_PREFIX);
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    MSG_FATAL("%x, %x ,%x,Handle_ANSWER_MODE_DialogEveng",eCode,wParam,dwParam);
+
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSETTINGMENU_RES_FILE,                                
+                        IDS_PREFIX,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pAnn,WTitle,FALSE);
+            }
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PREFIX_MANUAL, IDS_PREFIX_MANUAL, NULL, 0);            
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PREFIX_AUTO, IDS_PREFIX_AUTO, NULL, 0);            
+            return TRUE;
+
+        case EVT_DIALOG_START:
+            {
+                uint16    ui16_return = IDS_PREFIX_MANUAL;
+              
+                AECHAR    wstr[FEATURE_CODE_MAX_LENTH];
+
+                ICONFIG_GetItem(pMe->m_pConfig, CFGI_PREFIX, wstr, FEATURE_CODE_MAX_LENTH);
+                
+                if(WSTRCMP(wstr, OEMNV_PREFIX_DEFAULT) == 0)
+                {
+                    ui16_return = IDS_PREFIX_AUTO;                  
+                }
+                else
+                {
+                    ui16_return = IDS_PREFIX_MANUAL;                   
+                }
+
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, ui16_return, TRUE);
+                IMENUCTL_SetSel(pMenu, ui16_return);
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT|MP_ACTIVE_NO_REDRAW);
+                IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
+#endif
+                IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+            }            
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                default:
+                    break;
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+            {             
+                AECHAR wstr[FEATURE_CODE_MAX_LENTH];    
+
+                switch (wParam)
+                {                      
+                    case IDS_PREFIX_MANUAL:                         
+                       CLOSE_DIALOG(DLGRET_PREFIX_EDIT)
+                       return TRUE;
+
+                    case IDS_PREFIX_AUTO:
+                    default:    
+                        WSTRCPY(wstr, OEMNV_PREFIX_DEFAULT);                       
+                       (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                              CFGI_PREFIX,
+                                              wstr,
+                                              FEATURE_CODE_MAX_LENTH);   
+                        break;                           
+                }
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, wParam, TRUE);
+                ICONFIG_SetItem(pMe->m_pConfig,CFGI_PREFIX, wstr,FEATURE_CODE_MAX_LENTH);
+                CLOSE_DIALOG(DLGRET_WARNING)
+            }
+            return TRUE;
+
+        default:
+            break;
+    }
+    return FALSE;
+}
+
+static boolean  Handle_PrefixEdit_DialogEveng(CSettingMenu *pMe,
+                                               AEEEvent       eCode,
+                                               uint16         wParam,
+                                               uint32         dwParam)
+{
+    ITextCtl *pTextCtl = NULL;
+    IMenuCtl *pMenuCtl = NULL;
+    
+    if (NULL == pMe)
+    {
+        return FALSE;
+    }
+
+    pTextCtl = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_PREFIX_EDIT);
+    pMenuCtl = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_PREFIX_EDIT_MENU);
+    
+    if (NULL == pTextCtl)
+    {
+        return FALSE;
+    }
+
+    switch(eCode)
+    {
+        case EVT_DIALOG_INIT:
+            ITEXTCTL_SetProperties(pTextCtl, TP_FRAME | TP_NOUPDATE|TP_FOCUS_NOSEL);
+            return TRUE;
+
+        case EVT_DIALOG_START:
+        {
+            AEERect ctlRect;
+            AEERect menuRt;
+            AECHAR  WTitle[40] = {0};
+            AECHAR  wstr[FEATURE_CODE_MAX_LENTH];
+            
+            (void)ISHELL_LoadResString(pMe->m_pShell,
+                                      AEE_APPSSETTINGMENU_RES_FILE,                                
+                                      IDS_PREFIX_MANUAL,
+                                      WTitle,
+                                      sizeof(WTitle));
+            if(pMe->m_pAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldTextEx(pMe->m_pAnn,WTitle,FALSE);
+            }
+
+            SETAEERECT(&menuRt,  0, MENUITEM_HEIGHT,
+                        SCREEN_WIDTH,
+                        (SCREEN_HEIGHT-STATEBAR_HEIGHT-BOTTOMBAR_HEIGHT-MENUITEM_HEIGHT));     
+
+            IMENUCTL_SetRect(pMenuCtl, &menuRt);
+            IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+            IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_GRAPHIC_BG|OEMMP_USE_MENU_STYLE);
+
+            
+            SETAEERECT(&ctlRect,  0, 0,
+                        SCREEN_WIDTH,
+                        MENUITEM_HEIGHT);    //pMe->m_rc.dy - GetBottomBarHeight(pMe->m_pDisplay));     
+                      
+            ICONTROL_SetRect((IControl*)pTextCtl, &ctlRect);
+            ITEXTCTL_SetMaxSize(pTextCtl, FEATURE_CODE_MAX_LENTH);              
+            (void) ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_NUMBERS);   
+            
+            ICONFIG_GetItem(pMe->m_pConfig, CFGI_PREFIX, wstr, FEATURE_CODE_MAX_LENTH);
+            
+            if (WSTRLEN(wstr) > 0)
+            {
+                ITEXTCTL_SetText(pTextCtl, wstr, -1);
+            }
+
+            ITEXTCTL_SetActive(pTextCtl,TRUE);        
+            IMENUCTL_SetActive(pMenuCtl,FALSE);
+            
+            (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                        EVTFLG_ASYNC,
+                                        AEECLSID_APP_SETTINGMENU,
+                                        EVT_USER_REDRAW,
+                                        0, 
+                                        0);
+            return TRUE;
+        }
+        case EVT_USER_REDRAW:
+        case EVT_KEY_RELEASE:
+            // 绘制底条提示
+            {
+                AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pTextCtl);
+                int nLen = 0;
+                
+                if (NULL != pwstrText)
+                {
+                    nLen = WSTRLEN(pwstrText);
+                }
+
+                (void)ITEXTCTL_Redraw(pTextCtl);
+
+                ITEXTCTL_SetActive(pTextCtl,TRUE);
+                IMENUCTL_SetActive(pMenuCtl,FALSE);                
+                
+                if (nLen > 0)
+                {
+                	#ifndef FEATURE_ALL_KEY_PAD
+                    if (ITEXTCTL_GetCursorPos(pTextCtl) != TC_CURSORSTART)
+                    {
+                        SETTING_MENU_DRAW_BOTTOMBAR(BTBAR_SAVE_DELETE)
+                    }
+                    else
+                    #endif
+                    {
+                        SETTING_MENU_DRAW_BOTTOMBAR(BTBAR_SAVE_BACK)
+                    }
+                }
+                else
+                {
+                   SETTING_MENU_DRAW_BOTTOMBAR(BTBAR_BACK)
+                }
+            }
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            
+            return TRUE;
+            
+        case EVT_DIALOG_END:            
+            return TRUE;
+            
+        case EVT_KEY:
+            switch (wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+  
+                case AVK_INFO:
+                case AVK_SELECT:
+                    { 
+                        if (WSTRLEN(ITEXTCTL_GetTextPtr(pTextCtl)) == 0) 
+                        {
+                            return TRUE;
+                        }   
+                       
+                       (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                              CFGI_PREFIX,
+                                              ITEXTCTL_GetTextPtr(pTextCtl),
+                                              FEATURE_CODE_MAX_LENTH);                       
+                    }
+      
+                    CLOSE_DIALOG(DLGRET_WARNING)
+                    return TRUE;
+  
+                default:
+                    break;
+            }
+            return TRUE;
+  
+        default:
+            break;
+    }
+}
+
+#endif
 
 static void SettingMenu_Process_Feature_Code(CSettingMenu *pMe,uint16 feature_code)
 {

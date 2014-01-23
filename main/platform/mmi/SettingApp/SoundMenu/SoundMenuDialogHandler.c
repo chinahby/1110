@@ -416,11 +416,19 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
 			//add by yangdecai
 			{
 				AECHAR WTitle[40] = {0};
+#ifdef FEATURE_VERSION_K232_Y101
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSOUNDMENU_RES_FILE,                                
+                        IDS_LIST_PROFILE,
+                        WTitle,
+                        sizeof(WTitle));
+#else
 				(void)ISHELL_LoadResString(pMe->m_pShell,
                         AEE_APPSSOUNDMENU_RES_FILE,                                
                         IDS_SCENEMODE_TITLE,
                         WTitle,
                         sizeof(WTitle));
+#endif
 				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             Sound_App_Add_Menu(pMenu,IDS_NORMALMODE);

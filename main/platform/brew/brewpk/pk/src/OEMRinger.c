@@ -1459,6 +1459,13 @@ static void FormatRingerName(char * pszIn, AECHAR * pszDest, int nSize)
          bNextCap = FALSE;
       }
    }
+    
+#ifdef FEATURE_VERSION_K232_Y101
+    if (strcmp(psz, "Poweronoff") == 0)
+    {
+        STRCPY(psz, "Power on/off");
+    }
+#endif
 
    STR_TO_WSTR(psz,pszDest,nSize);
 }

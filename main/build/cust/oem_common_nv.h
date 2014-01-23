@@ -271,3 +271,5 @@
 #endif
 #define OEMNV_TV_TvSetting                          {0,0,0,0,0,0,0,{{{0},{0}},{{0},{0}}},0,{0}}
 
+#define OEMNV_PREFIX_DEFAULT                        L"0091"
+

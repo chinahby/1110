@@ -5047,7 +5047,11 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
 #ifdef FEATURE_OEMOMH
             if(gsdi_uim_omh_cap.omh_enabled)
             {
+#ifdef FEATURE_VERSION_K232_Y101
+                STRCPY(pBuf, "ESNTRACK MTS LAVAFFFFFF M141FFFFFF PU RUIM_ID: ");
+#else
                 STRCPY(pBuf, "ESNTRACK MTS MICROMAXFF C200FFFFFF PU RUIM_ID: ");  
+#endif
             }
             else
 #endif            
@@ -5109,7 +5113,11 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
 #ifdef FEATURE_OEMOMH
             if(gsdi_uim_omh_cap.omh_enabled)
             {
+#ifdef FEATURE_VERSION_K232_Y101
+                STRCPY(pBuf, " V.MTS.M141.B01 V1");
+#else            
                 STRCAT(pBuf," C200_V1.0FFFFFF V1");  
+#endif
             }
             else
 #endif

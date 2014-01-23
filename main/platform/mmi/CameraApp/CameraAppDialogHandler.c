@@ -5100,6 +5100,41 @@ switch(pMe->m_nCameraSize)
 #endif
 
 
+#if defined (FEATURE_VERSION_K232_Y101)
+    // size cfgID
+    (void)ICONFIG_GetItem(pMe->m_pConfig,
+                          CFGI_CAMERA_SIZE,
+                         &pMe->m_nCameraSize,
+                          sizeof(pMe->m_nCameraSize));
+
+    if(pMe->m_isRecordMode == FALSE)
+    {
+        switch(pMe->m_nCameraSize)
+        {
+            case OEMNV_CAMERA_SIZE_INDEX_0:
+                nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+                break;                 
+            default:
+                nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+                break;
+        }
+    }
+    else
+    {
+        switch(pMe->m_nCameraSize)
+        {
+            case OEMNV_CAMERA_SIZE_INDEX_0:
+                nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+                break;        
+            default:
+                nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+                break;
+        }
+    }    
+#endif
+
+
+
 //#endif      //!defined FEATURE_VERSION_IC241A_MMX
 
 //#endif

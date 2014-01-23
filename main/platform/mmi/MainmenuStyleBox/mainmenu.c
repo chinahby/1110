@@ -13577,7 +13577,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     #elif defined (FEATURE_VERSION_K232_Y101)
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CONTACTS;      
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_MESSAGES;      
-    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_USER_PROFILE;   
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_USERPROFILE;   
     pMe->m_IconTitle[3]     = IDS_MAIN_MENU_RECENTCALLS;    
     pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MY_MTS;                        
     pMe->m_IconTitle[5]     = IDS_MAIN_MENU_TOOLS;          
@@ -14964,6 +14964,9 @@ static void CalculateScreenParameters(MainMenu *pMe)
 #ifdef FEATURE_VERSION_H19C   
     iconSpaceHorizontal = 12;
     iconSpaceVertical = 2;
+#elif defined FEATURE_VERSION_K232_Y101
+    iconSpaceHorizontal = 2;
+    iconSpaceVertical = 2;
 #else
     if(pMe->m_rc.dx > imageInfoIcon.cx * MAX_MATRIX_COLS)
     {
@@ -14987,6 +14990,27 @@ static void CalculateScreenParameters(MainMenu *pMe)
 
     for( i = 0; i < MAX_MATRIX_ITEMS; i ++)
     {
+#ifdef FEATURE_VERSION_K232_Y101        
+        if (i > (MAX_MATRIX_PER_PAGE-1))
+        {
+            pMe->m_Icondefault_Pt[i].x = pMe->m_Icondefault_Pt[i-MAX_MATRIX_PER_PAGE].x;            
+            pMe->m_Icondefault_Pt[i].y = pMe->m_Icondefault_Pt[i-MAX_MATRIX_PER_PAGE].y;
+        
+            pMe->m_IconFocus_Pt[i].x = pMe->m_IconFocus_Pt[i-MAX_MATRIX_PER_PAGE].x;
+            pMe->m_IconFocus_Pt[i].y = pMe->m_IconFocus_Pt[i-MAX_MATRIX_PER_PAGE].y;
+        }
+        else
+        {
+            pMe->m_Icondefault_Pt[i].x = iconSpaceHorizontal +
+                ( imageInfoIcon.cx + iconSpaceHorizontal) * ( i % MAX_MATRIX_COLS);
+            
+            pMe->m_Icondefault_Pt[i].y = TITLEBAR_HEIGHT + iconSpaceVertical +
+                ( imageInfoIcon.cy + iconSpaceVertical) * ( i / MAX_MATRIX_COLS);
+        
+            pMe->m_IconFocus_Pt[i].x = pMe->m_Icondefault_Pt[i].x - (ICON_ANIMATED_WIDTH - imageInfoIcon.cx)/2;
+            pMe->m_IconFocus_Pt[i].y = pMe->m_Icondefault_Pt[i].y - (ICON_ANIMATED_HEIGHT- imageInfoIcon.cy)/2;
+        }
+#else
         pMe->m_Icondefault_Pt[i].x = iconSpaceHorizontal +
             ( imageInfoIcon.cx + iconSpaceHorizontal) * ( i % MAX_MATRIX_COLS);
         
@@ -14997,11 +15021,10 @@ static void CalculateScreenParameters(MainMenu *pMe)
         pMe->m_Icondefault_Pt[i].x += 10;
         //pMe->m_Icondefault_Pt[i].y -= 5;        
 #endif
-
-        //计算焦点图片的坐标
+        
         pMe->m_IconFocus_Pt[i].x = pMe->m_Icondefault_Pt[i].x - (ICON_ANIMATED_WIDTH - imageInfoIcon.cx)/2;
-
         pMe->m_IconFocus_Pt[i].y = pMe->m_Icondefault_Pt[i].y - (ICON_ANIMATED_HEIGHT- imageInfoIcon.cy)/2;
+#endif        
         //end added
 
         MSG_FATAL("***zzg m_Icondefault_Pt[%d].x=%d, m_Icondefault_Pt.y=%d", i, pMe->m_Icondefault_Pt[i].x, pMe->m_Icondefault_Pt[i].y);
@@ -15079,6 +15102,60 @@ static void DrawMatrix(MainMenu *pMe)
 #ifndef FEATURE_VERSION_C01 
 #ifndef FEATURE_VERSION_SKY
 #ifndef FEATURE_VERSION_W021_C11
+
+#ifdef FEATURE_VERSION_K232_Y101
+{   
+    AEERect rectBg = {SCREEN_WIDTH-2, TITLEBAR_HEIGHT, 2, SCREEN_HEIGHT-TITLEBAR_HEIGHT-BOTTOMBAR_HEIGHT};
+    AEERect rectFgUp = {SCREEN_WIDTH-2, TITLEBAR_HEIGHT, 2, (SCREEN_HEIGHT-TITLEBAR_HEIGHT-BOTTOMBAR_HEIGHT)/2};
+    AEERect rectFgDown = {SCREEN_WIDTH-2, TITLEBAR_HEIGHT+(SCREEN_HEIGHT-TITLEBAR_HEIGHT-BOTTOMBAR_HEIGHT)/2+1, 2, (SCREEN_HEIGHT-TITLEBAR_HEIGHT-BOTTOMBAR_HEIGHT)/2};
+    
+    int theFocus = pMe->m_nRow * MAX_MATRIX_COLS + pMe->m_nColumn;
+    
+    
+    if ((theFocus >= 0) && (theFocus < MAX_MATRIX_PER_PAGE))
+    {
+        IDISPLAY_FillRect(pMe->m_pDisplay, &rectBg, RGB_WHITE);
+        IDISPLAY_FillRect(pMe->m_pDisplay, &rectFgUp, MAKE_RGB(0xFF, 0x70, 0x00));
+        
+        for (i = 0; i < MAX_MATRIX_PER_PAGE; i ++)
+        {
+            if (pMe->m_pImageIcon[i] == NULL)
+            {
+                pMe->m_pImageIcon[i] = ISHELL_LoadImage(pMe->m_pShell,
+                                                        ICON_ANI[i]);
+            }
+
+            if (pMe->m_pImageIcon[i] != NULL)
+            {
+                IIMAGE_Draw(pMe->m_pImageIcon[i],
+                            pMe->m_Icondefault_Pt[i].x,
+                            pMe->m_Icondefault_Pt[i].y);
+            }
+        }
+    }
+    else if ((theFocus >= MAX_MATRIX_PER_PAGE) && (theFocus < MAX_MATRIX_ITEMS))
+    {
+        IDISPLAY_FillRect(pMe->m_pDisplay, &rectBg, RGB_WHITE);
+        IDISPLAY_FillRect(pMe->m_pDisplay, &rectFgDown, MAKE_RGB(0xFF, 0x70, 0x00));
+        
+        for (i = MAX_MATRIX_PER_PAGE; i < MAX_MATRIX_ITEMS; i ++)
+        {
+            if (pMe->m_pImageIcon[i] == NULL)
+            {
+                pMe->m_pImageIcon[i] = ISHELL_LoadImage(pMe->m_pShell,
+                                                        ICON_ANI[i]);
+            }
+
+            if (pMe->m_pImageIcon[i] != NULL)
+            {
+                IIMAGE_Draw(pMe->m_pImageIcon[i],
+                            pMe->m_Icondefault_Pt[i].x,
+                            pMe->m_Icondefault_Pt[i].y);
+            }
+        }
+    }    
+}
+#else
     //Draw icon
     for (i = 0; i < MAX_MATRIX_ITEMS; i ++)
     {
@@ -15123,6 +15200,8 @@ static void DrawMatrix(MainMenu *pMe)
         #endif
 
     }  
+#endif
+
 #endif    
 #endif
 #endif
@@ -15157,6 +15236,10 @@ static void DrawFocusIcon(MainMenu *pMe)
     {
         return;
     }
+
+#ifdef FEATURE_VERSION_K232_Y101
+    DrawMatrix(pMe);
+#endif 
             
     MEMSET( &titleBarParms, 0, sizeof( TitleBar_Param_type));
     
@@ -15164,7 +15247,7 @@ static void DrawFocusIcon(MainMenu *pMe)
     STRCPY( titleBarParms.strTitleResFile, MAINMENU_RES_FILE_LANG);
 	titleBarParms.nTitleResID   = pMe->m_IconTitle[theFocus];
     DrawTitleBar(pMe->m_pDisplay, &titleBarParms);
-    
+   
  #if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01) || defined(FEATURE_VERSION_SKY)|| defined(FEATURE_VERSION_IN50_MMX)
     if(pMe->m_pAnimate != NULL)
     {
@@ -15260,7 +15343,8 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
                       pMe->m_IconFocus_Pt[theFocus].y, 
                       ICON_ANIMATED_WIDTH, 
                       ICON_ANIMATED_HEIGHT);
-	  MSG_FATAL("***pyg***pMe->m_IconFocus_Pt[theFocus].x=%d---pMe->m_IconFocus_Pt[theFocus].y=%d",pMe->m_IconFocus_Pt[theFocus].x,pMe->m_IconFocus_Pt[theFocus].y,0);
+
+	MSG_FATAL("***pyg***pMe->m_IconFocus_Pt[theFocus].x=%d---pMe->m_IconFocus_Pt[theFocus].y=%d",pMe->m_IconFocus_Pt[theFocus].x,pMe->m_IconFocus_Pt[theFocus].y,0);
     MSG_FATAL("***pyg***ICON_ANIMATED_WIDTH=%d---ICON_ANIMATED_HEIGHT=%d",ICON_ANIMATED_WIDTH,ICON_ANIMATED_HEIGHT,0);
     MainMenu_DrawBackGround(pMe, &rect);
     
@@ -15628,8 +15712,13 @@ static int StartApplet(MainMenu *pMe, int i)
 
     case IDS_MAIN_MENU_FACEBOOK:
 	{		
-        OEM_SetUCBROWSER_ADSAccount();
-		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FACEBOOK);
+        //OEM_SetUCBROWSER_ADSAccount();
+		//Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FACEBOOK);
+		
+		IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn,FALSE);         
+		IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+        
+		Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.google.com.hk/");
 		break;
 	}
     #endif

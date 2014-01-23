@@ -639,6 +639,9 @@ typedef struct
    sChanInfo   fmRadio_chan_info[MAX_FMRADIO_STORED_CHANNEL];   //CFGI_FMRADIO_CHAN_INFO
    byte        fmRadio_chan_total;                              //CFGI_FMRADIO_CHAN_TOTAL
    EmergencyNum_Table    emerg_table;                 //CFGI_EMERGENCYNUM_TABLE
+#ifdef FEATURE_VERSION_K232_Y101
+   AECHAR      prefix[FEATURE_CODE_MAX_LENTH];
+#endif   
    char     BUSY_ENABLE[FEATURE_CODE_MAX_LENTH];      //CFGI_CALLFORWARD_BUSY_ENABLE
    char     BUSY_DISABLE[FEATURE_CODE_MAX_LENTH];     //CFGI_CALLFORWARD_BUSY_DISABLE
    char     NOANSWER_ENABLE[FEATURE_CODE_MAX_LENTH];  //CFGI_CALLFORWARD_NOANSWER_ENABLE
@@ -1270,6 +1273,10 @@ static int OEMPriv_GetItem_CFGI_PEDOMETER_CHECK(void *pBuff);
 static int OEMPriv_SetItem_CFGI_PEDOMETER_CHECK(void *pBuff);
 static int OEMPriv_GetItem_CFGI_EMERGENCYNUM_TABLE(void *pBuff);
 static int OEMPriv_SetItem_CFGI_EMERGENCYNUM_TABLE(void *pBuff);
+#ifdef FEATURE_VERSION_K232_Y101
+static int OEMPriv_GetItem_CFGI_PREFIX(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PREFIX(void *pBuff);
+#endif
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_BUSY_ENABLE(void *pBuff);
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_BUSY_ENABLE(void *pBuff);
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_BUSY_DISABLE(void *pBuff);
@@ -2041,6 +2048,9 @@ static OEMConfigListType oemi_cache = {
    , 0                                              //CFGI_FMRADIO_CHAN_TOTAL
 #endif
    ,OEMNV_EMERGENCYNUM_TABLE_NUM                                            //CFGI_EMERGENCYNUM_TABLE
+#ifdef FEATURE_VERSION_K232_Y101
+   ,{OEMNV_PREFIX_DEFAULT}
+#endif   
    ,{OEMNV_CALLFORWARD_BUSY_ENABLE}                                         //CFGI_CALLFORWARD_BUSY_ENABLE
    ,{OEMNV_CALLFORWARD_BUSY_DISABLE}                                        //CFGI_CALLFORWARD_BUSY_DISABLE
    ,{OEMNV_CALLFORWARD_NOANSWER_ENABLE}                                     //CFGI_CALLFORWARD_NOANSWER_ENABLE
@@ -2699,6 +2709,9 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_FMRADIO_CHAN_INFO, sizeof(sChanInfo) * MAX_FMRADIO_STORED_CHANNEL),
    CFGTABLEITEM(CFGI_FMRADIO_CHAN_TOTAL, sizeof(byte)),
    CFGTABLEITEM(CFGI_EMERGENCYNUM_TABLE,sizeof(EmergencyNum_Table)),
+#ifdef FEATURE_VERSION_K232_Y101
+   CFGTABLEITEM(CFGI_PREFIX, FEATURE_CODE_MAX_LENTH), 
+#endif   
    CFGTABLEITEM(CFGI_CALLFORWARD_BUSY_ENABLE,FEATURE_CODE_MAX_LENTH),
    CFGTABLEITEM(CFGI_CALLFORWARD_BUSY_DISABLE,FEATURE_CODE_MAX_LENTH),
    CFGTABLEITEM(CFGI_CALLFORWARD_NOANSWER_ENABLE,FEATURE_CODE_MAX_LENTH),
@@ -3189,6 +3202,9 @@ void OEM_RestoreFactorySetting( void )
 #else
    oemi_cache.headset_autoanswer       = OEMNV_HEADSET_AUTOANSWER_OFF;
 #endif
+#ifdef FEATURE_VERSION_K232_Y101
+   WSTRCPY(oemi_cache.prefix, L"0091");  
+#endif
    oemi_cache.phone_password         = OEMNV_PHONE_PASSWORD;
    //oemi_cache.phone_password_check   = OEMNV_PHONE_PASSWORD_CHECK;  //恢复出厂设置不恢复为不检测手机密码
    //短信铃声(0-表示无)
@@ -3503,7 +3519,9 @@ void OEM_RestoreFactorySetting( void )
 
 #endif
 
-                                   
+#ifdef FEATURE_VERSION_K232_Y101
+   WSTRCPY(oemi_cache.prefix,OEMNV_PREFIX_DEFAULT);   //CFGI_PREFIX
+#endif
    STRCPY(oemi_cache.BUSY_ENABLE,OEMNV_CALLFORWARD_BUSY_ENABLE);   //CFGI_CALLFORWARD_BUSY_ENABLE
    STRCPY(oemi_cache.BUSY_DISABLE,OEMNV_CALLFORWARD_BUSY_DISABLE);  //CFGI_CALLFORWARD_BUSY_DISABLE
    STRCPY(oemi_cache.NOANSWER_ENABLE,OEMNV_CALLFORWARD_NOANSWER_ENABLE);  //CFGI_CALLFORWARD_NOANSWER_ENABLE
@@ -11140,6 +11158,20 @@ static int OEMPriv_SetItem_CFGI_EMERGENCYNUM_TABLE(void *pBuff)
     return SUCCESS;
 }
 
+#ifdef FEATURE_VERSION_K232_Y101
+static int OEMPriv_GetItem_CFGI_PREFIX(void *pBuff)
+{
+    MEMCPY(pBuff, oemi_cache.prefix, sizeof(uint16) * FEATURE_CODE_MAX_LENTH);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_PREFIX(void *pBuff)
+{
+    MEMCPY(oemi_cache.prefix, pBuff, sizeof(uint16) * FEATURE_CODE_MAX_LENTH);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+#endif
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_BUSY_ENABLE(void *pBuff)
 {
     MEMCPY(pBuff, oemi_cache.BUSY_ENABLE, FEATURE_CODE_MAX_LENTH);

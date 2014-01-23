@@ -1196,7 +1196,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             IMENUCTL_SetTitle(pMenu, APPLICATION_RES_FILE_LANG, IDS_APPLICATION_LIST, NULL);
 			#else
 #if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) ||defined(FEATURE_VERSION_C500BE)||defined	(FEATURE_VERSION_FLEXI203P)||defined (FEATURE_VERSION_VG68)\
-	||defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_W021_C11) //xxzhen
+	||defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_K232_Y101) //xxzhen
 			(void)ISHELL_LoadResString(pMe->m_pShell,
                                     APPLICATION_RES_FILE_LANG,                                
                                     IDS_TOOLS_LIST,
@@ -1407,7 +1407,9 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			//IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_GAME, IDS_APPLICATION_GAME, NULL, 0);
 #else
 #ifdef FEATURE_APP_MANAGER
+//#ifndef FEATURE_VERSION_K232_Y101
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BAM, IDS_APPLICATION_BAM, NULL, 0);
+//#endif
 #endif
 #ifndef FEATURE_VERSION_C306
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TIMER, IDS_APPLICATION_TIMER, NULL, 0);

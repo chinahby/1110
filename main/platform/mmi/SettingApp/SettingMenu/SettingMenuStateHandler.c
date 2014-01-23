@@ -150,7 +150,10 @@ static NextFSMAction SettingMenu_StateOutGoingHandler(CSettingMenu *pMe);
 static NextFSMAction SettingMenu_StateIncomingHandler(CSettingMenu *pMe);
 
 static NextFSMAction SettingMenu_StateAutoAnswer_Mode(CSettingMenu *pMe);
-
+#ifdef FEATURE_VERSION_K232_Y101
+static NextFSMAction SettingMenu_StatePrefix(CSettingMenu *pMe);
+static NextFSMAction SettingMenu_StatePrefixEdit(CSettingMenu *pMe);
+#endif
 #ifdef FEATRUE_SET_IP_NUMBER
 static NextFSMAction SettingMenu_StateIP_Number_Set_Mode(CSettingMenu *pMe);
 #endif
@@ -371,6 +374,16 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
         case SETTINGMENUST_AUTO_ANSWER:
             retVal = SettingMenu_StateAutoAnswer_Mode(pMe);
             break;
+
+#ifdef FEATURE_VERSION_K232_Y101
+        case SETTINGMENUST_PREFIX:
+            retVal = SettingMenu_StatePrefix(pMe);
+            break;
+            
+        case SETTINGMENUST_PREFIX_EDIT:
+            retVal = SettingMenu_StatePrefixEdit(pMe);  
+            break;    
+#endif
 
 #ifdef FEATRUE_SET_IP_NUMBER
         case SETTINGMENUST_IP_NUMBER_SET:
@@ -641,6 +654,12 @@ static NextFSMAction SettingMenu_StateCallSettingHandler(CSettingMenu *pMe)
         case DLGRET_AUTO_ANSWER_MODE:
             MOVE_TO_STATE(SETTINGMENUST_AUTO_ANSWER)
             return NFSMACTION_CONTINUE;
+
+#ifdef FEATURE_VERSION_K232_Y101
+        case DLGRET_PREFIX:
+            MOVE_TO_STATE(SETTINGMENUST_PREFIX)
+            return NFSMACTION_CONTINUE;
+#endif
             
 #ifdef FEATURE_CARRIER_THAILAND_HUTCH              
         case DLGRET_AUTO_ANSWER_MODE_SUB:
@@ -2189,6 +2208,84 @@ static NextFSMAction SettingMenu_StateAutoAnswer_Mode(CSettingMenu *pMe)
 
     return NFSMACTION_WAIT;
 }
+#ifdef FEATURE_VERSION_K232_Y101
+static NextFSMAction SettingMenu_StatePrefix(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            SettingMenu_ShowDialog(pMe, IDD_PREFIX);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CALLSETTINGSEL:
+            MOVE_TO_STATE(SETTINGMENUST_CALLSETTINGSEL)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_CANCELED:
+        case DLGRET_MSGBOX_OK:
+            MOVE_TO_STATE(SETTINGMENUST_CALLSETTING)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_AUTO_ANSWER_MODE_SUB:
+            MOVE_TO_STATE(SETTINGMENUST_AUTOANSWERSUB)
+            return NFSMACTION_CONTINUE;
+            
+        case DLGRET_PREFIX_EDIT:
+            MOVE_TO_STATE(SETTINGMENUST_PREFIX_EDIT)
+            return NFSMACTION_CONTINUE;
+            
+        case DLGRET_WARNING:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            pMe->m_msg_id = IDS_DONE;
+            SettingMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
+            return NFSMACTION_WAIT;
+
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+}
+
+
+static NextFSMAction SettingMenu_StatePrefixEdit(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    MSG_FATAL("***zzg SettingMenu_StatePrefixEdit pMe->m_eDlgRet=%x***", pMe->m_eDlgRet, 0, 0);
+        
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_PREFIX_EDIT);
+            return NFSMACTION_WAIT;      
+
+        case DLGRET_WARNING:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            pMe->m_msg_id = IDS_DONE;
+            SettingMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
+            
+        case DLGRET_MSGBOX_CANCEL:
+        case DLGRET_CANCELED:                
+            MOVE_TO_STATE(SETTINGMENUST_PREFIX)
+            return NFSMACTION_CONTINUE;
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+}
+
+#endif
 #ifdef FEATRUE_SET_IP_NUMBER
 static NextFSMAction SettingMenu_StateIP_Number_Set_Mode(CSettingMenu *pMe)
 {

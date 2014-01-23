@@ -598,7 +598,18 @@
 	<String Id="1404" Name="IDS_AKG_15SEC">
 		<Text>15 sec</Text>
 	</String>
-
+	<STRING Id="1405" Name="IDS_LIST_PROFILE">
+		<Text>Profile</Text>
+	</STRING>
+	<STRING Id="1406" Name="IDS_PREFIX">
+		<Text>International Call Prefix</Text>
+	</STRING>
+	<STRING Id="1407" Name="IDS_PREFIX_MANUAL">
+		<Text>Manual</Text>
+	</STRING>
+	<STRING Id="1408" Name="IDS_PREFIX_AUTO">
+		<Text>Auto</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">
@@ -908,6 +919,22 @@
 	</DIALOG>
 	<Dialog Id="6048" Name="IDD_SOS" Focus="0">
 		<Controls/>
+	</Dialog>
+	<DIALOG Id="6049" Name="IDD_PREFIX" Focus="7048">
+		<Controls>
+			<Menu Id="7048" Name="IDC_PREFIX">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>	
+	<Dialog Id="6050" Name="IDD_PREFIX_EDIT" Focus="7050">
+		<Controls>
+			<Menu Id="7049" Name="IDC_PREFIX_EDIT_MENU">
+				<Items/>
+			</Menu>
+			<Text Id="7050" Name="IDC_PREFIX_EDIT">
+				<Items/></Text>
+		</Controls>
 	</Dialog>
 </Dialogs>
 </BREWRes>

@@ -111,6 +111,9 @@
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 4
 #endif
+
+#define MAX_MATRIX_PER_PAGE 9
+
 #define MAINMENU_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
 
 /*==============================================================================
@@ -303,10 +306,10 @@ typedef struct _MainMenu
 #define ICON_ANIMATED_WIDTH     42
 #define ICON_ANIMATED_HEIGHT    40
 #elif defined(FEATURE_VERSION_K232_Y101)
-#define ICON_WIDTH              40
-#define ICON_HEIGHT             24
-#define ICON_ANIMATED_WIDTH     40
-#define ICON_ANIMATED_HEIGHT    24
+#define ICON_WIDTH              40  //40
+#define ICON_HEIGHT             40  //24
+#define ICON_ANIMATED_WIDTH     40  //40
+#define ICON_ANIMATED_HEIGHT    40  //24
 #else
 #define ICON_WIDTH              40
 #define ICON_HEIGHT             32

@@ -1090,7 +1090,9 @@ static boolean IDD_MAIN_Handler(void        *pUser,
 #if( !defined FEATURE_VERSION_C337)
 #if( !defined FEATURE_VERSION_EC99)
 #if( !defined FEATURE_VERSION_IC241A_MMX)
+#if( !defined FEATURE_VERSION_K232_Y101)
             MENU_ADDITEM(pMenu, IDS_VOICEMAIL);
+#endif
 #endif
 #endif
 #endif
@@ -3636,7 +3638,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
     &&!defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)\
     &&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_W021_CT100_QVGA)\
     &&!defined(FEATURE_VERSION_W021_C11)&&!defined(FEATURE_VERSION_W516_C260)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_K232_X3)\
-    &&!defined(FEATURE_VERSION_K292)
+    &&!defined(FEATURE_VERSION_K292)&&!defined(FEATURE_VERSION_K232_Y101)
             MENU_ADDITEM(pMenu, IDS_CALLBACKNUM);
 #endif
 #endif 

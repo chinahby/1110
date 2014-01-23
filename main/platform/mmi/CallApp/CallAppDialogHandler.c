@@ -13465,6 +13465,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 #ifndef FEATURE_VERSION_EC99
 #ifndef FEATURE_VERSION_K212_20D
 #ifndef FEATURE_VERSION_K212_ND 
+#ifndef FEATURE_VERSION_K232_Y101
         else if ((AVKType)wParam == AVK_1)
         {
             if((pMe->m_DialString[0] == '1')&&(pMe->m_DialString[1] == '\0'))
@@ -13472,6 +13473,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
                 CallApp_MakeVoiceMailCall(pMe);
             }
         }
+#endif        
 #endif
 #endif
 #endif        
@@ -14515,6 +14517,32 @@ static boolean CallApp_Process_Send_Key_Release_Event(CCallApp *pMe)
 		MSG_FATAL("pMe->m_DialString........111111111",0,0,0);
 	}
 #endif
+
+#ifdef FEATURE_VERSION_K232_Y101
+    if((STRISTR(temp,"+91")) || (STRISTR(temp,"0091")))
+    {
+        //Do nothing    
+    }
+    else
+    {
+        AECHAR wstr[FEATURE_CODE_MAX_LENTH];
+        ICONFIG_GetItem(pMe->m_pConfig, CFGI_PREFIX, wstr, FEATURE_CODE_MAX_LENTH);
+
+        if (WSTRLEN(wstr) > 0)
+        {
+            WSTRCPY(TempToStr,wstr);    		
+    		WSTRCAT(TempToStr,pMe->m_DialString);
+    		DBGPRINTF("CFGI_PREFIX=%S", wstr);
+    		DBGPRINTF("TempToStr=%S", TempToStr);
+    		DBGPRINTF("ppMe->m_DialString=%S", pMe->m_DialString);
+    		MEMSET(pMe->m_DialString,0,(sizeof(pMe->m_DialString))+1);
+    		WSTRCPY(pMe->m_DialString,TempToStr);
+    		DBGPRINTF("pMe->m_DialString=%S", pMe->m_DialString);
+    		MSG_FATAL("pMe->m_DialString........111111111",0,0,0);
+        }
+    }
+#endif
+
 #if defined (FEATURE_VERSION_INDONESIAN)
 	WSTRTOSTR(pMe->m_DialString,temp,MAX_SIZE_DIALER_TEXT+1);
     if((STRISTR(temp,"+62")))

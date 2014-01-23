@@ -183,8 +183,13 @@ boolean bIsPowerUp = FALSE;     //Add By zzg 2013_03_29
 #define RPLMN_Y				(IDLE_D_CLOCK_Y+18)
 #endif
 
+#ifdef FEATURE_VERSION_K232_Y101
+#define DATA_X				5
+#define DATA_Y				(RPLMN_Y + 30) 
+#else
 #define DATA_X				5
 #define DATA_Y				(RPLMN_Y + 16) 
+#endif
 
 #define WEEK_X              5
 #define WEEK_Y              (DATA_Y+16)
@@ -7367,7 +7372,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                                   IDF_ALIGN_CENTER
                                   | IDF_ALIGN_MIDDLE
                                   | IDF_TEXT_TRANSPARENT);       
-	#endif
+#endif
 #else
     {
         // Display the string
@@ -7404,7 +7409,11 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                                       wszBuf2, -1,
                                       0, 0, &rc, 
                           #ifdef FEATURE_OEMOMH
+                          #ifdef FEATURE_VERSION_K232_Y101
+                                      IDF_ALIGN_CENTER
+                          #else
                                       IDF_ALIGN_LEFT 
+                          #endif                                      
                           #elif defined(FEATURE_VERSION_MYANMAR)
                                       IDF_ALIGN_CENTER                         
                           #else
@@ -7423,7 +7432,11 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                                       wszBuf1, -1,
                                       0, 0, &rc, 
                           #ifdef FEATURE_OEMOMH
+                          #ifdef FEATURE_VERSION_K232_Y101
+                                      IDF_ALIGN_CENTER
+                          #else
                                       IDF_ALIGN_LEFT 
+                          #endif                                      
                           #elif defined(FEATURE_VERSION_MYANMAR)
                                       IDF_ALIGN_CENTER                                        
                           #else
@@ -7448,7 +7461,11 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                                   wszBufncard1, -1,
                                   0, 0, &Temprc, 
                                   #ifdef FEATURE_OEMOMH
+                                  #ifdef FEATURE_VERSION_K232_Y101
+                                  IDF_ALIGN_CENTER
+                                  #else
                                   IDF_ALIGN_LEFT 
+                                  #endif
                                   #elif defined(FEATURE_VERSION_MYANMAR)
                                   IDF_ALIGN_CENTER
         						  #else
@@ -7466,7 +7483,11 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                                   wszBufncard2, -1,
                                   0, 0, &rc, 
                                   #ifdef FEATURE_OEMOMH
+                                  #ifdef FEATURE_VERSION_K232_Y101
+                                  IDF_ALIGN_CENTER
+                                  #else
                                   IDF_ALIGN_LEFT 
+                                  #endif
                                   #elif defined(FEATURE_VERSION_MYANMAR)
                                   IDF_ALIGN_CENTER
         						  #else
@@ -7485,7 +7506,11 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                                   wszBuf, -1,
                                   0, 0, &rc, 
                                   #ifdef FEATURE_OEMOMH
+                                  #ifdef FEATURE_VERSION_K232_Y101
+                                  IDF_ALIGN_CENTER
+                                  #else
                                   IDF_ALIGN_LEFT 
+                                  #endif
                                   #elif defined(FEATURE_VERSION_MYANMAR)||defined(FEATURE_VERSION_K212_ND)
                                   IDF_ALIGN_CENTER
                                   #elif defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
