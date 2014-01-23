@@ -8488,7 +8488,7 @@ boolean mdp_init_system_frames(void)
   memset(white_frame->buffer, MDP_WB_CLR, SCR_BYTE_SIZE(white_frame->pxWidth, white_frame->pxHeight, 16));
   mdpTempImgBuf = white_frame;
   /* Temporary Buffer */
-  #if !defined(FEATURE_VERSION_K212_12832)
+  #if !defined(FEATURE_VERSION_K212_12832)&& !defined(FEATURE_VERSION_K212)&&!defined(CUST_EDITION)
   if((mdpTempImgBuf = mdp_create_largest_frame(DISP_16BPP)) == NULL)
     goto MDP_CREATE_BUFFER_FAILURE;
   #endif
@@ -8514,13 +8514,13 @@ boolean mdp_init_system_frames(void)
   **-------------------------------*/
 
   /*  Sub-layer buffer */
-#if !defined(FEATURE_VERSION_K212_12832)
+#if !defined(FEATURE_VERSION_K212_12832)&& !defined(FEATURE_VERSION_K212)&&!defined(CUST_EDITION)
   if((mdp_slBuf_1 = mdp_create_primary_frame(DISP_16BPP)) == NULL )
     goto MDP_CREATE_BUFFER_FAILURE;
 #endif
   /* Layer-1 buffer	*/
 #ifdef FEATURE_MDP_LAYER1_PRIMARY
-#if !defined(FEATURE_VERSION_K212_12832)
+#if !defined(FEATURE_VERSION_K212_12832)&& !defined(FEATURE_VERSION_K212)&&!defined(CUST_EDITION)
   if((mdp_L1buf_1 = mdp_create_primary_frame(DISP_16BPP)) == NULL )
     goto MDP_CREATE_BUFFER_FAILURE;    
 #endif

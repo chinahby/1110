@@ -47,7 +47,7 @@ struct _OEMSMSMgr
 
 // The number of entries in the cache for Mobile terminated SMS. 25 value is chosen
 // keeping in mind that inbox of native client have limit of 20 messages.
-#if defined(FEATURE_VERSION_K212_12832) || defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212_12832) || defined(FEATURE_VERSION_K212) || defined(CUST_EDITION)
 #define MAX_SMS_CACHE   5
 #else
 #define MAX_SMS_CACHE   25
