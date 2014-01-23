@@ -177,7 +177,7 @@ static void CoreApp_InitdataTouch(CCoreApp *pMe)
 	pMe->m_pImageTimeIcon[12] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_NIGHT);
 }
 #else
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||(defined(FEATURE_GREYBIT)&&defined(FEATURE_VERSION_K212_HUALU))
 static void CoreApp_InitdataTouch(CCoreApp *pMe)
 {
 	pMe->m_pImageTimeIcon[0] = ISHELL_LoadResImage(pMe->a.m_pIShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_TIME_0);
@@ -749,7 +749,7 @@ boolean CoreApp_InitAppData(IApplet* po)
      CoreApp_InitdataBlackBerry(pMe);
 #endif
 
-#if defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||(defined(FEATURE_GREYBIT)&&defined(FEATURE_VERSION_K212_HUALU))
     CoreApp_InitdataTouch(pMe);
 #endif
 

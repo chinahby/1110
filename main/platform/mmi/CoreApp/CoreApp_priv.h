@@ -1290,7 +1290,7 @@ typedef struct _CCoreApp
 	IImage              *m_pImageTouchIcon[IDLE_TOUCH_ITEMMAX];
 	IImage              *m_pImageTimeIcon[IDLE_TIME_COUNT];
 #endif
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_HUALU)
 	IImage              *m_pImageTimeIcon[IDLE_TIME_COUNT];
 #endif
 #endif

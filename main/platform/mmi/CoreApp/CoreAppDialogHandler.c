@@ -7946,7 +7946,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	
 	}
     #elif defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_HUALU) 
-	#if !defined(FEATURE_VERSION_K212_HUALU) 
+	#if 1//!defined(FEATURE_VERSION_K212_HUALU) 
 	{
 		 AEERect rect = {0};
 		 int16    wHour,len,wMinute;
@@ -8949,6 +8949,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		}
 }			
 #else
+	rc_week.x= rc_week.x+10;
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
