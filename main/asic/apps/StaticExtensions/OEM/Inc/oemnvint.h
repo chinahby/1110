@@ -450,7 +450,7 @@ typedef PACKED struct _Key_pad_Cfg
 #define OEMNV_LOCKMUM_MAXLEN 20
 #define OEMNV_LOCKIMSI_MAXLEN 16
 
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 #define OEMNV_DEFAULT_BANNER "ZBH-BIHEE C15"
 #elif defined(FEATURE_VERSION_K212_HUALU)
 #if defined(FEATURE_VERSION_K212_VHOPE)
@@ -587,7 +587,7 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_DEFAULTRINGER       5
 #elif defined(FEATURE_VERSION_K202_LM129C)//xxzhen
 #define   OEMNV_DEFAULTRINGER       10
-#elif defined(FEATURE_VERSION_K212)
+#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 #define   OEMNV_DEFAULTRINGER       10
 #elif defined (FEATURE_VERSION_K212_ND)
 #define   OEMNV_DEFAULTRINGER       10 
@@ -686,7 +686,7 @@ typedef PACKED struct _Key_pad_Cfg
 #elif defined(FEATURE_VERSION_C316)
 #define   OEMNV_STARTUP_MUSIC 3
 #define   OEMNV_SHUTDOWN_MUSIC 4
-#elif defined(FEATURE_VERSION_K212)
+#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 #define   OEMNV_STARTUP_MUSIC 11
 #define   OEMNV_SHUTDOWN_MUSIC 11
 #elif defined(FEATURE_VERSION_EC99)
@@ -1132,7 +1132,7 @@ typedef struct _OEMErrLogType {
 #define OEMNV_EMERG_NUM_TWO                    "101"
 #define OEMNV_EMERG_NUM_TRE                    "102"
 #define OEMNV_EMERG_NUM_FOR                    "112"
-#elif defined(FEATURE_VERSION_K212)
+#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 /*
 #define OEMNV_EMERT_SEZE                       1
 #define OEMNV_EMERG_NUM_LEN                    3

@@ -5411,7 +5411,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return TRUE;
 				else 
 					return FALSE;
-#elif defined(FEATURE_VERSION_K212)
+#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 				return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
 #elif defined(FEATURE_VERSION_K212_HUALU) 
                 return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK);
@@ -5594,7 +5594,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 
 #elif defined (FEATURE_VERSION_HITZ181) || defined (FEATURE_VERSION_W515V3)|| defined (FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_K212_20D) 
 
-#ifdef FEATURE_VERSION_K212
+#if	defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 						{
 							int8 count_main = 1;
 					   		OEM_SetConfig(CFGI_COUNT_OF_MAIN, &count_main, sizeof(int8));
@@ -5688,7 +5688,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #ifdef FEATURE_VERSION_W317A
                         return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 #else
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 						{
 							int8 count_main = 1;
 							OEM_SetConfig(CFGI_COUNT_OF_MAIN, &count_main, sizeof(int8));
@@ -8505,7 +8505,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #elif defined(FEATURE_DISP_128X160)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #elif defined(FEATURE_DISP_240X320)
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_BH)
 				WSTRLCPY(wFormat,L"%02d.%02d.%04d",63); 
 #else
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
@@ -8530,7 +8530,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #elif defined(FEATURE_DISP_128X160)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #elif defined(FEATURE_DISP_240X320)
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_BH)
 				WSTRLCPY(wFormat,L"%02d.%02d.%04d",63);
 #else
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
@@ -8556,7 +8556,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #elif defined(FEATURE_DISP_128X160)
 				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
 #elif defined(FEATURE_DISP_240X320)
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_BH)
 				WSTRLCPY(wFormat,L"%04d.%02d.%02d",63);
 #else
 				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
@@ -8810,7 +8810,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	(void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
-                              #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+                              #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_BH)
 							  28,
 							  #else
                               AEE_FONT_NORMAL,
@@ -8920,7 +8920,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	(void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_BH)
 							  28,
 #else
 							  AEE_FONT_NORMAL,
@@ -8953,7 +8953,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_BH)
 							  28,
 #else
                               AEE_FONT_NORMAL,
@@ -9766,7 +9766,7 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
     {
 	    if (b_headset)
 	    {
-#if defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_HEADSET, ANNUN_STATE_HEADSET_ON);
 #else
 	        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_ON/*ANNUN_STATE_ON*/);
@@ -9779,14 +9779,15 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 	    else
 	    {
 	        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_FMRADIO_OFF/*ANNUN_STATE_OFF*/);
-#if defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_HEADSET, ANNUN_STATE_HEADSET_OFF);
 #else            
 	        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_OFF*/);
 #endif
 	    }
 #ifdef FEATURE_QQ_APP 
-#ifdef FEATURE_VERSION_K212
+#if	defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
+
      IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_OFFLINE);
      IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_MSG_OFF);
      IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_LEAVE_OFF); 
@@ -9837,7 +9838,7 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
                      break;          
                }
 #endif        
-#endif        
+#endif
     }
 
     if(pMe->m_pIAnn != NULL)

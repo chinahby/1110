@@ -880,7 +880,7 @@ typedef struct _CCallApp
 #if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)  ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)  
        boolean                    m_isIncoming;
 #endif
-#if defined(FEATURE_VERSION_K212)    
+#if defined(FEATURE_VERSION_K212) ||defined(FEATURE_VERSION_K212_BH)   
 	boolean   m_isCallConectBacklight;
 #endif
     IStatic *pStatic;           //Add By zzg 2013_08_23

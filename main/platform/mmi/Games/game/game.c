@@ -938,7 +938,7 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
                 }
 		    }
 			#endif     
-#ifdef FEATURE_VERSION_K212
+#if	defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 			IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_TETRIS, IDS_GAME_TITLE_TETRIS, NULL, 0);
 #else
 #ifdef FEATURE_VERSION_VG68

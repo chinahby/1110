@@ -18205,6 +18205,10 @@ static boolean IDD_MANAGEMENT_Handler(void   *pUser,
                 MENU_ADDITEM(pMenu, IDS_COPYINBOX);
                 MENU_ADDITEM(pMenu, IDS_MOVEINBOX);
 				#endif
+				#ifdef FEATURE_VERSION_K212_BH
+				MENU_ADDITEM(pMenu, IDS_COPYINBOX);
+                MENU_ADDITEM(pMenu, IDS_MOVEINBOX);
+				#endif
 #ifdef FEATURE_CDSMS_RUIM
                 MENU_ADDITEM(pMenu, IDS_STORAGE);
 #endif       

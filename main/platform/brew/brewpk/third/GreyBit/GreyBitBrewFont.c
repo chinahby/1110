@@ -71,21 +71,18 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText,
 #define MMI_GREYBITTYPE_FONTS_PATH     AEEFS_SYS_DIR"systemfont.gvf"
 
 #if defined(FEATURE_DISP_320X240) || defined(FEATURE_DISP_240X320)
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_BH)
 #define BIGNUMBER_FONT_SIZE 84
 #else
 #define BIGNUMBER_FONT_SIZE 48 
 #endif
-
 #define NORMAL_FONT_SIZE    32 
-
 #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 #define LARGE_FONT_SIZE     38
 #else
 #define LARGE_FONT_SIZE     36 
 #endif
 #define SMALL_FONT_SIZE     25
-
 #elif defined(FEATURE_DISP_220X176) || defined(FEATURE_DISP_176X220)
 #if defined(FEATURE_VERSION_1110W516)
 #define BIGNUMBER_FONT_SIZE 54 
@@ -130,6 +127,7 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText,
 #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 #define BIGNUMBER_FONT_SIZE 42
 #else
+
 #define BIGNUMBER_FONT_SIZE 32
 #endif
 #endif

@@ -341,6 +341,7 @@ static OEMState_data alarm_image_data[]=
 #ifndef FEATURE_VERSION_K212_HUALU
 #ifndef FEATURE_VERSION_K232_JST
 #ifndef FEATURE_VERSION_K232_X3
+#ifndef FEATURE_VERSION_K212_BH
 /*MMS Full/MMS Unread/MMS Unreceive/Push*/
 static OEMState_data mms_image_data[]=
 {
@@ -351,6 +352,7 @@ static OEMState_data mms_image_data[]=
 #endif
     {ANNUN_STATE_PUSH_ON, IDB_PUSH_MSG, NULL}
 };
+#endif
 #endif
 #endif
 #endif
@@ -400,7 +402,7 @@ static OEMState_data batt_image_data[]=
 };
 #endif
 
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K232_JST)||defined(FEATURE_VERSION_K232_X3)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K232_JST)||defined(FEATURE_VERSION_K232_X3)||defined(FEATURE_VERSION_K212_BH)
 static OEMState_data qq_image_data[]=
 {  
 #ifdef FEATURE_VERSION_K212_HUALU
@@ -492,7 +494,7 @@ OEMAnnun_content fmradio_content =
      {ANNUN_TYPE_IMAGE, 1, ANNUN_STATE_OFF, (void *)fmradio_image_data};
 #endif
 
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K232_JST)||defined(FEATURE_VERSION_K232_X3)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K232_JST)||defined(FEATURE_VERSION_K232_X3)||defined(FEATURE_VERSION_K212_BH)
 OEMAnnun_content qq_content =
      {ANNUN_TYPE_IMAGE, 4, ANNUN_STATE_OFF, (void *)qq_image_data};
 #else
@@ -520,8 +522,10 @@ OEMAnnun_content alarm_content =
 #ifndef FEATURE_VERSION_K212_HUALU
 #ifndef FEATURE_VERSION_K232_JST
 #ifndef FEATURE_VERSION_K232_X3
+#ifndef FEATURE_VERSION_K212_BH
 OEMAnnun_content mms_content =
      {ANNUN_TYPE_IMAGE, 4, ANNUN_STATE_OFF, (void *)mms_image_data};
+#endif
 #endif
 #endif
 #endif
@@ -705,7 +709,7 @@ OEMAnnun_content batt_content =
  */
 static OEMAnnun_data Annunciators[] =
 {
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K232_JST)||defined(FEATURE_VERSION_K232_X3)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K232_JST)||defined(FEATURE_VERSION_K232_X3)||defined(FEATURE_VERSION_K212_BH)
     {ANNUN_FIELD_RSSI,             ANNUN_ICON_POSITION_1,      ROW1_Y,  LG_IMG_WIDTH,   IMG_HEIGHT,  &rssi_content}, 	      
     {ANNUN_FIELD_HEADSET,          ANNUN_ICON_POSITION_2,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &headset_content},     
     {ANNUN_FIELD_TCARD,            ANNUN_ICON_POSITION_3,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &tcard_content},  
@@ -770,7 +774,7 @@ static OEMAnnun_data Annunciators[] =
     {ANNUN_FIELD_BATT,             ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
 #else
   {ANNUN_FIELD_ALARM,               ANNUN_ICON_POSITION_8,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
-#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_K232_JST)&&!defined(FEATURE_VERSION_K232_X3)
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_K232_JST)&&!defined(FEATURE_VERSION_K232_X3)&&!defined(FEATURE_VERSION_K212_BH)
   {ANNUN_FIELD_MMS,                 ANNUN_ICON_POSITION_9,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
 #else
   {ANNUN_FIELD_MMS,                 ANNUN_ICON_POSITION_9,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  NULL},
@@ -799,7 +803,7 @@ static OEMAnnun_data Annunciators[] =
 #if  0//def FEATURE_VERSION_LM126C
 #define ANNUN_MAX_STATES     (8)
 #else
-#if defined (FEATURE_VERSION_K212)|defined(FEATURE_VERSION_W021_CT100_QVGA)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K232_JST)||defined(FEATURE_VERSION_K232_X3)
+#if defined (FEATURE_VERSION_K212)|defined(FEATURE_VERSION_W021_CT100_QVGA)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K232_JST)||defined(FEATURE_VERSION_K232_X3)||defined(FEATURE_VERSION_K212_BH)
 #define ANNUN_MAX_STATES     (9)
 #else
 #define ANNUN_MAX_STATES     (7)
@@ -2117,7 +2121,7 @@ static int IAnnunciator_SetFieldText(IAnnunciator * pMe ,uint16 *cText, boolean 
 	{
       return EFAILED;
     }
-#if !defined( FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_K232_JST)&&!defined(FEATURE_VERSION_K232_X3)
+#if !defined( FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_K232_JST)&&!defined(FEATURE_VERSION_K232_X3)&&!defined(FEATURE_VERSION_K212_BH)
     if(cText)
     {
 	    WSTRLCPY(IAnnunCoreObj->m_Title, cText, ANN_TEXT_MAX_LEN);
@@ -2484,7 +2488,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 #endif        
 
         //MSG_FATAL("***zzg OEMAnnunciator m_bActive=%d, m_hasTitleText=%d***", IAnnunCoreObj->m_bActive, IAnnunCoreObj->m_hasTitleText, 0);
-#if !defined( FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_K232_JST)&&!defined(FEATURE_VERSION_K232_X3)
+#if !defined( FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_K232_JST)&&!defined(FEATURE_VERSION_K232_X3)&&!defined(FEATURE_VERSION_K212_BH)
 	    if(!IAnnunCoreObj->m_bActive)
 		{			
 			/*

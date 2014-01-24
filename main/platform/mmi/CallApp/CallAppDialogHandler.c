@@ -315,9 +315,10 @@ static void CallApp_RefreshVolBar(CCallApp *pMe);
 static void  CallApp_SetTimerControl(void *pUser);
 #endif //FEATURE_APP_PAUSE_TIMER
 
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 static void  CallApp_SetTimerTounoffBlackLight(void *pUser);
 #endif
+
 
 //Add By zzg 2010_08_03
 #ifdef FEATURE_FRENDUO
@@ -4198,11 +4199,13 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 				IALERT_StopAlerting(pMe->m_pAlert);
 				MSG_FATAL("IALERT_StopAlerting..............................",0,0,0);
         	}
-#ifdef FEATURE_VERSION_K212
+#if	defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
+
 			pMe->m_isCallConectBacklight = TRUE;
 			(void)ISHELL_CancelTimer(pMe->m_pShell,CallApp_SetTimerTounoffBlackLight,pMe);
 			(void)ISHELL_SetTimer(pMe->m_pShell,6000,CallApp_SetTimerTounoffBlackLight,pMe);
 #endif
+
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 			IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_ON/*ANNUN_STATE_ON*/);
             //for CDG test, CNAP with Forwarding
@@ -4288,10 +4291,11 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             (void) ISHELL_CancelTimer(pMe->m_pShell, CallApp_SetTimerControl, pMe);
 #endif //FEATURE_APP_PAUSE_TIMER
             (void) ISHELL_CancelTimer(pMe->m_pShell, CallApp_Draw_Connect_Time, pMe);
-#ifdef FEATURE_VERSION_K212
+#if	defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 			pMe->m_isCallConectBacklight = FALSE;
 			(void)ISHELL_CancelTimer(pMe->m_pShell,CallApp_SetTimerTounoffBlackLight,pMe);
 #endif
+
 
             //add for CDG test, CNAP with Forwarding
             //(void) ISHELL_CancelTimer(pMe->m_pShell,
@@ -10550,7 +10554,7 @@ static void CallApp_Draw_Connect_Time(void *pUser)
 		  (void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
 	}
 #endif
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 		if(!pMe->m_isCallConectBacklight)
 		{
 			pMe->m_isCallConectBacklight = TRUE;
@@ -10984,7 +10988,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
     if(pMe->m_pConvImage)
     {
         //IIMAGE_SetParm(pMe->m_pConvImage, IPARM_ROP, AEE_RO_TRANSPARENT, 0);
-		#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+		#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_BH)
         IIMAGE_Draw(pMe->m_pConvImage, CALL_TEXT_X, CALL_SECOND_UP_LINE_Y);
 		#else
 		IIMAGE_Draw(pMe->m_pConvImage, CALL_TEXT_X, CALL_SECOND_LINE_Y);
@@ -11806,7 +11810,8 @@ void CallApp_SpecialKeySnd(CCallApp *pMe, uint16 wParam)
 
 #endif /* KEYSND_ZY */
 
-#ifdef FEATURE_VERSION_K212
+#if	defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
+
 static void  CallApp_SetTimerTounoffBlackLight(void *pUser)
 {
 	CCallApp *pMe = (CCallApp *)pUser;
@@ -11818,6 +11823,7 @@ static void  CallApp_SetTimerTounoffBlackLight(void *pUser)
 
 }
 #endif
+
 
 
 #ifdef FEATURE_APP_PAUSE_TIMER
@@ -14143,7 +14149,9 @@ if(wp == AVK_0)
 						//return L'W';
 						WSTRCPY(&pMe->m_DialString[len-1], L"+");
 						#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_PRESS_STAR_ADD)
+						#ifndef FEATURE_VERSION_K212_BH
 						Temp_wp = AVK_Z;
+						#endif
 						#endif
 					}
 				}
@@ -14182,7 +14190,9 @@ if(wp == AVK_0)
 						//WSTRCPY(&pMe->m_DialString[len-1], L"w");
 						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'+';
 						#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_PRESS_STAR_ADD)
+						#ifndef FEATURE_VERSION_K212_BH
 						Temp_wp = AVK_Z;
+						#endif
 						#endif
 					}
 				}	
@@ -14202,7 +14212,11 @@ if(wp == AVK_0)
 				}
         	}
             #if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_PRESS_STAR_ADD)
+			#ifdef FEATURE_VERSION_K212_BH
+			if(pMe->m_curpros<2)
+			#else
             if(pMe->m_curpros<3)
+			#endif
             #else
         	if(pMe->m_curpros<2)
             #endif

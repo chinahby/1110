@@ -651,7 +651,7 @@ extern int TetrisMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 
 //extern int GmFive_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
-#if defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 //extern int GmFive_Load(IShell *ps, void *pHelpers, IModule **pMod);
 extern int TetrisMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
@@ -990,6 +990,9 @@ extern int  VideoPlayerMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #ifndef FEATURE_VERSION_K212_HUALU
 extern int AppTimerMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
+#ifdef FEATURE_VERSION_K212_BH
+extern int AppTimerMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
+#endif
 #endif
 #if defined(FEATURE_SUPPORT_WAP_APP)
 extern int CNetFront3_Load(IShell *ps, void *pHelpers, IModule **pMod);
@@ -1001,6 +1004,9 @@ extern int nemobrew_Load(IShell *ps, void *pHelpers, IModule **pMod);
 
 #if defined(FEATURE_CONVERTER)
 #if !defined(FEATURE_VERSION_K212_HUALU)
+extern int  ConverterMod_Load(IShell* ps, void* pHelpers, IModule** ppMod);
+#endif
+#ifdef FEATURE_VERSION_K212_BH
 extern int  ConverterMod_Load(IShell* ps, void* pHelpers, IModule** ppMod);
 #endif
 #endif
@@ -1127,7 +1133,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 
 //    {AEEFS_MIF_DIR"gmfive.mif", GmFive_Load},
 #endif
-#if defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
       //{AEEFS_MIF_DIR"gmfive.mif", GmFive_Load},
       {AEEFS_MIF_DIR"tetris.mif", TetrisMod_Load},
 #endif
@@ -1406,6 +1412,10 @@ static const AEEStaticMod gOEMStaticModList[] =
 #ifndef FEATURE_VERSION_K212_HUALU
       {AEEFS_MIF_DIR"apptimer.mif", AppTimerMod_Load},//wu raojin add
 #endif
+#ifdef FEATURE_VERSION_K212_BH
+      {AEEFS_MIF_DIR"apptimer.mif", AppTimerMod_Load},//wu raojin add
+#endif
+
 #endif
 #ifndef WIN32
 #ifndef CUST_EDITION
@@ -1438,6 +1448,9 @@ static const AEEStaticMod gOEMStaticModList[] =
 #if defined(FEATURE_CONVERTER)
 #if !defined(FEATURE_VERSION_K212_HUALU)
          {AEEFS_MIF_DIR"converter.mif", ConverterMod_Load},
+#endif
+#if defined(FEATURE_VERSION_K212_BH)
+	 	{AEEFS_MIF_DIR"converter.mif", ConverterMod_Load},
 #endif
 #endif
 #ifdef FEATURE_SPORTS_APP

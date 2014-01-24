@@ -15,6 +15,7 @@ vpath %.c               $(TETRIS_SRC)
 vpath %.bar             $(TETRIS_RES)
 vpath %.brx             $(TETRIS_RES)
 vpath %.wav             $(TETRIS_RES)/gamemusic
+
 CONSTFILE_FILES+=\
 tetris.mif|fs:/mif/tetris.mif \
 tetris.bar|fs:/mod/tetris/en/tetris.bar \
