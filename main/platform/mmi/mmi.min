@@ -133,10 +133,12 @@ endif
 #include $(EXTRAMENU)/extramenu.min
 ifneq ($(USES_RESDIR),hualu)
 ifneq ($(USES_RESDIR),VHOPE)
+ifneq ($(USES_RESDIR),hywy)
 ifneq ($(USES_LOW),yes)
 include $(OEMEXTFOR3PART)/OEMExtFor3Part.min
 include $(EDITAPPLET)/EditApplet.min
 include $(EDITEXTENTSION)/EditExtension.min
+endif
 endif
 endif
 endif
@@ -195,9 +197,11 @@ endif
 endif
 ifneq ($(USES_RESDIR),hualu)
 ifneq ($(USES_RESDIR),VHOPE)
+ifneq ($(USES_RESDIR),hywy)
 ifneq ($(USES_LOWMEM),yes)
 include $(STATIC_BREW_APP)/staticbrewapp.min
 include $(STATIC_APP)/staticapp.min
+endif
 endif
 endif
 endif
@@ -213,12 +217,13 @@ ifneq ($(USES_RESDIR),hualu)
 ifneq ($(USES_RESDIR),VHOPE)
 ifneq ($(USES_RESDIR),K212)
 ifneq ($(USES_RESDIR),K232_X3)
+ifneq ($(USES_RESDIR),hywy)
 include $(UCWEB)/UCWEB.min
 endif
 endif
 endif
 endif
-
+endif
 ifeq ($(USES_ZI),yes)
 include $(ZI_PATH)/ZI.min
 endif
