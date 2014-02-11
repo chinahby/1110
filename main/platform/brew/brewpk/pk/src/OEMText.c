@@ -198,8 +198,13 @@ static uint16 StrokeMap[]=
 #define SPELLMAX  10
 #define SPACESIZE  5  //6
 #ifdef FEATURE_VERSION_K212_HUALU
+#ifdef FEATURE_VERSION_K212_BH
+#define CHINESE_FONT_HEIGHT 32
+#define CHINESE_FONT_WIDTH 32 
+#else
 #define CHINESE_FONT_HEIGHT 28
 #define CHINESE_FONT_WIDTH 32 
+#endif
 #else
 #define CHINESE_FONT_HEIGHT 32
 #define CHINESE_FONT_WIDTH 32 
@@ -762,6 +767,10 @@ T9KeyMap Stroke2T9Map[] =
 
 T9CCAudbInfo         *gpSimpCAUdbInfo = NULL;
 T9CCAudbInfo         *gpTradCAUdbInfo = NULL;
+T9SYMB               *gppsTxtBuf  = NULL;
+T9AuxType            *gppaAuxBuf  = NULL;
+
+
 extern T9STATUS T9FARCALL T9CCLoadLdb(T9CCFieldInfo *pFieldInfo, T9ChineseData T9FARDATA *pT9CCLdbHeader);
 #endif //FEATURE_T9_CHINESE
 #ifdef FEATURE_MYANMAR_INPUT_MOD
@@ -11363,10 +11372,18 @@ static void T9_CJK_MYANMAR_AdjustInputInfoLocation(TextCtlContext *pContext,
 static void T9TextCtl_CJK_CHINESE_Restart(TextCtlContext *pContext)
 {
     T9STATUS sT9Status = T9STATERROR; 
+    uint32	dwTotal = 0;
+	uint32 free = 0;
+	uint32 tot = 0;
+	uint32 larg = 0;
+	GETFSFREE(&dwTotal);
+	free = GETRAMFREE(&tot,&larg);
+    MSG_FATAL("T9TextCtl_CJK_CHINESE_Restartlarg=======%d,,,free==%d",larg,free,0);
     MSG_FATAL("T9TextCtl_CJK_CHINESE_Restart Start",0,0,0);
     // TRI Chinese input Init
     sT9Status = T9_CJK_CHINESE_Init ( pContext );
-
+    free = GETRAMFREE(&tot,&larg);
+    MSG_FATAL("T9_CJK_CHINESE_Initlarg=======%d,,,free==%d",larg,free,0);
     // set rectChinese input Rect
     MSG_FATAL("pContext->rectDisplay.dx=%d,pContext->nLineHeight=%d",pContext->rectDisplay.dx,pContext->nLineHeight,0);
     pContext->rectChineseSyllableInput.x = pContext->rectDisplay.x;
@@ -11406,6 +11423,8 @@ static void T9TextCtl_CJK_CHINESE_Restart(TextCtlContext *pContext)
     TextCtl_TextChanged(pContext);
     pContext->nSelectionSelectd = 0;       // no default selected word   
     pContext->sFocus = FOCUS_TEXT;
+    free = GETRAMFREE(&tot,&larg);
+    MSG_FATAL("T9TextCtl_CJK_CHINESE_Restartoverlarg=======%d,,,free==%d",larg,free,0);
 }
 
 /*------------------------------------------------------------------------
@@ -11954,14 +11973,21 @@ static T9STATUS T9_CJK_CHINESE_Init(TextCtlContext *pContext)
     /* for CAUDB initialization */
     gpSimpCAUdbInfo = (T9CCAudbInfo *)malloc(CAUDB_SIZE);
     gpTradCAUdbInfo = (T9CCAudbInfo *)malloc(CAUDB_SIZE);
-
+    if(!gppsTxtBuf)
+    {
+        gppsTxtBuf  = (T9SYMB*)malloc(MAX_INPUTTEXT_SIZE * sizeof(T9SYMB));
+    }
+    if(!gppaAuxBuf)
+    {
+        gppaAuxBuf  = (T9AuxType*)malloc(MAX_INPUTTEXT_SIZE * sizeof(T9AuxType));
+    }
     /* Allocate and initialize the field structure */
     MEMSET(&pContext->sT9ccFieldInfo, 0, sizeof(T9CCFieldInfo));
 
     sStatus = T9CCInitialize(&pContext->sT9ccFieldInfo, 
-                            (T9SYMB*)malloc(MAX_BUFFER_LENGTH * sizeof(T9SYMB)),
-                            (T9AuxType*)malloc(MAX_BUFFER_LENGTH * sizeof(T9AuxType)),
-                            MAX_BUFFER_LENGTH, 
+                            gppsTxtBuf,
+                            gppaAuxBuf,
+                            MAX_INPUTTEXT_SIZE, 
                             0 /* nBufLen */, 
                             T9_CJK_CHINESE_HandleRequest, 
                             SELECTION_BUFFER_SIZE, 
@@ -12046,10 +12072,23 @@ static T9STATUS T9_CJK_CHINESE_Init(TextCtlContext *pContext)
  *-----------------------------------------------------------------------*/
 static void T9_CJK_CHINESE_Destroy(TextCtlContext *pContext)
 {
+    uint32	dwTotal = 0;
+	uint32 free = 0;
+	uint32 tot = 0;
+	uint32 larg = 0;
     FREEIF(pContext->sT9ccFieldInfo.G.psTxtBuf);
     FREEIF(pContext->sT9ccFieldInfo.G.paAuxBuf);
+    FREEIF(pContext->sT9ccFieldInfo.G.pOEMPrivate);
+    FREEIF(pContext->sT9ccFieldInfo.pCudbInfo);
+    FREEIF(pContext->sT9ccFieldInfo.pCAUdbInfo);
+    FREEIF(pContext->sT9ccFieldInfo.pOEMPrivate);
     FREEIF(gpSimpCAUdbInfo);
     FREEIF(gpTradCAUdbInfo);
+    FREEIF(gppsTxtBuf);
+    FREEIF(gppaAuxBuf);
+	GETFSFREE(&dwTotal);
+	free = GETRAMFREE(&tot,&larg);
+    MSG_FATAL("T9_CJK_CHINESE_Destroy=======%d,,,free==%d",larg,free,0);
 }
 
 /*------------------------------------------------------------------------
@@ -12131,6 +12170,10 @@ static boolean T9_CJK_CHINESE_DisplayText(TextCtlContext *pContext)
     T9UINT  nCursor;
     boolean bModified = FALSE;
     boolean bAdjust = FALSE;
+    uint32	dwTotal = 0;
+	uint32 free = 0;
+	uint32 tot = 0;
+	uint32 larg = 0;
     MSG_FATAL("***T9_CJK_CHINESE_DisplayText--pContext->sFocus=%d",pContext->sFocus,0,0);
     if(pContext->rectDisplay.dy > pContext->rectChineseSyllableInput.dy + pContext->rectChineseTextInput.dy)
     {
@@ -12203,6 +12246,10 @@ static boolean T9_CJK_CHINESE_DisplayText(TextCtlContext *pContext)
         pContext->rectDisplay.dy = pContext->rectDisplay.dy + pContext->rectChineseSyllableInput.dy + pContext->rectChineseTextInput.dy-2;     
         }
     }    
+    
+	GETFSFREE(&dwTotal);
+	free = GETRAMFREE(&tot,&larg);
+    MSG_FATAL("T9_CJK_CHINESE_DisplayTextlarg=======%d,,,free==%d",larg,free,0);
     return bModified;
 
 }
