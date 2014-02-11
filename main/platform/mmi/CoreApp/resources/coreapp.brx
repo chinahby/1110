@@ -316,6 +316,12 @@
 	<String Id="1123" Name="IDS_ESN_TRACK_NUMBER_TWO">
 		<Text>Esn2</Text>
 	</String>
+	<String Id="1124" Name="IDS_LEMON_SALES_TRACK">
+		<Text>Dear LEMON Customer: This short message contains the registration information of the mobile phone. Please press Confirm button, then LEMON will receive your registration information in time and provide the best service.</Text>
+	</String>
+	<String Id="1125" Name="IDS_LEMON_SALES_SUCCESS">
+		<Text>Thank you for using LEMON mobile phone. The registration information has been entered into the database of LEMON Service Center.</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">
