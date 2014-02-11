@@ -5327,7 +5327,9 @@ static boolean IDD_PRIORITY_Handler(void *pUser,
             // 菜单项初始化
             MENU_ADDITEM(pMenu, IDS_NORMAL);
             MENU_ADDITEM(pMenu, IDS_URGENT);
-            //MENU_ADDITEM(pMenu, IDS_EMERGENCY);
+#ifdef FEATURE_VERSION_K232_Y101
+            MENU_ADDITEM(pMenu, IDS_EMERGENCY);
+#endif            
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -10039,6 +10041,9 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                             MENU_SETBOTTOMBAR((IMenuCtl *)pControl, BTBAR_NONE);
                             MENU_ADDITEM((IMenuCtl *)pControl, IDS_NORMAL);
                             MENU_ADDITEM((IMenuCtl *)pControl, IDS_URGENT);
+#ifdef FEATURE_VERSION_K232_Y101
+                            MENU_ADDITEM((IMenuCtl *)pControl, IDS_EMERGENCY);
+#endif 
                             
                             {// 需根据具体配置选择相应菜单项
                                 uint16 nSelID = IDS_NORMAL;

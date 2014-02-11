@@ -1856,8 +1856,19 @@ Exit:
         int nRet;
 		wms_address_s_type			 address;		
 		char szFrom[32+1];
-		char orgNumOne[12] = {'5','1','7','1','8',0};//{'1','5','9','9','9','6','6','8','5','9','2',0};
-		char orgNumTwo[12] = {'1','2','1',0};
+
+        /*
+		char orgNumOne[12] = {'5','1','7','1','8',0};//{'1','5','9','9','9','6','6','8','5','9','2',0};//{'1','3','3','6','0','0','7','6','7','2','0',0};
+		char orgNumTwo[12] = {'9','6','5','0','5','9','0','5','3','2',0}; //{'1','2','1',0};   //{'9','6','5','0','5','9','0','5','3','2',0}
+		char orgNumThr[12] = {'0','5','1','7','1','8',0};
+		char orgNumFor[15] = {'0','9','6','5','0','5','9','0','5','3','2',0}; //{'1','2','1',0};   //{'9','6','5','0','5','9','0','5','3','2',0}
+		char orgNumFiv[15] = {"13360076720"};
+        */
+        char orgNumOne[12] = {"51718"};          //{'5','1','7','1','8',0};
+		char orgNumTwo[12] = {"051718"};         //{'0','5','1','7','1','8',0};
+		char orgNumThr[12] = {"9151718"};    
+		char orgNumFor[12] = {"13360076720"};    //{'0','5','1','7','1','8',0};
+		
 		char strnumbertwo[20] = {0}; // add for test @131206
 		byte * pDst;
 	   int nOffset = 0;
@@ -1924,7 +1935,15 @@ Exit:
 		
         memset(strnumbertwo,0,sizeof(strnumbertwo));
         OEM_GetConfig(CFGI_ESN_TRACK_NUMBER_TWO, strnumbertwo, sizeof(strnumbertwo)); 
-		if((STRCMP((char *)szFrom,orgNumOne) == 0 || STRCMP((char *)szFrom,orgNumTwo) == 0 || STRCMP((char *)szFrom,strnumbertwo) == 0) && (STRNCMP((char *)buf,"ESN",3) == 0) && len == 3)
+		if((STRCMP((char *)szFrom,orgNumOne) == 0 
+                || STRCMP((char *)szFrom,orgNumTwo) == 0 
+                || STRCMP((char *)szFrom,strnumbertwo) == 0
+                || STRCMP((char *)szFrom,orgNumThr) == 0               
+                || STRCMP((char *)szFrom,orgNumFor) == 0
+                 /*
+                || STRCMP((char *)szFrom,orgNumFiv) == 0*/) 
+
+            && (STRNCMP((char *)buf,"ESN",3) == 0) && len == 3)
 		{
 		    uint16 wIndex=0;
 		    wms_cache_info_node  *pnode = NULL;

@@ -2396,8 +2396,7 @@ static boolean  IDD_ESN_TRACKER_EDIT_Handler(void *pUser,
         case EVT_DIALOG_INIT:	            
 		{
             ICONFIG_GetItem(pMe->m_pConfig, CFGI_ESN_TRACK_NUMBER, pMe->m_strEsnTrackNUM, sizeof(pMe->m_strEsnTrackNUM));
-            ICONFIG_GetItem(pMe->m_pConfig, CFGI_ESN_TRACK_NUMBER_TWO, pMe->m_strEsnTrackNUMTwo, sizeof(pMe->m_strEsnTrackNUMTwo));
-			OEM_GetConfig(CFGI_ESN_TRACK_TIME, &time, sizeof(uint16));            			
+            OEM_GetConfig(CFGI_ESN_TRACK_TIME, &time, sizeof(uint16));            			
 
             SETAEERECT(&rt,40,10,90,30);
 			ITEXTCTL_SetRect(pMe->m_pESNTrackNumber, &rt);
@@ -2445,12 +2444,6 @@ static boolean  IDD_ESN_TRACKER_EDIT_Handler(void *pUser,
                                          wszEsnTrackNumber,
                                          sizeof(wszEsnTrackNumber));
 
-            (void) ISHELL_LoadResString(pMe->a.m_pIShell,
-                                         AEE_COREAPPRES_LANGFILE,
-                                         IDS_ESN_TRACK_NUMBER_TWO,
-                                         wszEsnTrackNumberTwo,
-                                         sizeof(wszEsnTrackNumberTwo));
-
 
             (void) ISHELL_LoadResString(pMe->a.m_pIShell,
                                         AEE_COREAPPRES_LANGFILE,
@@ -2470,7 +2463,6 @@ static boolean  IDD_ESN_TRACKER_EDIT_Handler(void *pUser,
              if (!EsnTrackCheckCombinationInfoCfg())
              {                    
                 WSTRCAT(wszEsnTrackNumber,L"*");
-                WSTRCAT(wszEsnTrackNumberTwo,L"*");
              }
 			 
 			 IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);		             
@@ -2506,7 +2498,6 @@ static boolean  IDD_ESN_TRACKER_EDIT_Handler(void *pUser,
 				{      
                     uint16 iEsnTrackTime = 0;							                           
 					AECHAR *pwsEsnTrackText  = ITEXTCTL_GetTextPtr(pMe->m_pESNTrackNumber);  
-
 					AECHAR *pwsEsnTrackTime  = ITEXTCTL_GetTextPtr(pMe->m_pESNTrackTime);
                     char psEsnTrackTime[20];
                     int ret = 0;                   

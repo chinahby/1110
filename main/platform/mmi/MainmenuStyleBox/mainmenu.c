@@ -15712,13 +15712,8 @@ static int StartApplet(MainMenu *pMe, int i)
 
     case IDS_MAIN_MENU_FACEBOOK:
 	{		
-        //OEM_SetUCBROWSER_ADSAccount();
-		//Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FACEBOOK);
-		
-		IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn,FALSE);         
-		IANNUNCIATOR_Redraw(pMe->m_pIAnn);
-        
-		Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.google.com.hk/");
+        OEM_SetUCBROWSER_ADSAccount();
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FACEBOOK);		
 		break;
 	}
     #endif

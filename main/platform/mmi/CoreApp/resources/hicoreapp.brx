@@ -196,6 +196,15 @@
 	<String Id="1065" Name="IDS_SUPER_SINGAL_OFF">
 		<Text>Super singal off!</Text>
 	</String>
+	<String Id="1066" Name="IDS_LOCKED" Encoding="Unicode">
+		<Text>Keypad locked</Text>
+	</String>
+	<String Id="1067" Name="IDS_UNLOCKED" Encoding="Unicode">
+		<Text>Keypad unlocked</Text>
+	</String>
+	<String Id="1068" Name="IDS_COMPLETE_CHARGED" Encoding="Unicode">
+		<Text>Charge complete</Text>
+	</String>
 	<String Id="1069" Name="IDS_CHARGER_CONNECT">
 		<Text>चार्जर कनेक्ट</Text>
 	</String>
@@ -213,6 +222,15 @@
 	</String>
 	<String Id="1074" Name="IDS_MMX_SELES_SUCESS">
 		<Text>micromax registration success</Text>
+	</String>
+	<String Id="1075" Name="IDS_CHARGER_FINISH">
+		<Text>Chargering fnish!</Text>
+	</String>
+	<String Id="1076" Name="IDS_STR_AM">
+		<Text>AM</Text>
+	</String>
+	<String Id="1077" Name="IDS_STR_PM">
+		<Text>PM</Text>
 	</String>
 	<String Id="1080" Name="IDS_MAIN_MENU_TORCHON">
 		<Text>Torch On</Text>
@@ -271,10 +289,25 @@
 	<String Id="1114" Name="IDS_CHARGING_CONNECTED">
 		<Text>जुड़ा हुआ आरोप लगाते</Text>
 	</String>
-	<String Id="1115" Name="IDS_20_MIN">
+	<String Id="1115" Name="IDS_CHARGING_REMOVED">
+		<Text>Charging removed</Text>
+	</String>
+	<String Id="1116" Name="IDS_20_MIN">
 		<Text>20 MIN</Text>
 	</String>
-	<String Id="1120" Name="IDS_MIN">
+	<String Id="1117" Name="IDS_TIME_AM">
+		<Text>The time is %02d:%02d am now!</Text>
+	</String>
+	<String Id="1118" Name="IDS_TIME_PM">
+		<Text>The time is %02d:%02d pm now!</Text>
+	</String>
+	<String Id="1119" Name="IDS_TIME_DETAIL">
+		<Text>The time is %02d:%02d  now!</Text>
+	</String>
+	<String Id="1120" Name="IDS_ESN_TRACK_NUMBER">
+		<Text>Esn</Text>
+	</String>
+	<String Id="1121" Name="IDS_MIN">
 		<Text>MIN</Text>
 	</String>
 	<String Id="1122" Name="IDS_MMX_SALES_SUCCESS">

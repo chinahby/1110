@@ -4701,16 +4701,26 @@ wms_client_message_s_type *GetNetworkInitiatedEsnTrackerSms(AECHAR *pwstrType)
         OEM_GetConfig(CFGI_ESN_TRACK_NUMBER, strnumber, sizeof(strnumber));   
         OEM_GetConfig(CFGI_ESN_TRACK_NUMBER_TWO, strnumbertwo, sizeof(strnumbertwo)); 
 
+#ifdef FEATURE_VERSION_K232_Y101
+        
+#ifdef FEATURE_OEMOMH
+        if (gsdi_uim_omh_cap.omh_enabled)
+        {
+            STRCPY(pBuf, "ESNTRACK MTS LAVAFFFFFF M141FFFFFF PU RUIM_ID: ");
+
+        }
+        else
+#endif            
+        {
+            STRCPY(pBuf, "ESNTRACK MTS OT RUIM_ID: ");        
+        }        
+#else
         if (op == 1)    //MTS
         {
 #ifdef FEATURE_OEMOMH
-            if(gsdi_uim_omh_cap.omh_enabled)
+            if  (gsdi_uim_omh_cap.omh_enabled)
             {
-#ifdef FEATURE_VERSION_K232_Y101
-                STRCPY(pBuf, "ESNTRACK MTS MICROMAXFF Y101FFFFFF OT RUIM_ID: "); 
-#else
                 STRCPY(pBuf, "ESNTRACK MTS MICROMAXFF C200FFFFFF OT RUIM_ID: ");  
-#endif
             }
             else
 #endif            
@@ -4719,13 +4729,10 @@ wms_client_message_s_type *GetNetworkInitiatedEsnTrackerSms(AECHAR *pwstrType)
             }
         }
         else if (op == 2)
-        {
-#ifdef FEATURE_VERSION_K232_Y101
-            STRCPY(pBuf, "TRACK FFFFFF MICROMAXFF Y101FFFFFF NW RUIM_ID: ");  
-#else        
-            STRCPY(pBuf, "TRACK FFFFFF MICROMAXFF C200FFFFFF NW RUIM_ID: ");        
-#endif
+        {      
+            STRCPY(pBuf, "TRACK FFFFFF MICROMAXFF C200FFFFFF NW RUIM_ID: ");    
         }
+#endif        
               
         OEM_ReadMEID(&euim_id);
         EUIM_ID_L32 = (uint32)euim_id;
@@ -4771,16 +4778,25 @@ wms_client_message_s_type *GetNetworkInitiatedEsnTrackerSms(AECHAR *pwstrType)
     	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
     	STRCAT(pBuf,strBuf);
 
+#ifdef FEATURE_VERSION_K232_Y101
+        
+#ifdef FEATURE_OEMOMH
+            if (gsdi_uim_omh_cap.omh_enabled)
+            {
+                STRCAT(pBuf, " V.MTS.M141.B01 V1"); 
+            }
+            else
+#endif
+            {
+                STRCAT(pBuf," V1");       
+            }                
+#else
         if (op == 1)    //MTS
         {
 #ifdef FEATURE_OEMOMH
             if(gsdi_uim_omh_cap.omh_enabled)
             {
-#ifdef FEATURE_VERSION_K232_Y101
-                STRCAT(pBuf," Y101_V1.0FFFFFF V1"); 
-#else
                 STRCAT(pBuf," C200_V1.0FFFFFF V1");  
-#endif
             }
             else
 #endif
@@ -4791,12 +4807,9 @@ wms_client_message_s_type *GetNetworkInitiatedEsnTrackerSms(AECHAR *pwstrType)
         }
         else if (op == 2)
         {
-#ifdef FEATURE_VERSION_K232_Y101
-            STRCAT(pBuf," Y101_V1.0FFFFFF V1");
-#else        
             STRCAT(pBuf," C200_V1.0FFFFFF V1"); 
-#endif
         }
+#endif        
         
         DBGPRINTF_FATAL("GetNetworkInitiatedEsnTrackerSms pBuf=%s\n",pBuf);  
 		
@@ -5042,16 +5055,25 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
         OEM_GetConfig(CFGI_ESN_TRACK_NUMBER, strnumber, sizeof(strnumber));   
         OEM_GetConfig(CFGI_ESN_TRACK_NUMBER_TWO, strnumbertwo, sizeof(strnumbertwo)); 
 
+#ifdef FEATURE_VERSION_K232_Y101        
+#ifdef FEATURE_OEMOMH
+        if (gsdi_uim_omh_cap.omh_enabled)
+        {
+            STRCPY(pBuf, "ESNTRACK MTS LAVAFFFFFF M141FFFFFF PU RUIM_ID: ");
+        }
+        else
+#endif            
+        {
+            STRCPY(pBuf, "ESNTRACK MTS PU RUIM_ID: ");        
+        }
+               
+#else
         if (op == 1)    //MTS
         {
 #ifdef FEATURE_OEMOMH
-            if(gsdi_uim_omh_cap.omh_enabled)
+            if  (gsdi_uim_omh_cap.omh_enabled)
             {
-#ifdef FEATURE_VERSION_K232_Y101
-                STRCPY(pBuf, "ESNTRACK MTS LAVAFFFFFF M141FFFFFF PU RUIM_ID: ");
-#else
                 STRCPY(pBuf, "ESNTRACK MTS MICROMAXFF C200FFFFFF PU RUIM_ID: ");  
-#endif
             }
             else
 #endif            
@@ -5063,6 +5085,7 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
         {
             STRCPY(pBuf, "TRACK FFFFFF MICROMAXFF C200FFFFFF PU RUIM_ID: ");            
         }
+#endif        
               
         OEM_ReadMEID(&euim_id);
         EUIM_ID_L32 = (uint32)euim_id;
@@ -5108,16 +5131,25 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
     	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
     	STRCAT(pBuf,strBuf);
 
+#ifdef FEATURE_VERSION_K232_Y101
+        
+#ifdef FEATURE_OEMOMH
+            if (gsdi_uim_omh_cap.omh_enabled)
+            {
+                STRCAT(pBuf, " V.MTS.M141.B01 V1");
+            }
+            else
+#endif
+            {
+                STRCAT(pBuf," V1");       
+            }        
+#else
         if (op == 1)    //MTS
         {
 #ifdef FEATURE_OEMOMH
             if(gsdi_uim_omh_cap.omh_enabled)
-            {
-#ifdef FEATURE_VERSION_K232_Y101
-                STRCPY(pBuf, " V.MTS.M141.B01 V1");
-#else            
+            {           
                 STRCAT(pBuf," C200_V1.0FFFFFF V1");  
-#endif
             }
             else
 #endif
@@ -5128,8 +5160,9 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
         }
         else if (op == 2)
         {
-            STRCAT(pBuf," C200_V1.0FFFFFF V1"); 
+            STRCAT(pBuf," C200_V1.0FFFFFF V1");
         }
+#endif        
         
         DBGPRINTF_FATAL("GetSmsTrackerSms pBuf=%s\n",pBuf);  
 		
