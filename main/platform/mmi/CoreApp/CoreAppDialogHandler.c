@@ -8966,7 +8966,9 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		}
 }			
 #else
+#if defined(FEATURE_VERSION_K212_HUALU) 
 	rc_week.x= rc_week.x+10;
+#endif
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
