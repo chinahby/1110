@@ -565,6 +565,15 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_handset_midi_vol[] = {
   {            -400 , VOC_VOL_SILENCE ,  0 },
   {            -200 , VOC_VOL_SILENCE ,  0 },
   {             100 , VOC_VOL_SILENCE ,  0 }
+#elif defined(FEATURE_VERSION_K232_Y100)||defined (FEATURE_VERSION_K232_Y100A)
+  { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
+  {           -1200 , VOC_VOL_SILENCE ,  0 },
+  {            -800 , VOC_VOL_SILENCE ,  0 },
+  {            -500 , VOC_VOL_SILENCE ,  0 },
+  {            -300 , VOC_VOL_SILENCE ,  0 },
+  {             0   , VOC_VOL_SILENCE ,  0 },
+  {             200 , VOC_VOL_SILENCE ,  0 },
+  {             500 , VOC_VOL_SILENCE ,  0 }
 #else
   /* Internal CODEC - no pad values    */
   /*  rx                dtmf            pad        */
@@ -1105,6 +1114,16 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_headset_voice_vol[] = {
   {		   -1000  , 		  -2200 ,  0 },
   {			-700  , 		  -2000 ,  0 },
   {			-400  , 		  -1800 ,  0 }
+#elif defined (FEATURE_VERSION_K232_Y100)||defined (FEATURE_VERSION_K232_Y100A)
+  /*  rx                dtmf            pad        */
+  { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
+  {          -1000  ,           -3000 ,  0 },
+  {           -700  ,           -2800 ,  0 },
+  {           -400  ,           -2600 ,  0 },
+  {           -200  ,           -2400 ,  0 },
+  {            100  ,           -2200 ,  0 },
+  {            500  ,           -2000 ,  0 },
+  {            800  ,           -1800 ,  0 }
 #else
   /*  rx                dtmf            pad        */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
@@ -2249,6 +2268,15 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_sp_voice_vol[] = {
   {		         0  , 		     -600 ,  0 },
   {		       200  , 		     -400 ,  0 },
   {		       400  , 		     -200 ,  0 }
+#elif defined(FEATURE_VERSION_K232_Y100)||defined (FEATURE_VERSION_K232_Y100A)
+  { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
+  {		      -400  , 		    -1400 ,  0 },
+  {		      -200  , 		    -1200 ,  0 },
+  {		         0  , 		    -1000 ,  0 },
+  {			   200  , 		     -800 ,  0 },
+  {		       400  , 		     -600 ,  0 },
+  {		       600  , 		     -400 ,  0 },
+  {		       800  , 		     -200 ,  0 }
 #elif defined (FEATURE_VERSION_C260_IC19)  
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
   {		      -800  , 		    -1400 ,  0 },

@@ -335,6 +335,7 @@ static void CallApp_HandleStopMissedAlertTimer(void *pUser);
 
 static void CallApp_ShortcutQuiet(CCallApp *pMe);
 static void CallApp_Dialer_Show_Animation(void *pUser);
+static void CallApp_Dialer_Not_UimCard(void *pUser);
 
 static void CallApp_Flash_Call(CCallApp *pMe);
 
@@ -3138,6 +3139,18 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
             bt_ui_process_cmcall_notify(pMe,AEET_EVENT_CALL_ORIG, FALSE);
 #endif
 #endif
+            #ifdef FEATURE_VERSION_K232_Y100A
+            #ifdef FEATURE_OEMOMH
+            if((!IRUIM_IsCardConnected(pMe->m_pIRUIM))&&((WSTRLEN(pMe->m_CallsTable->call_number)>4)))
+            {
+                MSG_FATAL("CallApp_Dialer_Not_UimCard....ISHELL_SetTimer",0,0,0);
+                (void) ISHELL_SetTimer(pMe->m_pShell,
+	                        4000,
+	                        (PFNNOTIFY)CallApp_Dialer_Not_UimCard,
+	                        (void *)pMe);
+            }
+            #endif
+            #endif
             return TRUE;
         }
 
@@ -3420,6 +3433,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
                 //calling.....
                 CallApp_Dialer_Show_Animation(pMe); 
             }
+            
             return TRUE;
         }
 
@@ -3464,7 +3478,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
             {
                 case AVK_CLR:
                 case AVK_ENDCALL:					
-                    CALL_ERR("AVK_ENDCALL %d", pMe->m_lastCallState,0,0);
+                    MSG_FATAL("AVK_ENDCALL %d", pMe->m_lastCallState,0,0);
 #ifdef FEATURE_ICM
                     ICM_EndAllCalls(pMe->m_pICM);
 #else
@@ -3549,6 +3563,12 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
 
     return FALSE;
 } // CallAppCallingDlgHandler
+static void CallApp_Dialer_Not_UimCard(void *pUser)
+{
+     CCallApp *pMe = (CCallApp *)pUser;
+     MSG_FATAL("CallApp_Dialer_Not_UimCard....",0,0,0);
+     (void)ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,AVK_CLR,0);
+}
 
 /*==============================================================================
 º¯Êý£º
@@ -6109,6 +6129,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 #endif
 #endif
 	            }
+            
             return TRUE;
             
 		case EVT_NO_CLOSEBACKLIGHT:

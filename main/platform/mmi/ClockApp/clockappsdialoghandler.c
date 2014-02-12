@@ -30,6 +30,8 @@
 #ifdef FEATURE_APP_MUSICPLAYER
 #include "MusicPlayer.h"
 #endif 
+#include "AEEBacklight.h"
+
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
@@ -42,7 +44,9 @@
     BarParam.eBBarType = x;                         \
     DrawBottomBar(pMe->m_pDisplay, &BarParam);      \
 }
-
+#ifdef FEATURE_VERSION_K232_Y100A
+boolean m_bAlaram = FALSE;
+#endif
 //#define  MAX_STATE_ITEM     (2)
 #define  ITEM_STATE_ON      (1)
 #define  ITEM_STATE_OFF     (2)
@@ -1862,7 +1866,7 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
 {
     static byte keyBeepVolumeSetting = 0;
 
-#ifdef FEATURE_VERSION_EC99   
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K232_Y100A)
     static byte alert_type, ringer_vol;              
 #endif  
 
@@ -1914,7 +1918,7 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
                 ICONFIG_GetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
                 ICONFIG_SetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &mute, sizeof(byte));
             }
-#ifdef FEATURE_VERSION_EC99     
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K232_Y100A)   
             {
                 byte     tmptype = OEMNV_ALERTTYPE_RINGER;
                 byte     tmpvol = OEMSOUND_4TH_VOL;   
@@ -1999,6 +2003,9 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
                                           subMesssgeBuf);
                 }
 #endif
+#ifdef FEATURE_VERSION_K232_Y100A
+                m_bAlaram = TRUE;
+#endif
                 //画活动的闹钟图标
                 CClockApps_AniClockImg(pMe);
                 IANNUNCIATOR_Redraw(pMe->m_pIAnn);
@@ -2061,8 +2068,19 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
             }
             return TRUE;
 
-        case EVT_DIALOG_END:            
-#ifdef FEATURE_VERSION_EC99
+        case EVT_DIALOG_END:
+            #ifdef FEATURE_VERSION_K232_Y100A
+            m_bAlaram = FALSE;
+            {
+                IBacklight  *Backlight;
+                (void)ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
+                {
+  			        IBACKLIGHT_Enable(Backlight);
+                } 
+                IBACKLIGHT_Release(Backlight);
+            }
+            #endif
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K232_Y100A)
             {
                 if (alert_type < OEMNV_ALERTTYPE_OFF)   alert_type = OEMNV_ALERTTYPE_OFF;
                 if (alert_type > OEMNV_ALERTTYPE_VIBANDRINGER)   alert_type = OEMNV_ALERTTYPE_VIBANDRINGER;
@@ -2141,7 +2159,18 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
         
         case EVT_KEY:
         {       
-            alarm_shake_close();       
+            alarm_shake_close(); 
+            #ifdef FEATURE_VERSION_K232_Y100A
+            m_bAlaram = FALSE;
+            {
+                IBacklight  *Backlight;
+                (void)ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
+                {
+  			        IBACKLIGHT_Enable(Backlight);
+                } 
+                IBACKLIGHT_Release(Backlight);
+            }
+            #endif
             //打开翻盖不关闭闹钟,因为要显示提示信息;充电器插拔也不关闭闹钟
             switch(wParam)
             {
@@ -2746,7 +2775,17 @@ void CClockApps_Snooze(CClockApps *pMe)
 #ifdef FEATURE_UIALARM
     IAlarm *pAlarm = NULL;
 #endif    
-    
+    #ifdef FEATURE_VERSION_K232_Y100A
+    m_bAlaram = FALSE;
+    {
+        IBacklight  *Backlight;
+        (void)ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
+        {
+		        IBACKLIGHT_Enable(Backlight);
+        } 
+        IBACKLIGHT_Release(Backlight);
+    }
+    #endif
     if (pMe == NULL)
     {
         return ;

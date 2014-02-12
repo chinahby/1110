@@ -10624,11 +10624,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal = {
   0x2000, 					     /* Tx DTMF gain			  */
   0xCB00, 					     /* CODEC Tx gain 		  */
   0x6000, 					     /* CODEC Rx gain 		  */
-#elif defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K232_Y100A) ||defined(FEATURE_VERSION_K232_Y101)
+#elif defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
   0xa56F, 					   /* Tx Voice Volume		 */
   0x3000, 					   /* Tx DTMF gain		        */
   0xCB00, 					   /* CODEC Tx gain 		 */
-#if defined(FEATURE_VERSION_C260_IC19)||defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_K232_Y101)
+#if defined(FEATURE_VERSION_C260_IC19)
   0xE000,    					/* CODEC Rx gain 		 */  
 #else
   0x8000, 					   /* CODEC Rx gain 		 */ 

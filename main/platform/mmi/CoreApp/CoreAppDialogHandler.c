@@ -44,6 +44,7 @@
 #include "nv.h"
 #include "OEMCFGI.h"
 #include "hs_mb6550.h"
+#include "AEEBacklight.h"
 
 #include "clockapps.brh"
 #define  CLOCK_RES_PATH ("fs:/mod/clockapps/" AEE_RES_LANGDIR CLOCKAPPS_RES_FILE)
@@ -1378,10 +1379,12 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
     //static IImage * pIImage = NULL;
     static byte keyBeepVolumeSetting = 0;
     static PowerDown_Alarm_Cfg time = {0};
-
+    #ifdef FEATURE_VERSION_K232_Y100A
+    extern boolean m_bAlaram ;
+    #endif
     CCoreApp *pMe = (CCoreApp *)pUser;    
 
-#ifdef FEATURE_VERSION_EC99    
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K232_Y100A)  
     static byte alert_type, ringer_vol;       
 #endif  
 
@@ -1439,7 +1442,9 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
             uint16  ring_id = 1;
             byte    profilenum;
             ringID  ringid[PROFILENUMBER];
-            
+            #ifdef FEATURE_VERSION_K232_Y100A
+            m_bAlaram = TRUE;
+            #endif
 			pResImg = ISHELL_LoadResImage( pMe->a.m_pIShell, "fs:/mod/clockapps/clockapps_images.bar", IDI_ALARMCLOCK);
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
             if( pResImg != NULL)
@@ -1461,7 +1466,7 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
 
             MSG_FATAL("***zzg Alarm profilename=%x, ringType =%x", profilenum, ringid[profilenum].ringType, 0);
 
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K232_Y100A)
             {
 			    byte     tmptype = OEMNV_ALERTTYPE_RINGER;
                 byte     tmpvol = OEMSOUND_4TH_VOL;
@@ -1550,8 +1555,18 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
 			IDISPLAY_Update( pMe->a.m_pIDisplay);
 			return TRUE;
         case EVT_DIALOG_END:
-            
-#ifdef FEATURE_VERSION_EC99
+            #ifdef FEATURE_VERSION_K232_Y100A
+            m_bAlaram = FALSE;
+            {
+                IBacklight  *Backlight;
+                (void)ISHELL_CreateInstance(pMe->a.m_pIShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
+                {
+  			        IBACKLIGHT_Enable(Backlight);
+                } 
+                IBACKLIGHT_Release(Backlight);
+            }
+            #endif
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K232_Y100A)
             {
                 if (alert_type < OEMNV_ALERTTYPE_OFF)   alert_type = OEMNV_ALERTTYPE_OFF;
                 if (alert_type > OEMNV_ALERTTYPE_VIBANDRINGER)   alert_type = OEMNV_ALERTTYPE_VIBANDRINGER;
@@ -1580,6 +1595,17 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
 
         case EVT_KEY:
         {
+            #ifdef FEATURE_VERSION_K232_Y100A
+            m_bAlaram = FALSE;
+            {
+                IBacklight  *Backlight;
+                (void)ISHELL_CreateInstance(pMe->a.m_pIShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
+                {
+  			        IBACKLIGHT_Enable(Backlight);
+                } 
+                IBACKLIGHT_Release(Backlight);
+            }
+            #endif
             if(wParam == AVK_INFO)
             {
 #if !defined( AEE_SIMULATOR)

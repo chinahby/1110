@@ -1436,7 +1436,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                     IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_SCHEDULER, IDS_APPLICATION_SCHEDULER, NULL, 0);	
 			        IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
                 #else
-                    #if defined (FEATURE_VERSION_C260_IC18) 
+                    #if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_K232_Y100A)
                     IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TORCH, IDS_TORCH, NULL, 0);
                     #else
                     IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_FLASHLIGHT, IDS_APPLICATION_FLASHLIGHT, NULL, 0);

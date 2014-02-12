@@ -809,10 +809,15 @@ static void AEEBacklight_SetDisableTimer(IBacklight *pme)
 {
     byte  nVal=0;
     int32 nMSecs=0;
-    
+    #ifdef FEATURE_VERSION_K232_Y100A
+    extern boolean m_bAlaram ;
+    #endif
     OEM_SVCGetConfig(CFGI_BACK_LIGHT, &nVal, sizeof(nVal));
-    
+    #ifdef FEATURE_VERSION_K232_Y100A
+    if ((nVal > 0) && (nVal <100) && (!m_bAlaram))
+    #else
     if ((nVal > 0) && (nVal <100))
+    #endif
     {
         nMSecs = nVal*1000;
         AEE_SetSysTimer(nMSecs+5000, AEEBacklight_DisableTimer, pme);

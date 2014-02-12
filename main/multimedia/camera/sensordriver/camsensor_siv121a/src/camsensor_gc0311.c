@@ -111,6 +111,372 @@ static void    camsensor_GC0311_0m3_setup_camctrl_tbl(camctrl_tbl_type *camctrl_
 ============================================================================*/
 static  boolean camsensor_GC0311_sensor_init(void)
 {
+#if 1
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe , 0xf0);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe , 0xf0);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe , 0xf0);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xfc , 0x16); //clock enable 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xfc , 0x16); //clock enable 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x42 , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x4f , 0x01);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x03 , 0x02);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x04 , 0x88);
+
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x26 , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x29 , 0x40); //[7]black_compress_en, [6:0]global_offset
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x2a , 0x30);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x2b , 0x30);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x2c , 0x30);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x2d , 0x30); 
+
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x77 , 0x70);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x78 , 0x40);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x79 , 0x50);
+
+
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x73 , 0x85);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x74 , 0x80);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x75 , 0x80);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x76 , 0x98);
+
+	////////////  BLK /////////////////////
+	////////////////////////////////////////////////
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x26 , 0xf7);//[
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x28 , 0x7f); //BLK value limit 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x32 , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x33 , 0x20); //offset_ratio_G1
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x34 , 0x20); //offset_ratio_G2
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x35 , 0x20); //offset ratio_R
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x36 , 0x20); //offset ratio_B
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x3b , 0x08);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x3c , 0x08);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x3d , 0x08);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x3e , 0x08);
+
+	/////////////CISCTL/////////////////////////////                    
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe , 0x00); //Page select
+	//////window setting/////
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x0d , 0x01); //{8}cis_win_height 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x0e , 0xe8); //{7:0}cis_win_height
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x0f , 0x02); //{9:8}cis_win_width 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x10 , 0x88); //{7:0}cis_win_width
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x09 , 0x00); //row_start
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x0a , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x0b , 0x00); //col_start
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x0c , 0x04); 
+	/////////////////banding////////////////
+	#if 1
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x05 , 0x01);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x06 , 0x32); //Hb
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x07 , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x08 , 0x70); //VB
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe , 0x01); //VB
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x29 , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x2a , 0x3c); //step
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x2b , 0x02);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x2c , 0x58); //15fps
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x2d , 0x02);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x2e , 0x58); //11fps
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x2f , 0x02);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x30 , 0x58); //10fps
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x31 , 0x02);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x32 , 0xd0); //8fps
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x33 , 0x20);
+	#else
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x05 , 0x02);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x06 , 0x39); //Hb
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x07 , 0x01);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x08 , 0x6f); //VB
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe , 0x01); //VB
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x29 , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x2a , 0x5f); //step
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x2b , 0x03);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x2c , 0xb6); //15fps
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x2d , 0x03);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x2e , 0xb6); //11fps
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x2f , 0x03);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x30 , 0xb6); //10fps
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x31 , 0x04);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x32 , 0x74); //8fps
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x33 , 0x20);
+	#endif
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe , 0x00); 
+	
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x17 , 0x14); // [1]updown, [0]mirror
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x19 , 0x04); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x1f , 0x08); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x20 , 0x01);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x21 , 0x48); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x1b , 0x48); //for decrease FPN
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x22 , 0xba); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x23 , 0x07);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x24 , 0x16); //PAD driver
+
+	//global gain for range
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x70 , 0x50);//58
+
+	////////////////////////////////////////////////
+	////////////block enable/////////////
+	////////////////////////////////////////////////
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x40 , 0xdf); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x41 , 0x2e);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x42 , 0xf9);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x44 , 0xa0); // yuv//a2
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x46 , 0x07); //sync_mode //02
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x4d , 0x01); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x4f , 0x01);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x7e , 0x08); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x7f , 0xc3);
+
+	//DN & EEINTP
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x80 , 0xe7); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x82 , 0xa0);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x83 , 0x02); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x84 , 0x02);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x89 , 0x22); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x90 , 0x00); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x92 , 0x08);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x94 , 0x08);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x95 , 0x24);
+
+	/////////////////////ASDE////////////////
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x9a , 0x20); //Y offset Limit
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x9c , 0x86);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xa4 , 0x50);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xa7 , 0x40); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xaa , 0x60); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xa2 , 0x45);
+
+	////////////////Y gamma ////////////////
+	//////////////////////////////////////////
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x63 , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x64 , 0x04);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x65 , 0x09);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x66 , 0x17);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x67 , 0x2b);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x68 , 0x3d);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x69 , 0x4f);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x6a , 0x5f);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x6b , 0x82);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x6c , 0xa2);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x6d , 0xc5);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x6e , 0xe5);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x6f , 0xff);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe , 0x00);
+
+	////////////////RGB gamma //////////////
+	///////////////////////////////////////
+
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xbf , 0x0b);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xc0 , 0x17);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xc1 , 0x2a);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xc2 , 0x41);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xc3 , 0x54);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xc4 , 0x66);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xc5 , 0x74);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xc6 , 0x8c);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xc7 , 0xa3);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xc8 , 0xb5);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xc9 , 0xc4);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xca , 0xd0);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xcb , 0xdb);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xcc , 0xe5);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xcd , 0xf0);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xce , 0xf7);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xcf , 0xff);
+
+	///YUV maxtrix////
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xb0 , 0x13);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xb1 , 0x1f);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xb2 , 0x0e);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xb3 , 0xF5);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xb4 , 0xE5);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xb5 , 0x26);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xb6 , 0x20);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xb7 , 0xde);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xb8 , 0x02);
+	/////////////YCP//////////////
+	////////////////////////////
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xd1 , 0x28);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xd2 , 0x28);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xdd , 0x00); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xed , 0x00); 
+
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xde , 0x34); //autogray_mode
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xe4 , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xe5 , 0x40);
+
+	//luma_div
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe , 0x01);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x18 , 0x21); 
+
+	///////////MEANSURE WINDOW////////
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x08 , 0xa4);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x09 , 0xf0);
+
+	//////////////////AEC///////////////////////
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe , 0x01);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x10 , 0x08);//08//18//[7]low_light_mode,[6]measure_point
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x11 , 0x11); //[6:4]very N 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x12 , 0x00); //90 before Gamma,should set bit[7] as 0 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x13 , 0x48); //Y target
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x15 , 0xfe); //fc //high range
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x16 , 0xd8); //AEC ignore
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x17 , 0x98); //AEC ignore en
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x1a , 0x61); //SLOW margin
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x18 , 0x21); //LUMA
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x21 , 0xc0); //auto_post_gain
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x22 , 0x60);//auto pre gain
+	                  
+
+	//////////////////AWB////////////////////
+
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x06 , 0x10); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x08 , 0xa0);
+	          
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x50 , 0xfe); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x51 , 0x05); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x52 , 0x28); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x53 , 0x05);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x54 , 0x10); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x55 , 0x20); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x56 , 0x16); //AWB C max
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x57 , 0x10);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x58 , 0xf2); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x59 , 0x10); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x5a , 0x10); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x5b , 0xf0); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x5e , 0xe8); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x5f , 0x20); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x60 , 0x20); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x61 , 0xe0); 
+	                    
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x62 , 0x03); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x63 , 0x30); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x64 , 0xc0);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x65 , 0xd0);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x66 , 0x20);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x67 , 0x00); //80 //AWB_outdoor_mode
+	                       
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x6d , 0x90); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x6e , 0x40);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x6f , 0x08); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x70 , 0x10);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x71 , 0x62);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x72 , 0x24); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x73 , 0x71); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x74 , 0x10); 
+	                         
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x75 , 0x40); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x76 , 0x40);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x77 , 0xc9); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x78 , 0x9c); 
+	                           
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x79 , 0x18); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x7a , 0x40);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x7b , 0xb0); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x7c , 0xf5);
+	                          
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x81 , 0x80);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x82 , 0x42);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x83 , 0x98);
+	                       
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x8a , 0xf8);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x8b , 0xf4); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x8c , 0x0a); 
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x8d , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x8e , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x8f , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x90 , 0x12);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe , 0x00); 
+
+	//////////////// SPI reciver////////////////
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xad , 0x00); 
+	//////////////////LSC///////////////////////
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe , 0x01);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xc0 , 0x1e);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xc1 , 0x18);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xc2 , 0x17);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xc6 , 0x1e);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xc7 , 0x18);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xc8 , 0x17);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xba , 0x30);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xbb , 0x25);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xbc , 0x20);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xb4 , 0x30);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xb5 , 0x25);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xb6 , 0x20);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xc3 , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xc4 , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xc5 , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xc9 , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xca , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xcb , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xbd , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xbe , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xbf , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xb7 , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xb8 , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xb9 , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xa8 , 0x0f);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xa9 , 0x05);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xaa , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xab , 0x0f);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xac , 0x05);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xad , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xae , 0x0f);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xaf , 0x05);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xb0 , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xb1 , 0x0f);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xb2 , 0x05);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xb3 , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xa4 , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xa5 , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xa6 , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xa7 , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xa1 , 0x3c);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xa2 , 0x50);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe , 0x00);
+	               
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x50 , 0x01); //crop
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe , 0x01);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x9c , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x9e , 0xc0);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x9f , 0x40);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe , 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x42 , 0xfb);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x44, 0xa0); 
+	//subsample 1/2
+	/*
+       camsensor_GC0311_ycbcr_i2c_write_byte(0x59, 0x22);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x5a, 0x03);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x5b, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x5c, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x5d, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x5e, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x5f, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x60, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x61, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x62, 0x00);
+
+	
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x50, 0x01);  //crop
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x51, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x52, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x53, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x54, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x55, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x56, 0xf0);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x57, 0x01);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x58, 0x40);
+	*/
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xf1 , 0x07); //output enable
+	camsensor_GC0311_ycbcr_i2c_write_byte(0xf2 , 0x01); //output enable DVP or SPI
+
+#else
 	MSG_FATAL("-----camsensor_GC0311_sensor_init-----enter",0,0,0);
 
 	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe, 0xf0);
@@ -118,8 +484,8 @@ static  boolean camsensor_GC0311_sensor_init(void)
 	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe, 0xf0);
 	camsensor_GC0311_ycbcr_i2c_write_byte(0x42, 0x00);
 	camsensor_GC0311_ycbcr_i2c_write_byte(0x4f, 0x00);
-	camsensor_GC0311_ycbcr_i2c_write_byte(0x03, 0x00);
-	camsensor_GC0311_ycbcr_i2c_write_byte(0x04, 0x01);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x03, 0x01);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x04, 0x20);
 	camsensor_GC0311_ycbcr_i2c_write_byte(0xfc, 0x16);
 	//camsensor_GC0311_ycbcr_i2c_write_byte(0x77, 0x77);
 
@@ -438,10 +804,33 @@ static  boolean camsensor_GC0311_sensor_init(void)
 	camsensor_GC0311_ycbcr_i2c_write_byte(0xb6, 0x21);
 	camsensor_GC0311_ycbcr_i2c_write_byte(0xb7, 0xe4);
 	camsensor_GC0311_ycbcr_i2c_write_byte(0xb8, 0xfb);
-  ////////////20120613 end/////////////					  
+  ////////////20120613 end/////////////	
+  //subsample 1/2
+    camsensor_GC0311_ycbcr_i2c_write_byte(0x59, 0x22);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x5a, 0x03);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x5b, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x5c, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x5d, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x5e, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x5f, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x60, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x61, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x62, 0x00);
+
+	
 	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe, 0x00);
 	camsensor_GC0311_ycbcr_i2c_write_byte(0x50, 0x01);  //crop
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x51, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x52, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x53, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x54, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x55, 0x00);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x56, 0xf0);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x57, 0x01);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x58, 0x40);
+	
 	camsensor_GC0311_ycbcr_i2c_write_byte(0x44, 0xa0);
+	#endif
 	return  TRUE;
 } /* camsensor_GC0311_sensor_init */
 

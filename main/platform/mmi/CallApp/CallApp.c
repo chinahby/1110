@@ -1733,7 +1733,7 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 		case EVT_USER:
 		{
 			MSG_FATAL("***zzg CallApp_HandleEvt EVT_USER wParam=%x***", wParam, 0, 0);
-			#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+			//#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 			{				
 				if((wParam == AVK_SELECT) || (wParam == AVK_INFO))
 				{
@@ -1761,7 +1761,7 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 				}				
 				
 			}
-			#endif
+			//#endif
 			
 #ifdef FEATURE_SUPPORT_BT_AUDIO
 			if ((wParam == EVT_BT_AG_AUDIO_CONNECTED) || (wParam == EVT_BT_A2DP_AUDIO_CONNECTED))			
