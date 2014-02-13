@@ -361,5 +361,11 @@
 	<String Id="2021" Name="IDS_TODAY_Y100A">
 		<Text>today</Text>
 	</String>
+	<STRING Id="2050" Name="IDS_MSG_KEYGUARD_OK">
+		<Text>Press "Unlock" then OK key </Text>
+	</STRING>
+	<STRING Id="2051" Name="IDS_MSG_KEYGUARD_UNLOCKKEY_OK">
+		<Text>Press OK to unlock keyguard</Text>
+	</STRING>
 </Strings>
 </BREWRes>

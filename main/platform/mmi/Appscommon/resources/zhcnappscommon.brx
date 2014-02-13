@@ -352,5 +352,11 @@
 	<STRING Id="2018" Name="IDS_RECENTCALLS">
 		<Text>Recentcalls</Text>
 	</STRING>
+	<STRING Id="2050" Name="IDS_MSG_KEYGUARD_OK">
+		<Text>先按“解锁”键 再按 OK 键解锁 </Text>
+	</STRING>
+	<STRING Id="2051" Name="IDS_MSG_KEYGUARD_UNLOCKKEY_OK">
+		<Text>按 OK 键解锁 </Text>
+	</STRING>
 </Strings>
 </BREWRes>
