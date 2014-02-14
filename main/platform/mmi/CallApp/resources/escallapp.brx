@@ -202,6 +202,12 @@
 	<String Id="1118" Name="IDS_SPEED_DIAL_QUERY">
 		<Text>Speed Dial %s is Off,Set it On?</Text>
 	</String>
+	<String Id="1120" Name="IDS_MAIN_MENU_TORCHON">
+		<Text>Torch On</Text>
+	</String>
+	<String Id="1121" Name="IDS_MAIN_MENU_TORCHOFF">
+		<Text>Torch Off</Text>
+	</String>
 	<String Id="1122" Name="IDS_SAR">
 		<Text>SAR: 0.280W/kg</Text>
 	</String>
