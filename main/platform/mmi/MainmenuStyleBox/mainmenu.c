@@ -12865,7 +12865,7 @@ static boolean  MainMenu_FlashlightMenuHandler(MainMenu *pMe, AEEEvent eCode, ui
 ==============================================================================*/
 static char* ICON_ANI[] =
 {
-#if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01) || defined (FEATURE_VERSION_SKY) || defined(FEATURE_VERSION_W021_C11) 
+#if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01) || defined (FEATURE_VERSION_SKY) || defined(FEATURE_VERSION_W021_C11) || defined(FEATURE_VERSION_K232_H030)
     ICON_ANI_BG,
 #else
     ICON1_ANI,
@@ -12974,6 +12974,7 @@ static char* ICON_ANI_1[] =
 };
 
 #if defined (FEATURE_VERSION_K212_HUALU)
+#ifndef FEATURE_VERSION_K232_H030
 static char* ICON_EN_ANI[] =
 {
     ICON1_EN_ANI,
@@ -12999,6 +13000,7 @@ static char* ICON_EN_ANI_1[] =
     ICON8_EN_ANI_1,
     ICON9_EN_ANI_1,
 };
+#endif
 #endif
 /*=============================================================================
 FUNCTION:  MainMenuMod_Load
@@ -13778,6 +13780,17 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_SETTINGS;	  
 #endif    
 #elif defined(FEATURE_VERSION_K212_HUALU)
+#if defined (FEATURE_VERSION_K232_H030)
+	pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CONTACTS;
+    pMe->m_IconTitle[1]     = IDS_MAIN_MENU_MESSAGES;
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_RECENTCALLS;
+    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_SETTINGS;
+    pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MULTIMEDIA;
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_MEDIAGALLERY;
+    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_GAMES;
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_APPLICATION;
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_UTK;
+#else
 	pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CONTACTS;//IDS_MAIN_MENU_MEDIAGALLERY;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_RECENTCALLS;//IDS_MAIN_MENU_CONTACTS;
     pMe->m_IconTitle[2]     = IDS_MAIN_MENU_MESSAGES;//IDS_MAIN_MENU_UTK;
@@ -13787,6 +13800,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_SETTINGS;//IDS_MAIN_MENU_MUSICPLAYER;
     pMe->m_IconTitle[7]     = IDS_MAIN_MENU_USERPROFILE;
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_MEDIAGALLERY;
+#endif	
 #else
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MEDIAGALLERY;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_CONTACTS;
@@ -14344,7 +14358,7 @@ void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId)
         }
 #endif
         ISHELL_GetDeviceInfo(pMe->m_pShell, &di);
-#if defined (FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_VG68)|| defined (FEATURE_VERSION_SKY)||defined(FEATURE_VERSION_K202_LM129C) || defined(FEATURE_VERSION_W021_C11)
+#if defined (FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_VG68)|| defined (FEATURE_VERSION_SKY)||defined(FEATURE_VERSION_K202_LM129C) || defined(FEATURE_VERSION_W021_C11)|| defined(FEATURE_VERSION_K232_H030)
         pMe->m_rc.x = 0;
         pMe->m_rc.y = 0;
         
@@ -14447,7 +14461,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 				#endif 
 #endif
                 {
-#if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01)|| defined (FEATURE_VERSION_SKY)|| defined(FEATURE_VERSION_W021_C11)
+#if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01)|| defined (FEATURE_VERSION_SKY)|| defined(FEATURE_VERSION_W021_C11)|| defined(FEATURE_VERSION_K232_H030)
                     pMe->m_pImageBg = ISHELL_LoadImage(pMe->m_pShell,ICON_ANI[0]);
 //Add by pyuangui 20121221
 #elif defined(FEATURE_VERSION_W317A)
@@ -14958,7 +14972,28 @@ static void CalculateScreenParameters(MainMenu *pMe)
     pMe->m_IconFocus_Pt[7].x = 43;
     pMe->m_IconFocus_Pt[7].y = 100;
     pMe->m_IconFocus_Pt[8].x = 86;
-    pMe->m_IconFocus_Pt[8].y = 100;      
+    pMe->m_IconFocus_Pt[8].y = 100;  
+#elif defined(FEATURE_VERSION_K232_H030)
+    pMe->m_IconFocus_Pt[0].x = 0;
+    pMe->m_IconFocus_Pt[0].y = 36;
+    pMe->m_IconFocus_Pt[1].x = 70;
+    pMe->m_IconFocus_Pt[1].y = 36;
+    pMe->m_IconFocus_Pt[2].x = 140;
+    pMe->m_IconFocus_Pt[2].y = 36;
+
+    pMe->m_IconFocus_Pt[3].x = 0;
+    pMe->m_IconFocus_Pt[3].y = 96; //56;
+    pMe->m_IconFocus_Pt[4].x = 70;
+    pMe->m_IconFocus_Pt[4].y = 96;
+    pMe->m_IconFocus_Pt[5].x = 140;
+    pMe->m_IconFocus_Pt[5].y = 96;
+
+    pMe->m_IconFocus_Pt[6].x = 0;
+    pMe->m_IconFocus_Pt[6].y = 158;
+    pMe->m_IconFocus_Pt[7].x = 70;
+    pMe->m_IconFocus_Pt[7].y = 158;
+    pMe->m_IconFocus_Pt[8].x = 140;
+    pMe->m_IconFocus_Pt[8].y = 158;
 #else
 
 #ifdef FEATURE_VERSION_H19C   
@@ -15058,6 +15093,13 @@ static void MainMenu_DrawBackGround(MainMenu *pMe, AEERect *pRect)
                                                     pRect, 
                                                     0, 
                                                     0);
+		#elif defined(FEATURE_VERSION_K232_H030)
+		Appscommon_ResetBackground(pMe->m_pDisplay, 
+                                                    pMe->m_pImageBg, 
+                                                    APPSCOMMON_BG_COLOR, 
+                                                    pRect, 
+                                                    0, 
+                                                    0);
         #else
         Appscommon_ResetBackground(pMe->m_pDisplay, 
                                                     pMe->m_pImageBg, 
@@ -15102,7 +15144,7 @@ static void DrawMatrix(MainMenu *pMe)
 #ifndef FEATURE_VERSION_C01 
 #ifndef FEATURE_VERSION_SKY
 #ifndef FEATURE_VERSION_W021_C11
-
+#ifndef FEATURE_VERSION_K232_H030
 #ifdef FEATURE_VERSION_K232_Y101
 {   
     AEERect rectBg = {SCREEN_WIDTH-2, TITLEBAR_HEIGHT, 2, SCREEN_HEIGHT-TITLEBAR_HEIGHT-BOTTOMBAR_HEIGHT};
@@ -15201,7 +15243,7 @@ static void DrawMatrix(MainMenu *pMe)
 
     }  
 #endif
-
+#endif
 #endif    
 #endif
 #endif
@@ -15248,7 +15290,7 @@ static void DrawFocusIcon(MainMenu *pMe)
 	titleBarParms.nTitleResID   = pMe->m_IconTitle[theFocus];
     DrawTitleBar(pMe->m_pDisplay, &titleBarParms);
    
- #if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01) || defined(FEATURE_VERSION_SKY)|| defined(FEATURE_VERSION_IN50_MMX)
+ #if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01) || defined(FEATURE_VERSION_SKY)|| defined(FEATURE_VERSION_IN50_MMX)|| defined(FEATURE_VERSION_K232_H030)
     if(pMe->m_pAnimate != NULL)
     {
         IIMAGE_Stop(pMe->m_pAnimate);
@@ -15264,11 +15306,13 @@ static void DrawFocusIcon(MainMenu *pMe)
                                    &language,
                                    sizeof(language));
         #ifdef FEATURE_VERSION_K212_HUALU
+		#ifndef FEATURE_VERSION_K232_H030
         if(language == NV_LANGUAGE_ENGLISH)
         {
             pMe->m_pAnimate = ISHELL_LoadImage(pMe->m_pShell, ICON_EN_ANI_1[theFocus]);
         }
         else
+		#endif
         #endif
         {
         	  pMe->m_pAnimate = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI_1[theFocus]);
@@ -15278,7 +15322,7 @@ static void DrawFocusIcon(MainMenu *pMe)
 	if( pMe->m_pAnimate != NULL)
     {
     		
-#if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_IN50_MMX)
+#if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_IN50_MMX)|| defined(FEATURE_VERSION_K232_H030)
         IIMAGE_Start(pMe->m_pAnimate,
                      pMe->m_IconFocus_Pt[theFocus].x, 
                      pMe->m_IconFocus_Pt[theFocus].y);
@@ -15326,6 +15370,7 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 #ifndef FEATURE_VERSION_H19C
 #ifndef FEATURE_VERSION_C01
 #ifndef FEATURE_VERSION_SKY
+#ifndef FEATURE_VERSION_K232_H030
     int theFocus = pMe->m_nRow * MAX_MATRIX_COLS + pMe->m_nColumn;
     AEERect rect;
     nv_language_enum_type language;
@@ -15380,6 +15425,10 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
     #endif
 #endif
 #endif
+#endif
+#endif
+#ifdef FEATURE_VERSION_K232_H030
+	MainMenu_DrawBackGround(pMe, &pMe->m_rc);
 #endif
     // 开始聚焦动画过程
     SetCursor(pMe, row, column);

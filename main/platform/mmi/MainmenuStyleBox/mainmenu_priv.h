@@ -485,6 +485,8 @@ typedef struct _MainMenu
     #define ICON7_ANI      "fs:/image/mainmenu/Icon_wms.png"
 	#define ICON8_ANI      "fs:/image/mainmenu/Icon_camera.png"
     #define ICON9_ANI      "fs:/image/mainmenu/Icon_profile.png"
+#elif defined(FEATURE_VERSION_K232_H030)
+	#define ICON_ANI_BG "fs:/image/mainmenu/qsc1100_backgroup.png"	
 #else
 	#define ICON1_ANI      "fs:/image/mainmenu/qsc1100_01.png"
     #define ICON2_ANI      "fs:/image/mainmenu/qsc1100_02.png"
@@ -665,6 +667,17 @@ typedef struct _MainMenu
     #define ICON7_ANI_en      "fs:/image/mainmenu/Icon_wms_en.png"
 	#define ICON8_ANI_en      "fs:/image/mainmenu/Icon_camera_en.png"
     #define ICON9_ANI_en      "fs:/image/mainmenu/Icon_profile_en.png" 
+#elif defined(FEATURE_VERSION_K232_H030)
+    #define ICON_ANI_BG      "fs:/image/mainmenu/qsc1100_backgroup.png"
+    #define ICON1_ANI_1      "fs:/image/mainmenu/ICON_Contacts.gif"
+    #define ICON2_ANI_1      "fs:/image/mainmenu/ICON_Messages.gif"
+    #define ICON3_ANI_1      "fs:/image/mainmenu/ICON_Recentcalls.gif"
+    #define ICON4_ANI_1      "fs:/image/mainmenu/ICON_Settings.gif"
+    #define ICON5_ANI_1      "fs:/image/mainmenu/ICON_Multimedia.gif"
+    #define ICON6_ANI_1      "fs:/image/mainmenu/ICON_Mediagallery.gif"
+    #define ICON7_ANI_1      "fs:/image/mainmenu/ICON_Games.gif"
+    #define ICON8_ANI_1      "fs:/image/mainmenu/ICON_Management.gif"
+	#define ICON9_ANI_1      "fs:/image/mainmenu/ICON_Surface.gif"	
 #else
 	#define ICON1_ANI_1      "fs:/image/mainmenu/qsc1100_01_focus.png"
     #define ICON2_ANI_1      "fs:/image/mainmenu/qsc1100_02_focus.png"

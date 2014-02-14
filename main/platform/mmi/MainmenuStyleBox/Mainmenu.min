@@ -472,6 +472,19 @@ CONSTFILE_FILES+=\
 	qsc1100_07_focus.png|fs:/image/mainmenu/qsc1100_07_focus.png \
 	qsc1100_08_focus.png|fs:/image/mainmenu/qsc1100_08_focus.png \
 	qsc1100_09_focus.png|fs:/image/mainmenu/qsc1100_09_focus.png 
+else
+ifeq ($(USES_RESDIR),K232_H030)	
+CONSTFILE_FILES+=\
+    qsc1100_backgroup.png|fs:/image/mainmenu/qsc1100_backgroup.png \
+	ICON_Contacts.gif|fs:/image/mainmenu/ICON_Contacts.gif \
+	ICON_Messages.gif|fs:/image/mainmenu/ICON_Messages.gif \
+	ICON_Recentcalls.gif|fs:/image/mainmenu/ICON_Recentcalls.gif \
+	ICON_Settings.gif|fs:/image/mainmenu/ICON_Settings.gif \
+	ICON_Multimedia.gif|fs:/image/mainmenu/ICON_Multimedia.gif \
+	ICON_Mediagallery.gif|fs:/image/mainmenu/ICON_Mediagallery.gif \
+	ICON_Games.gif|fs:/image/mainmenu/ICON_Games.gif \
+	ICON_Management.gif|fs:/image/mainmenu/ICON_Management.gif \
+	ICON_Surface.gif|fs:/image/mainmenu/ICON_Surface.gif 
 else	
 ifeq ($(USES_RESDIR),IN50_MMX)	
 CONSTFILE_FILES+=\
@@ -561,6 +574,7 @@ CONSTFILE_FILES+=\
 endif	
 endif
 endif	
+endif
 endif
 endif
 endif
