@@ -243,6 +243,8 @@
 #elif defined(FEATURE_LANG_CHINESE)
 #ifdef FEATURE_VERSION_X3
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_ENGLISH         //简体中文
+#elif defined(FEATURE_LANG_SPANISH)
+#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_SPANISH         //西班牙文
 #else
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_CHINESE         //简体中文
 #endif
