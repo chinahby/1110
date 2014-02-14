@@ -361,7 +361,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
                                            uint16      wParam,
                                            uint32      dwParam);
 
-#if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_M74)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+#if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_M74)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_GECOMSA_C204)
 
 static void CallApp_TorchTipTimeOut(CCallApp *pMe);
 #endif
@@ -13598,7 +13598,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 
 		//Add By zzg 2010_09_10
 		#if defined(FEATURE_VERSION_C316)||defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_C306)|| defined (FEATURE_VERSION_K212_20D)|| defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_N68)||defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_H1201)|| defined(FEATURE_VERSION_W027)\
-			||defined(FEATURE_VERSION_W0216A_T18)||defined(FEATURE_VERSION_K212_ND)|| defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_K232_Y100)||defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_K232_Y101)|| defined(FEATURE_VERSION_W021_GD821)//xxzhen
+			||defined(FEATURE_VERSION_W0216A_T18)||defined(FEATURE_VERSION_K212_ND)|| defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_K232_Y100)||defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_K232_Y101)|| defined(FEATURE_VERSION_W021_GD821)||defined(FEATURE_VERSION_GECOMSA_C204)//xxzhen
         #ifndef FEATURE_TORCH_KEY_INFO
 		else if (((AVKType)wParam == AVK_0) && (WSTRLEN(pMe->m_DialString) == 1))
 	{	
@@ -13638,7 +13638,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 			}
 			OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
 
-            #if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_M74)|| defined (FEATURE_VERSION_K212_20D)
+            #if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_M74)|| defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_GECOMSA_C204)
 
             {
                 static IStatic * torch_pStatic = NULL;
@@ -13867,7 +13867,7 @@ static int SetBrowserArr_Main_CallApp(CCallApp *pMe,char *purl)
 
 //Add End
 
-#if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_M74)|| defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_ND)
+#if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_M74)|| defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_GECOMSA_C204)
 
 static void CallApp_TorchTipTimeOut(CCallApp *pMe)
 {
