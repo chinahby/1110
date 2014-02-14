@@ -289,5 +289,8 @@
 	<STRING Id="2010" Name="IDS_FMENU">
 		<Text>MiFlexi</Text>
 	</STRING>
+	<STRING Id="2019" Name="IDS_OPTION_EX">
+		<Text>Opción</Text>
+	</STRING>
 </Strings>
 </BREWRes>
