@@ -13550,6 +13550,19 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_ORGANIZER;
     pMe->m_IconTitle[7]     = IDS_MAIN_MENU_INTEXZONE;
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_SERVICES_C316;
+    #elif defined(FEATURE_VERSION_GECOMSA_C204)
+    pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MULTIMEDIA;	//IDS_MAIN_MENU_MUSICPLAYER;	
+	pMe->m_IconTitle[1]     = IDS_MAIN_MENU_CONTACTS;	
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_RECENTCALLS;	//IDS_MAIN_MENU_RECENTCALLS;
+    pMe->m_IconTitle[3]     = IDS_MAIN_WAPBROWSER;	//IDS_MAIN_WAPBROWSER;
+    pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MESSAGES;
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_MEDIAGALLERY;	//IDS_MAIN_MENU_MEDIAGALLERY;
+    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_UTK;
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_APPLICATION;	//IDS_MAIN_MENU_APPLICATION;
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_MUSICPLAYER;
+    pMe->m_IconTitle[9]     = IDS_MAIN_MENU_USERPROFILE;	//IDS_MAIN_MENU_USERPROFILE;	//IDS_MAIN_MENU_APPLICATION;
+    pMe->m_IconTitle[10]    = IDS_MAIN_MENU_GAMES;
+    pMe->m_IconTitle[11]    = IDS_MAIN_MENU_SETTINGS;
     #elif defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K232_Y100A)
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MULTIMEDIA;	//IDS_MAIN_MENU_MUSICPLAYER;	
 	pMe->m_IconTitle[1]     = IDS_PHONEBOOK;	
