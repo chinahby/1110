@@ -3786,7 +3786,7 @@ void OEM_RestoreFactorySetting( void )
         (void) OEMNV_Put( NV_LANGUAGE_SELECTION_I, &nvi );
         (void) AEE_IssueSystemCallback(AEE_SCB_DEVICE_INFO_CHANGED);
     }
-#if defined (FEATURE_VERSION_W208S) || defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_W208S) || defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y101)
    nvi.set_time_format = NV_SET_TIME_FORMAT_12_HOUR;
    (void) OEMNV_Put( NV_SET_TIME_FORMAT_I, &nvi);
    nvi_cache.set_time_format = (byte)NV_SET_TIME_FORMAT_12_HOUR;
@@ -4429,6 +4429,8 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          // Default to R-UIM only.
          #ifdef FEATURE_VERSION_S600S
 		 *(byte *) pBuff = RTRE_CONFIG_NVONLY;
+         #elif defined FEATURE_VERSION_K232_Y101
+         *(byte *) pBuff = RTRE_CONFIG_RUIMONLY;
 		 #else
          *(byte *) pBuff = RTRE_CONFIG_RUIMORDROPBACK;
 		 #endif
@@ -8083,6 +8085,8 @@ static int OEMPriv_GetItem_CFGI_RTRE_CONFIGURATION(void *pBuff)
       // Default to R-UIM only.
       #ifdef FEATURE_VERSION_S600S
 		 *(nv_rtre_configuration_type *) pBuff = NV_RTRE_CONFIG_NV_ONLY;
+      #elif defined FEATURE_VERSION_K232_Y101
+         *(nv_rtre_configuration_type *) pBuff = NV_RTRE_CONFIG_RUIM_ONLY;
 	  #else
          *(nv_rtre_configuration_type *) pBuff = NV_RTRE_CONFIG_RUIM_ONLY;
 	  #endif
