@@ -1005,6 +1005,18 @@ else
             ring2.mp3|fs:/ringers/ring2.mp3 \
 			poweronoff.mp3|fs:/ringers/poweronoff.mp3 \
 			ring3.mp3|fs:/ringers/ring3.mp3
+	else ifeq ($(USES_RESDIR),K232_H030)
+            CONSTFILE_FILES+=\
+            blues.mid|fs:/ringers/blues.mid \
+            blue_load.mid|fs:/ringers/blue_load.mid \
+            champagne.mid|fs:/ringers/champagne.mid \
+            green_line.mid|fs:/ringers/green_line.mid \
+            jumping.mid|fs:/ringers/jumping.mid \
+            lucky.mid|fs:/ringers/lucky.mid \
+            street_tale.mid|fs:/ringers/street_tale.mid \
+            techno_meto.mid|fs:/ringers/techno_meto.mid \
+            deda.mp3|fs:/ringers/deda.mp3 \
+            poweronoff.mp3|fs:/ringers/poweronoff.mp3		
 	else ifeq ($(USES_RESDIR),K232_X3)
             CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
