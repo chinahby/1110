@@ -609,7 +609,7 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
 
             // Ñ¡Ïî-----·µ»Ø
          case BTBAR_OPTION_BACK:
-            nResID_L = IDS_OPTION;
+            nResID_L = IDS_OPTION_EX;   //IDS_OPTION;
             nResID_R = IDS_BACK;
             break;
 
@@ -824,6 +824,12 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_R = IDS_STRING_UNLOCK;
             nResID_L = IDS_SOS;
             break;
+            
+         case BTBAR_SOS_UNLOCK:
+            nResID_L = IDS_EMERGENCY;
+            nResID_R = IDS_STRING_UNLOCK;
+            break;
+            
 #if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX))
 		case BTBAR_UNLOCK_M:
             nResID_L = IDS_STRING_UNLOCK;
@@ -3679,6 +3685,10 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
             nResID_R = IDS_STRING_UNLOCK;
             nResID_L = IDS_SOS;
             break;
+        case BTBAR_SOS_UNLOCK:
+            nResID_L = IDS_EMERGENCY;
+            nResID_R = IDS_STRING_UNLOCK;
+            break;    
 #if (defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316) || defined (FEATURE_VERSION_IC241A_MMX))
 		case BTBAR_UNLOCK_M:
             nResID_L = IDS_STRING_UNLOCK;

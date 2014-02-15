@@ -274,6 +274,9 @@
 	<String Id="1136" Name="IDS_MSG_SILENT">
 		<Text>Silent Mode</Text>
 	</String>
+	<String Id="1137" Name="IDS_FACEBOOK">
+		<Text>Facebook</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="0">

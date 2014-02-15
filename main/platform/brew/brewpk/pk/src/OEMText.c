@@ -2358,7 +2358,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                 wRemainingChars = (uint16)(wRemainingChars - WSTRLEN(pContext->pszContents));	
 
 				//Add by pyuangui 20121226
-				#ifdef FEATURE_VERSION_C316
+				#if defined (FEATURE_VERSION_C316) || defined (FEATURE_VERSION_K232_Y101)
 				if(AEE_Active()==AEECLSID_WMSAPP)
 				{
 				if(WSTRLEN(pContext->pszContents)<160)
@@ -2417,7 +2417,8 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                     STR_TO_WSTR("%d/%d   ", szFormat, sizeof(szFormat));
                     #endif
 						
-					#ifdef FEATURE_VERSION_C316  // Add by pyuangui 20121226
+					//#ifdef FEATURE_VERSION_C316  // Add by pyuangui 20121226
+                    #if defined (FEATURE_VERSION_C316) || defined (FEATURE_VERSION_K232_Y101)
 					if(AEE_Active()==AEECLSID_WMSAPP)
 					{
 					   WSPRINTF(szRemainingCount, sizeof(szRemainingCount), szFormat, IntexRemainingChars, IntexnItems);
@@ -2512,11 +2513,19 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                     }
                     else
                     {
+#if defined (FEATURE_DISP_128X160) 
+                        SETAEERECT(&rc,
+                                    rect.x,
+                                    rect.y-nBarH,
+                                    40,
+                                    nBarH);  
+#else
                         SETAEERECT(&rc,
                                     rect.x,
                                     rect.y-nBarH,
                                     50,
                                     nBarH);  
+#endif
                     }
                     if(pContext->dwProperties & TP_DISPLAY_SMSCOUNT)
                 	{
@@ -2899,7 +2908,8 @@ static void TextCtl_TextChanged(TextCtlContext *pContext)
    if (pContext->nDisplayLines <= 0)
       return;
 
-   #ifdef FEATURE_VERSION_C316
+   //#ifdef FEATURE_VERSION_C316
+   #if defined (FEATURE_VERSION_C316) || defined (FEATURE_VERSION_K232_Y101)
    if(pContext->nDisplayLines>=7)
    	{
    		pContext->nDisplayLines = 6;

@@ -15776,6 +15776,18 @@ static int StartApplet(MainMenu *pMe, int i)
     #if defined (FEATURE_VERSION_K232_Y101)
     case IDS_MAIN_MENU_MY_MTS:
 	{		
+        AECHAR MyMtsTitle[40] = {0};
+		(void)ISHELL_LoadResString(pMe->m_pShell,
+									MAINMENU_RES_FILE_LANG, 							   
+									IDS_MAIN_MENU_MY_MTS,
+									MyMtsTitle,
+									sizeof(MyMtsTitle));
+		if(pMe->m_pIAnn != NULL)
+		{		
+			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,MyMtsTitle,FALSE);
+			IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+        }
+        
         OEM_SetUCBROWSER_ADSAccount();
 		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MY_MTS);
 		break;
@@ -15788,7 +15800,19 @@ static int StartApplet(MainMenu *pMe, int i)
 	}
 
     case IDS_MAIN_MENU_FACEBOOK:
-	{		
+	{	        
+		AECHAR FacebookTitle[40] = {0};
+		(void)ISHELL_LoadResString(pMe->m_pShell,
+									MAINMENU_RES_FILE_LANG, 							   
+									IDS_MAIN_MENU_FACEBOOK,
+									FacebookTitle,
+									sizeof(FacebookTitle));
+		if(pMe->m_pIAnn != NULL)
+		{
+		    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,FacebookTitle,FALSE);
+			IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+        }   
+		
         OEM_SetUCBROWSER_ADSAccount();
 		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FACEBOOK);		
 		break;

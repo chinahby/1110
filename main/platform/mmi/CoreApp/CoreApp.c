@@ -4073,6 +4073,8 @@ static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe)
 			pMe->m_nMsgID = IDS_CHARGING_CONNECTED;
 			#elif defined(FEATURE_VERSION_C316)			
 			 pMe->m_nMsgID = IDS_CHARGER_CONNECT;
+            #elif defined(FEATURE_VERSION_K232_Y101)			
+			 pMe->m_nMsgID = IDS_CHARGING_START;
             #else
             pMe->m_nMsgID = IDS_CHARGER_ON;
             #endif
@@ -4085,6 +4087,8 @@ static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe)
           pMe->m_nMsgID = IDS_CHARGER_REMOVED;
 		  #elif defined(FEATURE_VERSION_K202)
 		  pMe->m_nMsgID = IDS_CHARGER_FINISH;
+          #elif defined(FEATURE_VERSION_K232_Y101)			
+		  pMe->m_nMsgID = IDS_CHARGING_STOP;
           #else
           pMe->m_nMsgID = IDS_CHARGER_OFF;
           #endif

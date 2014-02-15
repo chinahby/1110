@@ -322,6 +322,12 @@
 	<String Id="1125" Name="IDS_LEMON_SALES_SUCCESS">
 		<Text>नींबू मोबाइल फोन का उपयोग करने के लिए धन्यवाद. पंजीकरण जानकारी नींबू सर्विस सेंटर के डेटाबेस में दर्ज किया गया है.</Text>
 	</String>
+	<STRING Id="1126" Name="IDS_CHARGING_START">
+		<Text>प्रारंभ चार्ज</Text>
+	</STRING>
+	<STRING Id="1127" Name="IDS_CHARGING_STOP">
+		<Text>बंद करो चार्ज</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">

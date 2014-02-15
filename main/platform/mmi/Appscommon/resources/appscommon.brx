@@ -361,6 +361,9 @@
 	<String Id="2021" Name="IDS_TODAY_Y100A">
 		<Text>today</Text>
 	</String>
+	<String Id="2022" Name="IDS_EMERGENCY">
+		<Text>Emergency</Text>
+	</String>	
 	<STRING Id="2050" Name="IDS_MSG_KEYGUARD_OK">
 		<Text>Press "Unlock" then OK key </Text>
 	</STRING>

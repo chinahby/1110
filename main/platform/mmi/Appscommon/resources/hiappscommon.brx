@@ -361,5 +361,14 @@
 	<STRING Id="2021" Name="IDS_TODAY_Y100A">
 		<Text>आज</Text>
 	</STRING>
+	<String Id="2022" Name="IDS_EMERGENCY">
+		<Text>आपातकाल</Text>
+	</String>	
+	<STRING Id="2050" Name="IDS_MSG_KEYGUARD_OK">
+		<Text>प्रेस "अनलॉक" तब ठीक कुंजी </Text>
+	</STRING>
+	<STRING Id="2051" Name="IDS_MSG_KEYGUARD_UNLOCKKEY_OK">
+		<Text>Keyguard अनलॉक करने के लिए ठीक प्रेस</Text>
+	</STRING>
 </Strings>
 </BREWRes>

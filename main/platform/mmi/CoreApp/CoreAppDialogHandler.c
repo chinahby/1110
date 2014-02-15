@@ -174,8 +174,13 @@ boolean bIsPowerUp = FALSE;     //Add By zzg 2013_03_29
 
 #elif defined(FEATURE_DISP_128X160)
 
+#ifdef FEATURE_VERSION_K232_Y101
+#define IDLE_D_CLOCK_X 		5
+#define IDLE_D_CLOCK_Y 		18
+#else
 #define IDLE_D_CLOCK_X 		5
 #define IDLE_D_CLOCK_Y 		25
+#endif
 
 #define RPLMN_X				5
 #ifdef FEATURE_VERSION_MYANMAR
@@ -186,7 +191,7 @@ boolean bIsPowerUp = FALSE;     //Add By zzg 2013_03_29
 
 #ifdef FEATURE_VERSION_K232_Y101
 #define DATA_X				5
-#define DATA_Y				(RPLMN_Y + 30) 
+#define DATA_Y				(RPLMN_Y + 45) 
 #else
 #define DATA_X				5
 #define DATA_Y				(RPLMN_Y + 16) 
@@ -4693,7 +4698,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
         {   
 			
 			//Add By zzg 2012_10_29
-			#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K212_HUALU))
+			#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_K232_Y101)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K212_HUALU))
 		    if (pMe->pFileMgr)
 		    {
 				if (IFILEMGR_Test(pMe->pFileMgr, AEEFS_CARD0_DIR)==SUCCESS)		
@@ -9105,6 +9110,8 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
                 eBBarType = BTBAR_UNLOCK_M;
         	#elif defined(FEATURE_VERSION_VERYKOOL)
         		eBBarType = BTBAR_UNLOCK_SOS;
+            #elif defined(FEATURE_VERSION_K232_Y101)
+        		eBBarType = BTBAR_SOS_UNLOCK;
     		#else
         		eBBarType = BTBAR_UNLOCK;
         	#endif
@@ -9756,7 +9763,7 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 	
 
 	//Add By zzg 2012_10_29
-	#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_IC241A_MMX))
+	#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_K232_Y101)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_IC241A_MMX))
     if (pMe->pFileMgr)
     {
 		if (IFILEMGR_Test(pMe->pFileMgr, AEEFS_CARD0_DIR)==SUCCESS)		
