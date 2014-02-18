@@ -115,6 +115,9 @@
 	<String Id="1041" Name="IDS_SOS_INPUT">
 		<Text>输入急救号码</Text>
 	</String>
+	<String Id="1042" Name="IDS_APPLICATION_LIST_909C">
+		<Text>工具</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_FLASHLIGHT_SETTING" Focus="7002">

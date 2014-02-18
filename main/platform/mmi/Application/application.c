@@ -1226,6 +1226,12 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 	                                    WTitle,
 	                                    sizeof(WTitle));
 			}
+			#elif defined(FEATURE_VERSION_K292_WSF_CN)
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+	                                    APPLICATION_RES_FILE_LANG,                                
+	                                    IDS_APPLICATION_LIST_909C,
+	                                    WTitle,
+	                                    sizeof(WTitle));
 			#else
 			(void)ISHELL_LoadResString(pMe->m_pShell,
 	                                    APPLICATION_RES_FILE_LANG,                                
@@ -1487,7 +1493,12 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 #endif
 #if defined (FEATURE_DISP_128X128)
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_SCHEDULER, IDS_APPLICATION_SCHEDULER, NULL, 0);
+			#if !defined FEATURE_VERSION_K292_WSF_CN
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_GAME, IDS_APPLICATION_GAME, NULL, 0);
+			#endif
+			#if defined FEATURE_VERSION_K292_WSF_CN
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_FLASHLIGHT, IDS_APPLICATION_FLASHLIGHT, NULL, 0);
+			#endif
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
 #endif
 #endif

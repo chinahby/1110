@@ -118,6 +118,9 @@
 	<String Id="1041" Name="IDS_SOS_INPUT">
 		<Text>Pls input SOS Num</Text>
 	</String>
+	<String Id="1042" Name="IDS_APPLICATION_LIST_909C">
+		<Text>Tools</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_FLASHLIGHT_SETTING" Focus="7002">
