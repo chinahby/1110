@@ -927,11 +927,19 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
 			#else
 		    {
 		  		AECHAR WTitle[40] = {0};
+				#if defined(FEATURE_VERSION_K292_WSF_CN)
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        GAME_RES_FILE_LANG,                                
+                        IDS_GAME_LIST_909C,
+                        WTitle,
+                        sizeof(WTitle));
+				#else
 				(void)ISHELL_LoadResString(pMe->m_pShell,
                         GAME_RES_FILE_LANG,                                
                         IDS_GAME_LIST,
                         WTitle,
                         sizeof(WTitle));
+				#endif
                 if(pMe->m_pIAnn != NULL)
                 {
 				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);

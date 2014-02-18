@@ -13,6 +13,9 @@
 	<STRING Id="1016" Name="IDS_GAME_TITLE_TETRIS">
 		<Text>俄罗斯方块</Text>
 	</STRING>
+	<String Id="1019" Name="IDS_GAME_LIST_909C">
+		<Text>娱乐</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6003" Name="IDD_LIST_GAME" Focus="7001">

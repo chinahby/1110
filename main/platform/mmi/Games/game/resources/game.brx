@@ -28,6 +28,9 @@
 	<STRING Id="1018" Name="IDS_GAME_TITLE_BOMB">
 		<Text>Buah Pintar</Text>
 	</STRING>
+	<String Id="1019" Name="IDS_GAME_LIST_909C">
+		<Text>Games</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6003" Name="IDD_LIST_GAME" Focus="7001">
