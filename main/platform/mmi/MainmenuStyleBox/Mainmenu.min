@@ -63,8 +63,7 @@ CONSTFILE_FILES+=\
 	MediaGallery.gif|fs:/image/mainmenu/MediaGallery.gif\
 	userprofile.gif|fs:/image/mainmenu/userprofile.gif\
 	game.gif|fs:/image/mainmenu/game.gif \
-	tool.gif|fs:/image/mainmenu/tool.gif \
-	wap.gif|fs:/image/mainmenu/wap.gif
+	tool.gif|fs:/image/mainmenu/tool.gif
 else
 	
 CONSTFILE_FILES+=\
