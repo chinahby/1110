@@ -1058,11 +1058,19 @@ static boolean IDD_MAIN_Handler(void        *pUser,
             {
 				AECHAR WTitle[10] = {0};
                 int result = 0;
+				#if defined(FEATURE_VERSION_K292_WSF_CN)
+				result = ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_WMSAPPRES_LANGFILE,                                
+                        IDS_APP_WMS_909C,
+                        WTitle,
+                        sizeof(WTitle));
+				#else
 				result = ISHELL_LoadResString(pMe->m_pShell,
                         AEE_WMSAPPRES_LANGFILE,                                
                         IDS_APP_WMS,
                         WTitle,
                         sizeof(WTitle));
+				#endif
                 MSG_FATAL("IDD_MAIN_Handler EVT_DIALOG_INIT result=%d",result,0,0);
                 if(pMe->m_pIAnn != NULL)
                 {
@@ -1714,11 +1722,19 @@ static boolean  IDD_PWD_Handler(void       *pUser,
                 {
                     pMe->m_strPhonePWD = (char *)MALLOC((OEMNV_LOCKCODE_MAXLEN + 1)* sizeof(char));
                 }
+				#if defined(FEATURE_VERSION_K292_WSF_CN)
+                 (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                                  AEE_WMSAPPRES_LANGFILE,
+                                                  IDS_APP_WMS_909C, 
+                                                  text,
+                                                  sizeof(text)); 
+				#else
                  (void)ISHELL_LoadResString(pMe->m_pShell, 
                                                   AEE_WMSAPPRES_LANGFILE,
                                                   IDS_APP_WMS, 
                                                   text,
                                                   sizeof(text));                  
+				#endif
                   // 画标题条
     			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,text,FALSE);
                 return TRUE;
@@ -1757,11 +1773,19 @@ static boolean  IDD_PWD_Handler(void       *pUser,
 				  Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 #endif
                 //IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc,RGB_BLACK);
+            	#if defined(FEATURE_VERSION_K292_WSF_CN)
+               (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                                AEE_WMSAPPRES_LANGFILE,
+                                                IDS_APP_WMS_909C, 
+                                                text,
+                                                sizeof(text)); 
+				#else
                (void)ISHELL_LoadResString(pMe->m_pShell, 
                                                 AEE_WMSAPPRES_LANGFILE,
                                                 IDS_APP_WMS, 
                                                 text,
                                                 sizeof(text));                  
+				#endif
                 // 画标题条
                 TitleBar_Param.pwszTitle = text;
 				#if 0

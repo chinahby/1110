@@ -679,6 +679,9 @@
 	<String Id="1047" Name="IDS_MMS_MENSTATUS">
 		<Text>彩信存储状态</Text>
 	</String>
+	<STRING Id="1113" Name="IDS_APP_WMS_909C">
+		<Text>信息</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">
