@@ -51,7 +51,11 @@
 #define  MAX_MATRIX_COLS 4
 #endif
 #elif defined (FEATURE_DISP_128X128)
+#if defined (FEATURE_VERSION_K292_WSF_CN)
+#define  MAX_MATRIX_ITEMS 8
+#else
 #define  MAX_MATRIX_ITEMS 9
+#endif
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 3
 #elif defined (FEATURE_DISP_128X160)
@@ -187,7 +191,7 @@ typedef struct _MainMenu
 #ifdef FEATURE_VERSION_K212_ND
     int             m_index;
 #endif
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K232_X3)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K232_X3)||defined(FEATURE_VERSION_K292_WSF_CN)
     int             m_index;
 #endif
     
@@ -253,7 +257,7 @@ typedef struct _MainMenu
 	IMedia *              m_pMedia;
 	boolean   	    m_bChangeL; 
 #endif
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D) ||defined(FEATURE_VERSION_K232_X3)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D) ||defined(FEATURE_VERSION_K232_X3)||defined(FEATURE_VERSION_K292_WSF_CN)
     //IImage          *m_pImageSelectEC99[8];
     IImage          *m_pImageSelectEC99;
 	nv_language_enum_type language;
@@ -546,6 +550,16 @@ typedef struct _MainMenu
 #if defined (FEATURE_DISP_128X128)
 #if defined FEATURE_VERSION_H19C    
     #define ICON_ANI_BG    "fs:/image/mainmenu/Backgroud.png"
+#elif defined (FEATURE_VERSION_K292_WSF_CN)
+#define ICON1_ANI	   "fs:/image/mainmenu/Message_Mainmenu.gif"
+#define ICON2_ANI	   "fs:/image/mainmenu/Contact.gif"
+#define ICON3_ANI	   "fs:/image/mainmenu/Recentcall.gif"
+#define ICON4_ANI	   "fs:/image/mainmenu/MediaGallery.gif"
+#define ICON5_ANI	   "fs:/image/mainmenu/userprofile.gif"
+#define ICON6_ANI	   "fs:/image/mainmenu/game.gif"
+#define ICON7_ANI	   "fs:/image/mainmenu/Setting.gif"
+#define ICON8_ANI	   "fs:/image/mainmenu/tool.gif"
+//#define ICON9_ANI	   "fs:/image/mainmenu/wap.gif"
 #else
     #define ICON1_ANI      "fs:/image/mainmenu/MediaGallery.png"
     #define ICON2_ANI      "fs:/image/mainmenu/Contact.png"
@@ -843,7 +857,16 @@ typedef struct _MainMenu
 #define MUSIC_PATH6 "fs:/hsmm/mainmenu/manager.mp3"  //TOOLS
 #define MUSIC_PATH7 "fs:/hsmm/mainmenu/mesage.mp3"
 #endif
-
+#if defined (FEATURE_VERSION_K292_WSF_CN)
+#define MUSIC_PATH1 "fs:/hsmm/mainmenu/recentcall.mp3"
+#define MUSIC_PATH2 "fs:/hsmm/mainmenu/profile.mp3"     //TORCH
+#define MUSIC_PATH3 "fs:/hsmm/mainmenu/mutimed.mp3"      
+#define MUSIC_PATH4 "fs:/hsmm/mainmenu/contont.mp3"
+#define MUSIC_PATH5 "fs:/hsmm/mainmenu/settings.mp3"       
+#define MUSIC_PATH6 "fs:/hsmm/mainmenu/suafer.mp3"
+#define MUSIC_PATH7 "fs:/hsmm/mainmenu/manager.mp3"  //TOOLS
+#define MUSIC_PATH8 "fs:/hsmm/mainmenu/mesage.mp3"
+#endif
 
 // 此宏用当前状态更新先前状态，再用nextState状态更新当前状态
 #define MOVE_TO_STATE(nextState)            \
