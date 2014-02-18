@@ -484,6 +484,9 @@
 	<STRING Id="1096" Name="IDS_PHONEBOOK_SETTINGS">
 		<Text>Phonebook settings</Text>
 	</STRING>
+	<STRING Id="1097" Name="IDS_APPLET_909C">
+		<Text>Contacts</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MSGBOX" Focus="0">
