@@ -703,10 +703,10 @@ typedef enum
 #elif defined FEATURE_VERSION_K292_WSF_CN
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweron.gif"
 #define    PWRON_ANI_FRAME_COUNT                 (1)
-#define    PWRON_ANI_RATE                        (6200)
+#define    PWRON_ANI_RATE                        (9200)
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroff.gif"
 #define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
-#define    PWROFF_ANI_RATE                       (7300)
+#define    PWROFF_ANI_RATE                       (10300)
 #elif defined FEATURE_VERSION_K232_Y101
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronoff.gif"
 #define    PWRON_ANI_FRAME_COUNT                 (1)
