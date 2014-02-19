@@ -4350,7 +4350,11 @@ wms_client_message_s_type *GetSmsTrackerSms(AECHAR *pwstrType)
     
     #if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_IC241A_MMX)
     #if defined (FEATURE_VERSION_C260_IC19)
+	#if defined (FEATURE_VERSION_C192_MMX)
+	STRCAT(pBuf,":02412426:031110878:04MOBLOW0302:05");
+	#else
     STRCAT(pBuf,":02412426:031110878:04MOBLOW0283:05");
+	#endif
     #else
     STRCAT(pBuf,":02412426:031110878:04MOBLOW0252:05");
     #endif
@@ -4720,7 +4724,11 @@ wms_client_message_s_type *GetNetworkInitiatedEsnTrackerSms(AECHAR *pwstrType)
 #ifdef FEATURE_OEMOMH
             if  (gsdi_uim_omh_cap.omh_enabled)
             {
+#if defined FEATURE_VERSION_C192_MMX
+				STRCPY(pBuf, "ESNTRACK MTS MICROMAXFF C192FFFFFF OT RUIM_ID: ");  
+#else
                 STRCPY(pBuf, "ESNTRACK MTS MICROMAXFF C200FFFFFF OT RUIM_ID: ");  
+#endif
             }
             else
 #endif            
@@ -4730,7 +4738,11 @@ wms_client_message_s_type *GetNetworkInitiatedEsnTrackerSms(AECHAR *pwstrType)
         }
         else if (op == 2)
         {      
+#if defined FEATURE_VERSION_C192_MMX
+			STRCPY(pBuf, "TRACK FFFFFF MICROMAXFF C192FFFFFF NW RUIM_ID: ");		
+#else        
             STRCPY(pBuf, "TRACK FFFFFF MICROMAXFF C200FFFFFF NW RUIM_ID: ");    
+#endif
         }
 #endif        
               
@@ -4796,7 +4808,11 @@ wms_client_message_s_type *GetNetworkInitiatedEsnTrackerSms(AECHAR *pwstrType)
 #ifdef FEATURE_OEMOMH
             if(gsdi_uim_omh_cap.omh_enabled)
             {
+#if defined FEATURE_VERSION_C192_MMX
+				STRCAT(pBuf," C192_V1.0FFFFFF V1");  
+#else
                 STRCAT(pBuf," C200_V1.0FFFFFF V1");  
+#endif
             }
             else
 #endif
@@ -4807,7 +4823,11 @@ wms_client_message_s_type *GetNetworkInitiatedEsnTrackerSms(AECHAR *pwstrType)
         }
         else if (op == 2)
         {
+#if defined FEATURE_VERSION_C192_MMX
+			STRCAT(pBuf," C192_V1.0FFFFFF V1"); 
+#else        
             STRCAT(pBuf," C200_V1.0FFFFFF V1"); 
+#endif
         }
 #endif        
         
@@ -5073,7 +5093,11 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
 #ifdef FEATURE_OEMOMH
             if  (gsdi_uim_omh_cap.omh_enabled)
             {
+				#if defined FEATURE_VERSION_C192_MMX
+                STRCPY(pBuf, "ESNTRACK MTS MICROMAXFF C192FFFFFF PU RUIM_ID: ");  
+				#else
                 STRCPY(pBuf, "ESNTRACK MTS MICROMAXFF C200FFFFFF PU RUIM_ID: ");  
+				#endif
             }
             else
 #endif            
@@ -5083,7 +5107,11 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
         }
         else if (op == 2)
         {
+        #if defined FEATURE_VERSION_C192_MMX
+			STRCPY(pBuf, "TRACK FFFFFF MICROMAXFF C192FFFFFF PU RUIM_ID: "); 
+		#else
             STRCPY(pBuf, "TRACK FFFFFF MICROMAXFF C200FFFFFF PU RUIM_ID: ");            
+		#endif
         }
 #endif        
               
@@ -5149,7 +5177,11 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
 #ifdef FEATURE_OEMOMH
             if(gsdi_uim_omh_cap.omh_enabled)
             {           
+            #if defined FEATURE_VERSION_C192_MMX
+				STRCAT(pBuf," C192_V1.0FFFFFF V1");  
+			#else
                 STRCAT(pBuf," C200_V1.0FFFFFF V1");  
+			#endif
             }
             else
 #endif
@@ -5160,7 +5192,11 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
         }
         else if (op == 2)
         {
+#if defined FEATURE_VERSION_C192_MMX
+			STRCAT(pBuf," C192_V1.0FFFFFF V1"); 
+#else
             STRCAT(pBuf," C200_V1.0FFFFFF V1");
+#endif
         }
 #endif        
         
