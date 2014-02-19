@@ -1080,7 +1080,11 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                     #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
                     #ifdef FEATURE_VERSION_C260_IC18
                     #ifdef FEATURE_VERSION_C260_IC19
+					#if defined(FEATURE_VERSION_C192_MMX)
+                    static const char mnBuf[] = "MMX C192"; //MOBLOW0283
+					#else
                     static const char mnBuf[] = "MMX C200"; //MOBLOW0283
+                    #endif
                     #else
                     static const char mnBuf[] = "MMX C210";
                     #endif
