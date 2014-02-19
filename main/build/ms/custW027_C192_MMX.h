@@ -13,6 +13,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_VERSION_C337
 #define FEATURE_VERSION_C260_IC18
 #define FEATURE_VERSION_C260_IC19
+#define FEATURE_VERSION_C192_MMX
 #define LCD_KR
 #define FEATURE_QUICK_TEST_KEY_4
 #define FEATURE_OEMOMH
