@@ -35,7 +35,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 #include "AEEFile.h"
 #include "AEEMimeTypes.h"
 #include "AEESource.h"
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 #include "snddev.h"
 #include "snd.h"
 #include "gpio_1100.h"
