@@ -785,7 +785,7 @@ typedef struct
 #if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W317A)
    boolean  autocallrecord;                                 //CFGI_AUTOCALLRECORD Add by pyuangui 20121231 
 #endif
-#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
    boolean  reginfosms_send;                                 //CFGI_REGINFOSMS_SEND
 #endif
 #ifdef FEATURE_VERSION_C316   
@@ -1770,7 +1770,7 @@ static int OEMPriv_SetItem_CFGI_AUTOCALLRECORD(void *pBuff);
 #endif
 //Add End
 
-#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 static int OEMPriv_GetItem_CFGI_REGINFOSMS_SEND(void *pBuff);
 static int OEMPriv_SetItem_CFGI_REGINFOSMS_SEND(void *pBuff);
 #endif
@@ -2211,7 +2211,7 @@ static OEMConfigListType oemi_cache = {
     ,FALSE
 #endif
 //Add End
-#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
     ,FALSE     //CFGI_REGINFOSMS_SEND
 #endif
 #ifdef FEATURE_VERSION_C316
@@ -2853,7 +2853,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
 #if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W317A)
    CFGTABLEITEM(CFGI_AUTOCALLRECORD,sizeof(boolean)),				 //Add by pyuangui 20121231
 #endif
-#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
    CFGTABLEITEM(CFGI_REGINFOSMS_SEND,sizeof(boolean)),				
 #endif
 #ifdef FEATURE_VERSION_C316
@@ -3427,7 +3427,7 @@ void OEM_RestoreFactorySetting( void )
 	#if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W317A)
     oemi_cache.autocallrecord = FALSE;  //CFGI_AUTOCALLRECORD    //Add by pyuangui 2013-01-09 
     #endif
-    #if defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
+    #if defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
     oemi_cache.reginfosms_send= FALSE; 
     #endif
     
@@ -3674,7 +3674,7 @@ void OEM_RestoreFactorySetting( void )
    nvi.back_light = OEMNV_BL_7S;
    (void) OEMNV_Put( NV_BACK_LIGHT_I, &nvi );
    nvi_cache.backlight = OEMNV_BL_7S;
-   #elif defined (FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)
+   #elif defined (FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K212_BH)
    nvi.back_light = OEMNV_BL_30S;
    (void) OEMNV_Put( NV_BACK_LIGHT_I, &nvi );
    nvi_cache.backlight = OEMNV_BL_30S;
@@ -3798,9 +3798,15 @@ void OEM_RestoreFactorySetting( void )
 #endif   
 #ifdef FEATURE_TIME_DATA_SETTING
 #if defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_K212_HUALU) //xxzhen
-    nvi.set_date_format = NV_SET_DATE_FORMAT_YYYY_MM_DD_1;
+#ifdef FEATURE_VERSION_K212_BH
+    nvi.set_date_format = NV_SET_DATE_FORMAT_MM_DD_YYYY;
     (void) OEMNV_Put( NV_SET_DATE_FORMAT_I, &nvi);
-    nvi_cache.set_date_format = (byte)NV_SET_DATE_FORMAT_YYYY_MM_DD_1;
+    nvi_cache.set_date_format = (byte)NV_SET_DATE_FORMAT_MM_DD_YYYY;
+#else
+	nvi.set_date_format = NV_SET_DATE_FORMAT_YYYY_MM_DD_1;
+	(void) OEMNV_Put( NV_SET_DATE_FORMAT_I, &nvi);
+	nvi_cache.set_date_format = (byte)NV_SET_DATE_FORMAT_YYYY_MM_DD_1;
+#endif
 #elif defined (FEATURE_VERSION_C260_IC19) ||defined(FEATURE_VERSION_K232_Y100A) ||defined(FEATURE_VERSION_K232_Y101)   
     nvi.set_date_format = NV_SET_DATE_FORMAT_DD_MM_YYYY;
     (void) OEMNV_Put( NV_SET_DATE_FORMAT_I, &nvi);
@@ -11858,7 +11864,7 @@ static int OEMPriv_SetItem_CFGI_AUTOCALLRECORD(void *pBuff)
 #endif
 //Add End
 
-#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 static int OEMPriv_GetItem_CFGI_REGINFOSMS_SEND(void *pBuff)
 {
 	MEMCPY(pBuff, (void*) &oemi_cache.reginfosms_send, sizeof(boolean));
