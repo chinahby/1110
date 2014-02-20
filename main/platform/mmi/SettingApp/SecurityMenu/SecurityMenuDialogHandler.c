@@ -29,7 +29,7 @@
 #include "ContApp.h"
 #include "AEETelephone.h"
 #include "AEETelDef.h"
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 #include "tetris.h"
 #endif
 #define FILE_CONTAPP_CFG                (AEE_ADDRBOOK_DIR"\\contapp.cfg")
@@ -6870,7 +6870,7 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
     	 }
 	}
 
-#if defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 	{
 		int i = 0;
 		CPrefData m_CfgData;

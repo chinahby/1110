@@ -383,7 +383,7 @@ typedef struct _CSecurityMenu
 #define ID_MSG_EVENT            (EVT_USER)
 
 #define xOffset                 (5)
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 #define SECURITY_PROMPTMSG_TIMER (500)
 #else
 #define SECURITY_PROMPTMSG_TIMER (1500)

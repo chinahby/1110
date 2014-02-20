@@ -3039,7 +3039,7 @@ static boolean  HandleWarningMessegeDialogEvent(CSoundMenu *pMe,
             return TRUE;
 
         case EVT_DIALOG_START:
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
             ISHELL_SetTimer(pMe->m_pShell,500,SoundMenu_DialogTimeout,pMe);
 #else
 			ISHELL_SetTimer(pMe->m_pShell,1000,SoundMenu_DialogTimeout,pMe);
