@@ -2056,7 +2056,7 @@ Exit:
     }
 
 #endif
-#if defined(FEATURE_POWERUP_REGISTER_CHINAUNICOM)||defined(FEATURE_VERSION_K212)               
+#if defined(FEATURE_POWERUP_REGISTER_CHINAUNICOM)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)               
                 if (info->mt_message_info.message.u.cdma_message.teleservice == 
                     WMS_TELESERVICE_CHINAUNICOMREG)
                 {

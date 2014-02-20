@@ -5492,7 +5492,11 @@ wms_client_message_s_type *GetHOPERegisterMsg()
 	STRCAT(pBuf,"ZBH_BIHEE C15");
 	#else
 	#ifdef FEATURE_VERSION_K212_HUALU
+	#ifdef FEATURE_VERSION_K212_BH
+	STRCAT(pBuf,"ZBH_BIHEE C15");
+	#else
 	STRCAT(pBuf,"CHL-E-5300");
+	#endif
 	#else
     STRCAT(pBuf,"V-HOPE E102");
 	#endif
