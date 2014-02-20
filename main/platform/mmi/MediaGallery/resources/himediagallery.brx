@@ -373,6 +373,18 @@
 	<STRING Id="1125" Name="IDS_PWD_TITLE">
 		<Text>पासवर्ड दर्ज करें</Text>
 	</STRING>
+	<STRING Id="1126" Name="IDS_MG_AUTOCALLRECORD">
+		<Text>ऑटो कॉल रिकॉर्ड</Text>
+	</STRING>
+	<STRING Id="1127" Name="IDS_MG_ADD">
+		<Text>जोड़ना</Text>
+	</STRING>
+	<STRING Id="1128" Name="IDS_MG_SAVE">
+		<Text>बचाना</Text>
+	</STRING>
+	<STRING Id="1129" Name="IDS_MG_OPTION">
+		<Text>विकल्प</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_MG_MAINMENU" Focus="7001">
@@ -495,6 +507,13 @@
 	</Dialog>
 	<Dialog Id="6025" Name="IDD_PWD" Focus="0">
 		<Controls/>
+	</Dialog>
+	<Dialog Id="6026" Name="IDD_OPTION" Focus="0">
+		<Controls>
+			<Menu Id="7026" Name="IDC_OPTION">
+				<Items/>
+			</Menu>
+		</Controls>
 	</Dialog>
 </Dialogs>
 </BREWRes>
