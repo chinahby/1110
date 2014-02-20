@@ -911,7 +911,7 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
 			
             pMe->m_rc = as->rc;
             CameraApp_RunFSM(pMe);
-            #if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_K212)
+            #if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
             return CameraApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
             #else
             return TRUE;

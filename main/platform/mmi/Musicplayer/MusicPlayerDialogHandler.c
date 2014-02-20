@@ -461,7 +461,18 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
              
 			MP3_DrawPlayerWindows(pMe);
 			#ifdef FEATURE_VERSION_K212_HUALU
+			#ifdef FEATURE_VERSION_K212_BH
+			if(pMe->m_bPaused || pMe->m_bPlaying)
+			{
+			    MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);
+			}
+			else
+			{
+				MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+			}
+			#else
 			MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+			#endif
 			#else
 			if(pMe->m_bPaused || pMe->m_bPlaying)
 			{
@@ -513,6 +524,9 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 							#ifndef FEATURE_VERSION_K212_HUALU
 							MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);    
 							#endif
+							#ifdef FEATURE_VERSION_K212_BH
+							MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);
+							#endif
 							IDISPLAY_Update(pMe->m_pDisplay);							
 						}
 					}     
@@ -536,6 +550,9 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 						MP3_DrawImage(pMe, IDI_PAUSE, PLAY_X, PLAY_Y);	
 						#ifndef FEATURE_VERSION_K212_HUALU
 						MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);       
+						#endif
+						#ifdef FEATURE_VERSION_K212_BH
+						MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP); 
 						#endif
 		            	IDISPLAY_Update(pMe->m_pDisplay);
 						
@@ -3093,6 +3110,9 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 					#ifndef FEATURE_VERSION_K212_HUALU
 					MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);   
 					#endif
+					#ifdef FEATURE_VERSION_K212_BH
+					MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);
+					#endif
 	            	IDISPLAY_Update(pMe->m_pDisplay);
 					//Add End                
 	            }   
@@ -3117,6 +3137,9 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 					MP3_DrawImage(pMe, IDI_PAUSE, PLAY_X, PLAY_Y);	
 					#ifndef FEATURE_VERSION_K212_HUALU
 					MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);       
+					#endif
+					#ifdef FEATURE_VERSION_K212_BH
+					MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);
 					#endif
 	            	IDISPLAY_Update(pMe->m_pDisplay);
 					//Add End
@@ -3144,6 +3167,9 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
                         MSG_FATAL("PLAY_X=%d----PLAY_Y=%d",PLAY_X,PLAY_Y,0);
 						#ifndef FEATURE_VERSION_K212_HUALU
 						MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);      
+						#endif
+						#ifdef FEATURE_VERSION_K212_BH
+						MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);
 						#endif
 						IDISPLAY_Update(pMe->m_pDisplay);
 						//Add End
@@ -3425,8 +3451,16 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
                     pMe->m_bPlaying = FALSE;
                     pMe->m_bPaused= FALSE;
 					#ifdef FEATURE_VERSION_K212_HUALU
+					#ifdef FEATURE_VERSION_K212_BH
+					                    (void) ISHELL_PostEvent(pMe->m_pShell, 
+                                            AEECLSID_APP_MUSICPLAYER,
+                                            EVT_USER_REDRAW,
+                                            0,
+                                            0);  
+					#else
 					CLOSE_DIALOG(DLGRET_CANCELED);
 					return TRUE;
+					#endif
 					#else
                     (void) ISHELL_PostEvent(pMe->m_pShell, 
                                             AEECLSID_APP_MUSICPLAYER,

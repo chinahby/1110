@@ -175,7 +175,108 @@ static void disp_ic_init(void)
 	LCD_WRITE_DATA(0x06); 
 	LCD_WRITE_DATA(0x30); 
 	LCD_WRITE_DATA(0x38); 
-	LCD_WRITE_DATA(0x0F); 
+	LCD_WRITE_DATA(0x0F);
+	#elif defined(FEATURE_VERSION_K212_BH)
+	LCD_WRITE_CMD(0xCF);  
+    LCD_WRITE_DATA (0x00); 
+    LCD_WRITE_DATA (0xD9); 
+    LCD_WRITE_DATA (0X30); 
+     
+    LCD_WRITE_CMD(0xED);  
+    LCD_WRITE_DATA (0x64); 
+    LCD_WRITE_DATA (0x03); 
+    LCD_WRITE_DATA (0X12); 
+    LCD_WRITE_DATA (0X81); 
+     
+    LCD_WRITE_CMD(0xE8);  
+    LCD_WRITE_DATA (0x85); 
+    LCD_WRITE_DATA (0x00); 
+    LCD_WRITE_DATA (0x78); 
+     
+    LCD_WRITE_CMD(0xCB);  
+    LCD_WRITE_DATA (0x39); 
+    LCD_WRITE_DATA (0x2C); 
+    LCD_WRITE_DATA (0x00); 
+    LCD_WRITE_DATA (0x34); 
+    LCD_WRITE_DATA (0x02); 
+     
+    LCD_WRITE_CMD(0xF7);  
+    LCD_WRITE_DATA (0x20); 
+     
+    LCD_WRITE_CMD(0xEA);  
+    LCD_WRITE_DATA (0x00); 
+    LCD_WRITE_DATA (0x00); 
+     
+    LCD_WRITE_CMD(0xC0);    //Power control 
+    LCD_WRITE_DATA (0x1B);   //VRH[5:0] 
+     
+    LCD_WRITE_CMD(0xC1);    //Power control 
+    LCD_WRITE_DATA (0x12);   //SAP[2:0];BT[3:0] 
+     
+    LCD_WRITE_CMD(0xC5);    //VCM control 
+    LCD_WRITE_DATA (0x32); 
+    LCD_WRITE_DATA (0x3C); 
+     
+    LCD_WRITE_CMD(0xC7);    //VCM control2 
+    LCD_WRITE_DATA (0X9D); 
+     
+    LCD_WRITE_CMD(0x36);    // Memory Access Control 
+    LCD_WRITE_DATA (0x08); 
+     
+    LCD_WRITE_CMD(0x3A);   
+    LCD_WRITE_DATA (0x55); 
+
+    LCD_WRITE_CMD(0xB1);   
+    LCD_WRITE_DATA (0x00);   
+    LCD_WRITE_DATA (0x1B); 
+     
+    LCD_WRITE_CMD(0xB6);    // Display Function Control 
+    LCD_WRITE_DATA (0x0A); 
+    LCD_WRITE_DATA (0xA2); 
+
+    LCD_WRITE_CMD(0xF6);    
+    LCD_WRITE_DATA (0x01); 
+    LCD_WRITE_DATA (0x30); 
+     
+    LCD_WRITE_CMD(0xF2);    // 3Gamma Function Disable 
+    LCD_WRITE_DATA (0x00); 
+     
+    LCD_WRITE_CMD(0x26);    //Gamma curve selected 
+    LCD_WRITE_DATA (0x01); 
+     
+    LCD_WRITE_CMD(0xE0);    //Set Gamma 
+    LCD_WRITE_DATA (0x0F); 
+    LCD_WRITE_DATA (0x24); 
+    LCD_WRITE_DATA (0x1F); 
+    LCD_WRITE_DATA (0x0B); 
+    LCD_WRITE_DATA (0x0F); 
+    LCD_WRITE_DATA (0x05); 
+    LCD_WRITE_DATA (0x4A); 
+    LCD_WRITE_DATA (0X96); 
+    LCD_WRITE_DATA (0x39); 
+    LCD_WRITE_DATA (0x07); 
+    LCD_WRITE_DATA (0x11); 
+    LCD_WRITE_DATA (0x03); 
+    LCD_WRITE_DATA (0x11); 
+    LCD_WRITE_DATA (0x0D); 
+    LCD_WRITE_DATA (0x04);
+	
+    LCD_WRITE_CMD(0XE1);    //Set Gamma 
+    LCD_WRITE_DATA (0x00); 
+    LCD_WRITE_DATA (0x1B); 
+    LCD_WRITE_DATA (0x20); 
+    LCD_WRITE_DATA (0x04); 
+    LCD_WRITE_DATA (0x10); 
+    LCD_WRITE_DATA (0x02); 
+    LCD_WRITE_DATA (0x35); 
+    LCD_WRITE_DATA (0x23); 
+    LCD_WRITE_DATA (0x46); 
+    LCD_WRITE_DATA (0x04); 
+    LCD_WRITE_DATA (0x0E); 
+    LCD_WRITE_DATA (0x0C); 
+    LCD_WRITE_DATA (0x2E); 
+    LCD_WRITE_DATA (0x32); 
+    LCD_WRITE_DATA (0x05); 
     #else
 	//************* Start Initial Sequence **********// 
 	LCD_WRITE_CMD(0xCF);  

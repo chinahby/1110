@@ -270,7 +270,7 @@ typedef struct
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
 static const CCameraSize g_CameraFrontSizeCFG[] = 
 {
-#if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
     {240,320,L"240*320"}, // VGA
     {324,432,L"480*640"}, // VGA
     {0,0,NULL}
@@ -283,7 +283,7 @@ static const CCameraSize g_CameraFrontSizeCFG[] =
 
 static const CCameraSize g_CameraBackSizeCFG[] = 
 {
-#if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
     {240,320,L"240*320"}, // VGA
     {324,432,L"480*640"}, // VGA
     {0,0,NULL}
@@ -326,7 +326,7 @@ static const CCameraSize g_CameraSizeCFG[] =
 #endif    
 #endif
 #elif defined(FEATURE_DISP_240X320)
-#if defined(FEATURE_VERSION_K212) 
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 	{240,304,L"240*320"}, // VGA
 	{324,432,L"480*640"}, // VGA
 #elif defined(FEATURE_VERSION_IC241A_MMX)
@@ -406,7 +406,7 @@ static const CCameraSize g_CameraSizeCFG_10[] =
 #endif
 #endif     
 #elif defined(FEATURE_DISP_240X320)
-#if defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 	//{120,160,L"240*320"}, // VGA
 	{180,240,L"480*640"}, // VGA
 #elif defined(FEATURE_VERSION_IC241A_MMX)
@@ -953,7 +953,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
              // 如下代码限制在此界面的快速按键
             //#if defined (FEATURE_VERSION_C310) || defined (FEATURE_VERSION_C337)
             //1200
-			#ifdef FEATURE_VERSION_K212
+			#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
             (void)ISHELL_SetTimer( pMe->m_pShell,
                                                 500,
                                                 CameraApp_PrevewTimeout,

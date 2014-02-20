@@ -534,7 +534,7 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
 			//#ifdef FEATURE_VERSION_C337
 			//nResID_R = IDS_PHONE_BOOK;
 			//#else
-			#if defined(FEATURE_VERSION_K212)
+			#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 			nResID_R = IDS_CONTANT_K212;
 			#else
             nResID_R = IDS_STRING_CONTACTS;
@@ -2746,7 +2746,7 @@ void ReDrawPromptMessage(void *pShell)
         IIMAGE_Release(StringBgMsgImg);
         StringBgMsgImg = NULL;       
     }
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 	ISHELL_SetTimer(pShell, 500, (PFNNOTIFY)(ReDrawPromptMessage),pShell);
 #else
 	ISHELL_SetTimer(pShell, 1000, (PFNNOTIFY)(ReDrawPromptMessage),pShell);
@@ -3057,7 +3057,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
     }
     
     //Draw bottom
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_BH)
  if(PParam->eBBarType == BTBAR_NONE)	
  {
  	bottomParam.eBBarType = BTBAR_OK_BACK;
@@ -3635,7 +3635,7 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
 			//#ifdef FEATURE_VERSION_C337
 			//nResID_R = IDS_PHONE_BOOK;
 			//#else
-            #if defined(FEATURE_VERSION_K212)
+            #if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 			nResID_R = IDS_CONTANT_K212;
 			#else
             nResID_R = IDS_STRING_CONTACTS;

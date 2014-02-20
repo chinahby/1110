@@ -245,7 +245,7 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
 
    /* KEYSENSE_0 */
    /* 1,17          1,15        1,11        1,9          1,Memo*/
-   #if defined( FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K292)
+   #if defined( FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K292)||defined(FEATURE_VERSION_K212_BH)
    { HS_3_K,   HS_6_K,  HS_9_K,  HS_POUND_K,  HS_NONE_K},
    /* KEYSENSE_1 */
    /* 3,17          3,15        3,11        3,9          3,Memo*/
