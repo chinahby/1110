@@ -14,6 +14,14 @@ LCD_SURF_C_SOURCES= \
 	disp_ic_7789S_tft24_rot.c \
 	disp_ic_st7789s_tft24.c \
 	disp_ic_gc9312ds_tft23_rot.c
+else ifeq ($(USES_LCD_SIZE),128x128)
+LCD_SURF_C_SOURCES= \
+	disp_api_default.c \
+	disp_drv_$(USES_LCD_SIZE).c \
+	disp_ic_ili9163c_tft144.c \
+	disp_ic_st7735r_tft144.c \
+	disp_ic_st7735s_tft144.c \
+	disp_ic_rm68116_tft144.c
 else
 LCD_SURF_C_SOURCES= \
 	disp_api_default.c \
