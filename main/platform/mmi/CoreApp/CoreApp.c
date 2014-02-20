@@ -1920,7 +1920,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             return TRUE;
 #endif
 
-#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
        case  EVT_MOBILE_TRACKER:
 	   	     {
 			 	if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
@@ -2291,7 +2291,7 @@ case EVT_ALARM:
 */
 #ifdef FEATURE_QQ_APP                 
             case EVT_QQ_ANNU_UPDATE:
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)
                  IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_OFFLINE);
                  IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_MSG_OFF);
                  IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_LEAVE_OFF); 
@@ -3064,7 +3064,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
             #ifdef FEATURE_VERSION_V3CM301
 			b_low = FALSE;
 			#endif
-			#ifdef FEATURE_VERSION_K212
+			#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 			b_low = FALSE;
 			b_lowTimes = 0;
 			#endif
@@ -3171,7 +3171,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
 							b_low=TRUE;
 							CoreApp_Process_BattyLow_Msg(pMe, IDS_LOWBATTMSG_TEXT);
 						}
-					#elif defined(FEATURE_VERSION_K212)
+					#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 					if(b_lowTimes>=3)
 					{
 						b_low=TRUE;
@@ -3685,7 +3685,7 @@ static int DBToLevel (int nDBVal)
         return ANNUN_STATE_RSSI_2;
 	#else
 	
-	#ifdef FEATURE_VERSION_K212
+	#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 	if (nDBVal < 92)
         return ANNUN_STATE_RSSI_4;
     else if (nDBVal < 97)
@@ -3704,7 +3704,7 @@ static int DBToLevel (int nDBVal)
     else if (nDBVal < 108)
         return ANNUN_STATE_RSSI_1;
     else
-	#ifdef FEATURE_VERSION_K212
+	#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 		return ANNUN_STATE_RSSI_1;
 	#else
         return ANNUN_STATE_RSSI_0;
@@ -3903,7 +3903,7 @@ static void CoreApp_Process_AutoPower_Event(void *pUser)
     {
         if(IDIALOG_GetID(ISHELL_GetActiveDialog(pMe->a.m_pIShell)) == IDD_IDLE)
         {
-            #if defined(FEATURE_VERSION_K212)
+            #if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
             {
             Auto_Power_Cfg m_ClockCfg;
 				//ISHELL_CancelTimer(pMe->a.m_pIShell,DialogTimeoutCallback,pMe);  
@@ -4282,7 +4282,7 @@ int CoreApp_SendReginfo(CCoreApp   *pMe)
 }   
 #endif
 
-#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 void CoreApp_ReginfosmsTimer(void *pme)
 {
    CCoreApp *pMe = (CCoreApp *)pme;

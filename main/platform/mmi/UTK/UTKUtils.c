@@ -335,12 +335,13 @@ void UTK_GiveResponseEx(CUTK * pMe,
     uim_cmd_type *uim_cmd_ptr=NULL;
     byte packed_offset;
     #ifndef FEATURE_VERSION_K212
+	#ifndef FEATURE_VERSION_K212_BH
     if (pMe->m_pDisplay != NULL)
     {
         ShowBusyIcon(pMe->m_pShell, pMe->m_pDisplay, &pMe->m_rc,FALSE);
     }
 	#endif
-    
+    #endif
     uim_power_control( UIM_PROACTIVE_UIM, TRUE);
     MSG_FATAL("eCmd = %X bForwad %d Result 0x%X",eCmd,bForwad,eResult); 
     switch(eCmd)

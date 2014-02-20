@@ -957,7 +957,7 @@ static int CallApp_InitAppData(CCallApp *pMe)
 	pMe->m_bup= TRUE;
     pMe->m_i  = -1;
 #endif
-#if defined(FEATURE_VERSION_K212)    
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)    
 	pMe->m_isCallConectBacklight = FALSE;
 #endif
 

@@ -2408,10 +2408,12 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 				MSG_FATAL("IBACKLIGHT_Enable........0012",0,0,0);
             	IBACKLIGHT_Enable(gpBacklight);
 				#ifndef FEATURE_VERSION_K212
+				#ifndef FEATURE_VERSION_K212_BH
 				if (wParam == AVK_ENDCALL)
 				{
 					break;	//继续传给callapp to End call.
 				}
+				#endif
 				#endif
 				if((cls == AEECLSID_CORE_APP))
 				{
@@ -2468,7 +2470,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 				else
                 {
                 	MSG_FATAL("IBACKLIGHT_Enable........002",0,0,0);
-					#ifdef FEATURE_VERSION_K212
+					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 					if(AVK_STAR != wParam)
 					#endif
 					{
@@ -2484,7 +2486,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
             }
         }
         if (gpAlert) {
-			#ifdef FEATURE_VERSION_K212
+			#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 			if((cls != AEECLSID_DIALER) &&(cls != AEECLSID_MAIN_MENU))
 			#endif
 			{
@@ -2503,10 +2505,12 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 		}
 #endif
 #ifndef FEATURE_VERSION_K212
+#ifndef FEATURE_VERSION_K212_BH
 		if (wParam == AVK_ENDCALL)
 		{
 			break;	//继续传给callapp to End call.
 		}
+#endif
 #endif
 #ifdef FEATURE_OEMOMH
         if (wParam == AVK_RIGHT)

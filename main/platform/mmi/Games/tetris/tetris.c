@@ -284,6 +284,7 @@ static boolean Tetris_HandleEvent(CTetrisApp * pMe, AEEEvent eCode, uint16 wPara
 				MSG_FATAL("***zzg Application EVT_APP_START EnableAnnunciatorBar TRUE",0,0,0);				   
             }
             #ifndef FEATURE_VERSION_K212
+			#ifndef FEATURE_VERSION_K212_BH
 			{
                 AECHAR WTitle[20] = {0};
 
@@ -303,6 +304,7 @@ static boolean Tetris_HandleEvent(CTetrisApp * pMe, AEEEvent eCode, uint16 wPara
   			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,NULL);
           	  }
             #endif
+			#endif
             DisplaySplashScreen(pMe);
             return TRUE;
 
@@ -321,6 +323,7 @@ static boolean Tetris_HandleEvent(CTetrisApp * pMe, AEEEvent eCode, uint16 wPara
 
         case EVT_APP_RESUME:            // Resume the former status
            #ifndef FEATURE_VERSION_K212
+		   #ifndef FEATURE_VERSION_K212_BH
            {
                 AECHAR WTitle[20] = {0};
 
@@ -335,6 +338,7 @@ static boolean Tetris_HandleEvent(CTetrisApp * pMe, AEEEvent eCode, uint16 wPara
             	}
             }
 		    #endif
+			#endif
             switch(pMe->m_AppState)
             {
             case APP_STATE_SPLASH:
@@ -962,7 +966,7 @@ static void SetGameScreen(CTetrisApp * pMe)
 #if defined(FEATURE_DISP_128X160)
     HMargin = (pMe->m_rScreenWidth - (NEXT_MAX_XNUM) * NEXT_BLOCK_SIZE) % BLOCK_SIZE;
     HNum    = (pMe->m_rScreenWidth - (NEXT_MAX_XNUM ) * NEXT_BLOCK_SIZE) / BLOCK_SIZE;
-#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_BH)
 	HMargin = (pMe->m_rScreenWidth - (NEXT_MAX_XNUM + 2) * NEXT_BLOCK_SIZE) % BLOCK_SIZE;
     HNum    = (pMe->m_rScreenWidth - (NEXT_MAX_XNUM + 2) * NEXT_BLOCK_SIZE) / BLOCK_SIZE;
 #else

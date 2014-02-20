@@ -5209,7 +5209,7 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
 #ifndef HWVERSION
     #define HWVERSION "V1.0"
 #endif
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 	#define HWVERSION "K212_MB_V0.1"
 #endif
     n = WSTRLEN(szBuf);// update current Info. len

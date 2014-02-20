@@ -404,7 +404,7 @@ int CContApp_BuildMainMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
 #endif
   //}
 //#endif /* FEATURE_RUIM_PHONEBOOK */    
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
     (void)IMENUCTL_Redraw(pMenuCtl);
 #endif
     return SUCCESS;

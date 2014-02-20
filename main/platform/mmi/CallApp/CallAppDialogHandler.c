@@ -11009,7 +11009,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
     if(pMe->m_pConvImage)
     {
         //IIMAGE_SetParm(pMe->m_pConvImage, IPARM_ROP, AEE_RO_TRANSPARENT, 0);
-		#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_BH)
+		#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
         IIMAGE_Draw(pMe->m_pConvImage, CALL_TEXT_X, CALL_SECOND_UP_LINE_Y);
 		#else
 		IIMAGE_Draw(pMe->m_pConvImage, CALL_TEXT_X, CALL_SECOND_LINE_Y);

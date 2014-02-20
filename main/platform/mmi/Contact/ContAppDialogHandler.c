@@ -7468,7 +7468,9 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
             rc.dy = devinfo.cyScreen;
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
 #ifndef FEATURE_VERSION_K212
+#ifndef FEATURE_VERSION_K212_BH
             IMENUCTL_SetRect(pMenuCtl, &rc);
+#endif
 #endif
             MSG_FATAL("EVT_DIALOG_START",0,0,0);
             
@@ -14027,11 +14029,13 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
 					return TRUE;
 				#else
 				#ifndef FEATURE_VERSION_K212
+				#ifndef FEATURE_VERSION_K212_BH
 				case AVK_SELECT:
                     //CLOSE_DIALOG(DLGRET_OK);
               		MSG_FATAL("AVK_SELECT........",0,0,0);
                     CLOSE_DIALOG(DLGRET_SELECT);
                     return TRUE;
+				#endif
 				#endif
                 #endif
                 case AVK_CAMERA:

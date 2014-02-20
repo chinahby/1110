@@ -1619,7 +1619,7 @@ int CoreApp_GetBatteryLevel(CCoreApp *pMe);
 void CoreApp_SendSeamlessSMSTimer(void *pme);
 int  CoreApp_SendSeamlessSMS(CCoreApp *pMe);
 #endif //#ifdef FEATURE_SEAMLESS_SMS
-#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 void CoreApp_ReginfosmsTimer(void *pme);
 int  CoreApp_SendReginfosms(CCoreApp *pMe);
 #endif

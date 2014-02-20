@@ -1022,7 +1022,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                 if(pMe->m_nMsgID == IDS_AUTO_POWER_OFF)
                 {
                     m_PromptMsg.ePMsgType = MESSAGE_CONFIRM;
-					#ifdef FEATURE_VERSION_K212
+					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 					ISHELL_CancelTimer(pMe->a.m_pIShell,DialogTimeoutCallback,pMe);                        
                     pMe->m_ePowerDownType = POWERDOWN_NORMAL;
                     if (pMe->m_eCurState != COREST_POWEROFF)
@@ -1548,10 +1548,12 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
                 DrawTitleBar(pMe->a.m_pIDisplay,&title);
 				#else
 				#ifndef FEATURE_VERSION_K212
+				#ifndef FEATURE_VERSION_K212_BH
                 if(pMe->m_pIAnn != NULL)
                 {
 				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
                 }
+				#endif
 				#endif
 				#endif
                 
@@ -5614,7 +5616,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
 
-#elif defined (FEATURE_VERSION_HITZ181) || defined (FEATURE_VERSION_W515V3)|| defined (FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_K212_20D) 
+#elif defined (FEATURE_VERSION_HITZ181) || defined (FEATURE_VERSION_W515V3)|| defined (FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_BH) 
 
 #if	defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 						{
