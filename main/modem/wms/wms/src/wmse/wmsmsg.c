@@ -6865,7 +6865,7 @@ wms_status_e_type wms_msg_cdma_deliver
     client = parsed_client;
   }
 #ifdef CUST_EDITION	  
-#if defined(FEATURE_POWERUP_REGISTER_CHINAUNICOM)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_POWERUP_REGISTER_CHINAUNICOM)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
   if (msg_ptr->u.cdma_message.teleservice == WMS_TELESERVICE_CHINAUNICOMREG)
   {
     MSG_HIGH("China Unicom Register ack Message Detected! Routes Changed", 0, 0, 0);
