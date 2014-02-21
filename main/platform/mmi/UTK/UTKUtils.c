@@ -1590,6 +1590,7 @@ int UTK_ProcessSendCDMASMSCmd(CUTK *pMe,
 #endif                    
           // liyz add for test @131203
 #ifdef FEATURE_IC19_ESN_TRACKER
+#ifndef FEATURE_VERSION_K232_Y105A
                        {
                         wms_client_ts_data_s_type *pCltBd = NULL;
                         wms_client_bd_s_type *info_data = NULL;
@@ -1678,6 +1679,7 @@ int UTK_ProcessSendCDMASMSCmd(CUTK *pMe,
                             sys_free(info_data);
                         }
                     }
+#endif
 #endif
                 }
                 

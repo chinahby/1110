@@ -1237,6 +1237,7 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
 		                              pMe);
 #endif
 #if defined (FEATURE_IC19_ESN_TRACKER)
+#ifndef FEATURE_VERSION_K232_Y105A
                 // liyz modify @131206
                 if(!EsnTrackCheckCombinationInfoCfg())
                 {
@@ -1245,6 +1246,7 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
 		                              CoreApp_EsnTrackerTimer, 
 		                              pMe);
                 }
+#endif
 #endif
 
 				(void) ICONFIG_GetItem(pMe->m_pConfig,	
