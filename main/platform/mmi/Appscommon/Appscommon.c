@@ -1043,7 +1043,7 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             break;
             // option---½ñÌì---·µ»Ø
          case BTBAR_OPTION_TODAY_BACK:
-#if defined (FEATURE_VERSION_K232_Y100A) || defined (FEATURE_VERSION_K232_Y101)
+#if defined (FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_K232_Y105A) || defined (FEATURE_VERSION_K232_Y101)
             nResID_L = IDS_OPTION_Y100A;
             nResID_M = IDS_TODAY_Y100A;
 #else
@@ -1949,7 +1949,7 @@ void DrawTitleBar(IDisplay  * pIDisplay, TitleBar_Param_type *TParam)
         else
         #endif
 
-		#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_K232_Y101)
+		#if defined (FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K232_Y105A) || defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_K232_Y101)
 		{
 #ifdef FEATURE_VERSION_IN50_MMX
             IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_WHITE);

@@ -279,7 +279,7 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
    /* KEYSENSE_4 */
    /* 9,17          9,15        9,11        9,9          9,Memo*/
    { HS_3_K,   HS_LEFT_K,   HS_INFO_K,     HS_RIGHT_K,     HS_MUSIC_K}
-   #elif defined(FEATURE_VERSION_K212_12832)||defined(FEATURE_VERSION_K232_Y100)||defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_K232_Y101)
+   #elif defined(FEATURE_VERSION_K212_12832)||defined(FEATURE_VERSION_K232_Y100)||defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_K232_Y101)||defined(FEATURE_VERSION_K232_Y105A)
 		 #if defined(FEATURE_VERSION_K212_20D)
 		   { HS_PAUSE_K,   HS_6_K,  HS_9_K,  HS_POUND_K,  HS_FFWD_K},
 		   /* KEYSENSE_1 */
@@ -297,7 +297,7 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
 		   /* KEYSENSE_4 */
 		   /* 9,17          9,15        9,11        9,9          9,Memo*/
 		   { HS_3_K,   HS_LEFT_K,   HS_INFO_K,     HS_RIGHT_K,     HS_NONE_K}
-		#elif defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K232_Y100)||defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_K232_Y101)
+		#elif defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K232_Y100)||defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_K232_Y101)||defined(FEATURE_VERSION_K232_Y105A)
 			   { HS_3_K,   HS_6_K,  HS_9_K,  HS_POUND_K,  HS_NONE_K},
  			   /* KEYSENSE_1 */
  			   /* 3,17          3,15        3,11        3,9          3,Memo*/
@@ -447,7 +447,7 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
 #define INFO_KEY_COLUMN 1
 #endif
 
-#if defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_K212_12832) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K292)||defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_K232_Y101)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K232_Y105A) || defined(FEATURE_VERSION_K212_12832) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K292)||defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_K232_Y101)
 /* '1' Key */
 #define ONE_KEY_ROW      2
 #define ONE_KEY_COLUMN   0
@@ -2363,7 +2363,7 @@ void keypad_clear_headset_key(void)
 #define DLOAD_KEY_ROW  0
 #define DLOAD_KEY_COL  0
 #else
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_12832)||defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_K232_Y101)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K232_Y105A)||defined(FEATURE_VERSION_K212_12832)||defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_K232_Y101)
 #define DLOAD_KEY_ROW  4
 #define DLOAD_KEY_COL  3
 #elif defined(FEATURE_VERSION_K202)

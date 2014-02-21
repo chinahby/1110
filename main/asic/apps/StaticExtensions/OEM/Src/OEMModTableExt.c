@@ -655,7 +655,6 @@ extern int TetrisMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 //extern int GmFive_Load(IShell *ps, void *pHelpers, IModule **pMod);
 extern int TetrisMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
-
 #if defined( FEATURE_JEWISH_CALENDAR)
 extern int JewishCalendar_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif

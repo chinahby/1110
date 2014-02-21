@@ -29,7 +29,7 @@
 #include "ContApp.h"
 #include "AEETelephone.h"
 #include "AEETelDef.h"
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)||defined(FEATURE_VERSION_K232_Y105A)
 #include "tetris.h"
 #endif
 #define FILE_CONTAPP_CFG                (AEE_ADDRBOOK_DIR"\\contapp.cfg")

@@ -87,6 +87,10 @@ else ifeq ($(USES_RESDIR), Karbonn)
 CONSTFILE_FILES+=\
     poweron.gif|fs:/image/pwronoffani/poweron.gif \
     poweroff.gif|fs:/image/pwronoffani/poweroff.gif
+else ifeq ($(USES_RESDIR), Y105A)
+CONSTFILE_FILES+=\
+    poweron.gif|fs:/image/pwronoffani/poweron.gif \
+    poweroff.gif|fs:/image/pwronoffani/poweroff.gif
 else ifeq ($(USES_RESDIR), C01)
 CONSTFILE_FILES+=\
     poweronoffani.gif|fs:/image/pwronoffani/poweronoffani.gif

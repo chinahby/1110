@@ -3427,7 +3427,7 @@ void OEM_RestoreFactorySetting( void )
 	#if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W317A)
     oemi_cache.autocallrecord = FALSE;  //CFGI_AUTOCALLRECORD    //Add by pyuangui 2013-01-09 
     #endif
-    #if defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
+    #if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
     oemi_cache.reginfosms_send= FALSE; 
     #endif
     

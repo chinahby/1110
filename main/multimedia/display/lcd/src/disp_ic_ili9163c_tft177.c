@@ -317,7 +317,7 @@ static void disp_ic_init(void)
 #endif
 
 #if 1
-	#if defined( FEATURE_VERSION_C316)||defined(FEATURE_VERSION_15E)
+	#if defined(FEATURE_VERSION_15E)
 	//CPT  TXDT180CA-68v4
 	
 	LCD_WRITE_CMD(0x11); //Exit Sleep

@@ -1558,7 +1558,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
         					CLOSE_DIALOG(DLGRET_MSGBOX);
 							return TRUE;
                         }   
-#elif defined (FEATURE_VERSION_K232_Y100A) || defined (FEATURE_VERSION_K232_Y101)|| defined(FEATURE_VERSION_W021_GD821)
+#elif defined (FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_K232_Y105A) || defined (FEATURE_VERSION_K232_Y101)|| defined(FEATURE_VERSION_W021_GD821)
                         if (WSTRCMP(pMe->m_DialString, L"*#07#") == 0)       	//SAR                 	
                         { 
 							pMe->m_msg_text_id = IDS_SAR;	
@@ -1975,7 +1975,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)||defined(FEATURE_VERSION_IC241A_MMX)
 						else if (WSTRCMP(pMe->m_DialString, L"*#5374#") == 0
-#if defined(FEATURE_VERSION_W021_CT100_SALES_TRACK) ||defined(FEATURE_VERSION_K232_Y100A)  ||defined(FEATURE_VERSION_K232_Y101)                            
+#if defined(FEATURE_VERSION_W021_CT100_SALES_TRACK)||defined(FEATURE_VERSION_K232_Y105A) ||defined(FEATURE_VERSION_K232_Y100A)  ||defined(FEATURE_VERSION_K232_Y101)                            
                             ||WSTRCMP(pMe->m_DialString, L"*#4695#") == 0
 #endif                            
                             )
@@ -13598,7 +13598,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 
 		//Add By zzg 2010_09_10
 		#if defined(FEATURE_VERSION_C316)||defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_C306)|| defined (FEATURE_VERSION_K212_20D)|| defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_N68)||defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_H1201)|| defined(FEATURE_VERSION_W027)\
-			||defined(FEATURE_VERSION_W0216A_T18)||defined(FEATURE_VERSION_K212_ND)|| defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_K232_Y100)||defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_K232_Y101)|| defined(FEATURE_VERSION_W021_GD821)||defined(FEATURE_VERSION_GECOMSA_C204)//xxzhen
+			||defined(FEATURE_VERSION_W0216A_T18)||defined(FEATURE_VERSION_K232_Y105A)||defined(FEATURE_VERSION_K212_ND)|| defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_K232_Y100)||defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_K232_Y101)|| defined(FEATURE_VERSION_W021_GD821)||defined(FEATURE_VERSION_GECOMSA_C204)//xxzhen
         #ifndef FEATURE_TORCH_KEY_INFO
 		else if (((AVKType)wParam == AVK_0) && (WSTRLEN(pMe->m_DialString) == 1))
 	{	
