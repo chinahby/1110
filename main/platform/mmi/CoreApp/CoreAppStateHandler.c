@@ -1228,8 +1228,14 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
 		                              MOBILETRACKERREGINFOR_TIME,
 		                              CoreApp_MobileTrackerTimer, 
 		                              pMe);
-#endif                
+#endif   
 
+#ifdef FEATURE_VERSION_K232_Y105A
+                 (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
+		                              MOBILETRACKERREGINFOR_TIME,
+		                              CoreApp_MobileTrackerTimer, 
+		                              pMe);
+#endif
 #if defined (FEATURE_IC19_ESN_TRACKER)
                 // liyz modify @131206
                 if(!EsnTrackCheckCombinationInfoCfg())
