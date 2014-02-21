@@ -1288,6 +1288,12 @@ void DrawBottomBar(IDisplay  * pIDisplay, BottomBar_Param_type *BParam)
                                           BParam->strImgResFile, 
                                           BParam->nImgResID);
         }
+        if((0 != BParam->nImgResID)&&(STRLEN(BParam->strImgResFile) <= 0))
+        {
+            pBarImg = ISHELL_LoadResImage(pShell, 
+                                          AEE_APPSCOMMONRES_IMAGESFILE, 
+                                          BParam->nImgResID);
+        }
         #else
         if (BParam->nImgResID != 0)
         {// 用户传入参数优先
@@ -1743,7 +1749,7 @@ void DrawTitleBar(IDisplay  * pIDisplay, TitleBar_Param_type *TParam)
     // 获取主题参数
     Appscom_GetThemeParameters(&Theme_Param);
 #endif /* FEATURE_FUNCS_THEME */    
-    
+    MSG_FATAL("DrawTitleBar...................",0,0,0);
     // 确定标题条的矩形
     if (NULL != TParam->prc)
     {
@@ -1830,9 +1836,20 @@ void DrawTitleBar(IDisplay  * pIDisplay, TitleBar_Param_type *TParam)
             else
             #endif //Add End
             {
-               pBarImg = ISHELL_LoadResImage(pShell,
+               #ifdef FEATURE_VERSION_K232_Y105A
+               if((0 != TParam->nImgResID))
+               {
+                  pBarImg = ISHELL_LoadResImage(pShell,
+                                          AEE_APPSCOMMONRES_IMAGESFILE,
+                                          TParam->nImgResID);
+               }
+               else
+               #endif
+               {
+                  pBarImg = ISHELL_LoadResImage(pShell,
                                           AEE_APPSCOMMONRES_IMAGESFILE,
                                           IDI_TITLEBAR);
+               }
             }
             #endif
         }
@@ -1949,7 +1966,7 @@ void DrawTitleBar(IDisplay  * pIDisplay, TitleBar_Param_type *TParam)
         else
         #endif
 
-		#if defined (FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K232_Y105A) || defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_K232_Y101)
+		#if defined (FEATURE_VERSION_C337)|| defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_K232_Y101)
 		{
 #ifdef FEATURE_VERSION_IN50_MMX
             IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_WHITE);
@@ -1967,7 +1984,7 @@ void DrawTitleBar(IDisplay  * pIDisplay, TitleBar_Param_type *TParam)
         dwFlags = TParam->dwAlignFlags | 
                   IDF_TEXT_TRANSPARENT |
                   IDF_ALIGN_MIDDLE;
-
+        MSG_FATAL("IDISPLAY_DrawText...................",0,0,0);
         // 绘制标题文本
         (void) IDISPLAY_DrawText(pIDisplay, 
                     AEE_FONT_NORMAL, 

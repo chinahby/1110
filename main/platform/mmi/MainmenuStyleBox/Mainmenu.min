@@ -576,7 +576,8 @@ ifeq ($(USES_RESDIR),Y105A)
 	Intex_zone.png|fs:/image/mainmenu/Intex_zone.png \
 	Intex_zone_focus.png|fs:/image/mainmenu/Intex_zone_focus.png \
 	Browser.png|fs:/image/mainmenu/Browser.png \
-	Browser_focus.png|fs:/image/mainmenu/Browser_focus.png
+	Browser_focus.png|fs:/image/mainmenu/Browser_focus.png \
+	mainbackgroud.png|fs:/image/mainmenu/mainbackgroud.png
 	else
 CONSTFILE_FILES+=\
 	qsc1100_01.png|fs:/image/mainmenu/qsc1100_01.png \

@@ -16526,6 +16526,8 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 #elif defined(FEATURE_VERSION_W317A)
                     pMe->m_pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_MAINMENU_BG);
 //Add by pyuangui 20121221
+#elif defined(FEATURE_VERSION_K232_Y105A)
+                    pMe->m_pImageBg = ISHELL_LoadImage(pMe->m_pShell,ICON_MAINBACKGROUD);
 #else
 #ifndef FEATURE_LOW_MEM_BIGFONT
                     pMe->m_pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);//modi by yangdecai
@@ -17308,6 +17310,9 @@ static void DrawMatrix(MainMenu *pMe)
 #endif
 #endif
     BarParam.eBBarType = BTBAR_SELECT_BACK;
+#ifdef FEATURE_VERSION_K232_Y105A
+    BarParam.nImgResID = IDI_MAINMENU_BAR;
+#endif
 #ifdef FEATURE_VERSION_W021_C11
     DrawBottomBar_Ex(pMe->m_pShell,pMe->m_pDisplay, BTBAR_SELECT_BACK);//wlh 20090412 add
 #else
@@ -17347,6 +17352,9 @@ static void DrawFocusIcon(MainMenu *pMe)
     titleBarParms.dwAlignFlags  = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
     STRCPY( titleBarParms.strTitleResFile, MAINMENU_RES_FILE_LANG);
 	titleBarParms.nTitleResID   = pMe->m_IconTitle[theFocus];
+    #ifdef FEATURE_VERSION_K232_Y105A
+    titleBarParms.nImgResID = IDI_MAINMENU_BAR;
+    #endif
     DrawTitleBar(pMe->m_pDisplay, &titleBarParms);
    
  #if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01) || defined(FEATURE_VERSION_SKY)|| defined(FEATURE_VERSION_IN50_MMX)|| defined(FEATURE_VERSION_K232_H030)

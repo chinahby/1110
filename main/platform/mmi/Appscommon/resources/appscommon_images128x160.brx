@@ -30,7 +30,7 @@
 	</Object>
 	<Object Id="5010" Name="IDI_KEY_TEST" MimeType="image/png">
 		<File>..\images\128x160\common\QuickTest\keytest.png</File>
-	</Object>	
+	</Object>
 	<Object Id="5011" Name="IDI_TEST_DOWN" MimeType="image/png">
 		<File>..\images\128x160\common\QuickTest\down.png</File>
 	</Object>
@@ -96,6 +96,9 @@
 	</Object>
 	<Object Id="5032" Name="IDI_BACKGROUD_BLUE" MimeType="image/png">
 		<File>..\images\128x160\common\Appscommon\Menu\background\backgroundblue.png</File>
+	</Object>
+	<Object Id="5033" Name="IDI_MAINMENU_BAR" MimeType="image/png">
+		<File>..\images\128x160\common\Appscommon\Menu\titlebar\title.png</File>
 	</Object>
 	<Object Id="5041" Name="IDB_ERROR" MimeType="image/png">
 		<File>..\images\128x160\common\Appscommon\MessageBox\error.png</File>
@@ -498,11 +501,10 @@
 	</Object>
 	<Object Id="7107" Name="IDI_KEY_TEST_4" MimeType="image/png">
 		<File>..\images\128x160\common\QuickTest\keytest_4.png</File>
-	</Object>	
+	</Object>
 	<Object Id="7108" Name="IDI_KEY_TEST_6" MimeType="image/png">
 		<File>..\images\128x160\common\QuickTest\keytest_6.png</File>
-	</Object>	
-	
+	</Object>
 	<Object Id="7109" Name="IDI_MENU_ITEM_PROFILE_ALERT" MimeType="image/png">
 		<File>..\images\128x160\common\Appscommon\Menu\menu\alert.png</File>
 	</Object>

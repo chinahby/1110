@@ -867,7 +867,9 @@ typedef struct _MainMenu
 #define MUSIC_PATH7 "fs:/hsmm/mainmenu/manager.mp3"  //TOOLS
 #define MUSIC_PATH8 "fs:/hsmm/mainmenu/mesage.mp3"
 #endif
-
+#if defined (FEATURE_VERSION_K232_Y105A)
+#define ICON_MAINBACKGROUD    "fs:/image/mainmenu/mainbackgroud.png"
+#endif
 // 此宏用当前状态更新先前状态，再用nextState状态更新当前状态
 #define MOVE_TO_STATE(nextState)            \
 {                                           \
