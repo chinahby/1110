@@ -1133,7 +1133,9 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
 
 #ifndef FEATURE_VERSION_C337
 #ifndef FEATURE_VERSION_IC241A_MMX
+#ifndef FEATURE_VERSION_K232_Y105A
             Sound_App_Add_Menu(pMenu,IDS_POWERONOFF_ALERT);
+#endif
 #endif
 #endif
 

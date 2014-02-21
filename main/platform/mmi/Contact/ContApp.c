@@ -537,8 +537,14 @@ static int CContApp_InitAppData(CContApp *pMe)
                     {
                         boolean sameRecord = FALSE;
                         IAddrBook          *addr;      // IADDRBOOK interface for RUIM
-						  AECHAR  name[11] = {'I', 'N', 'T', 'E', 'X', ' ', 'C', 'A', 'R', 'E', '\0'};
-						  AECHAR Mobile[12] = {'1', '8', '0', '0', '1', '0', '3', '8', '8', '2', '2', '\0'};
+
+                        AECHAR  name[11] = {'I', 'N', 'T', 'E', 'X', ' ', 'C', 'A', 'R', 'E', '\0'};
+#ifdef FEATURE_VERSION_K232_Y105A
+                        AECHAR Mobile[12] = {'1', '8', '6', '0', '1', '0', '8', '5', '5', '5', '5', '\0'};
+#else
+						  
+						AECHAR Mobile[12] = {'1', '8', '0', '0', '1', '0', '3', '8', '8', '2', '2', '\0'};
+#endif                          
                         addr = pMe->m_pAddrPhone;
 						  pMe->m_pAddNewMobile = WSTRDUP(Mobile);	
 						  pMe->m_pAddNewName = WSTRDUP(name);	 	
