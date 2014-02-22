@@ -977,6 +977,10 @@ static int CallApp_InitAppData(CCallApp *pMe)
 	}
 #endif
 	pMe->m_bShift = FALSE;   //add by yangdecai 2010-07-27
+
+    pMe->num_edit_start_time = 0;
+
+   
 	
     return SUCCESS;
 

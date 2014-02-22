@@ -837,6 +837,8 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 				return FALSE;
 			}
 #endif
+            pMe->num_edit_start_time = GETUPTIMEMS(); 
+            
 			IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_CLEARSCREEN_ONREDRAW|DLG_NOT_UPDATE_ONREDRAW);
             pMe->m_btime_out     = 0;
             pMe->m_return_value  = RETURN_ZERO;
@@ -14128,8 +14130,32 @@ if(wp == AVK_0)
        {
        		AECHAR szStr;
        		int len=0;
-			uint16 Temp_wp = 0;
-       		len = WSTRLEN(pMe->m_DialString);
+			uint16 Temp_wp = 0;            
+
+#ifdef FEATURE_VERSION_K232_Y105A
+            /*
+            char str[10];
+
+            WSTRTOSTR(pMe->m_DialString, str, 10);
+
+            DBGPRINTF("***zzg CallApp_Process_Spec_Key 111 m_DialString=%s***", str);
+
+            MSG_FATAL("***zzg CallApp_Process_Spec_Key GETUPTIMEMS()=%d, num_edit_start_time=%d, len=%d***", GETUPTIMEMS(), pMe->num_edit_start_time, WSTRLEN(pMe->m_DialString));
+            */
+            
+            if ((GETUPTIMEMS() - pMe->num_edit_start_time) < 1000)
+            {
+                if (WSTRCMP(pMe->m_DialString, L"*") == 0)
+                {
+                    pMe->b_multenter = TRUE;
+                    pMe->m_nCursorPos = 0;
+                    pMe->m_curpros = 1;
+                    //WSTRCPY(pMe->m_DialString, L"p");                                      
+                }
+            }
+#endif            
+            len = WSTRLEN(pMe->m_DialString);
+            
         	AEE_CancelTimer(CallApp_keypadtimer,pMe);
         	szStr = CallApp_AVKSTAR_2ASCII(pMe);
         	//if(pMe->m_curpros>0 ||(pMe->m_curpros==0 && pMe->b_multenter))
@@ -14142,7 +14168,7 @@ if(wp == AVK_0)
        		    if (pMe->m_nCursorPos == 0)
 				{
         			//(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPoS], &szStr);	    
-					MSG_FATAL("pMe->m_nCursorPos=================%d",pMe->m_nCursorPos,0,0);
+					MSG_FATAL("pMe->m_curpros=================%d",pMe->m_curpros,0,0);
 					if(pMe->m_curpros == 0)
 					{
 						//return L'*';
@@ -14232,7 +14258,7 @@ if(wp == AVK_0)
         			(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos+1], wstrTemp);
 				}
         	}
-            #if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_PRESS_STAR_ADD)
+            #if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_PRESS_STAR_ADD)||defined(FEATURE_VERSION_K232_Y105A)
 			#ifdef FEATURE_VERSION_K212_BH
 			if(pMe->m_curpros<2)
 			#else
@@ -15616,7 +15642,7 @@ static void CallApp_Set_Cursor_Blink(void* pUser)
     AEERect rect = {0};
     ISHELL_CancelTimer(pMe->m_pShell, CallApp_Set_Cursor_Blink, pMe);
 
-	MSG_FATAL("***zzg CallApp_Set_Cursor_Blink***", 0, 0, 0);
+	//MSG_FATAL("***zzg CallApp_Set_Cursor_Blink***", 0, 0, 0);
 
     CallApp_Calc_Cursor_Rect(pMe, &rect);
 

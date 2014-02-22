@@ -884,6 +884,7 @@ typedef struct _CCallApp
 	boolean   m_isCallConectBacklight;
 #endif
     IStatic *pStatic;           //Add By zzg 2013_08_23
+    uint32   num_edit_start_time;   //Add By zzg 2014_02_22    
 //   boolean            m_short_hit;
 } CCallApp;
 
