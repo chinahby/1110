@@ -370,5 +370,8 @@
 	<STRING Id="2051" Name="IDS_MSG_KEYGUARD_UNLOCKKEY_OK">
 		<Text>Keyguard अनलॉक करने के लिए ठीक प्रेस</Text>
 	</STRING>
+	<String Id="2052" Name="IDS_SPEAKER">
+		<Text>वक्ता</Text>
+	</String>	
 </Strings>
 </BREWRes>
