@@ -3399,6 +3399,8 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
 
 			#if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)
 			REFUI_DRAW_BOTTOMBAR(BTBAR_END_CALL)
+			#elif defined(FEATURE_VERSION_K232_Y105A)
+			REFUI_DRAW_BOTTOMBAR(BTBAR_SPEAKER_ENDCALL)
 			#else
             REFUI_DRAW_BOTTOMBAR(BTBAR_CANCEL)
             #endif
@@ -3518,6 +3520,13 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
 					
                     return TRUE;
 
+				#ifdef FEATURE_VERSION_K232_Y105A
+                  case AVK_SELECT:
+                        pMe->m_bHandFree = TRUE;
+                        CallApp_SetupCallAudio(pMe);
+                    return TRUE;  //make the dialog can't closed by avk_clr.
+                #endif
+				
                 default:
                     break;
             }
@@ -13142,7 +13151,7 @@ static void CallApp_Draw_Connect_Softkey(CCallApp *pMe)
 		else
 		{
 			#if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)
-			REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_HANDS_FREE)
+			REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_HANDS_FREE)			
 			#else
 			REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_HANDSFREEON)
 			#endif
