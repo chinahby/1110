@@ -6796,6 +6796,7 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
             pIWmsApp = NULL;
         }
 	}
+	#ifndef FEATURE_VERSION_K232_Y105A
 	//删除电话本信息
 	{
 		IContApp * pIContApp = NULL;
@@ -6821,7 +6822,7 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
             pIContApp = NULL;
         }
 	}
-
+   #endif
     
 #ifdef FEATURE_APP_MEDIAGALLERY
 	// 删除文件夹内的文件 (存储在手机上的)
