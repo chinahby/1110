@@ -11360,7 +11360,11 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_PINYIN);
         	    	#else
 					#ifdef FEATURE_VERSION_C316
+					#ifdef FEATURE_VERSION_K232_Y105A
+					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);
+					#else
 					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_CAPLOWER);
+					#endif
 					#else
                     #ifndef FEATURE_VERSION_EC99                    
                     (void)ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);
