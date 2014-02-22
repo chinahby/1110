@@ -669,10 +669,10 @@ else
             index_m1.mp3|fs:/ringers/intex5.mp3
   else ifeq ($(USES_RESDIR),Y105A)   
 	CONSTFILE_FILES+=\
-						01.mid|fs:/ringers/intex1.mid \
-            index_m1.mid|fs:/ringers/intex2.mid \
-            index_m2.mid|fs:/ringers/intex3.mid \
-            index_m2.mp3|fs:/ringers/intex4.mp3 \
+						index_m1.mid|fs:/ringers/intex1.mid \
+            index_m2.mp3|fs:/ringers/intex2.mp3 \
+            feeling_on.mp3|fs:/ringers/intex3.mp3 \
+            feeling_off.mp3|fs:/ringers/intex4.mp3 \
             index_m1.mp3|fs:/ringers/intex5.mp3
 	else ifeq ($(USES_RESDIR),M74)                                           
         CONSTFILE_FILES+=\

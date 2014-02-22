@@ -4190,6 +4190,14 @@ static boolean recorder_format_file_name( Media* pme, char* fileNameBuffer, int 
 
 		MEMSET( fileNameBuffer, 0, fileNameBufferLenght);
 		SPRINTF( fileNameBuffer,      "%s",    pme->m_pszSaveDir);
+        #ifdef FEATURE_VERSION_K232_Y105A
+        SPRINTF( fileNameBuffer      + offset, "%02d", julian.wHour);
+        SPRINTF( fileNameBuffer + 2  + offset, "%02d", julian.wMinute);
+        SPRINTF( fileNameBuffer + 4  + offset, "%02d", julian.wDay);
+        SPRINTF( fileNameBuffer + 6  + offset, "%02d", julian.wMonth);
+        SPRINTF( fileNameBuffer + 8  + offset, "%04d", julian.wYear);
+		SPRINTF( fileNameBuffer + 12 + offset, "%s",   pme->m_pszFileExtension);
+        #else
 		SPRINTF( fileNameBuffer      + offset, "%04d", julian.wYear);
 		SPRINTF( fileNameBuffer + 4  + offset, "%02d", julian.wMonth);
 		SPRINTF( fileNameBuffer + 6  + offset, "%02d", julian.wDay);
@@ -4200,6 +4208,7 @@ static boolean recorder_format_file_name( Media* pme, char* fileNameBuffer, int 
 	//	#else
 		SPRINTF( fileNameBuffer + 12 + offset, "%02d", julian.wSecond);
 		SPRINTF( fileNameBuffer + 14 + offset, "%s",   pme->m_pszFileExtension);
+        #endif
 	//	#endif
 
 		debug( ";file name, %s", fileNameBuffer);

@@ -1360,7 +1360,7 @@ __handleKeyEvent_input_channel_done__:
 		case AVK_DOWN:
 		case AVK_I:
 		case AVK_O:
-	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_LOW_MEM_BIGFONT)
+	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K232_Y105A)||defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_LOW_MEM_BIGFONT)
 		case AVK_STAR:
 		case AVK_POUND:
 	#endif
@@ -1384,7 +1384,7 @@ __handleKeyEvent_input_channel_done__:
 					ISHELL_CancelTimer( pMe->m_pShell, (PFNNOTIFY)tuneVolumeByLeftRightArrowKeyCloseCb, pMe);
 					#endif
                     pMe->fmVolumeStop=TRUE;
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K232_Y105A)||defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)
 					if (key == AVK_STAR)
 					{
 						key = AVK_DOWN;
@@ -1393,6 +1393,14 @@ __handleKeyEvent_input_channel_done__:
 					{
 						key = AVK_UP;
 					}	
+                    #if defined(FEATURE_VERSION_K232_Y105A)
+                    else if(key == AVK_UP)
+                    {
+                        pMe->fmVolumeStop=TRUE;
+                        moveOperationModeTo( pMe, FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST_CONFIRM);
+                        return TRUE;
+                    }
+                    #endif
                     
 #endif        
 #ifdef FEATURE_ADD_VOLUP_VOLDN //xxzhen
@@ -1425,7 +1433,7 @@ __handleKeyEvent_input_channel_done__:
 						changeChannelClockwise( pMe);
 					}
 #endif
-					#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+					#if defined (FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K232_Y105A) || defined(FEATURE_VERSION_IC241A_MMX)
 					if (key == AVK_STAR)
 					{
 						key = AVK_DOWN;
@@ -1433,7 +1441,15 @@ __handleKeyEvent_input_channel_done__:
 					else if (key == AVK_POUND)
 					{
 						key = AVK_UP;
-					}						
+					}	
+                    #if defined(FEATURE_VERSION_K232_Y105A)
+                    else if(key == AVK_UP)
+                    {
+                        pMe->fmVolumeStop=TRUE;
+                        moveOperationModeTo( pMe, FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST_CONFIRM);
+                        return TRUE;
+                    }
+                    #endif
 					#endif
 					
                     if(( key == AVK_DOWN) || ( key == AVK_UP)|| ( key == AVK_I)|| ( key == AVK_O))
