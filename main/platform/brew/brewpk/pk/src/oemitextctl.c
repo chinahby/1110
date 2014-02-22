@@ -2481,7 +2481,12 @@ static void CTextCtl_SetProperties(ITextCtl * pITextCtl, uint32 nProperties)
             	#ifdef FEATURE_VERSION_C316
 				if(nProperties & TP_GRAPHIC_BGBLUE)
 				{
+				    #ifndef FEATURE_VERSION_K232_Y105A
 					pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_BACKGROUD_BLUE);
+					#else
+					OEM_Text_BLUEBackGround(pme->m_pText, TRUE);
+                    #endif
+                    
 				}
 				else
 				{
@@ -7957,7 +7962,9 @@ static void TextCtl_DrawBackGround(CTextCtl * pme, AEERect *pRect)
 			#ifdef FEATURE_VERSION_C316
 			if(pme->m_dwProps & TP_GRAPHIC_BGBLUE)
 			{
+			    #ifndef FEATURE_VERSION_K232_Y105A
 				pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_BACKGROUD_BLUE);
+                #endif
 			}
 			else
 			{
@@ -7971,7 +7978,19 @@ static void TextCtl_DrawBackGround(CTextCtl * pme, AEERect *pRect)
         }
         OEM_TextSetBackGround(pme->m_pText, pme->m_pImageBg);
     }
+    #ifdef FEATURE_VERSION_K232_Y105A
+    if(pme->m_dwProps & TP_GRAPHIC_BGBLUE)
+	{
+	    Appscommon_ResetBackground(pme->m_pIDisplay, pme->m_pImageBg, RGB_WHITE, pRect, 0, 0);
+        OEM_Text_BLUEBackGround(pme->m_pText, TRUE);
+    }
+    else
+    {
+        Appscommon_ResetBackground(pme->m_pIDisplay, pme->m_pImageBg, APPSCOMMON_BG_COLOR, pRect, 0, 0);
+    }
+    #else
     Appscommon_ResetBackground(pme->m_pIDisplay, pme->m_pImageBg, APPSCOMMON_BG_COLOR, pRect, 0, 0);
+    #endif
 }
 //end added
 

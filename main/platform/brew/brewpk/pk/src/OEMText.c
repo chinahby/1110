@@ -414,6 +414,7 @@ typedef struct _TextCtlContext {
    boolean              m_bDigital;
    uint32               m_curpos;
    uint32               m_curarri;
+   boolean              m_bblueBackG;
 #ifdef  FEATURE_T9_MT_ENGLISH   
    boolean              is_bSelectchar; 
    int                  m_oldkey;
@@ -1107,6 +1108,7 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
    pNewContext->nFontLeading = TEXT_BETWEEN_LINE_PIXEL; // 0 pixels of leading between rows
    curLngMode = LNG_ENGLISH;//OEM_Lang();  
    pNewContext->m_pImageBg = NULL;
+   pNewContext->m_bblueBackG = FALSE;
 
    {
       for (i=0;i<NUM_OF_MODES;i++) {
@@ -2591,6 +2593,30 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
             TextCtl_DrawScrollBar(pContext);
             bScroll = TRUE;
         }
+       #ifdef FEATURE_VERSION_K232_Y105A
+       if(pContext->m_bblueBackG)
+        {
+            if(pContext->dwProperties & TP_GRAPHIC_BG)
+            {
+                nOldFontColor = RGB_BLACK;
+            }
+            else
+            {
+                nOldFontColor = RGB_WHITE;
+            }
+        }
+        else
+        {
+            if(pContext->dwProperties & TP_GRAPHIC_BG)
+            {
+                nOldFontColor = TEXT_GRAPHIC_FONT_COLOR;
+            }
+            else
+            {
+                nOldFontColor = TEXT_FONT_COLOR;
+            }
+        }
+        #else
         if(pContext->dwProperties & TP_GRAPHIC_BG)
         {
             nOldFontColor = TEXT_GRAPHIC_FONT_COLOR;
@@ -2599,6 +2625,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
         {
             nOldFontColor = TEXT_FONT_COLOR;
         }
+        #endif
         nOldFontColor = IDISPLAY_SetColor(pContext->pIDisplay, CLR_USER_TEXT, nOldFontColor); 
         TextCtl_DrawTextPart(pContext, bScroll, bFrame);
         (void)IDISPLAY_SetColor(pContext->pIDisplay, CLR_USER_TEXT, nOldFontColor);
@@ -2761,6 +2788,11 @@ void OEM_TextSetBackGround(OEMCONTEXT hTextField, const IImage * pImageBg)
     {
         pContext->m_pImageBg = (IImage*)pImageBg;
     }
+}
+void OEM_Text_BLUEBackGround(OEMCONTEXT hTextField, boolean b)
+{
+    TextCtlContext *pContext = (TextCtlContext *) hTextField;
+    pContext->m_bblueBackG  = TRUE;
 }
 
 /*===========================================================================
@@ -3842,6 +3874,31 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
                 draw.x++;
                 draw.y += pContext->nExtraPixels;
            }
+           #ifdef FEATURE_VERSION_K232_Y105A
+            if(pContext->m_bblueBackG)
+            {
+                
+                if(pContext->dwProperties & TP_GRAPHIC_BG)
+                {
+                    IDISPLAY_FillRect(pContext->pIDisplay, &draw, RGB_BLACK); 
+                }
+                else
+                {
+                    IDISPLAY_FillRect(pContext->pIDisplay, &draw, RGB_WHITE/*RGB_BLACK*/); 
+                }
+            }
+            else
+            {
+                if(pContext->dwProperties & TP_GRAPHIC_BG)
+                {
+                    IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_GRAPHIC_FONT_COLOR); 
+                }
+                else
+                {
+                    IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_FONT_COLOR/*RGB_BLACK*/); 
+                }
+            }
+           #else
            if(pContext->dwProperties & TP_GRAPHIC_BG)
            {
                IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_GRAPHIC_FONT_COLOR); 
@@ -3850,6 +3907,7 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
            {
                IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_FONT_COLOR/*RGB_BLACK*/); 
            }
+           #endif
        }
     }
     else
@@ -3944,6 +4002,30 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
     			    }
     	       }
     		   #endif
+                #ifdef FEATURE_VERSION_K232_Y105A
+                if(pContext->m_bblueBackG)
+                {
+                    if(pContext->dwProperties & TP_GRAPHIC_BG)
+        	       {
+        	           IDISPLAY_FillRect(pContext->pIDisplay, &draw, RGB_BLACK); 
+        	       }
+        	       else
+        	       {
+        	           IDISPLAY_FillRect(pContext->pIDisplay, &draw, RGB_WHITE/*RGB_BLACK*/); 
+        	       }
+                }
+                else
+                {
+                    if(pContext->dwProperties & TP_GRAPHIC_BG)
+        	       {
+        	           IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_GRAPHIC_FONT_COLOR); 
+        	       }
+        	       else
+        	       {
+        	           IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_FONT_COLOR/*RGB_BLACK*/); 
+        	       }
+                }
+                #else
     	       if(pContext->dwProperties & TP_GRAPHIC_BG)
     	       {
     	           IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_GRAPHIC_FONT_COLOR); 
@@ -3952,6 +4034,7 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
     	       {
     	           IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_FONT_COLOR/*RGB_BLACK*/); 
     	       }
+               #endif
     	   }
         }
 #else    
@@ -3999,6 +4082,30 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
                 draw.x++;
                 draw.y += pContext->nExtraPixels;
            }
+           #ifdef FEATURE_VERSION_K232_Y105A
+           if(pContext->m_bblueBackG)
+           {
+                if(pContext->dwProperties & TP_GRAPHIC_BG)
+                {
+                    IDISPLAY_FillRect(pContext->pIDisplay, &draw, RGB_BLACK); 
+                }
+                else
+                {
+                    IDISPLAY_FillRect(pContext->pIDisplay, &draw, RGB_WHITE/*RGB_BLACK*/); 
+                }
+           }
+           else
+           {
+              if(pContext->dwProperties & TP_GRAPHIC_BG)
+               {
+                   IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_GRAPHIC_FONT_COLOR); 
+               }
+               else
+               {
+                   IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_FONT_COLOR/*RGB_BLACK*/); 
+               }
+           }
+           #else
            if(pContext->dwProperties & TP_GRAPHIC_BG)
            {
                IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_GRAPHIC_FONT_COLOR); 
@@ -4007,6 +4114,7 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
            {
                IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_FONT_COLOR/*RGB_BLACK*/); 
            }
+           #endif
        }
 #endif //FEATURE_ARPHIC_LAYOUT_ENGINE
     }
@@ -4568,7 +4676,31 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
            rectLeading = rectText;
            rectLeading.y += rectText.dy;
            rectLeading.dy = pContext->nFontLeading;
-           
+
+           #ifdef FEATURE_VERSION_K232_Y105A
+           if(pContext->m_bblueBackG)
+            {
+                if(pContext->dwProperties & TP_GRAPHIC_BG)
+                {
+                    dwOldBkClr = RGB_WHITE;
+                }
+                else
+                {
+                    dwOldBkClr = RGB_BLACK;
+                }
+            }
+           else
+            {
+                if(pContext->dwProperties & TP_GRAPHIC_BG)
+                {
+                    dwOldBkClr = TEXT_GRAPHIC_BG_COLOR;
+                }
+                else
+                {
+                    dwOldBkClr = TEXT_BG_COLOR;
+                }
+            }
+           #else
            if(pContext->dwProperties & TP_GRAPHIC_BG)
            {
                dwOldBkClr = TEXT_GRAPHIC_BG_COLOR;
@@ -4577,6 +4709,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
            {
                dwOldBkClr = TEXT_BG_COLOR;
            }
+           #endif
            dwOldBkClr = IDISPLAY_SetColor((IDisplay *)pContext->pIDisplay,CLR_USER_BACKGROUND,
                                 dwOldBkClr);//MAKE_RGB(255,255,255)); 
            for (; cnt > 0; ++i, --cnt) 
@@ -5313,7 +5446,19 @@ static void TextCtl_NoSelection(TextCtlContext *pContext)
 
 static void TextCtl_DrawBackGround(TextCtlContext *pContext, AEERect *pRect)
 {
+    #ifdef FEATURE_VERSION_K232_Y105A
+    if(pContext->m_bblueBackG)
+	{
+	    Appscommon_ResetBackground(pContext->pIDisplay, pContext->m_pImageBg, RGB_WHITE, pRect, 0, 0);
+    }
+    else
+    {
+        Appscommon_ResetBackground(pContext->pIDisplay, pContext->m_pImageBg, APPSCOMMON_BG_COLOR, pRect, 0, 0);
+    }
+    #else
     Appscommon_ResetBackground(pContext->pIDisplay, pContext->m_pImageBg, APPSCOMMON_BG_COLOR, pRect, 0, 0);
+    #endif
+    
 }
 
 #ifdef FEATURE_T9_INPUT

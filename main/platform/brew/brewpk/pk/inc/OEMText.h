@@ -2216,6 +2216,7 @@ int32 OEM_ExitIputMethod(OEMCONTEXT hTextField);
  /* add the code end */
  
 void OEM_TextSetBackGround(OEMCONTEXT hTextField, const IImage * pImageBg);
+void OEM_Text_BLUEBackGround(OEMCONTEXT hTextField, boolean b);
 //#ifdef  WIN32   //add by ydc
 void             OEM_TextDrawIMEDlg(OEMCONTEXT hTextField);   
 boolean          OEM_HandlePenEvt(OEMCONTEXT hTextField,
