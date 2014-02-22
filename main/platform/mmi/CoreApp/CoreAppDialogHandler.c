@@ -628,6 +628,8 @@ static void CoreApp_Media_time_Notify(void *pUser, AEEMediaCmdNotify *pCmdNotify
 #endif
 
 static void CCoreApp_LaunchApplication(CCoreApp *pMe);
+static void CCoreApp_LaunchFmRadioApp(CCoreApp *pMe);
+
 
 /*==============================================================================
 
@@ -5091,6 +5093,44 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				return TRUE;
 			}
 		}
+#ifdef FEATURE_VERSION_K232_Y105A
+        if (wParam == AVK_STAR)
+        {
+            pMe->keyend_time= GETUPTIMEMS();			
+            
+            MSG_FATAL("***zzg CoreApp EVT_KEY_RELEASE keystart_time=%d, keyend_time=%d***", pMe->keystart_time,pMe->keyend_time,0);      
+
+            ISHELL_CancelTimer(pMe->a.m_pIShell,(PFNNOTIFY)CCoreApp_LaunchFmRadioApp,pMe);
+            
+            if(pMe->keyend_time - pMe->keystart_time < 1000)
+            {
+                //CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+                
+                ICallApp         *pCallApp = NULL;                        
+
+                if ( SUCCESS != ISHELL_CreateInstance( pMe->a.m_pIShell,
+                                                AEECLSID_DIALER,
+                                                (void **)&pCallApp))
+                {
+                    return FALSE;
+                }
+                MEMSET(pMe->m_wstrEnterNum, 0, sizeof(pMe->m_wstrEnterNum));
+               
+                pMe->m_wstrEnterNum[0] = (AECHAR)'*';                       
+                
+                ICallApp_VoiceCallDial_F(pCallApp,pMe->m_wstrEnterNum);
+                
+                if (pCallApp) 
+                {
+                    ICallApp_Release(pCallApp);
+                    pCallApp = NULL;
+                }                
+                return TRUE;
+            }
+            return TRUE;
+        }
+#endif
+
 #endif					
 #endif		 
 			
@@ -5733,6 +5773,14 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif
 					}
 					break;
+#ifdef FEATURE_VERSION_K232_Y105A
+                case AVK_STAR:
+                {
+                    (void)ISHELL_SetTimer(pMe->a.m_pIShell, 1000, (PFNNOTIFY)CCoreApp_LaunchFmRadioApp, pMe); 
+                    break;
+                }
+#endif
+
 #ifndef FEATURE_LCD_TOUCH_ENABLE
 #if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || defined (FEATURE_VERSION_M8021)
 				case AVK_SOFT2:
@@ -5897,7 +5945,14 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     pMe->keystart_time = GETUPTIMEMS(); 
                     MSG_FATAL("pMe->keystart_time1=%d",pMe->keystart_time,0,0);
                     return TRUE;
-                }        
+                }      
+#elif defined (FEATURE_VERSION_K232_Y105A)      
+                if(wParam == AVK_STAR)
+                {
+                    pMe->keystart_time = GETUPTIMEMS(); 
+                    MSG_FATAL("pMe->keystart_time1=%d",pMe->keystart_time,0,0);
+                    return TRUE;
+                } 
 #endif
 
 #ifndef CUST_EDITION
@@ -10867,6 +10922,11 @@ static void CCoreApp_LaunchApplication(CCoreApp *pMe)
     OEM_SetUCBROWSER_ADSAccount();
     ISHELL_StartApplet(pMe->a.m_pIShell, AEECLSID_MY_MTS);   
 #endif
+}
+
+static void CCoreApp_LaunchFmRadioApp(CCoreApp *pMe)
+{
+    ISHELL_StartApplet(pMe->a.m_pIShell, AEECLSID_APP_FMRADIO);  
 }
 
 

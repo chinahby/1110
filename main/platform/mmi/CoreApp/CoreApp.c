@@ -771,7 +771,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     ISHELL_RegisterHandler(pMe->a.m_pIShell, HTYPE_BROWSE, "http*", 0);
 	ISHELL_RegisterHandler(pMe->a.m_pIShell, HTYPE_BROWSE, "http*", AEECLSID_CORE_APP);
 
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y105A)
 	pMe->keystart_time = 0;	
     pMe->keyend_time = 0;
 #endif

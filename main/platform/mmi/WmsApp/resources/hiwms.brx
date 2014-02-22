@@ -718,6 +718,12 @@
 	<STRING Id="1112" Name="IDS_SAVED_EX">
 		<Text>Saved</Text>
 	</STRING>
+	<STRING Id="1113" Name="IDS_APP_WMS_909C">
+		<Text>Messages</Text>
+	</STRING>
+	<STRING Id="1114" Name="IDS_CLEAR_TEXT">
+		<Text>Clear text</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">

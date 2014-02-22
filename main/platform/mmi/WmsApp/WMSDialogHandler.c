@@ -12146,6 +12146,10 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERTEMOTIONSYMBOL);
 						#endif
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERTCONTACT);
+#ifdef FEATURE_VERSION_K232_Y105A
+                        MENU_ADDITEM(pMe->m_pMenu, IDS_CLEAR_TEXT);    
+#endif
+
 #ifdef FEATURE_USES_MMS       
                         IMENUCTL_SetActive(pMenuCtl, FALSE);
                         if(!pMe->m_hasImage && !pMe->m_hasSound && !pMe->m_hasVideo)
@@ -12386,6 +12390,18 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     MSG_FATAL("***zzg IDS_INSERTCONTACT 222***", 0, 0, 0);
                     WMSExtApp_GetAddresseeFromContactsApp(pMe, GETADDR_INSERT);
                     return TRUE;
+                    
+                case IDS_CLEAR_TEXT:
+                {                    
+                    ITEXTCTL_SetText(pIText, L"", -1);
+                    (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                                EVTFLG_ASYNC,
+                                                AEECLSID_WMSAPP,
+                                                EVT_USER_REDRAW,
+                                                0, 
+                                                0);
+                    return TRUE;
+                }
                     
                 // ≤Â»Î≥£”√”Ô
                 case IDS_INSERTTEMPLATES:
