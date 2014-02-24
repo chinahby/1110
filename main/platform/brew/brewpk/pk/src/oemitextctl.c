@@ -4071,16 +4071,39 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
    rc.dy = pme->m_nFontHeight;//y;
 
    pszSym = szBuff + (nPage * 9);
-
-   if(pme->m_dwProps & TP_GRAPHIC_BG)
-   {
-        nOldFontColor = TEXT_GRAPHIC_FONT_COLOR;
-   }
-   else
-   {
-        nOldFontColor = TEXT_FONT_COLOR;
-   }
-
+   #ifdef FEATURE_VERSION_K232_Y105A
+      if(pme->m_dwProps & TP_GRAPHIC_BGBLUE)
+      {
+           if(pme->m_dwProps & TP_GRAPHIC_BG)
+           {
+                nOldFontColor = RGB_BLACK;
+           }
+           else
+           {
+                nOldFontColor = RGB_WHITE;
+           }
+      }
+      else
+      {
+           if(pme->m_dwProps & TP_GRAPHIC_BG)
+           {
+                nOldFontColor = TEXT_GRAPHIC_FONT_COLOR;
+           }
+           else
+           {
+                nOldFontColor = TEXT_FONT_COLOR;
+           }
+      }
+   #else
+       if(pme->m_dwProps & TP_GRAPHIC_BG)
+       {
+            nOldFontColor = TEXT_GRAPHIC_FONT_COLOR;
+       }
+       else
+       {
+            nOldFontColor = TEXT_FONT_COLOR;
+       }
+   #endif
    nOldFontColor = IDISPLAY_SetColor(pd, CLR_USER_TEXT, nOldFontColor);
    for(nRow = i = 0; nRow < 3; nRow++, y += cyAdd){
       for(x = dm.cxScreen/10, nCol = 0; nCol < 3; nCol++, x += cxAdd, i++, pszSym++)
