@@ -4821,7 +4821,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 		
         WSPRINTF(wszIndex,sizeof(wszIndex),wszFmt,pme->theDrawnItem);
 	
-#if defined( FEATURE_VERSION_C337)||defined( FEATURE_VERSION_IC241A_MMX)
+#if defined( FEATURE_VERSION_C337)||defined( FEATURE_VERSION_IC241A_MMX)||defined( FEATURE_VERSION_K232_Y100A)
 		{
 			IImage      *pBarImg = NULL;
 

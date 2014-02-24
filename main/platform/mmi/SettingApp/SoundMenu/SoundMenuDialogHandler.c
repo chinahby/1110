@@ -487,7 +487,7 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW|MP_ICON_ANIMATED);
 #else
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
@@ -1102,7 +1102,10 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
 #if !defined(FEATURE_LANG_ARABIC)
 #ifndef FEATURE_VERSION_C337
 #ifndef FEATURE_VERSION_IC241A_MMX
+#ifndef FEATURE_VERSION_K232_Y100A
+
             Sound_App_Add_Menu(pMenu,IDS_MISSEDCALL_ALERT);
+#endif
 #endif
 #endif
 #endif
@@ -1114,7 +1117,7 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
             //Sound_App_Add_Menu(pMenu,IDS_KEYTONE_LENGTH);
 
 	
-			#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)
+			#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 			/*
 			if (pMe->m_ePreState != DLGRET_SCENEMODESUB)
 			{
@@ -1133,12 +1136,13 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
 
 #ifndef FEATURE_VERSION_C337
 #ifndef FEATURE_VERSION_IC241A_MMX
+#ifndef FEATURE_VERSION_K232_Y100A
 #ifndef FEATURE_VERSION_K232_Y105A
             Sound_App_Add_Menu(pMenu,IDS_POWERONOFF_ALERT);
 #endif
 #endif
 #endif
-
+#endif
 #if defined (FEATURE_VERSION_IN50A)
             Sound_App_Add_Menu(pMenu,IDS_POWERONOFF_ALERT);
 #endif
@@ -3894,7 +3898,7 @@ static void VolumePreview(void *pUser)
             pMe->m_RingerID[pMe->m_CurProfile].midID = OEMNV_DEFAULTRINGER;
         }
 #endif
-		#if defined( FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K212_HUALU)
+		#if defined( FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K212_HUALU)|| defined(FEATURE_VERSION_K232_Y100A)
 		//IALERT_StartRingerAlert(pMe->m_pAlert, OEMNV_DEFAULTRINGER);
 		IALERT_StartRingerAlert(pMe->m_pAlert, pMe->m_RingerID[pMe->m_CurProfile].midID);
 		#else

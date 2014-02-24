@@ -70,7 +70,7 @@ when       who     what, where, why
 
 ////
 // Time in milliseconds before the keyguard message will close
-#if defined (FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 #define TIMEOUT_MS_KEYGUARD_TIMER              (3*1000)
 #else
 #define TIMEOUT_MS_KEYGUARD_TIMER              (1*1000)
@@ -615,7 +615,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 
 //Add By zzg 2010_11_23
 #ifndef FEATURE_UNLOCK_KEY_SPACE	
-#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_C316)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_K212_HUALU)|| defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_IC241A_MMX)
+#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_C316)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_K212_HUALU)|| defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
                 case AVK_SELECT:
 				case AVK_SOFT1:
 #elif  defined(FEATURE_VERSION_W027)
@@ -627,7 +627,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 #else
                 case AVK_CLR:
 #endif
-					#if ((defined FEATURE_VERSION_C337) || (defined FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX))
+					#if ((defined FEATURE_VERSION_C337) || (defined FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A))
 					m_bEnabled = FALSE;
                     (void) AEE_SetSysTimer(300,
                           OEMPriv_MessageTimerCBInformation,
@@ -653,7 +653,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                     break;
 
                 case AVK_STAR:
-					#if ((defined FEATURE_VERSION_C337) || (defined FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX))
+					#if ((defined FEATURE_VERSION_C337) || (defined FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A))
 					if(!m_bEnabled)
 					{
 						return TRUE;
@@ -1181,7 +1181,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
         }
         #endif
         
-#if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX))
+#if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A))
           {
               IBacklight  *Backlight;
               (void)ISHELL_CreateInstance(sgpShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
@@ -1240,7 +1240,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
 #endif            
         {
 #ifndef FEATURE_VERSION_W208S    
-#if (defined( FEATURE_VERSION_C337) || defined( FEATURE_VERSION_C316)  || defined(FEATURE_VERSION_IC241A_MMX))
+#if (defined( FEATURE_VERSION_C337) || defined( FEATURE_VERSION_C316)  || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A))
 				;
 #else
 #if defined(FEATURE_VERSION_C310)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
@@ -1299,7 +1299,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
 #endif
         {        
 #ifndef FEATURE_VERSION_W208S  
-#if (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX))
+#if (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A))
 	;
 #else
 	return FALSE;
@@ -1464,7 +1464,7 @@ void OEMKeyguard_SetState(boolean bEnabled)
     sbKeyguardEnabled = bEnabled;
 	bDrawMessage = TRUE;
 	MSG_FATAL("bEnabled======%d",0,0,0);
-#if ((defined FEATURE_VERSION_C337) || (defined FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX))
+#if ((defined FEATURE_VERSION_C337) || (defined FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A))
 	OEMPriv_DrawKeyguardInformation(!bEnabled);
 #endif
 

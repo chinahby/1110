@@ -1313,7 +1313,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 	                {
 	                	if ( pMe->m_isStartFromFacebook == TRUE)
 	                	{
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)   	 
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)   	 
 				            pMe->m_wMsgID = IDS_NOMEMORY;
 #else
 	                    	pMe->m_wMsgID = IDS_MSG_NOMEMORY;
@@ -1323,7 +1323,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 	                    {
 							if(pMe->m_bMemoryCardExist)
 		                    {
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)   	 
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)   	 
     				            pMe->m_wMsgID = IDS_NOMEMORY;
 #else
     	                    	pMe->m_wMsgID = IDS_MSG_NOMEMORY;
@@ -1410,7 +1410,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 	                {
 						if(pMe->m_bMemoryCardExist)
 	                    {
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)   	 
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)   	 
 				            pMe->m_wMsgID = IDS_NOMEMORY;
 #else
 	                    	pMe->m_wMsgID = IDS_MSG_NOMEMORY;
@@ -1809,7 +1809,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                     MSG_FATAL("CameraApp_CameraCFGHandleEvent RIGHT END:%d",pMe->m_nCameraCFG,0,0);
                     break;
 
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
                 case AVK_1:
                      pMe->m_nCameraCFG=CAMERACFGENVIRMENT;
                      break;
@@ -2217,7 +2217,7 @@ static boolean CameraApp_VideoHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint1
            
 			if (WSTRLEN(wfileName)>0)
 			{      
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
             pMe->m_rc.y += 20;    
             DrawTextWithProfile(pMe->m_pShell, 
 			                        pMe->m_pDisplay, 
@@ -2422,7 +2422,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 				pMe->m_bIsPreview = FALSE;
 	            pMe->m_nCameraState = CAM_START;
                 //Add By zzg 2013_03_28
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
                 if (pMe->m_wMsgID  != IDS_MSG_NOSDCARD)             
                 {
                     pMe->m_wMsgID = IDS_MSG_WAITING; 
@@ -2583,7 +2583,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
                     case IDS_MSG_NOSDCARD:
                     case IDS_MSG_NOCAMERA:
                     case IDS_MSG_NOMEMORY:
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)   
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)   
 		            case IDS_NOMEMORY:	
 #endif
                     case IDS_MSG_CAPTURE_FAILED:
@@ -2618,7 +2618,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 #ifdef FEATURE_DSP
             if(pMe->m_wMsgID == IDS_MSG_WAITING || pMe->m_wMsgID == IDS_DONE
                || pMe->m_wMsgID == IDS_MSG_NOSDCARD || pMe->m_wMsgID == IDS_MSG_NOMEMORY
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)      
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)      
 		       || pMe->m_wMsgID == IDS_NOMEMORY
 #endif
                ) // &&(!pMe->m_pCamera)
@@ -2634,7 +2634,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 #else                 
             
              //Add By zzg 2013_03_28
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
             if(((pMe->m_wMsgID == IDS_MSG_WAITING) || pMe->m_wMsgID == IDS_MSG_NOSDCARD) &&(!pMe->m_pCamera))
 #else
             if((pMe->m_wMsgID == IDS_MSG_WAITING) &&(!pMe->m_pCamera))

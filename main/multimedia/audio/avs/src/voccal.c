@@ -15318,7 +15318,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_speaker_cal = {
   0x5000,                          /* CODEC Rx gain         */
 #elif defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K232_Y105A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K232_Y100A) ||defined(FEATURE_VERSION_K232_Y101) 
 #if defined  (FEATURE_VERSION_C260_IC18)||defined(FEATURE_VERSION_K232_Y100A) ||defined(FEATURE_VERSION_K232_Y105A)||defined(FEATURE_VERSION_K232_Y101)
-  0xF000, 						   /* Tx Voice Volume 	  */
+  0xFFFF, 						   /* Tx Voice Volume 	  */
 #else
   0x7000, 						   /* Tx Voice Volume 	  */
 #endif  

@@ -1035,7 +1035,7 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
          case BTBAR_OPTION_SAVE_DEL:
             nResID_L = IDS_OPTION_EX;   //IDS_OPTION;
             nResID_M = IDS_SAVE;
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
             nResID_R = IDS_CLEAR_EX;	
 #else
             nResID_R = IDS_DEL;	
@@ -3634,7 +3634,7 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
 			//#ifdef FEATURE_VERSION_C337
 			//nResID_R = IDS_PHONE_BOOK;
 			//#else
-#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
 			nResID_R = IDS_NAMES;
 #else
 			nResID_R = IDS_STRING_CONTACTS;

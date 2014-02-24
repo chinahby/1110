@@ -105,7 +105,7 @@ boolean camsensor_siv121a_init(camsensor_function_table_type *camsensor_function
 {
     uint8   sensor_id;
     
-    ERR("camsensor_siv121a_init!",0,0,0);
+    MSG_FATAL("camsensor_siv121a_init!",0,0,0);
     
     /* Input MCLK = 24MHz */
     camsensor_camclk_po_hz = 24000000;
@@ -131,17 +131,17 @@ boolean camsensor_siv121a_init(camsensor_function_table_type *camsensor_function
     camera_timed_wait(10);  //ovt
     if( !siv121a_i2c_write_byte(0x00,0x00))
     {
-        ERR("Block Select Error!",0,0,0);
+        MSG_FATAL("Block Select Error!",0,0,0);
         return FALSE;
     }
     
     if( !siv121a_i2c_read_byte(SIV121A_ID_REG,&sensor_id)) 
     {
-        ERR("read sensor_id failed!",0,0,0);
+        MSG_FATAL("read sensor_id failed!",0,0,0);
         return FALSE;
     }
     
-    ERR("sensor_id 1 = %x",sensor_id,0,0);
+    MSG_FATAL("sensor_id 1 = %x",sensor_id,0,0);
     
     /* Check if it matches it with the value in Datasheet */
     if ( sensor_id != SIV121A_SENSOR_ID)
@@ -150,7 +150,7 @@ boolean camsensor_siv121a_init(camsensor_function_table_type *camsensor_function
     }
     
     siv121a_i2c_read_byte(SIV121A_INFO_REG,&sensor_id);
-    ERR("sensor_id 2 = %x",sensor_id,0,0);
+    MSG_FATAL("sensor_id 2 = %x",sensor_id,0,0);
 #ifdef CAMSENSOR_HIGHQUALITY_PREVIEW
     initialize_siv121a_registers(CAMSENSOR_SIV121A_QTR_SIZE_WIDTH, CAMSENSOR_SIV121A_QTR_SIZE_HEIGHT);
 #else

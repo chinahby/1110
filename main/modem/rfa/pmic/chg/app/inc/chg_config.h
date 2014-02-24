@@ -176,7 +176,7 @@ when       who     what, where, why
 /*! \def AUTO_CHARGING_VBATDET
  *  \brief The VBATDET (in milli volt), in automatic charigng
  */
-#define AUTO_CHARGING_VBATDET                              4150
+#define AUTO_CHARGING_VBATDET                              4180
 #endif /* FEATURE_BATTERY_CHARGER_USE_NIMH */
 /*! \def AUTO_CHARGING_VBATDET
  *  \brief The minimum value of VBATDET (in milli volt), in automatic charigng
@@ -193,7 +193,7 @@ when       who     what, where, why
  *  setting (::AUTO_CHARGING_VBATDET) when the charging is resumed or the charger is 
  *  reinserted.
  */
-#define AUTO_CHARGING_RESUME_DETECTION_VBATDET             3800
+#define AUTO_CHARGING_RESUME_DETECTION_VBATDET             3300
 /*! \def AUTO_CHARGING_TRICKLE_T
  *  \brief The maximum trickle charging time (in minutes) in the automatic charigng
  */
@@ -290,7 +290,7 @@ when       who     what, where, why
 /*! \def AUTO_CHARGING_PULSE_VBATDET
  *  \brief The pulse charger vbatdet (in mv) in the autonomous charging
  */  
-#define AUTO_CHARGING_PULSE_VBATDET                       4175
+#define AUTO_CHARGING_PULSE_VBATDET                       4180
 #if defined(FEATURE_PMIC_HIGH_SIDE_PULSE_CHARGING)
 /*! \def CHG_TOPOFF_PULSE_TYPE
  *  \brief The pulse charger type during the topoff state

@@ -11,7 +11,6 @@ DESCRIPTION
 Copyright (c) 2004 by QUALCOMM Incorporated.  All Rights Reserved.
 ===========================================================================*/
 
-
 /*===========================================================================
 
                         EDIT HISTORY FOR FILE

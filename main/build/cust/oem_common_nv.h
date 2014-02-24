@@ -123,7 +123,7 @@
 #define OEMNV_CALLFORWARD_VOICEMAIL_ENABLE          "0"                         //CFGI_CALLFORWARD_VOICEMAIL_ENABLE 
 #define OEMNV_VOICEMAIL_NUMBER                      L"91122"                         //NV_SMS_VM_NUMBER_I 
 
-#elif defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#elif defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 //Operator parameters
 #define OEMNV_EMERGENCYNUM_TABLE_NUM                {{{"100",3},{"101",3},{"102",3},{"108",3},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0}},4} //CFGI_EMERGENCYNUM_TABLE
 #define OEMNV_CALLFORWARD_BUSY_ENABLE               "*75"                       //CFGI_CALLFORWARD_BUSY_ENABLE
@@ -259,7 +259,11 @@
 #elif defined(FEATURE_LANG_INDONESIAN)
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_INDONESIAN      //”°∂»ƒ·Œ˜—«
 #elif defined(FEATURE_LANG_HINDI)
-#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_HINDI           //”°∂»”Ô
+#ifdef FEATURE_VERSION_K232_Y100A
+#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_ENGLISH         //”¢”Ô
+#else
+#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_ENGLISH           //”°∂»”Ô
+#endif
 #elif defined(FEATURE_LANG_ARABIC)
 #ifdef FEATURE_VERSION_N021
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_ENGLISH         //NV_LANGUAGE_SELECTION_I
@@ -286,6 +290,9 @@
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_MYANMAR         //√ÂµÈŒƒ
 #else
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_ENGLISH         //NV_LANGUAGE_SELECTION_I
+#endif
+#ifdef FEATURE_VERSION_K232_Y100A
+#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_ENGLISH 
 #endif
 #define OEMNV_TV_TvSetting                          {0,0,0,0,0,0,0,{{{0},{0}},{{0},{0}}},0,{0}}
 

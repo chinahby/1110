@@ -47,13 +47,13 @@ when       who     what, where, why
  * BAT_LWR_THRESH = 3200 mV = threshold for stopping charging
  */
 #ifndef OSBL_USB_CHG_BAT_UPR_THRESH
-#define OSBL_USB_CHG_BAT_UPR_THRESH 3500
+#define OSBL_USB_CHG_BAT_UPR_THRESH 3300
 #endif
 
 #ifndef OSBL_USB_CHG_BAT_LWR_THRESH
 #define OSBL_USB_CHG_BAT_LWR_THRESH 3200
 #endif
-#define OSBL_USB_CHG_BAT_WIN_UPR_THRESH 3500
+#define OSBL_USB_CHG_BAT_WIN_UPR_THRESH 3300
 #define OSBL_USB_CHG_BAT_WIN_MID_THRESH 3200
 #define OSBL_USB_CHG_BAT_WIN_LWR_THRESH 2800
 

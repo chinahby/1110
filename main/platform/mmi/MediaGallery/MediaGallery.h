@@ -73,7 +73,7 @@
 #define MG_DOWNLOAD_FOLDER          "download"
 #else
 #define MG_PICTURES_FOLDER          "pictures"
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 #define MG_MUSIC_FOLDER				"My Music"
 #define MG_VIDEOS_FOLDER            "videos"
 #else

@@ -948,7 +948,7 @@ static boolean IDateCtl_GetDateString(IDateCtl * po, AECHAR * pBuffer, int nMaxS
 
    if (pnChars)
       *pnChars = 0;
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
 	if(dwFormat == DFMT_DD_MM_YYYY)
 	{
 		dwFormat = DFMT_DD_MON_YY;

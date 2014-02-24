@@ -1334,13 +1334,15 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
 #if defined( FEATURE_ONCE_ALARM)         
 #ifndef FEATURE_VERSION_C337  
 #ifndef FEATURE_VERSION_IC241A_MMX
+#ifndef FEATURE_VERSION_K232_Y100A
 
             if(IMENUCTL_GetSel(pMe->m_pRepMode) == WEEK_ALARM_REP11)
             {
                 IMENUCTL_SetSel(pMe->m_pSnooze,ITEM_SNOOZE_4);
             }
             else
-#endif                
+#endif      
+#endif
 #endif				
 #endif //defined( FEATURE_ONCE_ALARM)         
             {
@@ -1358,15 +1360,17 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
                 }
                 else
                 {
-                    #ifdef FEATURE_VERSION_K212_HUALU
+                    #if defined(FEATURE_VERSION_K212_HUALU)
                         IMENUCTL_SetSel( pMe->m_pSnooze, ITEM_SNOOZE_1);
+                    #elif defined(FEATURE_VERSION_K232_Y100A)
+                        IMENUCTL_SetSel( pMe->m_pSnooze, ITEM_SNOOZE_2);
                     #else
                         IMENUCTL_SetSel( pMe->m_pSnooze, ITEM_SNOOZE_4);
                     #endif
                 }
             }
             
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)       
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)      
             IMENUCTL_SetSel( pMe->m_pRepMode, WEEK_ALARM_REP11);		
 #else
             IMENUCTL_SetSel( pMe->m_pRepMode, pMe->m_ClockCfg.RepMode[pMe->m_eCurAlarmType]);	    
@@ -1927,8 +1931,11 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
                 (void)ICONFIG_GetItem(pMe->m_pConfig, CFGI_RINGER_VOL, &ringer_vol, sizeof(ringer_vol));   
 
                 MSG_FATAL("***zzg ClockApp EVT_START alert_type=%x, ringer_vol=%x***", alert_type, ringer_vol, 0);   
-
+#if defined(FEATURE_VERSION_K232_Y100A)  
+                if ((ringer_vol == 0))
+#else
                 if ((alert_type == 0) && (ringer_vol == 0))
+#endif
                 {
                     (void)ICONFIG_SetItem(pMe->m_pConfig, CFGI_ALERT_TYPE, &tmptype, sizeof(tmptype));                  
                     (void)ICONFIG_SetItem(pMe->m_pConfig, CFGI_RINGER_VOL, &tmpvol, sizeof(tmpvol));    
@@ -2079,6 +2086,7 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
                 } 
                 IBACKLIGHT_Release(Backlight);
             }
+            IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE);
             #endif
 #if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K232_Y100A)
             {
@@ -2182,7 +2190,7 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
                     CClockApps_DeActivate( pMe);
 #endif
 
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
 #ifdef FEATURE_ONCE_ALARM  
                     if (pMe->m_ClockCfg.RepMode[pMe->m_eCurAlarmType] == WEEK_ALARM_REP11)
                     {
@@ -2898,8 +2906,11 @@ static void CClockApps_AniClockImg(CClockApps *pMe)
 		#if 0
         DrawTitleBar(pMe->m_pDisplay,&title);
 		#else
+        MSG_FATAL("CClockApps_AniClockImg.........",0,0,0);
         if(pMe->m_pIAnn != NULL)
         {
+            MSG_FATAL("IANNUNCIATOR_SetFieldTextEx.........",0,0,0);
+            IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
 		    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,wszTitle,FALSE);
         }
 		#endif
@@ -3132,6 +3143,8 @@ static boolean CClockApps_HandleKeyEvent(CClockApps *pMe, uint16 wParam)
 #if defined( FEATURE_ONCE_ALARM)         
 #ifndef FEATURE_VERSION_C337  
 #ifndef FEATURE_VERSION_IC241A_MMX
+#ifndef FEATURE_VERSION_K232_Y100A
+
             if(pMe->m_nCtlID == IDC_CLOCK_SNOOZE)
             {
                 if(IMENUCTL_GetSel(pMe->m_pRepMode) == ITEM_REP_MODE_11)
@@ -3148,7 +3161,8 @@ static boolean CClockApps_HandleKeyEvent(CClockApps *pMe, uint16 wParam)
                 }
             }  
 #endif            
-#endif			
+#endif		
+#endif
 #endif //defined( FEATURE_ONCE_ALARM)         
             return TRUE;
 

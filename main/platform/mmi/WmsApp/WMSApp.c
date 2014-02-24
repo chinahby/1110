@@ -6317,7 +6317,7 @@ void WmsApp_UpdateAnnunciators(WmsApp * pMe)
         {// 用户优先使用RUIM
             if (pMe->m_memruimStatuse.used_tag_slots >= pMe->m_memruimStatuse.max_slots)
             {// UIM 存储空间已满
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)            
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)            
                 if (nInMsgs >= IN_MAX-1)
                 {// 存储空间已满
  		    wms_cache_info_list   *pList = NULL;
@@ -6424,7 +6424,7 @@ void WmsApp_UpdateAnnunciators(WmsApp * pMe)
         }
         else
         {// 用户优先使用手机内存
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)            
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)            
                 if (nInMsgs >= IN_MAX-1)
                 {// 存储空间已满
                    if (pMe->m_memruimStatuse.used_tag_slots >= pMe->m_memruimStatuse.max_slots)

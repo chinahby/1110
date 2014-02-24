@@ -1289,7 +1289,7 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
 			{
 				AECHAR WTitle[40] = {0};
 				
-				#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
+				#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 					                        MGRES_LANGFILE,                                
 					                        IDS_MG_MEDIAGALLERY_C337,
@@ -1325,7 +1325,7 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
       {
          const char *pszResFile = MGRES_LANGFILE;
 
-		 #if  defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
+		 #if  defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 		 uint16 wResID = IDS_MG_MEDIAGALLERY_C337;
 		 #else
 		 uint16 wResID = IDS_MG_MEDIAGALLERY;
@@ -1335,7 +1335,7 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
 
          if(eStartMode == MGSM_NORMAL_EXPLORER)
          {
-         	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
+         	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 			wResID = IDS_MG_MEDIAGALLERY_C337;
 			#else
             wResID = IDS_MG_MEDIAGALLERY;
@@ -1368,7 +1368,7 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
          else if(eStartMode == MGSM_RECORD_VIEW ||
                  eStartMode == MGSM_FILE_SELECT)
          {
-         	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
+         	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 			wResID = IDS_MG_MEDIAGALLERY_C337;
 			#else
             wResID = IDS_MG_MEDIAGALLERY;
@@ -1410,6 +1410,8 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
          IANNUNCIATOR_Redraw(pMe->m_pIAnn);
 #ifndef FEATURE_VERSION_C337  
 #ifndef FEATURE_VERSION_IC241A_MMX
+#ifndef FEATURE_VERSION_K232_Y100A
+
          if((nBackground = app_media_scheduler()) != APP_MEDIA_ALLOW)
          {
             MG_FARF(ADDR, ("nBackground is %d", nBackground));
@@ -1421,7 +1423,8 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
          }
          else
 #endif            
-#endif		 	
+#endif		
+#endif
 	  if(MG_MENUITEM_NULL == *pPrevSelItemID)
          {
             nState = MediaGalleryApp_GetCallbackState(pMe, MG_CBT_TESTCARD0);
@@ -2850,7 +2853,7 @@ static boolean MediaGalleryApp_OnDefaultOperate(CMediaGalleryApp* pMe,
    else
    {
       MGMimeType     eMimeBase;
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
       int nBackground; 	    		 
      if((nBackground = app_media_scheduler()) != APP_MEDIA_ALLOW)
      {

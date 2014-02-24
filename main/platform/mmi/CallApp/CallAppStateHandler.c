@@ -800,9 +800,32 @@ static NextFSMAction STATE_ORIGINATIONHanlder(CCallApp *pMe)
     switch(pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
+            #ifdef FEATURE_VERSION_K232_Y100A
+            #ifdef FEATURE_OEMOMH
+            if((!IRUIM_IsCardConnected(pMe->m_pIRUIM))&&(WSTRCMP(pMe->m_CallsTable->call_number,L"911")!=0)
+                &&(WSTRCMP(pMe->m_CallsTable->call_number,L"112")!=0)&&(WSTRCMP(pMe->m_CallsTable->call_number,L"100")!=0)
+                &&(WSTRCMP(pMe->m_CallsTable->call_number,L"101")!=0)&&(WSTRCMP(pMe->m_CallsTable->call_number,L"102")!=0)
+                &&(WSTRCMP(pMe->m_CallsTable->call_number,L"108")!=0))
+            {
+                MOVE_TO_STATE(STATE_EXIT)
+                return NFSMACTION_CONTINUE;
+            }
+            else
+            {
+                 pMe->m_bNotOverwriteDlgRet = FALSE;
+                FREEIF(pMe->m_pwstrDialStringkeep);
+                CallApp_ShowDialog(pMe, IDD_CALLING);
+            }
+            #else
             pMe->m_bNotOverwriteDlgRet = FALSE;
             FREEIF(pMe->m_pwstrDialStringkeep);
             CallApp_ShowDialog(pMe, IDD_CALLING);
+            #endif
+            #else
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            FREEIF(pMe->m_pwstrDialStringkeep);
+            CallApp_ShowDialog(pMe, IDD_CALLING);
+            #endif
             return NFSMACTION_WAIT;
 
         case DLGRET_OK:

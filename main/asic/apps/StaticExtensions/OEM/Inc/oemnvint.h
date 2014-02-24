@@ -334,9 +334,9 @@ when       who     what, where, why
 #endif
 #endif
 
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99)
 #define OEMNV_BACKLIGHT_LEVEL       (OEMNV_BACKLIGHT_LEVEL_BRIGHT)
-#elif defined(FEATURE_VERSION_W516_C260)
+#elif defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_K232_Y100A)
 #define OEMNV_BACKLIGHT_LEVEL       (OEMNV_BACKLIGHT_LEVEL_BRIGHT)
 #elif defined(FEATURE_VERSION_K212_ND)
 #define OEMNV_BACKLIGHT_LEVEL       (OEMNV_BACKLIGHT_LEVEL_NORMAL)
@@ -1134,13 +1134,18 @@ typedef struct _OEMErrLogType {
 #define OEMNV_EMERG_NUM_ONE                    "*1"
 #define OEMNV_EMERG_NUM_TWO                    "911"
 #define OEMNV_EMERG_NUM_TRE                    "*171"
-#elif defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W021_GD821) || defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_K232_Y101)
+#elif defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W021_GD821) || defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_K232_Y101)
 #define OEMNV_EMERT_SEZE                       4
 #define OEMNV_EMERG_NUM_LEN                    3
 #define OEMNV_EMERG_NUM_ONE                    "100"
 #define OEMNV_EMERG_NUM_TWO                    "101"
 #define OEMNV_EMERG_NUM_TRE                    "102"
 #define OEMNV_EMERG_NUM_FOR                    "108"
+#elif defined(FEATURE_VERSION_K232_Y100A)
+#define OEMNV_EMERT_SEZE                       2
+#define OEMNV_EMERG_NUM_LEN                    3
+#define OEMNV_EMERG_NUM_ONE                    "911"
+#define OEMNV_EMERG_NUM_TWO                    "112"
 #elif defined(FEATURE_VERSION_C316)
 #define OEMNV_EMERT_SEZE                       4
 #define OEMNV_EMERG_NUM_LEN                    3

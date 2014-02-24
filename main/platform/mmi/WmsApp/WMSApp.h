@@ -104,7 +104,7 @@
 #define  POWERUP_HUALU                  'H'
 #endif
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 #define MOBILE_TRACKER_MSG              'M'
 #define SMS_TRACKER_MSG                 'T'
 #define SMS_TRACKER_MSG_TWO             'Q'

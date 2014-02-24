@@ -1720,7 +1720,7 @@ static void Calc_ClearVals(CCalcApp *pme)
     MEMSET( pme->m_pValList, 0, sizeof( pme->m_pValList));
 
 	
-#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
 	MEMSET( pme->m_szText, 0, sizeof( pme->m_szText));		//Modify by zzg 2012_11_13
 #else
 	pme->m_szText[0] = (AECHAR) '\0';

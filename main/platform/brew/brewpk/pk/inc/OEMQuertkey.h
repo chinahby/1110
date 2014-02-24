@@ -396,7 +396,7 @@ static AR_character_type  VLARCharKeyItem[MAX_ARKEYPAD_NUMBER] =
 #if defined(FEATURE_LANG_HINDI)
 static HI_character_type VLHICharKeyItem[MAX_HIKEYPAD_NUMBER] = 
 {
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
     {AVK_1,  {0x0915, 0x0916, 0x0917, 0x0918, 0x0919, 0x0967, '1'}, 7}, /* key 1 */
     {AVK_2,  {0x091A, 0x091B, 0x091C, 0x091D, 0x091E, 0x095B, 0x0968, '2'}, 8},      /* key 2 */
     {AVK_3,  {0x091F, 0x0920, 0x0921, 0x0922, 0x0923, 0x0969, '3'}, 7},     /* key 3 */

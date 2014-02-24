@@ -92,7 +92,7 @@ pm_sample_use_new_vbatt_interface ( void )
            Client now wants to use different votage direction, voltage and  
            and different callback. One can use of the same handle.
        */
-        desired_volt = 3500 ;
+        desired_volt = 3300 ;
         voltage_direction = VBATT_VOLTAGE_BELOW_THIS_LEVEL ;    
         cb_func = &pm_sample_vbatt_cb1 ;
         err = pm_vbatt_modify_client ( 

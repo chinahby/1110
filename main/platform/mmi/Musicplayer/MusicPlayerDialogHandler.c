@@ -691,7 +691,7 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 
 #endif//FEATURE_LCD_TOUCH_ENABLE
 
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
         case EVT_KEY_PRESS:	
 			if((wParam == AVK_LEFT) ||(wParam == AVK_RIGHT))
 			{
@@ -746,7 +746,7 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 			 break;
 #endif						
         case EVT_KEY:
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
             {
                 uint32 keycurrent_time= GETUPTIMEMS();	
 			     if(keycurrent_time - pMe->keystart_time > 1000)//long press	
@@ -3069,7 +3069,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawImageWithOffset,pMe);
 		ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_Next_Space,pMe);
 
-		#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K202_LM129C) || defined(FEATURE_VERSION_IC241A_MMX)
+		#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K202_LM129C) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 		#else
         ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawForwardImage, pMe);
         ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawRewindImage, pMe);

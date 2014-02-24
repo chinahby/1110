@@ -1493,7 +1493,8 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         if ((WSTRCMP(pMe->m_DialString, L"*#*#8378#0#") == 0)||
                         	(WSTRCMP(pMe->m_DialString, L"*#4224876#") == 0)||
                         	(WSTRCMP(pMe->m_DialString, L"*#18375#") == 0)||
-                        	(WSTRCMP(pMe->m_DialString, L"*#8375#") == 0)
+                        	(WSTRCMP(pMe->m_DialString, L"*#8375#") == 0)||
+                        	(WSTRCMP(pMe->m_DialString, L"*#64276#") == 0)
                         	#ifdef FEATURE_VERSION_K202_LM129C //xxzhen
 							||(WSTRCMP(pMe->m_DialString, L"*#6688432#") == 0)
 							#endif
@@ -3151,16 +3152,22 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
             bt_ui_process_cmcall_notify(pMe,AEET_EVENT_CALL_ORIG, FALSE);
 #endif
 #endif
+            #if 0
             #ifdef FEATURE_VERSION_K232_Y100A
             #ifdef FEATURE_OEMOMH
-            if((!IRUIM_IsCardConnected(pMe->m_pIRUIM))&&((WSTRLEN(pMe->m_CallsTable->call_number)>4)))
+            if((!IRUIM_IsCardConnected(pMe->m_pIRUIM))&&(WSTRCMP(pMe->m_CallsTable->call_number,L"911")!=0)
+                &&(WSTRCMP(pMe->m_CallsTable->call_number,L"112")!=0)&&(WSTRCMP(pMe->m_CallsTable->call_number,L"100")!=0)
+                &&(WSTRCMP(pMe->m_CallsTable->call_number,L"101")!=0)&&(WSTRCMP(pMe->m_CallsTable->call_number,L"102")!=0)
+                &&(WSTRCMP(pMe->m_CallsTable->call_number,L"108")!=0))
             {
                 MSG_FATAL("CallApp_Dialer_Not_UimCard....ISHELL_SetTimer",0,0,0);
                 (void) ISHELL_SetTimer(pMe->m_pShell,
 	                        4000,
 	                        (PFNNOTIFY)CallApp_Dialer_Not_UimCard,
 	                        (void *)pMe);
+                WSTRCMP(pMe->m_DialString, L"*#37#")
             }
+            #endif
             #endif
             #endif
             return TRUE;

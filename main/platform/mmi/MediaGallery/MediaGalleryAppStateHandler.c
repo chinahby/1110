@@ -1064,7 +1064,7 @@ static NextFSMAction MGStateMediaMenuHandler(CMediaGalleryApp* pMe)
          return NFSMACTION_WAIT;
      }
 
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)  
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)  
       case MGDLGRET_BGPLAYPROMPT:
          {
             uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);
@@ -1512,7 +1512,7 @@ static NextFSMAction MGStateVideoAddHandler(CMediaGalleryApp* pMe)
          MGMOVE_TO_STATE(pMe, STATE_EXIT);
          break;
 
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)  
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)  
       case MGDLGRET_BGPLAYPROMPT:
          {
             uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);

@@ -2387,11 +2387,11 @@ int OEMCamera_GetParm(OEMINSTANCE h, int16 nParmID, int32 * pP1, int32 * pP2)
           }
           else if(camsensor_static_params[0].sensor_model == CAMSENSOR_SIC110A_ID)
           {
-               *pP1 = 10;
+                *pP1 = 10;
           }
           else
           {
-          	   *pP1 = 10;
+          	    *pP1 = 10;
           }
           break;
       }

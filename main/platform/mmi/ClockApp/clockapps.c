@@ -960,7 +960,7 @@ static boolean ClockApps_Expired(CClockApps *pMe, AlarmType eAlarmType, boolean 
     boolean continueAlarm    = 0;
 #endif
 
-#if defined (FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
 	continueAlarm    = TRUE;
 #endif
     if (pMe == NULL)

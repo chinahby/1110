@@ -4067,7 +4067,7 @@ static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe)
         MSG_FATAL("CoreApp_Process_Charger_Msg Start",0,0,0); 
         if(pMe->m_bExtPwrState)
         {
-            #if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+            #if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
             pMe->m_nMsgID = IDS_CHARGER_CONNECTED;
 			#elif defined(FEATURE_VERSION_W317A)
 			pMe->m_nMsgID = IDS_CHARGING_CONNECTED;
@@ -4083,7 +4083,7 @@ static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe)
         } 
        else
        {
-          #if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX))
+          #if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A))
           pMe->m_nMsgID = IDS_CHARGER_REMOVED;
 		  #elif defined(FEATURE_VERSION_K202)
 		  pMe->m_nMsgID = IDS_CHARGER_FINISH;

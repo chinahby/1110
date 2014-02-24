@@ -1237,7 +1237,7 @@ static boolean dialog_handler_of_state_pwd(CScheduleApp* pme,
 #endif
                 //IDISPLAY_FillRect  (pme->m_pDisplay,&pme->m_rc,RGB_BLACK);
 
-				#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
+				#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 				(void)ISHELL_LoadResString(pme->m_pShell, 
 	                                        AEE_SCHEDULEAPP_RES_FILE,
 	                                        IDS_CALENDAR, 
@@ -1688,7 +1688,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
 #if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_K292_WSF_CN)
             CScheduleApp_DrawLunarStr(pme);
 #else
-			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
+			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 			(void)ISHELL_LoadResString(pme->m_pShell,
 							            AEE_SCHEDULEAPP_RES_FILE,                                
 							            IDS_CALENDAR,
@@ -2171,7 +2171,7 @@ static boolean  dialog_handler_of_state_option( CScheduleApp* pme,
         if( ( pme->m_CalMgr.m_dwMask & (1 << (pme->m_CalMgr.m_julianCurrentDay.wDay - 1)))
                                  && pme->m_subStateOption == SUBSTATE_OPTION_VIEWMONTH)
         {
-#if defined(FEATURE_VERSION_C337)   || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_C337)   || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
             IMENUCTL_AddItem( pMenu,
                         AEE_SCHEDULEAPP_RES_FILE,
                         IDS_DELETE,
@@ -2424,7 +2424,7 @@ static boolean  dialog_handler_of_state_option( CScheduleApp* pme,
                 }
                 break;
 				
-#if defined(FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
                 case IDS_DELETE: 		
 #else
                 case IDS_OPTION_DELETE_TODAY:
@@ -2607,7 +2607,7 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
                     AECHAR text[16];
                     TitleBar_Param_type TitleBar = {0};
 
-					#if defined (FEATURE_VERSION_C337) ||defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
+					#if defined (FEATURE_VERSION_C337) ||defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 					ISHELL_LoadResString(pme->m_pShell, 
                                             AEE_SCHEDULEAPP_RES_FILE, 
                                             IDS_CALENDAR, 
@@ -3685,7 +3685,7 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
             }
             else
             {
-#if defined(FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX) || defined(FEATURE_VERSION_K212_HUALU)  
+#if defined(FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX) || defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K232_Y100A) 
                 IMENUCTL_SetSel( pAlarm, IDS_EVENT_EDIT_ALARM_OPTION_ON_TIME);                		 
 #else
                 IMENUCTL_SetSel( pAlarm, IDS_EVENT_EDIT_ALARM_OPTION_15_MIN_BEFORE);
@@ -3895,7 +3895,7 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
                 titleBarParms.nTitleResID   = IDS_APP;
             }
 
-			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
+			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 			titleBarParms.nTitleResID   = IDS_CALENDAR;
 			#endif
 			
@@ -6478,7 +6478,7 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                     IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
                     // schedule alert
                     {
-                    	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
+                    	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 						ISHELL_LoadResString(pme->m_pShell, 
                                                 AEE_SCHEDULEAPP_RES_FILE, 
                                                 IDS_CALENDAR, 

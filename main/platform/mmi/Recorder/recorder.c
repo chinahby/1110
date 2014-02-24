@@ -209,7 +209,7 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 			pme->m_rc.dy = di.cyScreen;
             IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
 
-			#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+			#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 			ISHELL_LoadResString( pme->a.m_pIShell,
                                       AEE_RECORDER_RES_FILE,
                                       IDS_TITLE_C337,

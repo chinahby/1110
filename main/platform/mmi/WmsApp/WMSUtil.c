@@ -37,7 +37,7 @@
 #include "recentcalls.h"
 #include "mobile.h"
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX) || defined(FEATURE_OEMOMH)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX) || defined(FEATURE_OEMOMH)|| defined(FEATURE_VERSION_K232_Y100A)
 #include "AEECARDSESSION_NOTIFIER.BID"
 #include "AEECARDSESSION.BID"
 #include "AEECardSession.h"
@@ -3762,7 +3762,7 @@ GETREGISTERMSG_EXIT:
 #endif
 
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 
 void HextoStr(byte *src,char *dst,char srclen)
 {
@@ -5697,7 +5697,7 @@ wms_client_message_s_type *CWmsApp_Getspecmsg(AECHAR *pwstrType)
         case POWERUP_REGISTER_SEAMLESSSMS:
             return GetSeamlessSMS();
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 		case MOBILE_TRACKER_MSG:
 			return GetMobileTrackerSMS();
 		case SMS_TRACKER_MSG:

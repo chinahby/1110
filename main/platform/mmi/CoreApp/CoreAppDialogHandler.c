@@ -761,7 +761,7 @@ void CoreApp_SetDialogHandler(CCoreApp *pMe)
             pMe->m_pDialogHandler = IDD_WMSTIPS_Handler;
             break;
 #endif    
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 #ifndef FEATURE_VERSION_C316
 		case IDD_SALESTRACKER:
 			pMe->m_pDialogHandler = IDD_SALESTRACKER_Handler;
@@ -1442,6 +1442,7 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
             if(pMe->m_pIAnn != NULL)
             {
                 IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+                IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,L"Alarm",FALSE);
             }
 			{
             
@@ -3972,8 +3973,10 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
                     //如果是自动重启，则不播放开机铃声
                     if(db.db_poweruptype != DB_POWERUP_BYRESET)
                     {
-                        ICONFIG_GetItem( pMe->m_pConfig, CFGI_PROFILE_STARTUP_MUSIC, aRing_type, sizeof(aRing_type) );
+                        ICONFIG_GetItem( pMe->m_pConfig, CFGI_PROFILE_STARTUP_MUSIC, aRing_type, sizeof(aRing_type));
+                        #ifndef FEATURE_VERSION_K232_Y100A
                         IALERT_StartRingerAlert_Ex( pMe->m_pAlert, (uint32)aRing_type[Ring_Cur_Music] );
+                        #endif
                     }
                 }
 
@@ -5564,7 +5567,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     {
                         #if defined( FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_K212_HUALU)|| defined(FEATURE_VERSION_K212_ND)|| defined(FEATURE_VERSION_K232_Y101)
                            Mainmenu_KeypadLock(TRUE);
-			            #elif defined ( FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+			            #elif defined ( FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 						   WMSDialog_KeypadLock(TRUE);
 						#elif defined (FEATURE_VERSION_C316)
 						   APPDialog_KeypadLock(TRUE);
@@ -6414,7 +6417,7 @@ static boolean	IDD_SALESTRACKER_Handler(void *pUser,
 				BottomBar_Param_type bottomParam;
                 // 从资源文件取消息内容
                 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_SALESTRACKER)
-                #if defined (FEATURE_VERSION_C260_IC19)
+                #if defined (FEATURE_VERSION_C260_IC19)|| defined(FEATURE_VERSION_K232_Y100A)
                 (void)ISHELL_LoadResString(pMe->a.m_pIShell,
                                 AEE_COREAPPRES_LANGFILE,                                
                                 IDS_MMX_SELES_TRACK,
@@ -6427,7 +6430,7 @@ static boolean	IDD_SALESTRACKER_Handler(void *pUser,
                                 wstrText,
                                 sizeof(wstrText));
                 #endif
-				#elif defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+				#elif defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 				(void)ISHELL_LoadResString(pMe->a.m_pIShell,
                                 AEE_COREAPPRES_LANGFILE,                                
                                 IDS_MMX_SELES_TRACK,
@@ -6556,7 +6559,7 @@ static boolean  IDD_SALESSUCCESS_Handler(void *pUser,
 
 				// 从资源文件取消息内容
 				#if defined (FEATURE_VERSION_W317A)||defined(FEATURE_SALESTRACKER)
-                #if defined (FEATURE_VERSION_C260_IC19)
+                #if defined (FEATURE_VERSION_C260_IC19)|| defined(FEATURE_VERSION_K232_Y100A)
                 (void)ISHELL_LoadResString(pMe->a.m_pIShell,
 								AEE_COREAPPRES_LANGFILE,								
 								IDS_MMX_SALES_SUCCESS,
@@ -6918,7 +6921,9 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
                             if(poweronoff_alert[Ring_Cur_Music]  == OEMNV_POWERONOFF_ENABLE)
                             {
                                 ICONFIG_GetItem( pMe->m_pConfig, CFGI_PROFILE_SHUTDOWN_MUSIC, aRing_type, sizeof(aRing_type) );
+                                #ifndef FEATURE_VERSION_K232_Y100A
                                 IALERT_StartRingerAlert_Ex( pMe->m_pAlert, (uint32)aRing_type[Ring_Cur_Music] );
+                                #endif
                             }
                             
 #if !defined(FEATURE_USES_LOWMEM)//&&!defined(FEATURE_LOWER_MEM)
@@ -9151,7 +9156,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
     			eBBarType = BTBAR_UNLOCK_SOS;
 			#elif defined(FEATURE_VERSION_W021_DX_POWERTEL)
 				eBBarType = BTBAR_LUNLOCK;
-			#elif defined(FEATURE_VERSION_C316)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_K212_HUALU)
+			#elif defined(FEATURE_VERSION_C316)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_K212_HUALU)|| defined(FEATURE_VERSION_K232_Y100A)
 			    eBBarType = BTBAR_UNLOCK_L;
         	#elif defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) 
         		eBBarType = BTBAR_LUNLOCK;

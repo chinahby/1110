@@ -1280,7 +1280,7 @@ typedef struct _CMusicPlayer
     MP3Recttype m_rtype;////wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
     IAnnunciator *m_pIAnn;
     boolean       m_isshift;
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 	uint32 keystart_time;	
     uint32 keyend_time;	
 #endif
