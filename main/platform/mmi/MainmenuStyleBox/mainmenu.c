@@ -17724,6 +17724,21 @@ static int StartApplet(MainMenu *pMe, int i)
         #endif
 		break;
 	case IDS_MAIN_MENU_MSTORE:
+		{
+			AECHAR WBrowserTitle[40] = {0};
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+										MAINMENU_RES_FILE_LANG, 							   
+										IDS_MAIN_MENU_MSTORE,
+										WBrowserTitle,
+										sizeof(WBrowserTitle));
+			if(pMe->m_pIAnn != NULL)
+			{
+			
+			    DBGPRINTF("IDS_MAIN_MENU_MSTORE IANNUNCIATOR_Redraw");
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WBrowserTitle,FALSE);
+				IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+			}
+		}
 #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 #if defined (FEATURE_VERSION_IN50A)
         Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.google.com.hk/"); 
