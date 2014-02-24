@@ -722,7 +722,7 @@
 		<Text>Messages</Text>
 	</STRING>
 	<STRING Id="1114" Name="IDS_CLEAR_TEXT">
-		<Text>Clear text</Text>
+		<Text>स्पष्ट पाठ</Text>
 	</STRING>
 </Strings>
 <Dialogs>
