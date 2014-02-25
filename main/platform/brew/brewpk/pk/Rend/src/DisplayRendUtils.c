@@ -101,7 +101,7 @@ static RendType DisplayRend_GetRendType(DisplayRendType idx, boolean bIn)
         {REND_SHOW_VERT_OUT,            REND_SHOW_VERT_IN},
         {REND_MOVE_HORZ_OUT,            REND_MOVE_HORZ_IN},
         {REND_MOVE_VERT_OUT,            REND_MOVE_VERT_IN},
-        #if !defined(FEATURE_VERSION_W516) && !defined(FEATURE_VERSION_W208S) && !defined(FEATURE_VERSION_W027)
+        #if !defined(FEATURE_VERSION_W516) && !defined(FEATURE_VERSION_W208S) && !defined(FEATURE_VERSION_W027)&&!defined(FEATURE_VERSION_W516_C260)
         {REND_FLY_HORZ_OUT,             REND_FLY_HORZ_IN},   
         {REND_FLY_VERT_OUT,             REND_FLY_VERT_IN},
         #endif    

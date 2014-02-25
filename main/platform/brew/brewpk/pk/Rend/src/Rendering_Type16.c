@@ -1430,7 +1430,7 @@ static const PFNRENDDRAW g_PFNRendDraw[REND_MAX] =
     Fun_REND_MOVE_HORZ_IN,
     Fun_REND_MOVE_VERT_OUT,
     Fun_REND_MOVE_VERT_IN,
-    #if !defined(FEATURE_VERSION_W516) || !defined(FEATURE_VERSION_W208S) || defined(FEATURE_VERSION_W027)
+    #if !defined(FEATURE_VERSION_W516) || !defined(FEATURE_VERSION_W208S) || !defined(FEATURE_VERSION_W027)||!defined(FEATURE_VERSION_W516_C260)
     Fun_REND_FLY_HORZ_OUT,          //ª¨»Î
     Fun_REND_FLY_HORZ_IN,
     Fun_REND_FLY_VERT_OUT,

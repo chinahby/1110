@@ -7,17 +7,17 @@ typedef enum
     DISPLAYREND_TYPE_SHOW_VERT,     // 垂直显示
     DISPLAYREND_TYPE_MOVE_HORZ,     // 水平移动
     DISPLAYREND_TYPE_MOVE_VERT,     // 垂直移动
-    #if !defined(FEATURE_VERSION_W516) && !defined(FEATURE_VERSION_W208S) && !defined(FEATURE_VERSION_W027)
+    #if !defined(FEATURE_VERSION_W516) && !defined(FEATURE_VERSION_W208S) && !defined(FEATURE_VERSION_W027)&&!defined(FEATURE_VERSION_W516_C260)
     DISPLAYREND_TYPE_FLY_HORZ,      // 水平飞行
     DISPLAYREND_TYPE_FLY_VERT,      // 垂直飞行
     #endif
-    DISPLAYREND_TYPE_ROTAT_HORZ,    // 水平旋转
-    DISPLAYREND_TYPE_ROTAT_VERT,    // 垂直旋转
+    DISPLAYREND_TYPE_ROTAT_HORZ,    // 水平Gi转
+    DISPLAYREND_TYPE_ROTAT_VERT,    // 垂直Gi转
     DISPLAYREND_TYPE_BLINDS_VERT,   // 垂直百叶窗
     DISPLAYREND_TYPE_BLINDS_INTER,  // 交叉百叶窗
     DISPLAYREND_TYPE_GROUP,         // 分组的最大值
     DISPLAYREND_TYPE_RAND,          // 随机
-    DISPLAYREND_TYPE_ONEBYONE,      // 逐个
+    DISPLAYREND_TYPE_ONEBYONE,      // 謌个
     DISPLAYREND_TYPE_MAX,
 }DisplayRendType;
 

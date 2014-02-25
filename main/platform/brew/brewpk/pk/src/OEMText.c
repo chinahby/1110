@@ -1967,7 +1967,7 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
     // Press and hold the number key to get the number
 	#ifndef FEATURE_ALL_KEY_PAD
 
-	#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_1110W516) ||defined(FEATURE_VERSION_W027) || defined(FEATURE_VERSION_M74)
+	#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_1110W516) ||defined(FEATURE_VERSION_W027) || defined(FEATURE_VERSION_M74)||defined(FEATURE_VERSION_W516_C260)
 
     if ((eCode == EVT_KEY_RELEASE)||(eCode == EVT_KEY_PRESS))
     #else
@@ -3971,7 +3971,7 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
     	   MSG_FATAL("...............................2",0,0,0);
     	   scratch.x += (int16)( (uint16) scratch.dx >> 1 ) + 1;
     	   scratch.dx = 1;
-           #if defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)
+           #if defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_W516_C260)
     	   scratch.dy = 17;
     	   #else
            scratch.dy =  pContext->nFontAscent + pContext->nFontDescent; 
@@ -13282,7 +13282,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 #if !defined (FEATURE_ALL_KEY_PAD)
 	        case AVK_STAR:
 
-#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_M74)
+#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_M74)||defined(FEATURE_VERSION_W516_C260)
 
               if(eCode == EVT_KEY_HELD)
               {
@@ -13300,7 +13300,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 #endif
               {
 
-                #if defined(FEATURE_VERSION_W515V3) ||defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_M74)
+                #if defined(FEATURE_VERSION_W515V3) ||defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_M74)||defined(FEATURE_VERSION_W516_C260)
 
                 	AEE_CancelTimer(TextCtl_keypadtimer,pContext);
                 	{    
