@@ -615,7 +615,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 
 //Add By zzg 2010_11_23
 #ifndef FEATURE_UNLOCK_KEY_SPACE	
-#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_C316)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_K212_HUALU)|| defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_C316)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_K212_HUALU)|| defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_W516_C260)
                 case AVK_SELECT:
 				case AVK_SOFT1:
 #elif  defined(FEATURE_VERSION_W027)
@@ -670,7 +670,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                         {
                             IALERT_KeyBeep(spAlert, (AVKType) wParam, TRUE);
                         }
-                        #if defined(FEATURE_VERSION_W027) || defined(FEATURE_VERSION_M74)
+                        #if defined(FEATURE_VERSION_W027) || defined(FEATURE_VERSION_M74)||defined(FEATURE_VERSION_W516_C260)
                         {
                             IBacklight  *Backlight;
                             (void)ISHELL_CreateInstance(sgpShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
@@ -1195,7 +1195,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
               IBACKLIGHT_Release(Backlight);
           }
 #endif		
-#if defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_BH)
+#if defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_BH)|| defined(FEATURE_VERSION_W516_C260)
 	if((wParam == AVK_CLR)||(wParam == AVK_END)||(wParam == AVK_INFO)||(wParam == AVK_SEND)||(wParam == AVK_1)||
 		   (wParam == AVK_2)||(wParam == AVK_3)||(wParam == AVK_4)||(wParam == AVK_5)||(wParam == AVK_6)||(wParam == AVK_7)||
 		   (wParam == AVK_8)||(wParam == AVK_9)||(wParam == AVK_0)||(wParam == AVK_STAR)||(wParam == AVK_POUND)||
@@ -1222,7 +1222,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
         IBACKLIGHT_Release(Backlight);
     }
 #endif
-#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)|| defined(FEATURE_VERSION_EC99)
+#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)|| defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_W516_C260)
 #if defined(FEATURE_VERSION_C310)//||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)
 		if((wParam == AVK_CLR)||(wParam == AVK_INFO)||(wParam == AVK_SEND)||(wParam == AVK_1)||
 		   (wParam == AVK_2)||(wParam == AVK_3)||(wParam == AVK_4)||(wParam == AVK_5)||(wParam == AVK_6)||(wParam == AVK_7)||
@@ -1243,7 +1243,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
 #if (defined( FEATURE_VERSION_C337) || defined( FEATURE_VERSION_C316)  || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A))
 				;
 #else
-#if defined(FEATURE_VERSION_C310)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
+#if defined(FEATURE_VERSION_C310)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)|| defined(FEATURE_VERSION_W516_C260)
 				if (cls == AEECLSID_CORE_APP)		//For Emergency Call
 				{
 					OEMPriv_ResumeBREW();
@@ -1288,7 +1288,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
             }            
         }
 
-#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)||defined(FEATURE_VERSION_W516_C260)
         if(wParam== AVK_CLR||wParam == AVK_END || wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)
 #elif defined (FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
         if(wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)
