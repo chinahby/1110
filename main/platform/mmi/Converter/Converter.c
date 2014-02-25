@@ -734,7 +734,7 @@ static int Converter_InitAppData(CConverter *pMe)
         return EFAILED;
     }
     MSG_FATAL("coeff2 address=%x",pMe->coeff2,0,0);
-    #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C310)
+    #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C310)||defined(FEATURE_VERSION_W516_C260)
     #else
     if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, 
                                 AEECLSID_TEXTCTL, 
@@ -820,7 +820,7 @@ static void Converter_FreeAppData(CConverter *pMe)
         ITEXTCTL_Release(pMe->coeff2);
         pMe->coeff2 = NULL;
     }
-    #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C310)
+    #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C310)||defined(FEATURE_VERSION_W516_C260)
     #else
     MSG_FATAL("coeff3 address=%x",pMe->coeff3,0,0);
     if(pMe->coeff3)
@@ -1001,7 +1001,7 @@ static void Converter_SetMenuPosition(CConverter *pMe)
     rect.y += (2*pMe->dyMenu);    
     ITEXTCTL_SetRect(pMe->coeff2, &rect);
     
-	#if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C310)
+	#if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C310)||defined(FEATURE_VERSION_W516_C260)
     #else
     rect.y += (2*pMe->dyMenu);	
     rect.y += (2*pMe->dyMenu - FRAME_SIZE);		//Add By zzg 2010_07_08
@@ -1013,7 +1013,7 @@ static void Converter_SetMenuPosition(CConverter *pMe)
     ITEXTCTL_SetProperties(pMe->pNumber2, TP_FRAME|TP_FOCUS_NOSEL|TP_FIXSETRECT);	
     ITEXTCTL_SetProperties(pMe->coeff1, TP_FRAME|TP_FOCUS_NOSEL);
     ITEXTCTL_SetProperties(pMe->coeff2, TP_FRAME|TP_FOCUS_NOSEL);
-    #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C310)
+    #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C310)||defined(FEATURE_VERSION_W516_C260)
     #else
     ITEXTCTL_SetProperties(pMe->coeff3, TP_FRAME|TP_FOCUS_NOSEL);
     #endif
@@ -1021,7 +1021,7 @@ static void Converter_SetMenuPosition(CConverter *pMe)
     ITEXTCTL_SetCursorPos(pMe->pNumber2, TC_CURSOREND);
     ITEXTCTL_SetCursorPos(pMe->coeff1, TC_CURSOREND);
     ITEXTCTL_SetCursorPos(pMe->coeff2, TC_CURSOREND);
-    #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C310)
+    #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C310)||defined(FEATURE_VERSION_W516_C260)
     #else
     ITEXTCTL_SetCursorPos(pMe->coeff3, TC_CURSOREND);
     #endif

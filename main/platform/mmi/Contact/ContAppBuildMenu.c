@@ -862,7 +862,7 @@ int CContApp_BuildAddMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         return EFAILED;
      }  
 	
-	#if defined(FEATURE_VERSION_K212) ||defined(FEATURE_LOW_MEM_BIGFONT)||defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_IN50A)
+	#if defined(FEATURE_VERSION_K212) ||defined(FEATURE_LOW_MEM_BIGFONT)||defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_IN50A)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_LEC_6)
     #else
     ai.wItemID   = IDI_ADDNEW_MENU_SELECTRINGTONE;
     ai.wImage    = IDB_RING;
@@ -1027,11 +1027,15 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
            
            #ifndef FEATURE_VERSION_K212
 		   #ifndef FEATURE_LOW_MEM_BIGFONT
+		   #ifndef FEATURE_VERSION_W516_C260
            #ifndef FEATURE_VERSION_IN50A
+		   #ifndef FEATURE_VERSION_LEC_6
            //ai.wText       = IDS_RING;
            ai.wItemID   = IDI_EDIT_MENU_RINGTONE;
            ai.wImage    = IDB_RING;
            #endif  
+		   #endif
+		   #endif
 		   #endif
            #endif
            if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
@@ -1289,6 +1293,8 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
 
             #ifndef FEATURE_VERSION_K212
 			#ifndef FEATURE_LOW_MEM_BIGFONT
+			#ifndef FEATURE_VERSION_W516_C260
+			#ifndef FEATURE_VERSION_LEC_6
             #ifndef FEATURE_VERSION_IN50A
 
                 // ringtone     
@@ -1327,7 +1333,9 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
                 }
 			#endif
 			#endif
+			#endif
             #endif
+			#endif
             }
         }
     }

@@ -2599,7 +2599,7 @@ static boolean  QuickTest_BackLightTestHandler(CQuickTest *pMe,
                                     NULL,
                                     IDF_TEXT_TRANSPARENT);
 
-#if defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_M74)||defined(FEATURE_VERSION_W021_DX_POWERTEL)           
+#if defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_M74)||defined(FEATURE_VERSION_W021_DX_POWERTEL)||defined(FEATURE_VERSION_W516_C260)           
 
             MEMSET(string, 0, sizeof(string));              
             (void)ISHELL_LoadResString(pMe->m_pShell,
@@ -2733,7 +2733,7 @@ static boolean  QuickTest_BackLightTestHandler(CQuickTest *pMe,
                     IBACKLIGHT_TurnOff(pMe->m_pIBacklight);
                     break;
 
-#if defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_M74) ||defined(FEATURE_VERSION_W021_DX_POWERTEL)  
+#if defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_M74) ||defined(FEATURE_VERSION_W021_DX_POWERTEL)||defined(FEATURE_VERSION_W516_C260)  
 
                case AVK_3:
                     IBACKLIGHT_TurnOnTorch(pMe->m_pIBacklight);

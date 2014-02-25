@@ -3282,7 +3282,7 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
                      NULL,
                      IDF_TEXT_TRANSPARENT);
 #else
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)||defined(FEATURE_VERSION_LEC_6)
    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                      AEE_FONT_BOLD,
                      wszText, 
@@ -3300,6 +3300,7 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
                      NULL,
                      IDF_TEXT_TRANSPARENT);
 #else
+#ifndef FEATURE_VERSION_W516_C260
  (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                      AEE_FONT_BOLD,
                      wszText, 
@@ -3316,6 +3317,7 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
                      PIXELS_TO_EDGE  + ((5 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	5
                      NULL,
                      IDF_TEXT_TRANSPARENT);
+#endif
 #endif
 #endif   
 #endif   

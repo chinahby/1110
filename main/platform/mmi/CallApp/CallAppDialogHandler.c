@@ -2640,7 +2640,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #ifndef FEATURE_ALL_KEY_PAD
                        if(len == 0)
                        {
-                            #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_W021_WSF_CN)&&!defined(FEATURE_VERSION_K212_HUALU)
+                            #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_W021_WSF_CN)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_W516_C260)
                        		CallApp_Draw_NumEdit_SoftKey(pMe);
                     		CallApp_Display_Number(pMe);
                     		// Draw it now!
@@ -2679,7 +2679,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     {
                        // Clearing the last digit exits the dialog
                        pMe->m_DialString[0] = 0;
-                        #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_W021_WSF_CN)
+                        #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_W021_WSF_CN)&&!defined(FEATURE_VERSION_W516_C260)
 					   CallApp_Draw_NumEdit_SoftKey(pMe);
               		   CallApp_Display_Number(pMe);
               		   // Draw it now!
@@ -8991,7 +8991,7 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         y -= (pMe->m_nCurrNumHeight);
         srcStr -= pMe->m_nCurrLineFits[i];
         MSG_FATAL("pMe->m_nCurrNumHeight=%d---pMe->m_large_Num_Height=%d",pMe->m_nCurrNumHeight,pMe->m_large_Num_Height,0);
-        #if defined(FEATURE_VERSION_1110W516)
+        #if defined(FEATURE_VERSION_1110W516)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_LEC_6)
         if((int)pMe->m_nCurrNumHeight == 30 ||(int)pMe->m_nCurrNumHeight == pMe->m_large_Num_Height)
           tempy = y-10;
         else
@@ -10332,7 +10332,7 @@ static void CallApp_Build_NumEdit_Option_Menu(CCallApp *pMe,IMenuCtl   *pMenuCtl
 #endif //FEATURE_APP_PAUSE_TIMER
             {
 #if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_1110W516) ||defined(FEATURE_VERSION_C180) ||defined(FEATURE_VERSION_W027V3) \
-|| defined(FEATURE_VERSION_H1201)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
+|| defined(FEATURE_VERSION_H1201)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)||defined(FEATURE_VERSION_W516_C260)
 #else
                 if(!pMe->m_call_info.b_emerg)
                 {
@@ -13626,7 +13626,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 
 		//Add By zzg 2010_09_10
 		#if defined(FEATURE_VERSION_C316)||defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_C306)|| defined (FEATURE_VERSION_K212_20D)|| defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_N68)||defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_H1201)|| defined(FEATURE_VERSION_W027)\
-			||defined(FEATURE_VERSION_W0216A_T18)||defined(FEATURE_VERSION_K232_Y105A)||defined(FEATURE_VERSION_K212_ND)|| defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_K232_Y100)||defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_K232_Y101)|| defined(FEATURE_VERSION_W021_GD821)||defined(FEATURE_VERSION_GECOMSA_C204)//xxzhen
+			||defined(FEATURE_VERSION_W0216A_T18)||defined(FEATURE_VERSION_K232_Y105A)||defined(FEATURE_VERSION_K212_ND)|| defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_K232_Y100)||defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_K232_Y101)|| defined(FEATURE_VERSION_W021_GD821)||defined(FEATURE_VERSION_GECOMSA_C204)||defined(FEATURE_VERSION_W516_C260)//xxzhen
         #ifndef FEATURE_TORCH_KEY_INFO
 		else if (((AVKType)wParam == AVK_0) && (WSTRLEN(pMe->m_DialString) == 1))
 	{	

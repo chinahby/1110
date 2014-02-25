@@ -5324,7 +5324,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 			}
 			//Add End
 			
-			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_LEC_6)
 			if (pMe->m_bSpeedDialParam == TRUE)
 			{
 				CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_BACK);
@@ -5484,7 +5484,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 
 					MSG_FATAL("***zzg pMe->m_eCurState=%x", pMe->m_eCurState, 0, 0);
 					
-                    #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+                    #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_LEC_6)
 					MSG_FATAL("***zzg pMe->m_bSpeedDialParam=%x", pMe->m_bSpeedDialParam, 0, 0);
 					if (pMe->m_bSpeedDialParam == TRUE)
 					{						
@@ -6348,7 +6348,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                     
                     CContApp_SetGroupItemText(pMe, pMenuCtl);
                     
-					#if !defined(FEATURE_VERSION_K212)&& !defined(FEATURE_LOW_MEM_BIGFONT)
+					#if !defined(FEATURE_VERSION_K212)&& !defined(FEATURE_LOW_MEM_BIGFONT)&&!defined(FEATURE_VERSION_W516_C260)&&!defined(FEATURE_VERSION_LEC_6)
                     #ifndef FEATURE_VERSION_IN50A
                     if (pMe->m_nRingToneID && pMe->m_nRingToneID[0] != (AECHAR)'\0')
                     {
@@ -10485,14 +10485,14 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-            #if defined(FEATURE_VERSION_S1000T)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_VERSION_IN50A)//def FEATURE_VERSION_S1000T
+            #if defined(FEATURE_VERSION_S1000T)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_VERSION_IN50A)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_LEC_6)//def FEATURE_VERSION_S1000T
             IMENUCTL_SetActive(pMenuCtl, TRUE);
             ITEXTCTL_SetActive(pTextCtl, FALSE);
             #endif
             dwMask = IDIALOG_GetProperties(pMe->m_pActiveDlg);
             dwMask |= DLG_NOT_SET_FOCUS_AUTO;
             IDIALOG_SetProperties(pMe->m_pActiveDlg, dwMask);
-            #if defined(FEATURE_VERSION_S1000T)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_VERSION_IN50A)//def FEATURE_VERSION_S1000T
+            #if defined(FEATURE_VERSION_S1000T)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_VERSION_IN50A)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_LEC_6)//def FEATURE_VERSION_S1000T
             IDIALOG_SetFocus(pMe->m_pActiveDlg, IDC_EDIT_MENU);
             #endif
             pMe->m_nInputMode =  EDIT_MENU_MODE; 
@@ -10629,7 +10629,7 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
                     }
                         
                     CContApp_SetGroupItemText(pMe, pMenuCtl);
-    				#if !defined( FEATURE_VERSION_K212)&&!defined(FEATURE_LOW_MEM_BIGFONT)
+    				#if !defined( FEATURE_VERSION_K212)&&!defined(FEATURE_LOW_MEM_BIGFONT)&&!defined(FEATURE_VERSION_W516_C260)&&!defined(FEATURE_VERSION_LEC_6)
                     #ifndef FEATURE_VERSION_IN50A
                     if (pMe->m_nRingToneID && pMe->m_nRingToneID[0] != (AECHAR)'\0')
                     {
@@ -13854,7 +13854,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
 			#else
             CONTAPP_DRAW_BOTTOMBAR(BTBAR_BACK);	
 			#endif
-#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_LEC_6)
             if (pMe->m_bSpeedDialParam == TRUE)
             {
             	CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_CANCEL);	
@@ -13870,7 +13870,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
         {
         	 switch (wParam)
              {
-             	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+             	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_LEC_6)
 				case AVK_SELECT:					
 					if ((pMe->m_bSpeedDialParam == TRUE) && (pMe->m_nSpeedDialNumber != 0))
 					{
@@ -13960,7 +13960,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
                     CLOSE_DIALOG(DLGRET_CANCELED);
                     return TRUE;		
 
-				#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+				#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_LEC_6)
 				case AVK_INFO:
 				case AVK_SELECT:
                     MSG_FATAL("***zzg Detail m_bSpeedDialParam=%x",pMe->m_bSpeedDialParam,0,0);

@@ -1434,7 +1434,7 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
 #else
 
 #ifndef FEATURE_ALERT_3AND1
-           #if defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_C117)||defined(FEATURE_VERSION_M74)
+           #if defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_C117)||defined(FEATURE_VERSION_M74)||defined(FEATURE_VERSION_W516_C260)
            #if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_IC241A_MMX)
           	Sound_App_Add_Menu(pMenu,IDS_ALERTTYPE_VIBANDRING); 
            #endif

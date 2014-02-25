@@ -3107,7 +3107,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
 #ifdef FEATURE_APP_MEDIAGALLERY
                     MediaGallery_SetUSBCableConnect(pMe->m_bExtPwrState);
 #endif
-#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W027)
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_W516_C260)
                   if(!pMe->m_bBatteryActive && pMe->m_eCurState == COREST_STANDBY)
                   {
                      pMe->m_bBatteryActive=TRUE;

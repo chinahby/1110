@@ -9885,7 +9885,8 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     int ry=0;
                     #if (defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_1110W516)||defined(FEATURE_VERSION_C11)\
                         ||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_C100)|| defined(FEATURE_VERSION_W027)\
-                        ||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_W021_C11))&&!defined(FEATURE_VERSION_W021_CT100_QVGA)                    
+                        ||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_W021_C11))&&!defined(FEATURE_VERSION_W021_CT100_QVGA)\
+                        ||defined(FEATURE_VERSION_W516_C260)
                     if(i<4 && i != 2)
                     #else
                     if(i<4)

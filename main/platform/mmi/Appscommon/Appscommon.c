@@ -3018,7 +3018,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
             #if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)|| \
             defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_W027)|| \
             defined(FEATURE_VERSION_C316)|| defined(FEATURE_VERSION_W021_CT100)|| defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_EC99)|| \
-            defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_K292)
+            defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_K292)||defined(FEATURE_VERSION_W516_C260)
             #if defined(FEATURE_VERSION_W027_HC_KK3)
             strrect.dy = StringBgImgInfo.cy/2;
 			strrect.dx = StringBgImgInfo.cx;
