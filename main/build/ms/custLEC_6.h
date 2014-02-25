@@ -8,29 +8,11 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifndef CUST_EDITION
 #define CUST_EDITION
 #endif
-//#define FEATURE_OEMOMH
-//#define FEATURE_VERSION_W027
-//#define FEATURE_VERSION_W027_IC18
-#define FEATURE_VERSION_W516_C260
-//#define FEATURE_OEMOMH
+
+#define FEATURE_VERSION_C11
+#define FEATURE_VERSION_C310
+#define FEATURE_VERSION_LEC_6
 #ifdef CUST_EDITION
-#define FEATURE_APP_BLUETOOTH
-#define FEATURE_BT
-#define FEATURE_IBT
-#define FEATURE_BT_QSOC_INBAND_SLEEP  
-#define FEATURE_DRM_NO_BREW 
-#define FEATURE_BT_SEND_FILE_ONLY		//Add By zzg 2010_11_03
-#define FEATURE_SUPPORT_BT_AUDIO
-
-#define FEATURE_TORCH_KEY_INFO			//Add By zzg 2013_06_15
-
-//#define FEATURE_LANG_DEFAULT_ENGLISH
-#define FEATURE_ENABLE_OTKSL
-#define BT_QSC1110//FEATURE_BT_QSC1100
-#define FEATURE_BT_QSOC_BTS4025_B2   //this is now we used  bluetooth  型号
-//Add by zzg 2010_10_13
-//#define FEATURE_TORCH_KEY_CAMERA			//手电筒功能按键
-//#define FEATURE_IDLE_TORCH_DOWNKEY			//idle界面的向下键对应手电筒功能
 #define FEATURE_GPIO_LAMP_EN_OUTPUT_31		//GPIO_OUTPUT_31
 #define FEATURE_SIM_SEL_GPIO_34_PULL_DOWN	//SIM_SEL== GPIO_OUP(34,GROUP_GPIO_1,GPIO_PULL_DOWN)
 #define FEATURE_GPIO_31_SIGNAL_OUPUT_31		//GPIO_31_SIGNAL == GPIO_OUTPUT_31
@@ -40,7 +22,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_SUPPORT_ID
 #define FEATURE_WMS_APP
 #define FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
-//#define FEATURE_APP_MIZONE
 #undef  FEATRUE_SUPPORT_G_SENSOR
 #define FEATURE_RUIM_PHONEBOOK
 #define FEATURE_ICARD_NO_UI_BASE
@@ -274,6 +255,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_COMBINED_PWR_END_KEYS
 //#define FEATURE_FLEXI_STATIC_BREW_APP
 #define FEATURE_DRV_SDCC
+#define FEATURE_HFAT
 #define FEATURE_SDCC_CLK_CONFIG
 #define FEATURE_HS_USB_MS_FD
 #define FEATURE_AUDIO_CAMERA_CONCURRENCY // FOR MP3
@@ -290,6 +272,14 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custcamcorder.h"
 #endif
 #include "custcamera.h"
+#undef USE_CAMSENSOR_SIV121A
+#undef USE_CAMSENSOR_SIV120A
+#undef USE_CAMSENSOR_DB8B63A
+#undef USE_CAMSENSOR_SID130B
+#undef USE_CAMSENSOR_SP0838
+#undef USE_CAMSENSOR_SP0A18
+#undef USE_CAMSENSOR_MICRON_SIV121D_0M3
+#undef USE_CAMSENSOR_GC0329
 #include "custjpeg.h"
 #endif
 #include "custuim.h"
@@ -299,10 +289,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custmmode.h"
 #include "custcdma.h"
 #include "custrf.h"
-#ifdef FEATURE_BT
-#include "custqbt.h"
-#include "custbt.h"
-#endif
 #include "custsec.h"
 #include "custcdma2000.h"
 #include "custdebug.h"
@@ -405,8 +391,5 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
    #undef FEATURE_UNIFORM_SCAN_OOS
 #endif
 
-//#ifdef CAMERA_USES_SOFTDSP
-//#define FEATURE_CAMERA_NOFULLSCREEN
-//#endif
 
 #endif /* CUSTSB2_H */
