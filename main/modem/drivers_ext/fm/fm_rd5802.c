@@ -864,7 +864,9 @@ int fm_set_volume(word wVolume,boolean speaker)
 	uint8 level = (uint8)wVolume;
 
     #if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+	#if !defined(FEATURE_VERSION_C192_MMX)
     level = (level*3)/5;
+	#endif
     #endif
     
 	if((wVolume == 0) && (fm_playing_mute == FALSE))
