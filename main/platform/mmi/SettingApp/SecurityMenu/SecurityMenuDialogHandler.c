@@ -2549,7 +2549,7 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
 #if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                 MENUITEM_HEIGHT*3,
 #elif defined(FEATURE_VERSION_K212_ND)
-								MENUITEM_HEIGHT*3-15
+								MENUITEM_HEIGHT*3-15,
 #else
                                 MENUITEM_HEIGHT*7/2,
 #endif                                 
@@ -4718,7 +4718,7 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                                 AEE_FONT_NORMAL, 
 #else
 								AEE_FONT_BOLD, 
-#endi
+#endif
                                     text,
                                     -1, 
                                     xOffset, 
