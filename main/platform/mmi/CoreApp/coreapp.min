@@ -256,6 +256,10 @@ else ifeq ($(USES_RESDIR), WSF_CN_P5)
 CONSTFILE_FILES+=\
 	poweron.gif|fs:/image/pwronoffani/poweron.gif \
 	poweroff.gif|fs:/image/pwronoffani/poweroff.gif	
+else ifeq ($(USES_RESDIR), WSF_CN_P6)
+CONSTFILE_FILES+=\
+	poweron.gif|fs:/image/pwronoffani/poweron.gif \
+	poweroff.gif|fs:/image/pwronoffani/poweroff.gif
 else ifeq ($(USES_RESDIR), CT100_QVGA)
 CONSTFILE_FILES+=\
 	poweronoff.gif|fs:/image/pwronoffani/poweronoff.gif 	
