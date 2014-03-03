@@ -6372,7 +6372,11 @@ static void MP3_RefreshPlayingTick(CMusicPlayer *pMe)
 	DrawTextWithProfile(pMe->m_pShell, 
                            pMe->m_pDisplay, 
                            RGB_WHITE_NO_TRANS, 
-                           AEE_FONT_BOLD,
+                           	#if defined(FEATURE_VERSION_K212_ND) 
+                                AEE_FONT_ITALIC,
+							#else
+								AEE_FONT_BOLD,
+							#endif
                            Wtick_time, 
                            -1, 
 							  x,
@@ -6461,6 +6465,21 @@ static void MP3_DrawMusicName(CMusicPlayer *pMe ,int index)
   	}
   	#else
   	{
+  		#ifdef FEATURE_VERSION_K212_ND
+			AEERect rect1;
+  			SETAEERECT(&rect1,0,5,160,16);
+			//pMe->m_pMP3FaceRect[1].y=3;
+			IDisplay_FillRect(pMe->m_pDisplay,&rect1,RGB_BLACK);
+			IDISPLAY_DrawText(pMe->m_pDisplay, 
+                       	AEE_FONT_ITALIC,
+                       	pMe->m_pMp3FileToPlay+index, 
+                       	-1, 
+                       	rect1.x,
+                   		rect1.y,				
+                      	&rect1, 
+                       	IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
+		MSG_FATAL("rect1.x===%d,rect1.y===%d",rect1.x,rect1.y,0);
+		#else
     		IDISPLAY_DrawText(pMe->m_pDisplay, 
                        	AEE_FONT_BOLD,
                        	pMe->m_pMp3FileToPlay+index, 
@@ -6639,8 +6658,12 @@ static void MP3_DrawIndexAndTotalTime(CMusicPlayer *pMe)
         
         DrawTextWithProfile(pMe->m_pShell, 
                                 pMe->m_pDisplay, 
-                                RGB_WHITE_NO_TRANS, 
-                                AEE_FONT_BOLD,
+                                RGB_WHITE_NO_TRANS,
+								#if defined(FEATURE_VERSION_K212_ND) 
+                                AEE_FONT_ITALIC,
+								#else
+								AEE_FONT_BOLD,
+								#endif
                                 wliststr, 
                                 -1, 
                                 LISTINDEX_X, 
@@ -6671,7 +6694,11 @@ static void MP3_DrawIndexAndTotalTime(CMusicPlayer *pMe)
     DrawTextWithProfile(pMe->m_pShell, 
  		                pMe->m_pDisplay, 
  		                RGB_WHITE_NO_TRANS, 
- 		                AEE_FONT_BOLD,
+ 		                	#if defined(FEATURE_VERSION_K212_ND) 
+                                AEE_FONT_ITALIC,
+							#else
+								AEE_FONT_BOLD,
+							#endif
  		                wtotaltimestr, 
  		                -1, 
  					    TOTALTIME_X, 
