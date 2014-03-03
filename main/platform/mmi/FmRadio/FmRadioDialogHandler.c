@@ -942,9 +942,9 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
             ITEXTCTL_SetMaxSize( pMe->pText, 6);
 #else
 		#if defined(FEATURE_DISP_128X128)
-            ITEXTCTL_SetMaxSize( pMe->pText, 4);
+            ITEXTCTL_SetMaxSize( pMe->pText, 5);
         #elif defined(FEATURE_DISP_128X128)
-        	ITEXTCTL_SetMaxSize( pMe->pText, 4);
+        	ITEXTCTL_SetMaxSize( pMe->pText, 5);
         #else
         	ITEXTCTL_SetMaxSize( pMe->pText, 5);
         #endif
@@ -2630,9 +2630,9 @@ static void showChannelEditingScreen( CFmRadio *pMe)
     ITEXTCTL_SetMaxSize(pMe->pText, 6/*bw:5*/);
 #else
 	#if defined(FEATURE_DISP_128X128)
-		ITEXTCTL_SetMaxSize(pMe->pText, 4);
+		ITEXTCTL_SetMaxSize(pMe->pText, 5);
 	#elif defined(FEATURE_DISP_128X128)
-		ITEXTCTL_SetMaxSize(pMe->pText, 4);
+		ITEXTCTL_SetMaxSize(pMe->pText, 5);
 	#else
     	ITEXTCTL_SetMaxSize(pMe->pText, 5);
     #endif
