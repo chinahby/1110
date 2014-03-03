@@ -6488,6 +6488,7 @@ static void MP3_DrawMusicName(CMusicPlayer *pMe ,int index)
                        	pMe->m_pMP3FaceRect[1].y -3, 
                        	&pMe->m_pMP3FaceRect[1], 
                        	IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
+		#endif
    }
    #endif
     //if(pMe->m_eStartMethod == STARTMETHOD_SIMPLEPLAYER)
