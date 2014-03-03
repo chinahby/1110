@@ -1076,13 +1076,28 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
         }
 
         //时间控件不显示秒项,且active时更新
-        ITIMECTL_SetFont( pMe->m_pTime, AEE_FONT_BOLD, AEE_FONT_BOLD);
+      {
+      	//AEERect rc1;
+		//SETAEERECT(&rc1,
+                                                     //   83,		
+                                                    //    20,
+                                                       // 36,
+                                                     //   19);
+		#ifdef FEATURE_VERSION_K212_ND
+        ITIMECTL_SetFont( pMe->m_pTime, AEE_FONT_ITALIC, AEE_FONT_ITALIC);
+		#else
+		ITIMECTL_SetFont( pMe->m_pTime, AEE_FONT_BOLD, AEE_FONT_BOLD);
+		#endif
+		//ITIMECTL_SetRect(pMe->m_pTime,&rc1);
         ITIMECTL_SetProperties(pMe->m_pTime, TP_NO_SECONDS | TP_AUTOREDRAW);
+		//ITIMECTL_GetRect(pMe->m_pTime,&rc1);
+		//MSG_FATAL("===%d,========%d",rc1.x,rc1.y,0);
+		//MSG_FATAL("===%d,========%d",rc1.dx,rc1.dy,0);
         ITIMECTL_SetOemProperties( pMe->m_pTime, TP_OEM_COUNTDOWNCTL_EDITABLE|(timeFormatType==OEMNV_TIMEFORM_AMPM?TP_OEM_COUNTDOWNCTL_12_FORMAT:0));
         IMENUCTL_SetOemProperties(pMe->m_pState, OEMMP_SWITCHNAVIGATIONKEY | OEMMP_IDF_ALIGN_CENTER);
         IMENUCTL_SetOemProperties(pMe->m_pRepMode, OEMMP_SWITCHNAVIGATIONKEY | OEMMP_IDF_ALIGN_CENTER);
         IMENUCTL_SetOemProperties(pMe->m_pSnooze, OEMMP_SWITCHNAVIGATIONKEY | OEMMP_IDF_ALIGN_CENTER);
-
+     }
         //记录响闹时间
 #if defined( FEATURE_ONCE_ALARM)
         if( pMe->m_ClockCfg.RepMode[pMe->m_eCurAlarmType] == WEEK_ALARM_REP11)
@@ -1294,6 +1309,8 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
 
 #ifdef FEATURE_VERSION_EC99
                     SETAEERECT( &pMe->rectLine[i], x, pMe->rectLine[i].y - 2, width, pMe->rectLine[i].dy);
+#elif defined(FEATURE_VERSION_K212_ND)
+					SETAEERECT( &pMe->rectLine[i], x, pMe->rectLine[i].y, width, pMe->rectLine[i].dy-2);
 #else
                     SETAEERECT( &pMe->rectLine[i], x, pMe->rectLine[i].y - 2, width, pMe->rectLine[i].dy + 4);
 #endif                    
@@ -2936,9 +2953,12 @@ static void CClockApps_AniClockImg(CClockApps *pMe)
         {
             AEEImageInfo ImageInfo;            
             IIMAGE_GetInfo(pResImg, &ImageInfo);
-            IIMAGE_Draw( pResImg, (pMe->m_rc.dx - ImageInfo.cx)/2, TITLEBAR_HEIGHT + (pMe->m_rc.dy - BOTTOMBAR_HEIGHT - ImageInfo.cy)/2);
-
-            //IIMAGE_Draw( pResImg, 0, GetTitleBarHeight( pMe->m_pDisplay));
+			#ifdef FEATURE_VERSION_K212_ND
+            IIMAGE_Draw( pResImg, (pMe->m_rc.dx - ImageInfo.cx)/2, TITLEBAR_HEIGHT + (pMe->m_rc.dy - BOTTOMBAR_HEIGHT - ImageInfo.cy)/2-15);
+			#else
+			IIMAGE_Draw( pResImg, (pMe->m_rc.dx - ImageInfo.cx)/2, TITLEBAR_HEIGHT + (pMe->m_rc.dy - BOTTOMBAR_HEIGHT - ImageInfo.cy)/2);
+			#endif
+			//IIMAGE_Draw( pResImg, 0, GetTitleBarHeight( pMe->m_pDisplay));
             IIMAGE_Release( pResImg);
             pResImg = NULL;
         }
@@ -2947,13 +2967,21 @@ static void CClockApps_AniClockImg(CClockApps *pMe)
         AEERect     rc = {0};
         AECHAR      wszTime[16] = {0};
         RGBVAL      nOldFontColor;
-        
-        SETAEERECT(&rc, 0, TITLEBAR_HEIGHT, pMe->m_rc.dx, TITLEBAR_HEIGHT);
+        #ifdef FEATURE_VERSION_K212_ND
+        SETAEERECT(&rc, 0, 0, pMe->m_rc.dx, TITLEBAR_HEIGHT);
+		#else
+		SETAEERECT(&rc, 0, TITLEBAR_HEIGHT, pMe->m_rc.dx, TITLEBAR_HEIGHT);
+		#endif
         Appscommon_FormatTimeString(GETTIMESECONDS(), wszTime, sizeof(wszTime));
         
         nOldFontColor = IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+		#ifdef FEATURE_VERSION_K212_ND
         IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wszTime, -1, 0, 0, 
+                            &rc, IDF_ALIGN_TOP | IDF_ALIGN_CENTER | IDF_TEXT_TRANSPARENT);
+		#else
+		IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wszTime, -1, 0, 0, 
                             &rc, IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_TEXT_TRANSPARENT);
+		#endif
         (void)IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
     }
     IDISPLAY_Update( pMe->m_pDisplay);
