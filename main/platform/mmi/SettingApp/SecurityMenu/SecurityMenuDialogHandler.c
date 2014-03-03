@@ -1576,7 +1576,7 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                                 text,
                                 -1, 
                                 xOffset, 
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_K212_ND)
                                 0,
 #else
                                 MENUITEM_HEIGHT*1/2,
@@ -1622,7 +1622,7 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                                 text,
                                 -1, 
                                 xOffset, 
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_K212_ND)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                 MENUITEM_HEIGHT*2,
 #elif defined(FEATURE_VERSION_K212_ND)
 								MENUITEM_HEIGHT*2-10,
