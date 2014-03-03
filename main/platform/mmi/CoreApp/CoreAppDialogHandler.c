@@ -3894,6 +3894,20 @@ static boolean  IDD_UIMERR_Handler(void       *pUser,
     
     return FALSE;
 } // IDD_UIMERR_Handler
+#if defined(FEATURE_FLASHLIGHT_SUPPORT)
+void turn_on_coreapp_led(CCoreApp *pMe);
+void turn_off_coreapp_led(CCoreApp *pMe)
+{
+	IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+	ISHELL_SetTimer(pMe->a.m_pIShell,3000, (PFNNOTIFY)turn_on_coreapp_led,pMe);
+}
+
+void turn_on_coreapp_led(CCoreApp *pMe)
+{
+	IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+	ISHELL_SetTimer(pMe->a.m_pIShell,100, (PFNNOTIFY)turn_off_coreapp_led,pMe);
+}
+#endif
 /*==============================================================================
 函数:
     IDD_STARTUPANI_Handler
@@ -3925,7 +3939,10 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
 	uint32 free = 0;
 	//uint32 tot = 0;
 	//uint32 larg = 0;
-	
+	#if defined(FEATURE_FLASHLIGHT_SUPPORT)
+	boolean flashlight_status = 0;
+	OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&flashlight_status, sizeof(flashlight_status));
+	#endif
     MSG_FATAL("IDD_STARTUPANI_Handler Start",0,0,0);
     switch (eCode) 
     {
@@ -3937,6 +3954,11 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
         case EVT_DIALOG_START:			
             if(pMe->m_wStartupAniTime == 0)
             {
+            #if defined(FEATURE_FLASHLIGHT_SUPPORT)
+            if(flashlight_status){
+				ISHELL_SetTimer(pMe->a.m_pIShell,3000, (PFNNOTIFY)turn_on_coreapp_led,pMe);
+        	}
+			#endif
             GETFSFREE(&dwTotal);
 			free = GETRAMFREE(NULL,NULL);
 			MSG_FATAL("EVT_DIALOG_INIT CameraApp dwTotal======%d,free====%d",dwTotal,free,0);
@@ -4031,6 +4053,11 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
                 MSG_FATAL("IDD_STARTUPANI_Handler EVT_DIALOG_END 2",0,0,0);
                 IALERT_StopRingerAlert(pMe->m_pAlert);
             }
+			#if defined(FEATURE_FLASHLIGHT_SUPPORT)
+			if(flashlight_status){
+	            ISHELL_CancelTimer(pMe->a.m_pIShell,(PFNNOTIFY)turn_on_coreapp_led,pMe);
+			}
+			#endif
             return TRUE;
 
         case EVT_DISPLAYDIALOGTIMEOUT:
@@ -6849,6 +6876,10 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
                                       uint32     dwParam)
 { 
     CCoreApp *pMe = (CCoreApp *)pUser;    
+	#if defined(FEATURE_FLASHLIGHT_SUPPORT)
+	boolean flashlight_status = 0;
+	OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&flashlight_status, sizeof(flashlight_status));
+	#endif
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -6856,6 +6887,11 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
             return TRUE;
             
         case EVT_DIALOG_START:
+		#if defined(FEATURE_FLASHLIGHT_SUPPORT)
+		if(flashlight_status){
+			ISHELL_SetTimer(pMe->a.m_pIShell,3000, (PFNNOTIFY)turn_on_coreapp_led,pMe);
+		}
+		#endif
 #ifdef FEATURE_UIALARM
             // 挂起警报器
             CoreApp_EnableShellAlarms(pMe, FALSE);
@@ -6997,6 +7033,11 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
 //            (void) ISHELL_CancelTimer(pMe->a.m_pIShell,
 //                                      pMe);
             //IALERT_StopRingerAlert(pMe->m_pAlert);
+            #if defined(FEATURE_FLASHLIGHT_SUPPORT)
+            if(flashlight_status){
+	            ISHELL_CancelTimer(pMe->a.m_pIShell,(PFNNOTIFY)turn_on_coreapp_led,pMe);
+        	}
+			#endif
             return TRUE;
 
         case EVT_DISPLAYDIALOGTIMEOUT:
@@ -10207,8 +10248,9 @@ void CoreApp_Poweroff_Phone(void *pp)
         IBACKLIGHT_TurnOff(pBacklight);
         IBACKLIGHT_Release(pBacklight);
     }
-	
+	#if !defined(FEATURE_FLASHLIGHT_SUPPORT)
 	OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&bData, sizeof(bData));
+	#endif
     // 不再关心 IBatt 通知消息
     (void) ISHELL_RegisterNotify(pMe->a.m_pIShell,
                                  AEECLSID_CORE_APP,
@@ -10578,6 +10620,8 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
 		MSG_FATAL("m_ImageInfo.cx=%d, m_ImageInfo.cy=%d", m_ImageInfo.cx, m_ImageInfo.cy, 0);
 #if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
         SETAEERECT(&clip, 0, MUSIC_WIDTH, pMe->m_rc.dx, pMe->m_nNormalFontHeight + 4); 
+#elif defined(FEATURE_DISP_128X128)
+		SETAEERECT(&clip, 0, MUSIC_WIDTH, pMe->m_rc.dx, pMe->m_nNormalFontHeight + 2); 
 #else
         SETAEERECT(&clip, 0, MUSIC_WIDTH, pMe->m_rc.dx, pMe->m_nLargeFontHeight + 4); 
 #endif
@@ -10600,6 +10644,8 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
 #if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
     MSG_FATAL("rect.x=%d,w=%d", pMe->m_rc.dx/6, pMe->m_nNormalFontHeight, 0);
     SETAEERECT(&rect, pMe->m_rc.dx/6, MUSIC_START_WIDTH, pMe->m_nNormalFontHeight, pMe->m_nNormalFontHeight);
+#elif defined(FEATURE_DISP_128X128)
+	SETAEERECT(&rect, pMe->m_rc.dx/6, MUSIC_START_WIDTH, pMe->m_nNormalFontHeight, pMe->m_nNormalFontHeight);
 #else    
     MSG_FATAL("rect.x=%d,w=%d", pMe->m_rc.dx/6, pMe->m_nLargeFontHeight, 0);
     SETAEERECT(&rect, pMe->m_rc.dx/6, MUSIC_START_WIDTH, pMe->m_nLargeFontHeight, pMe->m_nLargeFontHeight);
@@ -10623,6 +10669,8 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
    SETAEERECT(&rect, pMe->m_rc.dx*5/6, MUSIC_START_WIDTH, pMe->m_nNormalFontHeight, pMe->m_nNormalFontHeight);
 #elif defined (FEATURE_VERSION_K212_ND)
     rect.y=80;
+	SETAEERECT(&rect, pMe->m_rc.dx*5/6, MUSIC_START_WIDTH, pMe->m_nNormalFontHeight, pMe->m_nNormalFontHeight);
+#elif defined(FEATURE_DISP_128X128)
 	SETAEERECT(&rect, pMe->m_rc.dx*5/6, MUSIC_START_WIDTH, pMe->m_nNormalFontHeight, pMe->m_nNormalFontHeight);
 #else                               
    MSG_FATAL("rect.x=%d,w=%d", pMe->m_rc.dx*5/6, pMe->m_nLargeFontHeight, 0);
@@ -10652,7 +10700,8 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
 	  rect.y=80;
 	  SETAEERECT(&rect, pMe->m_rc.dx*5/6, MUSIC_START_WIDTH, pMe->m_nNormalFontHeight, pMe->m_nNormalFontHeight);
    
-
+#elif defined(FEATURE_DISP_128X128)
+	SETAEERECT(&rect, (pMe->m_rc.dx/6 /*((pMe->m_rc.dx*3/4)-m_musicstl)/2*/), MUSIC_START_WIDTH,(pMe->m_rc.dx*2/3), pMe->m_nNormalFontHeight);
 #else
   SETAEERECT(&rect, (pMe->m_rc.dx/6 /*((pMe->m_rc.dx*3/4)-m_musicstl)/2*/), MUSIC_START_WIDTH,(pMe->m_rc.dx*2/3), pMe->m_nLargeFontHeight);
   MSG_FATAL("rect.x=%d,w=%d,rect.dy=%d", (pMe->m_rc.dx/6 + pMe->m_nLargeFontHeight), (pMe->m_rc.dx*2/3 - 2*DISP_BLANK_WIDTH), rect.dy);
