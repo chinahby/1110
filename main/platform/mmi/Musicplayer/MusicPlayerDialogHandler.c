@@ -7371,13 +7371,17 @@ static void CMusicPlayer_PlayPlaylistCB(CMusicPlayer *pMe)
 #elif defined(FEATURE_VERSION_K212_ND)
 		(void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Wuxinghongqi.mp3");
 #elif defined(FEATURE_VERSION_W021_WSF_CN_FM)||defined(FEATURE_VERSION_W021_WSF_CN_P3)
+#if defined(FEATURE_VERSION_W021_WSF_CN_P6)
+		(void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Yiwangeshebude.mp3");
+#else
 		(void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Away.mp3");
+#endif
 		(void)STRCPY(pMe->m_PlayingMusiclist[1].pMusicName,"1fs:/hsmm/music/Zadangbingderen.mp3");
 #else
         (void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Away.mp3");
 #endif
         pMe->m_MusicPlayerCfg.lastPlayMusicID=0;
-#if defined(FEATURE_VERSION_W021_WSF_CN_FM)||defined(FEATURE_VERSION_W021_WSF_CN_P3)
+#if defined(FEATURE_VERSION_W021_WSF_CN_FM)||defined(FEATURE_VERSION_W021_WSF_CN_P3)||defined(FEATURE_VERSION_W021_WSF_CN_P6)
 		pMe->m_nPlayinglistMusicNum = 2;
 #else
         pMe->m_nPlayinglistMusicNum = 1;
