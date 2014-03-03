@@ -10625,9 +10625,17 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal = {
   0xCB00, 					     /* CODEC Tx gain 		  */
   0x6000, 					     /* CODEC Rx gain 		  */
 #elif defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_C192_MMX)
+	0xC56F, 					 /* Tx Voice Volume 	   */
+#else
   0xa56F, 					   /* Tx Voice Volume		 */
+#endif
   0x3000, 					   /* Tx DTMF gain		        */
+  #if defined(FEATURE_VERSION_C192_MMX)
+  0xF000, 					   /* CODEC Tx gain 		 */
+  #else
   0xCB00, 					   /* CODEC Tx gain 		 */
+  #endif
 #if defined(FEATURE_VERSION_C260_IC19)
   0xE000,    					/* CODEC Rx gain 		 */  
 #else
@@ -13873,6 +13881,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_1_cal  = {
   0x1000,                        /* Tx DTMF gain            */
   0x5F8B,                        /* CODEC Tx gain           */
   0x5000,                        /* CODEC Rx gain           */
+#elif defined(FEATURE_VERSION_C192_MMX)
+0xaA67, 					   /* Tx Voice Volume		  */
+0x1000, 					   /* Tx DTMF gain			  */
+0x5F8B, 					   /* CODEC Tx gain 		  */
+0x8000, 					   /* CODEC Rx gain 		  */
 #else
   0x5A67,                        /* Tx Voice Volume         */
   0x1000,                        /* Tx DTMF gain            */
@@ -15318,12 +15331,20 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_speaker_cal = {
   0x5000,                          /* CODEC Rx gain         */
 #elif defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K232_Y105A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K232_Y100A) ||defined(FEATURE_VERSION_K232_Y101) 
 #if defined  (FEATURE_VERSION_C260_IC18)||defined(FEATURE_VERSION_K232_Y100A) ||defined(FEATURE_VERSION_K232_Y105A)||defined(FEATURE_VERSION_K232_Y101)
+#if defined(FEATURE_VERSION_C192_MMX)
+0xFF00, 						 /* Tx Voice Volume 	*/
+#else
   0xFFFF, 						   /* Tx Voice Volume 	  */
+#endif
 #else
   0x7000, 						   /* Tx Voice Volume 	  */
 #endif  
   0x1000, 						   /* Tx DTMF gain		  */
+  #if defined(FEATURE_VERSION_C192_MMX)
+  0x8000, 						   /* CODEC Tx gain		  */
+  #else
   0x5000, 						   /* CODEC Tx gain		  */
+  #endif
 #if defined  (FEATURE_VERSION_C260_IC18) 
   0x6000,  						   /* CODEC Rx gain		  */  
 #else
