@@ -83,7 +83,9 @@ static NextFSMAction Handler_STATE_MSGFMBGPLAYPROMPT(CMusicPlayer *pMe);
 static NextFSMAction Handler_STATE_EXIT(CMusicPlayer *pMe);
 /*状态STATE_MSGLISTFULL处理函数*/
 static NextFSMAction Handler_STATE_MSGLISTFULL(CMusicPlayer *pMe);
-
+#if defined(FEATURE_FLASHLIGHT_SUPPORT)
+static NextFSMAction Handler_STATE_FLASHLIGHT(CMusicPlayer *pMe);
+#endif
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -103,6 +105,9 @@ static const FSMSTATE_HANDLER gFSMStateHandler[] =
     Handler_STATE_PLAYLIST,
     Handler_STATE_SET_AS_RINGTONE,
     Handler_STATE_SETTING,
+    #if defined(FEATURE_FLASHLIGHT_SUPPORT)
+	Handler_STATE_FLASHLIGHT,
+	#endif
     Handler_STATE_MSG,
     Handler_STATE_PLAYLIST_OPTS,
     Handler_STATE_CREATEORRENAMELIST,
@@ -368,6 +373,11 @@ static NextFSMAction Handler_STATE_MAINOPTSMENU(CMusicPlayer *pMe)
             MOVE_TO_STATE(STATE_PLAYMUSIC_WINDOWS);
             break;
 //#ifdef FEATURE_SUPPORT_BT_APP
+#if defined(FEATURE_FLASHLIGHT_SUPPORT)
+		case DLGRET_FLASHLIGHT:
+			MOVE_TO_STATE(STATE_FLASHLIGHT);
+			break;
+#endif
 #ifdef FEATURE_SUPPORT_BT_AUDIO		//Modify by zzg 2011_10_19
         case DLGRET_UNCONNECT_BT:
              pMe->m_eMsgType = MESSAGE_WARNNING;
@@ -611,6 +621,39 @@ static NextFSMAction Handler_STATE_SET_AS_RINGTONE(CMusicPlayer *pMe)
    return NFSMACTION_CONTINUE;	
 
 }
+#if defined(FEATURE_FLASHLIGHT_SUPPORT)
+static NextFSMAction Handler_STATE_FLASHLIGHT(CMusicPlayer *pMe)
+{
+#if defined(AEE_STATIC)
+		ASSERT(pMe != NULL);
+#endif
+
+    switch (pMe->m_eDlgRet)
+    {
+        // 进入主界面
+        case DLGRET_CREATE:
+            {
+            	  MSG_FATAL("Handler_STATE_FLASHLIGHT",0,0,0);
+				  if(SUCCESS != CMusicPlayer_ShowDialog(pMe, IDD_FLASHLIGHT_SETTING))
+				  {
+					  MOVE_TO_STATE(STATE_EXIT);
+					  return NFSMACTION_CONTINUE;
+				  }
+				  
+				  return NFSMACTION_WAIT;
+            }
+         case DLGRET_CANCELED:         
+            MOVE_TO_STATE(STATE_PLAYMUSIC_WINDOWS);
+			break;
+        default:
+		#if defined(AEE_STATIC)
+			ASSERT_NOT_REACHABLE
+		#endif
+			break;
+
+    }
+}
+#endif
 /*==============================================================================
 函数：
        Handler_STATE_SETTING

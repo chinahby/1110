@@ -1005,7 +1005,9 @@ typedef enum DLGRetValue
    DLGRET_SETASRINGTONE,
    DLGRET_SETTINGS,
    DLGRET_MINIMIZE,
-   
+  #if defined(FEATURE_FLASHLIGHT_SUPPORT)
+   DLGRET_FLASHLIGHT,
+  #endif
    DLGRET_CREATEORRENAMELIST,
    DLGRET_PLAYLISTPLAY,
    DLGRET_PLAYLISTVIEW,
@@ -1109,6 +1111,9 @@ typedef enum MP3State
    STATE_PLAYLIST,
    STATE_SET_AS_RINGTONE,
    STATE_SETTING,
+   #if defined(FEATURE_FLASHLIGHT_SUPPORT)
+   STATE_FLASHLIGHT,
+   #endif
    STATE_MSG,
    STATE_PLAYLIST_OPTS,
    STATE_CREATEORRENAMELIST,
@@ -1287,6 +1292,7 @@ typedef struct _CMusicPlayer
 	boolean      m_Next;
     uint8        m_times;
     boolean      bFromResume;
+    IBacklight*  m_pBacklight;
 } CMusicPlayer;
 
 void CMusicPlayer_GetTimeBack(CMusicPlayer *pMe);

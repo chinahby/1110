@@ -490,7 +490,7 @@ static int CMusicPlayer_InitAppData(CMusicPlayer *pMe)
     {
         return EFAILED;
     }
-    if( ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BACKLIGHT, (void **)&pMe->m_pBackLight)!=AEE_SUCCESS)
+    if( ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BACKLIGHT, (void **)&pMe->m_pBacklight)!=AEE_SUCCESS)
     {
         return EFAILED;
     }
@@ -562,10 +562,10 @@ static void CMusicPlayer_FreeAppData(CMusicPlayer *pMe)
         ICONFIG_Release(pMe->m_pConfig);
         pMe->m_pConfig = NULL;
     }
-     if(pMe->m_pBackLight)
+     if(pMe->m_pBacklight)
     {
-        IBACKLIGHT_Release(pMe->m_pBackLight);
-        pMe->m_pBackLight = NULL;
+        IBACKLIGHT_Release(pMe->m_pBacklight);
+        pMe->m_pBacklight = NULL;
     }
     ISHELL_RegisterNotify( pMe->m_pShell,
                            AEECLSID_APP_MUSICPLAYER,

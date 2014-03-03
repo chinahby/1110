@@ -224,7 +224,9 @@ static void MP3_DrawNoRecord(CMusicPlayer *pMe);
 //Add By zzg 2010_08_18
 static void MP3_EnableKey( void);
 //Add End
-
+#if defined(FEATURE_FLASHLIGHT_SUPPORT)
+static boolean  CMusicPlayer_FlashlightMenuHandler(CMusicPlayer *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
+#endif
 #ifdef FEATURE_VERSION_W317A
 void CMusicPlayer_HeadsetSwitch(CMusicPlayer *pMe);
 #endif
@@ -357,6 +359,10 @@ boolean CMusicPlayer_RouteDialogEvent(CMusicPlayer *pMe,
              return MP3_SimplePlayer_HandleEvent(pMe,eCode, wParam, dwParam);
         case IDD_MSGFULL:
         	 return CMusicPlayer_MsgFull_HandleEvent(pMe,eCode, wParam, dwParam);
+		#if defined(FEATURE_FLASHLIGHT_SUPPORT)
+        case IDD_FLASHLIGHT_SETTING:
+        	return CMusicPlayer_FlashlightMenuHandler(pMe, eCode, wParam,dwParam);
+		#endif
         default:
              return FALSE;
     }
@@ -764,6 +770,28 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 
         return FALSE;
 }
+#if defined(FEATURE_FLASHLIGHT_SUPPORT)
+void turn_on_musicplayer_app_led(void *pme);
+void turn_off_musicplayer_app_led(void *pme)
+{
+	CMusicPlayer *pMe = (CMusicPlayer *)pme;
+	IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+	ISHELL_SetTimer(pMe->m_pShell,3000, turn_on_musicplayer_app_led,pMe);
+}
+
+void turn_on_musicplayer_app_led(void *pme)
+{
+	CMusicPlayer *pMe = (CMusicPlayer *)pme;
+	boolean flashlight_status = 0;
+	OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&flashlight_status, sizeof(flashlight_status));
+	if(flashlight_status){
+		if((GetMp3PlayerStatus() == MP3STATUS_RUNONBACKGROUND)||(pMe->m_bPlaying)){
+			IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+			ISHELL_SetTimer(pMe->m_pShell,100, turn_off_musicplayer_app_led,pMe);
+		}
+	}
+}
+#endif
 /*==============================================================================
 º¯Êý£º
        MP3_MainOptsMenu_HandleEvent
@@ -789,6 +817,9 @@ static boolean MP3_MainOptsMenu_HandleEvent(CMusicPlayer *pMe,
                                             uint32 dwParam)
 {
   IMenuCtl  *pMenuCtl;
+  #if defined(FEATURE_FLASHLIGHT_SUPPORT)
+  boolean flashlight_status = 0;
+  #endif
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
@@ -799,7 +830,9 @@ static boolean MP3_MainOptsMenu_HandleEvent(CMusicPlayer *pMe,
    {
        return FALSE;
    }
-
+   #if defined(FEATURE_FLASHLIGHT_SUPPORT)
+   OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&flashlight_status, sizeof(flashlight_status));
+   #endif
    MSG_FATAL("MP3_MainOptsMenu_HandleEvent eCode=%x, wParam=%x, dwParam=%x", eCode,wParam,dwParam);
    
     switch (eCode)
@@ -890,6 +923,13 @@ static boolean MP3_MainOptsMenu_HandleEvent(CMusicPlayer *pMe,
                         pMe->m_bPaused = FALSE;
                       } 
                     }
+					#if defined(FEATURE_FLASHLIGHT_SUPPORT)
+					if(flashlight_status){
+						if(pMe->m_bPlaying){
+						ISHELL_SetTimer(pMe->m_pShell,3000,turn_on_musicplayer_app_led,pMe);
+						 }
+					}
+					#endif
                    CLOSE_DIALOG(DLGRET_PLAY);
                     return TRUE;
 
@@ -902,6 +942,12 @@ static boolean MP3_MainOptsMenu_HandleEvent(CMusicPlayer *pMe,
                         pMe->m_bPlaying=FALSE;                  
                       }
                     }
+					#if defined(FEATURE_FLASHLIGHT_SUPPORT)
+					if(flashlight_status){
+						if(pMe->m_bPaused)
+						ISHELL_CancelTimer(pMe->m_pShell,turn_on_musicplayer_app_led,pMe);
+					}
+					#endif
                     CLOSE_DIALOG(DLGRET_PAUSE);
                     return TRUE;
                     
@@ -937,8 +983,19 @@ static boolean MP3_MainOptsMenu_HandleEvent(CMusicPlayer *pMe,
                         SetMp3PlayerStatus(pMe, MP3STATUS_RUNONBACKGROUND);
                      }
                      ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+					 #if defined(FEATURE_FLASHLIGHT_SUPPORT)
+					 if(flashlight_status){
+					 	 if(pMe->m_bPlaying){
+							ISHELL_SetTimer(pMe->m_pShell,3000, turn_on_musicplayer_app_led,pMe);
+						  }
+				 	}
+					 #endif
                     return TRUE;
-
+				#if defined(FEATURE_FLASHLIGHT_SUPPORT)
+				case IDS_MUSIC_FLASHLIGHT:
+					CLOSE_DIALOG(DLGRET_FLASHLIGHT);
+					 return TRUE;
+				#endif
 #ifdef FEATURE_SUPPORT_BT_APP
                 case IDS_USEBT_HEADSET:
 #ifndef WIN32
@@ -1613,7 +1670,159 @@ static boolean MP3_SetRingtone_HandleEvent(CMusicPlayer *pMe,
     }
     return FALSE;
  }
+#if defined(FEATURE_FLASHLIGHT_SUPPORT)
+static boolean  CMusicPlayer_FlashlightMenuHandler(CMusicPlayer *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
+{
+	PARAM_NOT_REF(dwParam)
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,IDC_FLASHLIGHT_SET);
+    AECHAR WTitle[40] = {0};
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    if(pMe->m_pIAnn != NULL)
+    {
+	    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+    }
+     switch (eCode)
+    {
+        case EVT_DIALOG_INIT:	
 
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                                    MUSICPLAYER_RES_FILE_LANG,                                
+                                    IDS_MUSIC_FLASHLIGHT,
+                                    WTitle,
+                                    sizeof(WTitle));
+
+            if(pMe->m_pIAnn != NULL)
+            {
+			    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
+            }
+            IMENUCTL_AddItem(pMenu, MUSICPLAYER_RES_FILE_LANG, IDS_FLASHLIGHT_ON, IDS_FLASHLIGHT_ON, NULL, 0);
+            IMENUCTL_AddItem(pMenu, MUSICPLAYER_RES_FILE_LANG, IDS_FLASHLIGHT_OFF, IDS_FLASHLIGHT_OFF, NULL, 0);
+            return TRUE;
+        case EVT_DIALOG_START:
+            {
+            	uint16 wItemID;
+                boolean Is_on = FALSE;
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+                IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+
+                IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+                OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&Is_on, sizeof(Is_on));
+                if(Is_on)
+                {
+                	wItemID = IDS_FLASHLIGHT_ON;
+                }
+                else
+                {
+                	wItemID = IDS_FLASHLIGHT_OFF;
+                }
+
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, wItemID, TRUE);
+                IMENUCTL_SetSel(pMenu, wItemID);
+                (void) ISHELL_PostEvent( pMe->m_pShell,
+                                         AEECLSID_APP_MUSICPLAYER,
+                                         EVT_USER_REDRAW,
+                                         0,
+                                         0);
+            }
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            //(void)IMENUCTL_Redraw(pMenu);
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                  default:
+                    break;
+            }
+            return TRUE;
+#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+					{
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_SELECT,0);
+						return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
+					{
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_INFO,0);
+						 return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
+					{						
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_CLR,0);
+						 return rt;
+					}
+				}
+
+			}
+			break;
+#endif 
+        case EVT_COMMAND:
+            {
+                boolean bytNewData = 0;
+
+                switch (wParam)
+                {
+                    case  IDS_FLASHLIGHT_ON:
+                       bytNewData = TRUE;
+                       break;
+
+                    case IDS_FLASHLIGHT_OFF:
+                       bytNewData = FALSE;
+                       break;
+
+                    default:
+                       break;
+
+                }
+                OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&bytNewData, sizeof(bytNewData));
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, wParam, TRUE);
+                (void) ISHELL_PostEvent( pMe->m_pShell,
+                                         AEECLSID_APP_MUSICPLAYER,
+                                         EVT_USER_REDRAW,
+                                         0,
+                                         0);
+				if(bytNewData){
+					ISHELL_SetTimer(pMe->m_pShell,3000,turn_on_musicplayer_app_led,pMe);
+				}
+				else{
+					ISHELL_CancelTimer(pMe->m_pShell,turn_on_musicplayer_app_led,pMe);
+				}
+            }
+        default:
+        	break;
+	}
+}
+#endif
 /*==============================================================================
 º¯Êý£º
        MP3_Playlist_HandleEvent
@@ -2998,7 +3207,10 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
                                             uint16  wParam ,
                                             uint32 dwParam)
 {
-
+#if defined(FEATURE_FLASHLIGHT_SUPPORT)
+	boolean flashlight_status = 0;
+	OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&flashlight_status, sizeof(flashlight_status));
+#endif
 #ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
 	//if ((eCode == EVT_PEN_UP)||(eCode == EVT_PEN_DOWN))
 	if (eCode == EVT_PEN_UP)
@@ -3177,7 +3389,16 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 				}     
 	        }        
 		}
-
+		#if defined(FEATURE_FLASHLIGHT_SUPPORT)
+		if(flashlight_status){
+			if(pMe->m_bPlaying){
+				ISHELL_SetTimer(pMe->m_pShell,3000, turn_on_musicplayer_app_led,pMe);
+			}
+			else if(pMe->m_bPaused){
+				ISHELL_CancelTimer(pMe->m_pShell,turn_on_musicplayer_app_led,pMe);
+			}
+		}
+		#endif
 		return TRUE;
 	 }        
 
@@ -6810,6 +7031,9 @@ static void MP3_Build_MainOpts_Menu(CMusicPlayer *pMe,IMenuCtl *pMenuCtl)
 #endif //FEATURE_SUPPORT_BT_APP
       MP3MENU_ADDITEM(pMenuCtl,IDS_MINIMIZE);
     }
+	#if defined(FEATURE_FLASHLIGHT_SUPPORT)
+    MP3MENU_ADDITEM(pMenuCtl,IDS_MUSIC_FLASHLIGHT);
+	#endif
          
 }
 
