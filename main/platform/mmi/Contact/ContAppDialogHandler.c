@@ -5145,6 +5145,12 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                         IDS_PHONEBOOK,
                         WTitle,
                         sizeof(WTitle));
+				#elif defined(FEATURE_VERSION_K292_WSF_M10C)
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+		                CONTAPP_RES_FILE_LANG,                                
+		                IDS_APPLET_M10C,
+		                WTitle,
+		                sizeof(WTitle));
 				#elif defined(FEATURE_VERSION_K292_WSF_CN)
                 (void)ISHELL_LoadResString(pMe->m_pShell,
 		                CONTAPP_RES_FILE_LANG,                                
@@ -7491,6 +7497,12 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
 							                IDS_PHONEBOOK,
 							                WTitle,
 							                sizeof(WTitle));
+				#elif defined(FEATURE_VERSION_K292_WSF_M10C)
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+							                CONTAPP_RES_FILE_LANG,                                
+							                IDS_APPLET_M10C,
+							                WTitle,
+							                sizeof(WTitle));
 				#elif defined(FEATURE_VERSION_K292_WSF_CN)
                 (void)ISHELL_LoadResString(pMe->m_pShell,
 							                CONTAPP_RES_FILE_LANG,                                
@@ -8124,6 +8136,12 @@ static boolean  CContApp_HandleFldOptsDlgEvent( CContApp  *pMe,
 							                IDS_PHONEBOOK,
 							                WTitle,
 							                sizeof(WTitle));
+				#elif defined(FEATURE_VERSION_K292_WSF_M10C)
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+		                CONTAPP_RES_FILE_LANG,                                
+		                IDS_APPLET_M10C,
+		                WTitle,
+		                sizeof(WTitle));
 				#elif defined(FEATURE_VERSION_K292_WSF_CN)
                 (void)ISHELL_LoadResString(pMe->m_pShell,
 		                CONTAPP_RES_FILE_LANG,                                
@@ -11595,6 +11613,12 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
                                             IDS_PHONEBOOK, 
                                             text,
                                             sizeof(text));
+				#elif defined(FEATURE_VERSION_K292_WSF_M10C)
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+		                CONTAPP_RES_FILE_LANG,                                
+		                IDS_APPLET_M10C,
+		                text,
+		                sizeof(text));
 				#elif defined(FEATURE_VERSION_K292_WSF_CN)
                 (void)ISHELL_LoadResString(pMe->m_pShell,
 		                CONTAPP_RES_FILE_LANG,                                
@@ -11649,6 +11673,12 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
                                             IDS_PHONEBOOK, 
                                             text,
                                             sizeof(text));
+				#elif defined(FEATURE_VERSION_K292_WSF_M10C)
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+		                CONTAPP_RES_FILE_LANG,                                
+		                IDS_APPLET_M10C,
+		                text,
+		                sizeof(text));
 				#elif defined(FEATURE_VERSION_K292_WSF_CN)
                 (void)ISHELL_LoadResString(pMe->m_pShell,
 		                CONTAPP_RES_FILE_LANG,                                
@@ -11771,6 +11801,12 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
                                             IDS_PHONEBOOK, 
                                             text,
                                             sizeof(text));
+				#elif defined(FEATURE_VERSION_K292_WSF_M10C)
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+		                CONTAPP_RES_FILE_LANG,                                
+		                IDS_APPLET_M10C,
+		                text,
+		                sizeof(text));
 				#elif defined(FEATURE_VERSION_K292_WSF_CN)
                 (void)ISHELL_LoadResString(pMe->m_pShell,
 		                CONTAPP_RES_FILE_LANG,                                
@@ -12096,6 +12132,12 @@ static boolean  CContApp_HandleSearchDlgEvent( CContApp  *pMe,
 							                IDS_PHONEBOOK,
 							                WTitle,
 							                sizeof(WTitle));
+				#elif defined(FEATURE_VERSION_K292_WSF_M10C)
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+		                CONTAPP_RES_FILE_LANG,                                
+		                IDS_APPLET_M10C,
+		                WTitle,
+		                sizeof(WTitle));
 				#elif defined(FEATURE_VERSION_K292_WSF_CN)
                 (void)ISHELL_LoadResString(pMe->m_pShell,
 		                CONTAPP_RES_FILE_LANG,                                
@@ -13362,6 +13404,12 @@ static boolean  CContApp_HandleSelectDlgEvent( CContApp  *pMe,
 							                IDS_PHONEBOOK,
 							                WTitle,
 							                sizeof(WTitle));
+				#elif defined(FEATURE_VERSION_K292_WSF_M10C)
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+		                CONTAPP_RES_FILE_LANG,                                
+		                IDS_APPLET_M10C,
+		                WTitle,
+		                sizeof(WTitle));
 				#elif defined(FEATURE_VERSION_K292_WSF_CN)
                 (void)ISHELL_LoadResString(pMe->m_pShell,
 		                CONTAPP_RES_FILE_LANG,                                

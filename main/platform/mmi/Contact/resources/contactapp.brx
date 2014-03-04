@@ -487,6 +487,9 @@
 	<STRING Id="1097" Name="IDS_APPLET_909C">
 		<Text>Contacts</Text>
 	</STRING>
+	<STRING Id="1098" Name="IDS_APPLET_M10C">
+		<Text>Contacts</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MSGBOX" Focus="0">
