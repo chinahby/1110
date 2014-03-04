@@ -2636,7 +2636,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 					//DBGPRINTF("***zzg bgRect:%d,%d,%d,%d***", bgRect.x, bgRect.y, bgRect.dx, bgRect.dy);
 
 					
-					#if defined(FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_K232_Y105A)|| defined(FEATURE_VERSION_K232_Y101)//||defined(FEATURE_LOW_MEM_BIGFONT)//|| defined(FEATURE_VERSION_K212)
+					#if defined(FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_K232_Y105A)|| defined(FEATURE_VERSION_K232_Y101)||defined(FEATURE_VERSION_K292_WSF_M10C)//||defined(FEATURE_LOW_MEM_BIGFONT)//|| defined(FEATURE_VERSION_K212)
 					{
 						IImage      *pBarImg = NULL;
 
