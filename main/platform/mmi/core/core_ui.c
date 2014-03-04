@@ -2101,10 +2101,10 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
             return FALSE;
         }       
 
-        if (cls == AEECLSID_APP_FMRADIO)
-        {
-            break;
-        }
+        //if (cls == AEECLSID_APP_FMRADIO)
+        //{
+            //break;
+        //}
 
         if ((cls != AEECLSID_APP_MUSICPLAYER) && (cls != AEECLSID_DIALER) && (!brewui_isincall()) )	//0x1006126	
 		{
