@@ -121,6 +121,9 @@
 	<String Id="1042" Name="IDS_APPLICATION_LIST_909C">
 		<Text>Tools</Text>
 	</String>
+	<String Id="1043" Name="IDS_APPLICATION_LIST_M10C">
+		<Text>Application</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_FLASHLIGHT_SETTING" Focus="7002">
