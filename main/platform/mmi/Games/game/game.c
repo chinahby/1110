@@ -927,7 +927,7 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
 			#else
 		    {
 		  		AECHAR WTitle[40] = {0};
-				#if defined(FEATURE_VERSION_K292_WSF_CN)
+				#if defined(FEATURE_VERSION_K292_WSF_CN)&&!defined(FEATURE_VERSION_K292_WSF_M10C)
 				(void)ISHELL_LoadResString(pMe->m_pShell,
                         GAME_RES_FILE_LANG,                                
                         IDS_GAME_LIST_909C,
