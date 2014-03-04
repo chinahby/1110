@@ -64,6 +64,24 @@ CONSTFILE_FILES+=\
 	userprofile.gif|fs:/image/mainmenu/userprofile.gif\
 	game.gif|fs:/image/mainmenu/game.gif \
 	tool.gif|fs:/image/mainmenu/tool.gif
+else ifeq ($(USES_RESDIR), K292_WSF_M10C)
+CONSTFILE_FILES+=\
+	Contact.gif|fs:/image/mainmenu/Contact.gif\
+	Message_Mainmenu.gif|fs:/image/mainmenu/Message_Mainmenu.gif \
+	Recentcall.gif|fs:/image/mainmenu/Recentcall.gif \
+	Setting.gif|fs:/image/mainmenu/Setting.gif \
+	MediaGallery.gif|fs:/image/mainmenu/MediaGallery.gif\
+	userprofile.gif|fs:/image/mainmenu/userprofile.gif\
+	game.gif|fs:/image/mainmenu/game.gif \
+	tool.gif|fs:/image/mainmenu/tool.gif\
+	Contact_en.gif|fs:/image/mainmenu/Contact_en.gif\
+	Message_Mainmenu_en.gif|fs:/image/mainmenu/Message_Mainmenu_en.gif \
+	Recentcall_en.gif|fs:/image/mainmenu/Recentcall_en.gif \
+	Setting_en.gif|fs:/image/mainmenu/Setting_en.gif \
+	MediaGallery_en.gif|fs:/image/mainmenu/MediaGallery_en.gif\
+	userprofile_en.gif|fs:/image/mainmenu/userprofile_en.gif\
+	game_en.gif|fs:/image/mainmenu/game_en.gif \
+	tool_en.gif|fs:/image/mainmenu/tool_en.gif
 else
 	
 CONSTFILE_FILES+=\

@@ -559,6 +559,16 @@ typedef struct _MainMenu
 #define ICON6_ANI	   "fs:/image/mainmenu/game.gif"
 #define ICON7_ANI	   "fs:/image/mainmenu/Setting.gif"
 #define ICON8_ANI	   "fs:/image/mainmenu/tool.gif"
+
+#define ICON1_ANI_en	   "fs:/image/mainmenu/Message_Mainmenu_en.gif"
+#define ICON2_ANI_en	   "fs:/image/mainmenu/Contact_en.gif"
+#define ICON3_ANI_en	   "fs:/image/mainmenu/Recentcall_en.gif"
+#define ICON4_ANI_en	   "fs:/image/mainmenu/MediaGallery_en.gif"
+#define ICON5_ANI_en	   "fs:/image/mainmenu/userprofile_en.gif"
+#define ICON6_ANI_en	   "fs:/image/mainmenu/game_en.gif"
+#define ICON7_ANI_en	   "fs:/image/mainmenu/Setting_en.gif"
+#define ICON8_ANI_en	   "fs:/image/mainmenu/tool_en.gif"
+
 //#define ICON9_ANI	   "fs:/image/mainmenu/wap.gif"
 #else
     #define ICON1_ANI      "fs:/image/mainmenu/MediaGallery.png"

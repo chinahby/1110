@@ -12940,6 +12940,18 @@ static char* MUSIC_PATH[] =
 	MUSIC_PATH7,
 	MUSIC_PATH8,
 };
+
+static char* ICON_ANI_en[] =
+{
+    ICON1_ANI_en,
+    ICON2_ANI_en,
+    ICON3_ANI_en,
+    ICON4_ANI_en,
+    ICON5_ANI_en,
+    ICON6_ANI_en,
+    ICON7_ANI_en,
+    ICON8_ANI_en,
+};
 #endif
 
 /*=============================================================================
@@ -14250,7 +14262,9 @@ static void DrawMatrix(MainMenu *pMe)
          (void)IIMAGE_Release(pMe->m_pImageSelectEC99);
          pMe->m_pImageSelectEC99 = NULL;
     }
-    
+    if(pMe->language == NV_LANGUAGE_ENGLISH)
+       pMe->m_pImageSelectEC99 = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI_en[pMe->m_index]);
+	else
     pMe->m_pImageSelectEC99 = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI[pMe->m_index]);      
     if(pMe->m_pImageSelectEC99 != NULL)
     {
@@ -14337,7 +14351,9 @@ static void MoveCursorTo(MainMenu *pMe, int index)
          (void)IIMAGE_Release(pMe->m_pImageSelectEC99);
          pMe->m_pImageSelectEC99 = NULL;
     }
-
+    if(pMe->language == NV_LANGUAGE_ENGLISH)
+       pMe->m_pImageSelectEC99 = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI_en[pMe->m_index]);
+	else
     pMe->m_pImageSelectEC99 = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI[pMe->m_index]);      
     if(pMe->m_pImageSelectEC99 != NULL)
     {
