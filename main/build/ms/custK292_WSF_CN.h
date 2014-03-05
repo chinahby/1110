@@ -19,6 +19,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_VERSION_W022
 #define FEATURE_VERSION_K292
 #define FEATURE_VERSION_K292_WSF_CN
+#define FEATURE_VERSION_K292_WSF_909C
 #define CONTAPP_OPTION_BACK
 #define FEATURE_PRESS_STAR_ADD
 #define _LKD_LCD
