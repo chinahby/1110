@@ -1700,7 +1700,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 break;
             }
 			//Add by pyuangui 20121220
-            #if defined(FEATURE_VERSION_C11)||(defined(FEATURE_VERSION_K292)&&!defined(FEATURE_FLASHLIGHT_SUPPORT))|| defined(FEATURE_VERSION_W021_C11)|| defined(FEATURE_VERSION_SKY)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)//||defined(FEATURE_VERSION_W027_HC_KK3)
+            #if defined(FEATURE_VERSION_C11)||(defined(FEATURE_VERSION_K292)&&(!defined(FEATURE_FLASHLIGHT_SUPPORT)&&!defined(FEATURE_VERSION_K292_WSF_K8C)))|| defined(FEATURE_VERSION_W021_C11)|| defined(FEATURE_VERSION_SKY)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)//||defined(FEATURE_VERSION_W027_HC_KK3)
              if(wParam == AVK_INFO)
              {
                return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
