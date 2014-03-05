@@ -84,7 +84,7 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
 #define FM_VOLUME_Y                         (SCREEN_HEIGHT - 140)
 #else
 #ifdef FEATURE_VERSION_K212_ND
-#define FM_VOLUME_Y                         (SCREEN_HEIGHT - 78)
+#define FM_VOLUME_Y                         (SCREEN_HEIGHT - 89)
 #else
 #define FM_VOLUME_Y                         (SCREEN_HEIGHT - 68)
 #endif
@@ -1062,7 +1062,7 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
         {            
             if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
             {
-                #if (defined( FEATURE_VERSION_1110W516) || defined( FEATURE_VERSION_W317A) || defined( FEATURE_VERSION_C337) || defined( FEATURE_VERSION_C316)||defined( FEATURE_VERSION_M74)|| defined( FEATURE_VERSION_C310)|| defined( FEATURE_VERSION_K202_LM129C) || defined(FEATURE_VERSION_EC99)|| defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_FM_PAUSE) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A))
+                #if (defined( FEATURE_VERSION_1110W516) || defined( FEATURE_VERSION_W317A) || defined( FEATURE_VERSION_C337) || defined( FEATURE_VERSION_C316)||defined( FEATURE_VERSION_M74)|| defined( FEATURE_VERSION_C310)|| defined( FEATURE_VERSION_K202_LM129C) || defined(FEATURE_VERSION_EC99)|| defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_FM_PAUSE) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_K212_ND))
                  tuneVolumeStop(pMe);
                  repaint( pMe, TRUE);
                  return TRUE;
@@ -2571,6 +2571,16 @@ static void showChannelList( void* pme)
                           wstrText,
                           sizeof(wstrText));
             fontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+			#ifdef FEATURE_VERSION_K212_ND
+			 (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                          AEE_FONT_NORMAL,
+                          wstrText, 
+                          -1, 
+                          6,						  
+						  TITLEBAR_HEIGHT,
+                          NULL,
+                          IDF_TEXT_TRANSPARENT);
+			#else
             (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                           AEE_FONT_NORMAL,
                           wstrText, 
@@ -2579,6 +2589,7 @@ static void showChannelList( void* pme)
                           6 + TITLEBAR_HEIGHT,
                           NULL,
                           IDF_TEXT_TRANSPARENT);
+			#endif
             IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, fontColor);
 
         }
@@ -2840,7 +2851,7 @@ static void paint( CFmRadio *pMe)
     {
     	drawSoftkey( pMe);
 	}
-
+	#ifndef FEATURE_VERSION_K212_ND
 	if(pMe->fmVolumeStop)
     {
     	if (pMe->globalSearching == FALSE)	//Modify by zzg 2012_11_26
@@ -2852,7 +2863,7 @@ static void paint( CFmRadio *pMe)
 	{
 		drawOperationPrompt( pMe, IDS_FMRADIO_PROMPT_PAUSED, RGB_WHITE);
 	}
-
+	#endif
 //#ifndef FEATURE_FMRADIO_SIMPLE_VERSION
 #if 0
 #if defined( FEATURE_FMRADIO_NO_MODE_SELECT)
@@ -3403,7 +3414,11 @@ static void drawChannelIndicator( CFmRadio *pMe)
 {
     AEERect rect;
     AECHAR  szBuf[20] = {0};            //Êä³ö»º´æ
+	#ifdef FEATUER_VERSION_K212_ND
+	int nFontHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_ITALIC, NULL, NULL);
+	#else
     int nFontHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_BOLD, NULL, NULL);
+	#endif
 
 //#ifndef FEATURE_FMRADIO_SIMPLE_VERSION// draw cursor
 #if 0
@@ -3464,13 +3479,23 @@ static void drawChannelIndicator( CFmRadio *pMe)
 #endif
 
     drawImageWithOffset( pMe, FMRADIOLN_RES_FILE, IDI_BG, rect.x, rect.y, &rect);
+	#ifdef FEATURE_VERSION_K212_ND
     drawText2( pMe->m_pDisplay,
+            szBuf,
+            &rect,
+            RGB_WHITE,
+            AEE_FONT_ITALIC,
+            IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE
+        );
+	#else
+	drawText2( pMe->m_pDisplay,
             szBuf,
             &rect,
             RGB_WHITE,
             AEE_FONT_BOLD,
             IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE
         );
+	#endif
 #endif
     IDISPLAY_UpdateEx( pMe->m_pDisplay, TRUE);
 }
@@ -3584,10 +3609,12 @@ static void drawRefreshListPrompt( void *pme)
     color = MAKE_RGB( pMe->demitintColor, pMe->demitintColor, pMe->demitintColor);
     pMe->demitintColor = ( pMe->demitintColor + 205) % 255;
 
+	#ifndef FEATURE_VERSION_K212_ND
     drawOperationPrompt( pMe,
             pMe->opMode == FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST ? IDS_FMRADIO_PROMPT_SEARCHING : IDS_FMRADIO_PROMPT_TUNING,
             color
         );
+	#endif
     drawLedLight( pMe);
     IDISPLAY_UpdateEx( pMe->m_pDisplay, FALSE);
 
