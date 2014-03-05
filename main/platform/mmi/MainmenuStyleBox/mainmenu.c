@@ -13871,9 +13871,10 @@ boolean MainMenu_RouteDialogEvt(MainMenu *pMe,
     {
         case IDD_MAIN_MENU:
             return MainMenu_IconMenuHandler(pMe, eCode, wParam, dwParam);
-
+#if defined(FEATURE_TORCH_SUPPORT)
         case IDD_FLASHLIGHT_SETTING:
             return MainMenu_FlashlightMenuHandler(pMe, eCode, wParam,dwParam);
+#endif
         default:
             return FALSE;
     }
@@ -14041,7 +14042,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 
     return FALSE;
 }
-
+#if defined(FEATURE_TORCH_SUPPORT)
 //Add By zzg 2013_08_20
 static boolean MainMenu_FlashlightMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
@@ -14182,7 +14183,7 @@ static boolean MainMenu_FlashlightMenuHandler(MainMenu *pMe, AEEEvent eCode, uin
 	}
 }
 //Add End
-
+#endif
 
 static void Main_keypadtimer(void *pUser)
 {
