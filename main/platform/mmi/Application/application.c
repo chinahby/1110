@@ -1228,7 +1228,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 	                                    WTitle,
 	                                    sizeof(WTitle));
 			}
-			#elif defined(FEATURE_VERSION_K292_WSF_M10C)||defined(FEATURE_VERSION_K292_WSF_K8C)
+			#elif defined(FEATURE_VERSION_K292_WSF_M10C)||defined(FEATURE_VERSION_K292_WSF_K8C)||defined(FEATURE_VERSION_K292_WSF_909C)
 			(void)ISHELL_LoadResString(pMe->m_pShell,
 	                                    APPLICATION_RES_FILE_LANG,                                
 	                                    IDS_APPLICATION_LIST_M10C,
