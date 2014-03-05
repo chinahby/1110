@@ -1147,8 +1147,10 @@ boolean Application_RouteDialogEvt(Application *pMe,
 
         case IDD_LIST_APPLICATION:
             return Application_ListMenuHandler(pMe, eCode, wParam, dwParam);
+#if defined(FEATURE_TORCH_SUPPORT)
         case IDD_FLASHLIGHT_SETTING:
         	return Application_FlashlightMenuHandler(pMe, eCode, wParam,dwParam);
+#endif
 #if defined(FEATURE_VERSION_W317A)
 		case IDD_PC_MODEM:
 			return Application_PcModemHandler(pMe, eCode, wParam,dwParam);
@@ -1226,7 +1228,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 	                                    WTitle,
 	                                    sizeof(WTitle));
 			}
-			#elif defined(FEATURE_VERSION_K292_WSF_M10C)
+			#elif defined(FEATURE_VERSION_K292_WSF_M10C)||defined(FEATURE_VERSION_K292_WSF_K8C)
 			(void)ISHELL_LoadResString(pMe->m_pShell,
 	                                    APPLICATION_RES_FILE_LANG,                                
 	                                    IDS_APPLICATION_LIST_M10C,
@@ -1502,7 +1504,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			#if !defined FEATURE_VERSION_K292_WSF_CN
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_GAME, IDS_APPLICATION_GAME, NULL, 0);
 			#endif
-			#if defined(FEATURE_VERSION_K292_WSF_CN)&&!defined(FEATURE_VERSION_K292_WSF_M10C)
+			#if defined(FEATURE_VERSION_K292_WSF_CN)&&(!defined(FEATURE_VERSION_K292_WSF_M10C)&&!defined(FEATURE_VERSION_K292_WSF_K8C))
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_FLASHLIGHT, IDS_APPLICATION_FLASHLIGHT, NULL, 0);
 			#endif
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
@@ -1680,7 +1682,7 @@ static void APPDialog_keypadtimer(void *pUser)
 }
 #endif
 //Add End
-
+#if defined(FEATURE_TORCH_SUPPORT)
 static boolean  Application_FlashlightMenuHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
 	PARAM_NOT_REF(dwParam)
@@ -1835,6 +1837,7 @@ static boolean  Application_FlashlightMenuHandler(Application *pMe, AEEEvent eCo
         	break;
 	}
 }
+#endif
 #ifdef FEATURE_SOUND_BO
 #if defined(FEATURE_VERSION_K212_ND)
 static boolean  Application_KeyTimeHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
