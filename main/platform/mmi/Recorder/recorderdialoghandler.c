@@ -1896,7 +1896,7 @@ __dialog_handler_of_state_record_pause_resume__:
 				    }
 				break;
 				#endif
-				#ifdef FEATURE_VERSION_K202_LM129C//xxzhen compatible with lm126c
+				#if defined(FEATURE_VERSION_K202_LM129C) || defined(FEATURE_VERSION_K232_Y105A)//xxzhen compatible with lm126c
 				case AVK_STAR:
 				case AVK_POUND:
 					{

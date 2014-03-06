@@ -4034,8 +4034,12 @@ static boolean MP3_SimplePlayer_HandleEvent(CMusicPlayer *pMe,
                     CLOSE_DIALOG(DLGRET_CANCELED);
                     return TRUE;
                 }        
+			   #ifdef FEATURE_VERSION_K232_Y105A
+			   case AVK_POUND:
+			   #else
                case AVK_UP:
                case AVK_RIGHT:
+			   #endif
 			   case AVK_VOLUME_UP:
                     if(pMe->m_MusicPlayerCfg.eMusicVolume < VOLUME_FIVE)
                     {
@@ -4094,10 +4098,13 @@ static boolean MP3_SimplePlayer_HandleEvent(CMusicPlayer *pMe,
                         }
                     }
                     return TRUE;
-                    
+               #ifdef FEATURE_VERSION_K232_Y105A
+			   case AVK_STAR:
+			   #else	
                case AVK_DOWN:
-			   case	AVK_VOLUME_DOWN:
+			   case	AVK_VOLUME_DOWN:	
                case AVK_LEFT:
+			   #endif
                     if(pMe->m_MusicPlayerCfg.eMusicVolume > VOLUME_OFF)
                     {
                         pMe->m_MusicPlayerCfg.eMusicVolume--;
