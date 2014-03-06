@@ -475,7 +475,11 @@ static boolean  QuickTest_MainMenuHandler(CQuickTest *pMe,
         case EVT_KEY:
             switch(wParam)
             {
+                #ifdef FEATURE_VERSION_K232_Y105A
+				case AVK_SELECT:
+				#else	
                 case AVK_CLR:
+				#endif	
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
 
@@ -703,7 +707,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 						return TRUE;
 					}
 					break;
+				#ifdef FEATURE_VERSION_K232_Y105A1	
+				case AVK_SELECT:
+				#else
                 case AVK_CLR:
+				#endif	
 					{
 						IImage* image	= NULL;
 						
@@ -1370,6 +1378,13 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 26, TITLEBAR_HEIGHT*2);
 #endif                            
 							IIMAGE_Release( image);
+
+	                    #if defined(FEATURE_VERSION_K232_Y105A)
+                        if(pMe->m_testkeycount >=22)       
+						{
+	                     	CLOSE_DIALOG(DLGRET_CANCELED)
+						}
+						#endif
 						}
 						pMe->m_testkeycount ++;
                     }
@@ -2251,7 +2266,11 @@ static boolean  QuickTest_HeadTestHandler(CQuickTest *pMe,
         case EVT_KEY:
             switch(wParam)
             {
+                #ifdef FEATURE_VERSION_K232_Y105A	
+				case AVK_SELECT:
+				#else
                 case AVK_CLR:
+				#endif
 					if(m_testend)
 					{
                     	(void)IRINGERMGR_Stop(pMe->m_pRingerMgr);
@@ -2365,7 +2384,11 @@ static boolean  QuickTest_YAMAHATestHandler(CQuickTest *pMe,
         case EVT_KEY:
             switch(wParam)
             {
+                #ifdef FEATURE_VERSION_K232_Y105A	
+				case AVK_SELECT:
+				#else
                 case AVK_CLR:
+				#endif	
                     (void)IRINGERMGR_Stop(pMe->m_pRingerMgr);
                     (void)ISHELL_CancelTimer(pMe->m_pShell,
                                  (PFNNOTIFY)(QuickTest_Ringer),
@@ -2469,7 +2492,11 @@ static boolean  QuickTest_VibrateTestHandler(CQuickTest *pMe,
         case EVT_KEY:
             switch(wParam)
             {
+                #ifdef FEATURE_VERSION_K232_Y105A	
+				case AVK_SELECT:
+				#else
                 case AVK_CLR:
+				#endif	
                     (void)ISOUND_StopVibrate(pMe->m_pISound);
                     (void)ISHELL_CancelTimer(pMe->m_pShell,
                                  (PFNNOTIFY)(QuickTest_Vibrate),
@@ -2700,7 +2727,11 @@ static boolean  QuickTest_BackLightTestHandler(CQuickTest *pMe,
         case EVT_KEY:
             switch(wParam)
             {
+                #ifdef FEATURE_VERSION_K232_Y105A	
+				case AVK_SELECT:
+				#else
                 case AVK_CLR:
+				#endif	
                     (void) ICONFIG_SetItem(pMe->m_pConfig,
                                            CFGI_BACKLIGHT_LEVEL,
                                            &pMe->m_nlightlevel,
@@ -2882,7 +2913,11 @@ static boolean  QuickTest_FlipTestHandler(CQuickTest *pMe,
         case EVT_KEY:
             switch(wParam)
             {
+                #ifdef FEATURE_VERSION_K232_Y105A	
+				case AVK_SELECT:
+				#else
                 case AVK_CLR:
+				#endif	
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     break;       
 
@@ -3001,7 +3036,11 @@ static boolean  QuickTest_FMTestHandler(CQuickTest *pMe,
         case EVT_KEY:
             switch(wParam)
             {
+                #ifdef FEATURE_VERSION_K232_Y105A	
+				case AVK_SELECT:
+				#else
                 case AVK_CLR:
+				#endif	
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     break;
 
@@ -3229,7 +3268,11 @@ static boolean  QuickTest_SDTestHandler(CQuickTest *pMe,
         case EVT_KEY:
             switch(wParam)
             {
+                #ifdef FEATURE_VERSION_K232_Y105A	
+				case AVK_SELECT:
+				#else
                 case AVK_CLR:
+				#endif	
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     break;
 
@@ -3384,7 +3427,11 @@ static boolean  QuickTest_VERTestHandler(CQuickTest *pMe,
         case EVT_KEY:
             switch(wParam)
             {
+                #ifdef FEATURE_VERSION_K232_Y105A	
+				case AVK_SELECT:
+				#else
                 case AVK_CLR:
+				#endif	
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     break;
 
@@ -3479,7 +3526,11 @@ static boolean  QuickTest_LCDTestHandler(CQuickTest *pMe,
         case EVT_KEY:
             switch(wParam)
             {
+                #ifdef FEATURE_VERSION_K232_Y105A	
+				case AVK_SELECT:
+				#else
                 case AVK_CLR:
+				#endif	
 #ifdef FEATURE_SUPPORT_BT_APP
                     if(pMe->m_dilag_type == BT_TEST)
                     {
@@ -3640,7 +3691,11 @@ static boolean  QuickTest_TouchScreenTestHandler(CQuickTest *pMe,
         case EVT_KEY:
             switch(wParam)
             {
+                #ifdef FEATURE_VERSION_K232_Y105A	
+				case AVK_SELECT:
+				#else
                 case AVK_CLR:
+				#endif	
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     break;
 
@@ -3769,7 +3824,11 @@ static boolean  QuickTest_ManualTest_Handler(CQuickTest *pMe,
         case EVT_KEY:
             switch(wParam)
             {
+                #ifdef FEATURE_VERSION_K232_Y105A	
+				case AVK_SELECT:
+				#else
                 case AVK_CLR:
+				#endif	
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
 
@@ -3931,8 +3990,11 @@ static boolean  QuickTest_CallHandler(CQuickTest *pMe,
         case EVT_KEY:
             switch(wParam)
             {
-
+                #ifdef FEATURE_VERSION_K232_Y105A	
+				case AVK_SELECT:
+				#else
                 case AVK_CLR:
+				#endif	
 #ifndef WIN32
                     voc_release(VOC_ACQ_TEST);
                     qdsp_cmd_set_isr(pMe->m_qdspisr);
@@ -4216,7 +4278,11 @@ static boolean  QuickTest_RestoreFactory_Handler(CQuickTest *pMe,
         case EVT_KEY:
             switch(wParam)
             {
+                #ifdef FEATURE_VERSION_K232_Y105A	
+				case AVK_SELECT:
+				#else
                 case AVK_CLR:
+				#endif	
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     break;
 
@@ -4299,7 +4365,11 @@ static boolean  QuickTest_Regulate_Handler(CQuickTest *pMe,
         case EVT_KEY:
             switch(wParam)
             {
+                #ifdef FEATURE_VERSION_K232_Y105A	
+				case AVK_SELECT:
+				#else
                 case AVK_CLR:
+				#endif	
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     break;
 
