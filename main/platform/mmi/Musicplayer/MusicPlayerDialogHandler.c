@@ -2266,12 +2266,18 @@ static boolean MP3_PlaylistOpts_HandleEvent(CMusicPlayer *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+			#if defined(FEATURE_VERSION_W021_WSF_P7)
+			MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST_PLAY);
+			MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST_VIEW);
+			MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST_RENAME);
+			#else
               MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST_PLAY);
               MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST_CREATELIST);
               MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST_VIEW);
               MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST_ADDMUSIC);
               MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST_RENAME);
               MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST_DELETE);              
+		   #endif
               return TRUE;
             
         case EVT_DIALOG_START:
@@ -2719,9 +2725,11 @@ static boolean MP3_PlaylistOpts_HandleEvent(CMusicPlayer *pMe,
     {
         case EVT_DIALOG_INIT:
             MP3MENU_ADDITEM(pMenuCtl,IDS_MUSICLIST_PLAY);
+			#if !defined(FEATURE_VERSION_W021_WSF_P7)
             MP3MENU_ADDITEM(pMenuCtl,IDS_MUSICLIST_ADD);
             MP3MENU_ADDITEM(pMenuCtl,IDS_MUSICLIST_DEL);
             MP3MENU_ADDITEM(pMenuCtl,IDS_MUSICLIST_DELALL);
+			#endif
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -7045,7 +7053,9 @@ static void MP3_Build_MainOpts_Menu(CMusicPlayer *pMe,IMenuCtl *pMenuCtl)
       MP3MENU_ADDITEM(pMenuCtl,IDS_PAUSE);
     }
     MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST);
+	#if !defined(FEATURE_VERSION_W021_WSF_P7)
     MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST_ADDMUSIC);
+	#endif
 #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
     MP3MENU_ADDITEM(pMenuCtl,IDS_SET_AS_RINGTONE);
 #endif
@@ -7377,9 +7387,11 @@ static void CMusicPlayer_PlayPlaylistCB(CMusicPlayer *pMe)
         (void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/jnstyle.mp3");
 #elif defined(FEATURE_VERSION_K212_ND)
 		(void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Wuxinghongqi.mp3");
-#elif defined(FEATURE_VERSION_W021_WSF_CN_FM)||defined(FEATURE_VERSION_W021_WSF_CN_P3)
+#elif defined(FEATURE_VERSION_W021_WSF_CN_FM)||defined(FEATURE_VERSION_W021_WSF_CN_P3)||defined(FEATURE_VERSION_W021_WSF_P7)
 #if defined(FEATURE_VERSION_W021_WSF_CN_P6)
 		(void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Yiwangeshebude.mp3");
+#elif defined(FEATURE_VERSION_W021_WSF_P7)
+	(void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Jiefangjunqichuanghao.mp3");
 #else
 		(void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Away.mp3");
 #endif
@@ -7388,7 +7400,7 @@ static void CMusicPlayer_PlayPlaylistCB(CMusicPlayer *pMe)
         (void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Away.mp3");
 #endif
         pMe->m_MusicPlayerCfg.lastPlayMusicID=0;
-#if defined(FEATURE_VERSION_W021_WSF_CN_FM)||defined(FEATURE_VERSION_W021_WSF_CN_P3)||defined(FEATURE_VERSION_W021_WSF_CN_P6)
+#if defined(FEATURE_VERSION_W021_WSF_CN_FM)||defined(FEATURE_VERSION_W021_WSF_CN_P3)||defined(FEATURE_VERSION_W021_WSF_CN_P6)||defined(FEATURE_VERSION_W021_WSF_P7)
 		pMe->m_nPlayinglistMusicNum = 2;
 #else
         pMe->m_nPlayinglistMusicNum = 1;

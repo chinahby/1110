@@ -829,9 +829,11 @@ static NextFSMAction Handler_STATE_PLAYLIST_OPTS(CMusicPlayer *pMe)
                 (void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/jnstyle.mp3");
 #elif defined(FEATURE_VERSION_K212_ND)
 		(void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Wuxinghongqi.mp3");
-#elif defined(FEATURE_VERSION_W021_WSF_CN_FM)||defined(FEATURE_VERSION_W021_WSF_CN_P3)
+#elif defined(FEATURE_VERSION_W021_WSF_CN_FM)||defined(FEATURE_VERSION_W021_WSF_CN_P3)||defined(FEATURE_VERSION_W021_WSF_P7)
 #if defined(FEATURE_VERSION_W021_WSF_CN_P6)
 		(void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Yiwangeshebude.mp3");
+#elif defined(FEATURE_VERSION_W021_WSF_P7)
+		(void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Jiefangjunqichuanghao.mp3");
 #else
 		(void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Away.mp3");
 #endif
@@ -840,7 +842,7 @@ static NextFSMAction Handler_STATE_PLAYLIST_OPTS(CMusicPlayer *pMe)
                 (void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Away.mp3");
 #endif
                 pMe->m_MusicPlayerCfg.lastPlayMusicID=0;
-#if defined(FEATURE_VERSION_W021_WSF_CN_FM)||defined(FEATURE_VERSION_W021_WSF_CN_P3)||defined(FEATURE_VERSION_W021_WSF_CN_P6)
+#if defined(FEATURE_VERSION_W021_WSF_CN_FM)||defined(FEATURE_VERSION_W021_WSF_CN_P3)||defined(FEATURE_VERSION_W021_WSF_CN_P6)||defined(FEATURE_VERSION_W021_WSF_P7)
 				pMe->m_nPlayinglistMusicNum = 2;
 #else
                 pMe->m_nPlayinglistMusicNum = 1;
@@ -1177,9 +1179,11 @@ static NextFSMAction Handler_STATE_VIEW_OPTS(CMusicPlayer *pMe)
                         (void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/jnstyle.mp3");
 #elif defined(FEATURE_VERSION_K212_ND)
 		(void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Wuxinghongqi.mp3");
-#elif defined(FEATURE_VERSION_W021_WSF_CN_FM)||defined(FEATURE_VERSION_W021_WSF_CN_P3)
+#elif defined(FEATURE_VERSION_W021_WSF_CN_FM)||defined(FEATURE_VERSION_W021_WSF_CN_P3)||defined(FEATURE_VERSION_W021_WSF_P7)
 #if defined(FEATURE_VERSION_W021_WSF_CN_P6)
 		(void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Yiwangeshebude.mp3");
+#elif defined(FEATURE_VERSION_W021_WSF_P7)
+	(void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Jiefangjunqichuanghao.mp3");
 #else
 		(void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Away.mp3");
 #endif
@@ -1188,7 +1192,7 @@ static NextFSMAction Handler_STATE_VIEW_OPTS(CMusicPlayer *pMe)
                         (void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Away.mp3");
 #endif
                         pMe->m_MusicPlayerCfg.lastPlayMusicID=0;
-#if defined(FEATURE_VERSION_W021_WSF_CN_FM)||defined(FEATURE_VERSION_W021_WSF_CN_P3)||defined(FEATURE_VERSION_W021_WSF_CN_P6)
+#if defined(FEATURE_VERSION_W021_WSF_CN_FM)||defined(FEATURE_VERSION_W021_WSF_CN_P3)||defined(FEATURE_VERSION_W021_WSF_CN_P6)||defined(FEATURE_VERSION_W021_WSF_P7)
 						pMe->m_nPlayinglistMusicNum = 2;
 #else
                         pMe->m_nPlayinglistMusicNum = 1;
@@ -1316,9 +1320,11 @@ static NextFSMAction Handler_STATE_VIEW_DELETEALL(CMusicPlayer *pMe)
             (void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/jnstyle.mp3");
 #elif defined(FEATURE_VERSION_K212_ND)
 		(void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Wuxinghongqi.mp3");
-#elif defined(FEATURE_VERSION_W021_WSF_CN_FM)||defined(FEATURE_VERSION_W021_WSF_CN_P3)
+#elif defined(FEATURE_VERSION_W021_WSF_CN_FM)||defined(FEATURE_VERSION_W021_WSF_CN_P3)||defined(FEATURE_VERSION_W021_WSF_P7)
 #if defined(FEATURE_VERSION_W021_WSF_CN_P6)
 		(void)STRCPY(pMe->m_PlayingMusiclist[2].pMusicName,"1fs:/hsmm/music/Yiwangeshebude.mp3");
+#elif defined(FEATURE_VERSION_W021_WSF_P7)
+	(void)STRCPY(pMe->m_PlayingMusiclist[2].pMusicName,"1fs:/hsmm/music/Jiefangjunqichuanghao.mp3");
 #else
 		(void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Away.mp3");
 #endif
@@ -1327,7 +1333,7 @@ static NextFSMAction Handler_STATE_VIEW_DELETEALL(CMusicPlayer *pMe)
             (void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Away.mp3");
 #endif
             pMe->m_MusicPlayerCfg.lastPlayMusicID=0;
-#if defined(FEATURE_VERSION_W021_WSF_CN_FM)||defined(FEATURE_VERSION_W021_WSF_CN_P3)||defined(FEATURE_VERSION_W021_WSF_CN_P6)
+#if defined(FEATURE_VERSION_W021_WSF_CN_FM)||defined(FEATURE_VERSION_W021_WSF_CN_P3)||defined(FEATURE_VERSION_W021_WSF_CN_P6)||defined(FEATURE_VERSION_W021_WSF_P7)
 			pMe->m_nPlayinglistMusicNum = 2;
 #else
             pMe->m_nPlayinglistMusicNum = 1;
