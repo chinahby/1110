@@ -222,7 +222,9 @@ ifneq ($(USES_RESDIR),VHOPE)
 ifneq ($(USES_RESDIR),K212)
 ifneq ($(USES_RESDIR),K232_X3)
 ifneq ($(USES_RESDIR),hywy)
+ifneq ($(USES_RESDIR),WSF_CN_P7)
 include $(UCWEB)/UCWEB.min
+endif
 endif
 endif
 endif
