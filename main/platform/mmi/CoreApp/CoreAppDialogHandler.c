@@ -5373,6 +5373,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
 #elif defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K232_Y101)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+#elif defined(FEATURE_VERSION_W021_WSF_P7)
+					return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
 #else
                 	return CoreApp_LaunchApplet(pMe, AEECLSID_MEDIAGALLERY);
 #endif
