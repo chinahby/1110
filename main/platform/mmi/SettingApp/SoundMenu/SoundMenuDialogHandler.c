@@ -2246,7 +2246,9 @@ static boolean  HandleSmsRingDialogEvent(CSoundMenu *pMe,
 #endif
 				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
+#if !defined(FEATURE_VERSION_W021_WSF_P7)
             IMENUCTL_AddItem(pMenu, AEE_APPSSOUNDMENU_RES_FILE, IDS_GALLERY_PROFILE, IDS_GALLERY_PROFILE, NULL, 0);
+#endif
             // ÃÌº”¡Â…˘—°œÓ
             for (i = 0; i < MAX_SMS_RINGER; i++)
             {

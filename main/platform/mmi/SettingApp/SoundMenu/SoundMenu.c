@@ -1558,12 +1558,16 @@ void SoundMenu_UpdateRingerListMenu(CSoundMenu *pMe, IMenuCtl *pMenu)
     if(pMe->m_RingerType == SET_ANOTHER)
     {
         IMENUCTL_AddItem(pMenu, AEE_APPSSOUNDMENU_RES_FILE, IDS_DEFAULT, DEFAULT_MENU, NULL, 0); 
+		#if !defined(FEATURE_VERSION_W021_WSF_P7)
         IMENUCTL_AddItem(pMenu, AEE_APPSSOUNDMENU_RES_FILE, IDS_GALLERY_PROFILE, DOWNLOAD_MENU, NULL, 0);
+		#endif
     }
 
     if(pMe->m_RingerType == SET_ALARMRING || pMe->m_RingerType == SET_RINGER)
     {
+#if !defined(FEATURE_VERSION_W021_WSF_P7)
         IMENUCTL_AddItem(pMenu, AEE_APPSSOUNDMENU_RES_FILE, IDS_GALLERY_PROFILE, DOWNLOAD_MENU, NULL, 0);
+#endif
     }
 
     // 建立菜单项列表
