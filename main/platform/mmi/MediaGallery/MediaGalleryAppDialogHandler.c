@@ -3646,8 +3646,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
          case AVK_RIGHT:
          case AVK_LEFT:
             MSG_FATAL("MGAppPopupMenu_OnImageViewer AVK_LEFT, eDlgStat=%d",eDlgStat,0,0);
-            if(eDlgStat == MG_DLGSTAT_NORMAL &&
-               (pMe->m_bImgLoadDone == TRUE ))
+            if(eDlgStat == MG_DLGSTAT_NORMAL &&(pMe->m_bImgLoadDone == TRUE ))
             {
                AEEImageInfo ImgInfo;
                IImage *pi = pMe->m_pImage;
@@ -3669,7 +3668,6 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
                                 0,
                                 0);
             }
-
             return TRUE;
 
          default:

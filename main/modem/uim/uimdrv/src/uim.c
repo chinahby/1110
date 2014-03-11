@@ -8967,12 +8967,14 @@ dword dummy
       if (rex_signals_mask & UIMDATA_INIT_SIG)
       {
          (void) rex_clr_sigs(&uim_tcb, UIMDATA_INIT_SIG);
+         MSG_FATAL("UIMDATA_INIT_SIG.................",0,0,0);
          if(db_getuiminitmask()&INITUIMSMSMASK)
          {
+            MSG_FATAL("UIMDATA_INIT_SIG.........msg........",0,0,0);
             if (wms_ruim_init_stepbystep())
             {// 短信初始化完成
                 db_items_value_type db_item;
-                
+                MSG_FATAL("UIMDATA_INIT_SIG.........msg.......over.",0,0,0);
                 db_item.db_uimsmsinited = TRUE;
                 db_put(DB_UIMSMSINIT, &db_item);
                 
@@ -8984,10 +8986,11 @@ dword dummy
          }
          else if(db_getuiminitmask()&INITUIMADDMASK)
          {
+            MSG_FATAL("UIMDATA_INIT_SIG.........uim........",0,0,0);
             if (InitRUIMAddrBkCacheCb())
             {// 电话本初始化完成
                 db_items_value_type db_item;
-                
+                MSG_FATAL("UIMDATA_INIT_SIG.........uim.......over.",0,0,0);
                 db_item.db_uimaddinited = TRUE;
                 db_put(DB_UIMADDINIT, &db_item);
                 

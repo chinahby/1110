@@ -5100,7 +5100,7 @@ switch(pMe->m_nCameraSize)
 #endif
 
 
-#if defined (FEATURE_VERSION_K232_Y101)
+#if defined (FEATURE_VERSION_K232_Y101)||defined (FEATURE_VERSION_K232_Y100A)
     // size cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_SIZE,

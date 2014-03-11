@@ -1343,7 +1343,7 @@ int CContApp_LoadAddrFlds( CContApp      *pMe,
         // sort by field type
         IVector_Sort(pMe->m_pFldIv, CContApp_SortByFldIDCB);
     }
-    
+    MSG_FATAL("CContApp_LoadAddrFlds====%d",ret,0,0);
     return ret;
 }// CContApp_LoadAddrFlds
 

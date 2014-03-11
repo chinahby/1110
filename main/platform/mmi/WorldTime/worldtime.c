@@ -450,7 +450,7 @@ static boolean InitWorldTime(CWorldTime *pme)
                                                 NULL,
                                                 0);
             }
-           #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_REGION_INDIA) || defined(FEATURE_VERSION_IC241A_MMX)
+           #if defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_K232_Y100A) || defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_REGION_INDIA) || defined(FEATURE_VERSION_IC241A_MMX)
             if(i == 4)
             {
             	(void)IMENUCTL_AddItem( pme->m_pMenuCity,

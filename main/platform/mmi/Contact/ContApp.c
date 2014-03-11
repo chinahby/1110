@@ -810,6 +810,7 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
             }
 #if defined(FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK)
 #if defined( FEATURE_RUIM_PHONEBOOK)
+            MSG_FATAL("PhoneBookCache_IsIninited=====%d",PhoneBookCache_IsIninited(),0,0);
             if (!PhoneBookCache_IsIninited())
             {
                 if ((pMe->m_eStartMethod == STARTMETHOD_FINDNUMBER) || 

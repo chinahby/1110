@@ -1230,11 +1230,16 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
 		                              pMe);
 #endif   
 
-#ifdef FEATURE_VERSION_K232_Y105A
+#if defined(FEATURE_VERSION_K232_Y105A)||defined(FEATURE_VERSION_K232_Y100A)
                  (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
 		                              MOBILETRACKERREGINFOR_TIME,
 		                              CoreApp_MobileTrackerTimer, 
 		                              pMe);
+                
+                (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
+	                              ININT_PHONE_BOOK,
+	                              CoreApp_InintPhoneBook, 
+	                              pMe);
 #endif
 #if defined (FEATURE_IC19_ESN_TRACKER)
 #ifndef FEATURE_VERSION_K232_Y105A

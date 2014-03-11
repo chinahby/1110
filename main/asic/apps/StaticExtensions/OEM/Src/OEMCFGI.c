@@ -2106,7 +2106,11 @@ static OEMConfigListType oemi_cache = {
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
    ,OEMNV_CAMERA_SHUTTER_TONE_SHUTTER1/*CFGI_CAMERA_TONE*/
 #else
+#if defined(FEATURE_VERSION_K232_Y100A)
+   ,OEMNV_CAMERA_SHUTTER_TONE_DISABLE
+#else
    ,OEMNV_CAMERA_SHUTTER_TONE_ENABLE       /*CFGI_CAMERA_TONE*/
+#endif
 #endif   
    ,OEMNV_CAMERA_BANDING_50HZ      /*CFGI_CAMERA_BANDING*/
    ,OEMNV_CAMERA_STORAGE_MEMORY_CARD/*CFGI_VIDEO_STORAGE*/ 
@@ -3551,7 +3555,11 @@ void OEM_RestoreFactorySetting( void )
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
    oemi_cache.camera_tone = OEMNV_CAMERA_SHUTTER_TONE_SHUTTER1;
 #else      
+#if defined(FEATURE_VERSION_K232_Y100A)
+   oemi_cache.camera_tone = OEMNV_CAMERA_SHUTTER_TONE_DISABLE;
+#else
    oemi_cache.camera_tone = OEMNV_CAMERA_SHUTTER_TONE_ENABLE;  
+#endif
 #endif
    oemi_cache.camera_banding = OEMNV_CAMERA_BANDING_50HZ;
    oemi_cache.camera_storage = OEMNV_CAMERA_STORAGE_MEMORY_CARD;
@@ -3677,7 +3685,7 @@ void OEM_RestoreFactorySetting( void )
    nvi.back_light = OEMNV_BL_7S;
    (void) OEMNV_Put( NV_BACK_LIGHT_I, &nvi );
    nvi_cache.backlight = OEMNV_BL_7S;
-   #elif defined (FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K212_BH)
+   #elif defined (FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K212_BH)||defined(FEATURE_VERSION_K232_Y100A)
    nvi.back_light = OEMNV_BL_30S;
    (void) OEMNV_Put( NV_BACK_LIGHT_I, &nvi );
    nvi_cache.backlight = OEMNV_BL_30S;
@@ -3789,7 +3797,7 @@ void OEM_RestoreFactorySetting( void )
         (void) OEMNV_Put( NV_LANGUAGE_SELECTION_I, &nvi );
         (void) AEE_IssueSystemCallback(AEE_SCB_DEVICE_INFO_CHANGED);
     }
-#if defined (FEATURE_VERSION_W208S) || defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y101)
+#if defined (FEATURE_VERSION_W208S) || defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y101)|| defined(FEATURE_VERSION_K232_Y100A)
    nvi.set_time_format = NV_SET_TIME_FORMAT_12_HOUR;
    (void) OEMNV_Put( NV_SET_TIME_FORMAT_I, &nvi);
    nvi_cache.set_time_format = (byte)NV_SET_TIME_FORMAT_12_HOUR;

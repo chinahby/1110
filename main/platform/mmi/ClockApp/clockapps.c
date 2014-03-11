@@ -1906,6 +1906,7 @@ void registerAgainPowerdownAlarmclock( void)
     }
     else
     {
+        MSG_FATAL("registerPowerdownAlarmclock..............",0,0,0);
         registerPowerdownAlarmclock();
     }
 }

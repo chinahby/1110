@@ -4469,6 +4469,16 @@ int CoreApp_MobileTracker(CCoreApp *pme)
    
    
 }
+void CoreApp_InintPhoneBook(void *pme)
+{
+    extern void OEMRUIMAddr_Refresh(void);
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+    db_items_value_type db_item;
+    db_item.db_uimaddinited = TRUE;
+    db_put(DB_UIMADDINIT, &db_item);
+#endif
+    OEMRUIMAddr_Refresh();
+}
 
 void CoreApp_MobileTrackerTimer(void *pme)
 {

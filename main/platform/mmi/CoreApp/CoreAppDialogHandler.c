@@ -1360,6 +1360,8 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
 #if defined( FEATURE_POWERDOWN_ALARM)
 static void CoreApp_AlarmPowerDown( CCoreApp* pMe)
 {
+    extern void registerAgainPowerdownAlarmclock( void);
+    registerAgainPowerdownAlarmclock();
     pMe->m_ePowerDownType = POWERDOWN_NORMAL;
     if (pMe->m_eCurState != COREST_POWEROFF)
     {
@@ -1483,8 +1485,11 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
                 (void)ICONFIG_GetItem(pMe->m_pConfig, CFGI_RINGER_VOL, &ringer_vol, sizeof(ringer_vol));   
 
                 MSG_FATAL("***zzg IDD_ALARM_Handler EVT_START alert_type=%x, ringer_vol=%x***", alert_type, ringer_vol, 0);               
-                
+                #if defined(FEATURE_VERSION_K232_Y100A)
+                if ((ringer_vol == 0))
+                #else
                 if ((alert_type == 0) && (ringer_vol == 0))
+                #endif
                 {
     			    (void)ICONFIG_SetItem(pMe->m_pConfig, CFGI_ALERT_TYPE, &tmptype, sizeof(tmptype));                  
                     (void)ICONFIG_SetItem(pMe->m_pConfig, CFGI_RINGER_VOL, &tmpvol, sizeof(tmpvol));
@@ -4732,7 +4737,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
         {   
 			
 			//Add By zzg 2012_10_29
-			#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_K232_Y101)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K212_HUALU))
+			#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_K232_Y101)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K212_HUALU)||defined (FEATURE_VERSION_K232_Y100A))
 		    if (pMe->pFileMgr)
 		    {
 				if (IFILEMGR_Test(pMe->pFileMgr, AEEFS_CARD0_DIR)==SUCCESS)		
@@ -9876,7 +9881,7 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 	
 
 	//Add By zzg 2012_10_29
-	#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_K232_Y101)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_IC241A_MMX))
+	#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_K232_Y100A)||defined (FEATURE_VERSION_K232_Y101)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_IC241A_MMX))
     if (pMe->pFileMgr)
     {
 		if (IFILEMGR_Test(pMe->pFileMgr, AEEFS_CARD0_DIR)==SUCCESS)		

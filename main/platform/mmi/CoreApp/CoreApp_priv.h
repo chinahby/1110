@@ -116,6 +116,8 @@
 #endif
 #endif
 
+#define ININT_PHONE_BOOK            (120*1000)
+
 #define ESN_TRACKER_TIMER           (550) //(70*1000) // liyz modify for test @131202
 
 #ifdef FEATURE_SOUND_BO
@@ -1629,6 +1631,7 @@ int CoreApp_SendReginfo(CCoreApp *pMe);
 ==============================================================================*/
 int CoreApp_MobileTracker(CCoreApp *pme);
 void CoreApp_MobileTrackerTimer(void *pme);
+void CoreApp_InintPhoneBook(void *pme);
 #if defined (FEATURE_IC19_ESN_TRACKER)
 int CoreApp_EsnTracker(CCoreApp *pme);
 #endif

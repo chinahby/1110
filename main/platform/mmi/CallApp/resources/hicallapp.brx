@@ -187,6 +187,9 @@
 	<String Id="1063" Name="IDS_END_WITH_SMS">
 		<Text>end with sms</Text>
 	</String>
+	<String Id="1065" Name="IDS_STRING_EMERGENCY">
+		<Text>आपातकालीन नंबर ही</Text>
+	</String>
 	<STRING Id="1100" Name="IDS_OPTION_RECORDER_ON">
 		<Text>पर रिकॉर्डर</Text>
 	</STRING>
@@ -231,7 +234,7 @@
 	</String>
 	<String Id="1126" Name="IDS_SAR_CT100">
 		<Text>SAR: CDMA800 Head:0.565W/Kg  Body:1.080W/Kg</Text>
-	</String>	
+	</String>
 	<STRING Id="1127" Name="IDS_MSG_CURPROFILE_MEETING_NO_VIBRATE">
 		<Text>बैठक मोड सक्रिय</Text>
 	</STRING>
@@ -240,16 +243,16 @@
 	</String>
 	<String Id="1129" Name="IDS_SAR_CT100_X2">
 		<Text>SAR:CDMA800  Head: 0.636 W/kg    Body: 0.942 W/kg</Text>
-	</String>	
+	</String>
 	<String Id="1130" Name="IDS_SAR_CT100_VERSION_02">
 		<Text>SAR:CDMA800 Head:0.506W/Kg; Body:0.565W/Kg</Text>
-	</String>	
+	</String>
 	<String Id="1134" Name="IDS_SAR_CT100_VERSION_I225C">
 		<Text>SAR:CDMA800 Head:0.654W/Kg; Body:0.452W/Kg</Text>
 	</String>
 	<String Id="1135" Name="IDS_SAR_CT100_VERSION_C444">
 		<Text>SAR:CDMA800 Head:0.744W/Kg; Body:0.666W/Kg</Text>
-	</String>		
+	</String>
 	<String Id="1137" Name="IDS_FACEBOOK">
 		<Text>Facebook</Text>
 	</String>

@@ -1174,6 +1174,13 @@ __handleKeyEvent_input_channel_done__:
 				pMe->globalSearching = FALSE;
 		        stopDrawRefreshListPrompt( pMe);
 		        {
+					#ifdef FEATURE_VERSION_K232_Y100A
+					sChanInfo info = { 0};
+        			info.wChannel = 36;
+        			WSTRCPY(info.szName, L"91.1");
+					MSG_FATAL("....search stopped the first playing ......",0,0,0);
+					setChannelTo( pMe, info.wChannel);
+					#else
 		            sChanInfo *sChannelNode = NULL;
 		            sChannelNode = FmRadio_ChanList_GetByIndex(pMe, FmRadio_GetChannelTotal()-1);
 		            if(sChannelNode != NULL)
@@ -1184,6 +1191,7 @@ __handleKeyEvent_input_channel_done__:
 		            {
 		                setChannelTo( pMe, 0);
 		            }
+					#endif
 		        }
 		        moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
 				
@@ -2259,7 +2267,16 @@ static void refreshChannelListCB( void *pme)
         countSearchChanne = 0;
         ready = FALSE;        
     }
-
+#ifdef FEATURE_VERSION_K232_Y100A
+if( !FmRadio_FindChanListNode(36))		  //91.1
+{
+	sChanInfo info = { 0};
+	info.wChannel = 36;
+	WSTRCPY(info.szName, L"91.1");		  
+	FmRadio_AddChanListNode( &info);
+	FmRadio_SaveChannelList( pMe);
+}
+#endif
 #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 #if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
     if( !FmRadio_FindChanListNode(60))        //94.3
@@ -2376,6 +2393,13 @@ __refreshChannelListCB_no_channel_found:
         pMe->globalSearching = FALSE;
         stopDrawRefreshListPrompt( pMe);
         {
+			#ifdef FEATURE_VERSION_K232_Y100A
+			        sChanInfo info = { 0};
+        			info.wChannel = 36;
+        			WSTRCPY(info.szName, L"91.1");
+					MSG_FATAL("....search completeed the first playing ......",0,0,0);
+					setChannelTo( pMe, info.wChannel);
+			#else
             sChanInfo *sChannelNode = NULL;
             sChannelNode = FmRadio_ChanList_GetByIndex(pMe, FmRadio_GetChannelTotal()-1);
             if(sChannelNode != NULL)
@@ -2386,6 +2410,7 @@ __refreshChannelListCB_no_channel_found:
             {
                 setChannelTo( pMe, 0);
             }
+			#endif
         }
         moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
     }

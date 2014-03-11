@@ -807,6 +807,9 @@ static NextFSMAction STATE_ORIGINATIONHanlder(CCallApp *pMe)
                 &&(WSTRCMP(pMe->m_CallsTable->call_number,L"101")!=0)&&(WSTRCMP(pMe->m_CallsTable->call_number,L"102")!=0)
                 &&(WSTRCMP(pMe->m_CallsTable->call_number,L"108")!=0))
             {
+                //MOVE_TO_STATE(STATE_EXIT)
+                //CallApp_ShowDialog(pMe, IDD_MSGBOX);
+                CallApp_ShowMsgBox(pMe, IDS_STRING_EMERGENCY);
                 MOVE_TO_STATE(STATE_EXIT)
                 return NFSMACTION_CONTINUE;
             }
