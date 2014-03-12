@@ -2732,6 +2732,16 @@ void uisnd_vibrate(uint16 wDuration,
 				   callback_ptr,
 				   client_data
 				  );
+#elif defined(FEATURE_VERSION_KK5)
+    snd_freq_tone_start(SND_DEVICE_CURRENT,
+				   SND_METHOD_RING,
+				   170,/*188*/
+				   170,/*188*/
+				   (uint16)(1000),
+				   (snd_apath_type)(SND_APATH_LOCAL),
+				   callback_ptr,
+				   client_data
+				  );
 #else
     snd_freq_tone_start(SND_DEVICE_CURRENT,
 				   SND_METHOD_RING,
