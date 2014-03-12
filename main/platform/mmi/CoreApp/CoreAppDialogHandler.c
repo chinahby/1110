@@ -10944,7 +10944,11 @@ static const ServiceProviderList List_SP[] =
        
        {111,1,"Syniverse"},             //信令转接商
        
+#if defined(FEATURE_VERSION_KK5)
+       {404,0,"Tata"},              //印度   
+#else
        {404,0,"Reliance"},              //印度   
+#endif
        {404,1,"Aircell Digilink"},   
        {404,2,"Bharti Mobile"},   
        {404,3,"Bharti Telenet"},   
