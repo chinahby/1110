@@ -8414,7 +8414,7 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
         &&!b_energency)
     {
     //Add by pyuangui 2013-01-08
-    #if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)
+    #if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y105A)
         ICM_SetSystemPreference(pMe->m_pICM,
                             AEECM_MODE_PREF_PERSISTENT, AEECM_PREF_TERM_PERMANENT, 0,
                             AEECM_GW_ACQ_ORDER_PREF_NO_CHANGE, AEECM_BAND_PREF_NO_CHANGE,
