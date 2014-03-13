@@ -3057,6 +3057,7 @@ void wms_ts_decode_relative_time
     #ifdef FEATURE_FLASH_SMS
     else if(v == 246)
     {
+        MSG_FATAL("timestamp->minute======%d",timestamp->minute,0,0);
     	timestamp->minute = 1;
     }
     #endif
@@ -3143,7 +3144,7 @@ uint8 wms_ts_encode_relative_time
         MSG_ERROR("Minute is invalid: %d", j, 0, 0);
       }
       i += j;
-
+      MSG_FATAL("i==================%d",i,0,0);
       if( i > 12 * 60 ) /* greater than 12 hours */
       {
         /* 144 - 167: 12 hours + ( (TP-VP - 143) * 30 minutes ) */
