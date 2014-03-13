@@ -1240,6 +1240,12 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 	                                    IDS_APPLICATION_LIST_909C,
 	                                    WTitle,
 	                                    sizeof(WTitle));
+			#elif defined(FEATURE_VERSION_K232_Y100A)
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+									APPLICATION_RES_FILE_LANG,								  
+									IDS_APPLICATION_LIST_C337,
+									WTitle,
+									sizeof(WTitle));
 			#else
 			(void)ISHELL_LoadResString(pMe->m_pShell,
 	                                    APPLICATION_RES_FILE_LANG,                                
@@ -1702,7 +1708,7 @@ static boolean  Application_FlashlightMenuHandler(Application *pMe, AEEEvent eCo
      switch (eCode)
     {
         case EVT_DIALOG_INIT:	
-#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) ||defined(FEATURE_VERSION_W021_C11)|| defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) ||defined(FEATURE_VERSION_W021_C11)|| defined(FEATURE_VERSION_IC241A_MMX)||defined (FEATURE_VERSION_K232_Y100A)
             (void)ISHELL_LoadResString(pMe->m_pShell,
                                     APPLICATION_RES_FILE_LANG,                                
                                     IDS_TORCH,
