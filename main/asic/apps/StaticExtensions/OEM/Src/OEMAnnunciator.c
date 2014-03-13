@@ -740,10 +740,14 @@ static OEMAnnun_data Annunciators[] =
 #else
   {ANNUN_FIELD_RSSI,                ANNUN_ICON_POSITION_1,     ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &rssi_content},
 #endif
-  {ANNUN_FIELD_WAP,                 ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},     
+  #ifndef FEATURE_VERSION_K232_Y105A
+  {ANNUN_FIELD_WAP,                 ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},  
+  #else
+  {ANNUN_FIELD_LOCKSTATUS,          ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &lockstatus_content},
+  #endif
  // {ANNUN_FIELD_QQ,               ANNUN_ICON_POSITION_3,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &qq_content},  
 
-#if (defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_K232_Y101))
+#if (defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_K232_Y105A)|| defined(FEATURE_VERSION_K232_Y101))
   {ANNUN_FIELD_TCARD, 			    ANNUN_ICON_POSITION_3,	 ROW1_Y,  IMG_WIDTH,	  IMG_HEIGHT,  &tcard_content}, 
 #else  
   {ANNUN_FIELD_LOCKSTATUS,          ANNUN_ICON_POSITION_3,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &lockstatus_content},
@@ -1183,6 +1187,28 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
   
     if (pBmp == NULL) 
     {
+        #ifdef FEATURE_VERSION_K232_Y105A
+        MSG_FATAL("DrawImageField....failed==%d==%d",nAnnunID,Annunciators[nAnnunID].pcontent->nCurrState,0);
+        if((nAnnunID == 0) && (Annunciators[nAnnunID].pcontent->nCurrState == ANNUN_STATE_RSSI_NO_SERV))
+        {
+            pBmp = ISHELL_LoadResBitmap (pMe->m_piShell,                                         
+                                         AEE_APPSCOMMONRES_IMAGESFILE,
+                                         IDB_NO_SERVICE);
+            IDISPLAY_SetDestination (pMe->m_coreObj->m_piDisplay, IDIB_TO_IBITMAP(pMe->m_coreObj->m_pDDB));
+        	IDISPLAY_BitBlt (pMe->m_coreObj->m_piDisplay,
+                   (int)Annunciators[nAnnunID].x_pos,
+                   (int)Annunciators[nAnnunID].y_pos,
+                   nWidth, nHeight, pBmp, 0, 0, AEE_RO_COPY);
+        	IDISPLAY_SetDestination(pMe->m_coreObj->m_piDisplay, NULL); // restore the destination 
+
+            if(bUpdate)
+            {
+                //DBGPRINTF("IAnnunciator_DrawImageField");ANNUN_STATE_RSSI_NO_SERV
+        	    annun_disp_update (pMe, pMe->m_coreObj->m_pDDB, nAnnunID);
+            }
+            return SUCCESS;
+        }
+        #endif
         return EFAILED;
     }
   
@@ -2462,10 +2488,24 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                 (void)OEM_GetConfig(CFGI_MENU_BGCOLOR, &nBgColor, sizeof(nBgColor));
             }
 #endif
+            #if defined(FEATURE_VERSION_K232_Y105A)
+            IImage      *pBarImg = NULL;
+            pBarImg = ISHELL_LoadResImage(pMe->m_piShell,
+                                          AEE_APPSCOMMONRES_IMAGESFILE,
+                                          IDB_ANNUNCIATOR_GROUD);
+			if (NULL != pBarImg)
+	        {
+	            IIMAGE_Draw(pBarImg, 0, 0);
+	            IIMAGE_Release(pBarImg);
+	            pBarImg = NULL;
+	        }
+            #else
             IDISPLAY_FillRect(pMe->m_coreObj->m_piDisplay, &Rect, nBgColor);
+            #endif
          }
          //IDISPLAY_FillRect(pMe->m_coreObj->m_piDisplay, &Rect, RGB_BLACK);
       }
+      
       IDISPLAY_BitBlt(pMe->m_coreObj->m_piDisplay,
                         0,
                         0,
@@ -2488,7 +2528,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 #endif        
 
         //MSG_FATAL("***zzg OEMAnnunciator m_bActive=%d, m_hasTitleText=%d***", IAnnunCoreObj->m_bActive, IAnnunCoreObj->m_hasTitleText, 0);
-#if !defined( FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_K232_JST)&&!defined(FEATURE_VERSION_K232_X3)&&!defined(FEATURE_VERSION_K212_BH)
+#if !defined( FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_K232_JST)&&!defined(FEATURE_VERSION_K232_X3)&&!defined(FEATURE_VERSION_K212_BH)&&!defined(FEATURE_VERSION_K232_Y105A)
 	    if(!IAnnunCoreObj->m_bActive)
 		{			
 			/*
@@ -2639,10 +2679,16 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 					#if defined(FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_K232_Y105A)|| defined(FEATURE_VERSION_K232_Y101)||defined(FEATURE_VERSION_K292_WSF_M10C)//||defined(FEATURE_LOW_MEM_BIGFONT)//|| defined(FEATURE_VERSION_K212)
 					{
 						IImage      *pBarImg = NULL;
+                        #if defined(FEATURE_VERSION_K232_Y105A)
+                        pBarImg = ISHELL_LoadResImage(pMe->m_piShell,
+			                                          AEE_APPSCOMMONRES_IMAGESFILE,
+			                                          IDB_ANNUNCIATOR_GROUD);
+                        #else
 
 						pBarImg = ISHELL_LoadResImage(pMe->m_piShell,
 			                                          AEE_APPSCOMMONRES_IMAGESFILE,
 			                                          IDI_TITLEBAR);
+                        #endif
 
 						if (NULL != pBarImg)
 				        {

@@ -4316,7 +4316,29 @@ wms_client_message_s_type *GetSmsTrackerSms(AECHAR *pwstrType)
         DBGPRINTF("GetSmsTrackerSms pBuf=%s\n",pBuf); 
     }
 #elif defined(FEATURE_VERSION_C316)
-
+#ifdef FEATURE_VERSION_K232_Y105A
+	STRCPY(pBuf,"MOB  IN50C  ");
+	
+	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
+	n = WSTRLEN(szBuf);
+	MSG_FATAL("n========%d",n,0,0);
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            H32
+            );
+    n = WSTRLEN(szBuf);
+    STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            L32
+            );
+	n = WSTRLEN(szBuf);
+	MSG_FATAL("2222n========%d",n,0,0);
+	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
+	STRCAT(pBuf,strBuf);
+#else
 	STRCPY(pBuf,"MOB  IN50PLUS  ");
 	
 	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
@@ -4338,7 +4360,7 @@ wms_client_message_s_type *GetSmsTrackerSms(AECHAR *pwstrType)
 	MSG_FATAL("2222n========%d",n,0,0);
 	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
 	STRCAT(pBuf,strBuf);
-	
+#endif	
 #else
     MSG_FATAL("2222n========%d,===%d",cur_bs_ptr->csp.sp.sid,cur_bs_ptr->csp.sp.nid,0);
 	SPRINTF(strSidnid,"%d",cur_bs_ptr->csp.sp.sid);

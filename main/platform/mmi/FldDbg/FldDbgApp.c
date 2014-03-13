@@ -5204,7 +5204,33 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
 
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n';
+#ifdef FEATURE_VERSION_K232_Y105A
+    (void) ISHELL_LoadResString(pme->a.m_pIShell,
+                               FLDDBG_RES_FILE,
+                               IDS_BUILID_TIME,
+                               (szBuf + n),
+                               sizeof(szBuf));
 
+    n = WSTRLEN(szBuf);
+    szBuf[n++] = (AECHAR) '\n'; 
+
+    //insert the SW ver. date
+    for(i=0; ver_date[i]!=0; i++)
+    {
+       szBuf[n+i] = (AECHAR)ver_date[i];
+    }
+    n = WSTRLEN(szBuf);
+    
+    //insert a white sapce
+    szBuf[n++] = (AECHAR) ' ';
+    n = WSTRLEN(szBuf);
+    //insert the SW ver. time
+    for(i=0; ver_time[i]!=0; i++)
+    {
+       szBuf[n+i] = (AECHAR)ver_time[i];
+    }
+    szBuf[n++] = (AECHAR) '\n'; 
+#endif
 
 #ifndef HWVERSION
     #define HWVERSION "V1.0"
@@ -5213,7 +5239,7 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
 	#define HWVERSION "K212_MB_V0.1"
 #endif
     n = WSTRLEN(szBuf);// update current Info. len
-
+    szBuf[n++] = (AECHAR) '\n';
     (void) ISHELL_LoadResString(pme->a.m_pIShell,
                                 FLDDBG_RES_FILE,
                                 IDS_HW_VERSION,

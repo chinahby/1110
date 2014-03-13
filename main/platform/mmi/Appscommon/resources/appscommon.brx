@@ -298,6 +298,9 @@
 	<String Id="1046" Name="IDS_CONTANT_K212">
 		<Text>Contacts</Text>
 	</String>
+	<String Id="1047" Name="IDS_EXIT_MUSIC">
+		<Text>exit music</Text>
+	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>Snooze</Text>
 	</STRING>
@@ -363,7 +366,7 @@
 	</String>
 	<String Id="2022" Name="IDS_EMERGENCY">
 		<Text>Emergency</Text>
-	</String>	
+	</String>
 	<STRING Id="2050" Name="IDS_MSG_KEYGUARD_OK">
 		<Text>Press "Unlock" then OK key </Text>
 	</STRING>
@@ -372,6 +375,6 @@
 	</STRING>
 	<String Id="2052" Name="IDS_SPEAKER">
 		<Text>Speaker</Text>
-	</String>	
+	</String>
 </Strings>
 </BREWRes>

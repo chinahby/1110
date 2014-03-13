@@ -916,7 +916,9 @@ static boolean RecentCalls_MainMenuEvent(CRecentCalls *pMe,
 		IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_DELETE_LOG, IDS_DELETE_LOG, NULL, 0);
 		#else
 		IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_CALL_TIME, IDS_CALL_TIME, NULL, 0);
+		#ifndef FEATURE_VERSION_K232_Y105A
         IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_DELETE_ALL, IDS_DELETE_ALL, NULL, 0);
+		#endif
 		#endif
         return TRUE;
       

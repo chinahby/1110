@@ -2659,7 +2659,19 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                                 #ifdef FEATURE_SHOW_RSSI_INFO
                                 pMe->m_rssi = pEvtInfo->event_data.ss.ss_info.rssi;
                                 #endif
+                                #ifdef FEATURE_VERSION_K232_Y105A
+                                if (IRUIM_IsCardConnected(pMe->m_pIRUIM))
+	                            {
+	                                IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, DBToLevel(pEvtInfo->event_data.ss.ss_info.rssi));
+                                }
+                                else
+                                {
+                                    IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_NO_SERV);
+                                    //pEvtInfo->event_data.ss.srv_status = AEECM_SRV_STATUS_NO_SRV;ANNUN_STATE_RSSI_NO_SERV
+                                }
+                                #else
                                 IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, DBToLevel(pEvtInfo->event_data.ss.ss_info.rssi));
+                                #endif
 #ifdef FEATURE_VERSION_EC99
                                 IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_3G_RSSI, DBToLevel(pEvtInfo->event_data.ss.ss_info.rssi));
 #endif                                  

@@ -47,7 +47,7 @@
 		<Text>Converter</Text>
 	</String>
 	<String Id="1016" Name="IDS_APPLICATION_WORLDTIME">
-		<Text>WorldTime</Text>
+		<Text>World clock</Text>
 	</String>
 	<String Id="1017" Name="IDS_APPLICATION_RECORDER">
 		<Text>Recorder</Text>

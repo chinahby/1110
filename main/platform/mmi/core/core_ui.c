@@ -244,6 +244,7 @@ IQI * piTouchscreen = NULL;
 /*These should go in a brew header*/
 extern void k1ExHandler_SetExceptionHandlerOf(L4_ThreadId_t thread_id);
 extern IEnv *gpiRexEnv;
+boolean get_fm_play_state(void);
 
 #endif
 
@@ -1013,6 +1014,12 @@ void handle_keys(void)
 
                 if (CoreTask_HandleAEEEvt(EVT_KEY, last_vcode, dwParam_code))
 				{
+#if defined(FEATURE_VERSION_KK5)||defined(FEATURE_VERSION_K232_Y105A)
+                    if (last_vcode == AVK_HEADSET_SWITCH)
+                    {
+                        hs_to_aee_tbl[hs2vcodeidx].bpressed = TRUE;
+                    }
+#endif
                     continue;
                 }	
 
@@ -1995,8 +2002,70 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
     }	
 #endif
     MSG_FATAL("evt====%0x,,wParam====%0x",evt,wParam,0);
+#if defined (FEATURE_VERSION_KK5)||defined(FEATURE_VERSION_K232_Y105A)        
+    if (wParam == AVK_HEADSET_SWITCH && bSendHeadsetKeyAllowed)     
+    {
+        MSG_FATAL("***zzg IsMp3PlayerStatusNone=%d, get_fm_play_state=%d***",IsMp3PlayerStatusNone(),get_fm_play_state(),0);
+        
+        if (IsMp3PlayerStatusOnBG())
+        {            
+            MSG_FATAL("***zzg CoreTask_HandleAEEEvt IsMp3PlayerStatusOnBG evt=%x,wParam=%x***", evt, wParam, 0);
+            ISHELL_SendEvent( AEE_GetShell(),
+                              AEECLSID_APP_MUSICPLAYER,
+                              EVT_USER,
+                              evt,
+                              wParam);
+            return TRUE;            
+        }
+
+        if (get_fm_play_state())
+        {   
+            ISHELL_SendEvent( AEE_GetShell(),
+                              AEECLSID_APP_FMRADIO,
+                              EVT_USER,
+                              evt,
+                              wParam);
+            return TRUE;            
+        }       
+    
+#ifdef FEATURE_ICM
+        if(AEECM_IS_VOICECALL_CONNECTED(gpICM))
+        {
+#else
+		if(SUCCESS != ITELEPHONE_GetCalls(g_pITelephone, &po,sizeof(AEETCalls)))
+		{
+			return FALSE;
+		}
+        
+        if (po.dwCount>0)
+        {
+#endif
+            //wParam = AVK_END;
+            bHandle = FALSE;  
+        }
+        else
+        {    
+            if (IsMp3PlayerStatusNone() && (!get_fm_play_state()))
+            {
+                if (AEE_Active() != AEECLSID_DIALER)
+                {
+                    wParam = AVK_SEND;
+                }
+                
+                bHandle = TRUE;                   
+            }
+            else
+            {
+                bHandle = FALSE;
+            }
+        }    
+        
+    }           
+#else
     // AVK_HEADSET_SWITCH means headset key press
-    if (wParam == AVK_HEADSET_SWITCH && bSendHeadsetKeyAllowed) {
+    if (wParam == AVK_HEADSET_SWITCH && bSendHeadsetKeyAllowed) 
+    {
+       
 #ifdef FEATURE_ICM
         if(AEECM_IS_VOICECALL_CONNECTED(gpICM)){
 #else
@@ -2021,7 +2090,8 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 			// add end
         }
         bHandle = TRUE;
-    }
+    }          
+#endif        
     
     cls = AEE_Active();
     switch(wParam){

@@ -672,7 +672,7 @@ else
 						index_m1.mid|fs:/ringers/intex1.mid \
             index_m2.mp3|fs:/ringers/intex2.mp3 \
             feeling_on.mp3|fs:/ringers/intex3.mp3 \
-            feeling_off.mp3|fs:/ringers/intex4.mp3 \
+            index_m3.mp3|fs:/ringers/intex4.mp3 \
             index_m1.mp3|fs:/ringers/intex5.mp3
 	else ifeq ($(USES_RESDIR),M74)                                           
         CONSTFILE_FILES+=\

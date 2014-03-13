@@ -881,7 +881,7 @@ typedef struct _CCallApp
 	int16   m_i;
 #endif
 	boolean            m_penup;
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)  ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)  
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K232_Y105A)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)  ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)  
        boolean                    m_isIncoming;
 #endif
 #if defined(FEATURE_VERSION_K212) ||defined(FEATURE_VERSION_K212_BH)   

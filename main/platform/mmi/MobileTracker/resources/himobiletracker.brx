@@ -8,7 +8,7 @@
 		<Text>मोबाइल ट्रैकर (पर / बंद) सक्षम</Text>
 	</String>
 	<String Id="1003" Name="IDS_MOBILETRACKER_DESIGNATENUMBER">
-		<Text>नंबर संपादित करें</Text>
+		<Text>इनपुट संख्या</Text>
 	</String>
 	<String Id="1004" Name="IDS_PWD_TITLE">
 		<Text>पासवर्ड दर्ज करें</Text>
@@ -41,7 +41,7 @@
 		<Text>नंबर 3:</Text>
 	</String>
 	<String Id="1014" Name="IDS_CONTENT">
-		<Text>सामग्री</Text>
+		<Text>संदेश</Text>
 	</String>
 	<String Id="1015" Name="IDS_CONFIRM_PASSWORD">
 		<Text>पासवर्ड की पुष्टि करें:</Text>

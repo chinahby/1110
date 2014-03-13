@@ -4483,6 +4483,7 @@ static int StartApplet(MainMenu *pMe, int i)
     case IDS_MAIN_MENU_CALL_LOGS:
 	case IDS_MAIN_MENU_RECENTCALLS_C337:	
     case IDS_MAIN_MENU_RECENTCALLS:
+    case IDS_MAIN_MENU_Y105A:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
         break;
         
@@ -6492,6 +6493,7 @@ static boolean  MainMenu_FlashlightMenuHandler(MainMenu *pMe, AEEEvent eCode, ui
 		case IDS_MAIN_MENU_CALL_LOGS:
 		case IDS_MAIN_MENU_RECENTCALLS_C337:	
 		case IDS_MAIN_MENU_RECENTCALLS:
+        case IDS_MAIN_MENU_Y105A:
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
 			break;
 			
@@ -8517,6 +8519,7 @@ static int StartApplet(MainMenu *pMe, int i)
     case IDS_MAIN_MENU_CALL_LOGS:
 	case IDS_MAIN_MENU_RECENTCALLS_C337:	
     case IDS_MAIN_MENU_RECENTCALLS:
+    case IDS_MAIN_MENU_Y105A:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
         break;
         
@@ -10460,6 +10463,7 @@ static int StartApplet(MainMenu *pMe, int i)
     case IDS_MAIN_MENU_CALL_LOGS:
 	case IDS_MAIN_MENU_RECENTCALLS_C337:	
     case IDS_MAIN_MENU_RECENTCALLS:
+    case IDS_MAIN_MENU_Y105A:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
         break;
         
@@ -12476,6 +12480,7 @@ static int StartApplet(MainMenu *pMe, int i)
     case IDS_MAIN_MENU_CALL_LOGS:
 	case IDS_MAIN_MENU_RECENTCALLS_C337:	
     case IDS_MAIN_MENU_RECENTCALLS:
+    case IDS_MAIN_MENU_Y105A:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
         break;
         
@@ -14518,6 +14523,7 @@ static int StartApplet(MainMenu *pMe, int i)
     case IDS_MAIN_MENU_CALL_LOGS:
 	case IDS_MAIN_MENU_RECENTCALLS_C337:	
     case IDS_MAIN_MENU_RECENTCALLS:
+    case IDS_MAIN_MENU_Y105A:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
         break;
         
@@ -15604,6 +15610,17 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[7]     = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_GALLERY;
 	#elif defined (FEATURE_VERSION_C316)
+    #ifdef FEATURE_VERSION_K232_Y105A
+    pMe->m_IconTitle[0]     = IDS_PHONEBOOK;
+    pMe->m_IconTitle[1]     = IDS_MAIN_MENU_MESSAGES;
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_CALL_LOGS;//IDS_MAIN_MENU_Y105A;
+    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_SETTINGS;
+    pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MULTIMEDIA;
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_FILEMGR;
+    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_ORGANIZER;
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_INTEXZONE;
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_SERVICES_C316;
+    #else
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CONTACTS;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_MESSAGES;
     pMe->m_IconTitle[2]     = IDS_MAIN_MENU_RECENTCALLS;
@@ -15613,6 +15630,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_ORGANIZER;
     pMe->m_IconTitle[7]     = IDS_MAIN_MENU_INTEXZONE;
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_SERVICES_C316;
+    #endif
     #elif defined(FEATURE_VERSION_GECOMSA_C204)
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MULTIMEDIA;	//IDS_MAIN_MENU_MUSICPLAYER;	
 	pMe->m_IconTitle[1]     = IDS_MAIN_MENU_CONTACTS;	
@@ -17698,6 +17716,7 @@ static int StartApplet(MainMenu *pMe, int i)
     case IDS_MAIN_MENU_CALL_LOGS:
 	case IDS_MAIN_MENU_RECENTCALLS_C337:	
     case IDS_MAIN_MENU_RECENTCALLS:
+    case IDS_MAIN_MENU_Y105A:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
         break;
         

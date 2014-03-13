@@ -311,7 +311,9 @@ static const CCameraSize g_CameraSizeCFG[] =
     {176,220,L"176*220"}, // QCIF
     {240,320,L"240*320"}, // QVGA   
  #if defined( FEATURE_VERSION_C316)//||defined(FEATURE_VERSION_C117_M74)
+ #ifndef FEATURE_VERSION_K232_Y105A
     {300,400,L"480*640"}, // VGA
+ #endif
  #elif defined (FEATURE_VERSION_C260_IC18)
     {352,464,L"352*464"}, // VGA 
  #endif
@@ -684,7 +686,7 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
             	    IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_ITEM_CAMERA_GALLERY, IDS_ITEM_CAMERA_GALLERY, NULL, NULL);
                 }
 			}            
-            #if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_K232_Y105A)|| defined(FEATURE_VERSION_W021_GD821) || defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_K212_VHOPE)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_K232_Y101)
+            #if defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W021_GD821) || defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_K212_VHOPE)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_K232_Y101)
             IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_CAMERA_PHOTO_MODE, IDS_CAMERA_PHOTO_MODE, NULL, NULL);
             #endif
 			if(pMe->m_bIsbackMed)
@@ -712,12 +714,33 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
             {
             	case IDS_VIDEO_CAMERA:
                 case IDS_ITEM_CAMERA: 
-#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_K232_Y105A) || defined(FEATURE_VERSION_W021_GD821)|| defined(FEATURE_VERSION_S1000T)||defined(FEATURE_VERSION_K212_VHOPE)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_K232_Y101)
+#if defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W021_GD821)|| defined(FEATURE_VERSION_S1000T)||defined(FEATURE_VERSION_K212_VHOPE)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_K232_Y101)
                     {
                       boolean cameraphotopath = FALSE;
                       OEM_GetConfig(CFGI_CAMERA_PHOTO_MODE,&cameraphotopath, sizeof(cameraphotopath));
                       pMe->m_isStartFromFacebook = cameraphotopath;
                     } 
+#elif defined(FEATURE_VERSION_K232_Y105A)
+                    {
+                        
+                        IFileMgr *pFileMgr ;
+                        ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_FILEMGR, (void **)&pFileMgr);
+                        if (pFileMgr)
+                        {
+                		    if(IFILEMGR_Test(pFileMgr, AEEFS_CARD0_DIR)==SUCCESS)		
+                		     {
+                		        pMe->m_isStartFromFacebook = FALSE;
+                             }
+                             else
+                             {
+                                pMe->m_isStartFromFacebook = TRUE;
+                             }
+                        }
+                        if (pFileMgr)
+                        {
+                             IFILEMGR_Release(pFileMgr);
+                        }
+                    }
 #endif
                     // set the annunciator disable
                     IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);

@@ -529,6 +529,12 @@
 	<STRING Id="1176" Name="IDS_PRL_VERSION_TITLE">
 		<Text>PRL Version</Text>
 	</STRING>
+	<String Id="1177" Name="IDS_STR_NAVIGATION">
+		<Text>Navigation key</Text>
+	</String>
+	<String Id="1178" Name="IDS_SOFTWARE_VERSION">
+		<Text>SW Info</Text>
+	</String>
 	<STRING Id="1372" Name="IDS_SHORTCUTS_MENU_TITLE">
 		<Text>Shortcuts</Text>
 	</STRING>
@@ -926,7 +932,7 @@
 				<Items/>
 			</Menu>
 		</Controls>
-	</DIALOG>	
+	</DIALOG>
 	<Dialog Id="6050" Name="IDD_PREFIX_EDIT" Focus="7050">
 		<Controls>
 			<Menu Id="7049" Name="IDC_PREFIX_EDIT_MENU">

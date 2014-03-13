@@ -98,7 +98,9 @@ when       who     what, where, why
 #ifdef FEATURE_LANG_ENGLISH
 #ifdef FEATURE_MT_ENGLISH_NEW
 #if defined(FEATURE_MT_ENGLISH_EN)
+#ifndef FEATURE_VERSION_K232_Y105A
 #define FEATURE_T9_RAPID_ENGLISH
+#endif
 #endif
 #else
 #if defined(FEATURE_VERSION_K212)||defined(FEATURE_LOWER_MEM)
@@ -108,7 +110,9 @@ when       who     what, where, why
 #define FEATURE_MT_ENGLISH_LOW
 #else
 #define FEATURE_T9_MT_ENGLISH
+#ifndef FEATURE_VERSION_K232_Y105A
 #define FEATURE_T9_RAPID_ENGLISH
+#endif
 #endif
 
 #if defined (FEATURE_ALL_KEY_PAD)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W0216A)||defined (FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_W516_C260)

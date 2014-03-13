@@ -97,7 +97,9 @@ when       who     what, where, why
 //#define FEATURE_LANG_ARABIC
 #ifdef FEATURE_LANG_ENGLISH
 #define FEATURE_ZI_MT_ENGLISH
+#ifndef FEATURE_VERSION_K232_Y105A
 #define FEATURE_ZI_RAPID_ENGLISH
+#endif
 #if defined (FEATURE_ALL_KEY_PAD)|| defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_W515V3)
 #define FEATURE_ZI_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
 #endif

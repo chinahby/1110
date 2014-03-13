@@ -4737,7 +4737,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
         {   
 			
 			//Add By zzg 2012_10_29
-			#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_K232_Y101)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K212_HUALU)||defined (FEATURE_VERSION_K232_Y100A))
+			#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_K232_Y101)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K212_HUALU)||defined (FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_K232_Y105A))
 		    if (pMe->pFileMgr)
 		    {
 				if (IFILEMGR_Test(pMe->pFileMgr, AEEFS_CARD0_DIR)==SUCCESS)		
@@ -9304,6 +9304,24 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
    
 	#endif    
 
+    #ifdef FEATURE_VERSION_K232_Y105A
+    {
+        if(!OEMKeyguard_IsEnabled())
+        {
+            IImage * pBottomBarImage = NULL;
+            pBottomBarImage = ISHELL_LoadResImage(pMe->a.m_pIShell,
+                                AEE_APPSCOMMONRES_IMAGESFILE,
+                                IDI_BOTTOM_BAR);
+            IIMAGE_Draw( pBottomBarImage, (SCREEN_HEIGHT/2)-18, (SCREEN_HEIGHT-BOTTOMBAR_HEIGHT));
+            if(pBottomBarImage)
+            {
+                IIMAGE_Release(pBottomBarImage);
+                pBottomBarImage = NULL;
+            }
+        }
+    }
+    #endif
+
     //Add By zzg 2013_09_09
 //#ifdef FEATURE_VERSION_EC99
     //IImage_Release(pTmpWallPaper);    
@@ -9881,7 +9899,7 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 	
 
 	//Add By zzg 2012_10_29
-	#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_K232_Y100A)||defined (FEATURE_VERSION_K232_Y101)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_IC241A_MMX))
+	#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_K232_Y105A)||defined (FEATURE_VERSION_K232_Y101)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_IC241A_MMX))
     if (pMe->pFileMgr)
     {
 		if (IFILEMGR_Test(pMe->pFileMgr, AEEFS_CARD0_DIR)==SUCCESS)		

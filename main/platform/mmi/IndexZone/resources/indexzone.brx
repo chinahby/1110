@@ -2,7 +2,7 @@
 <BREWRes Name="indexzone" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<String Id="1002" Name="IDS_INDEX_ZONE_TITLE">
-		<Text>Index Zone</Text>
+		<Text>Intex Zone</Text>
 	</String>
 	<String Id="1003" Name="IDS_INDEX_ZONE_UTK">
 		<Text>UTK</Text>

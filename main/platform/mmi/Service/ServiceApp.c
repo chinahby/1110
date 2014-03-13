@@ -648,7 +648,9 @@ static boolean ServiceApp_ListMenuHandler(ServiceApp *pMe, AEEEvent eCode, uint1
 				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
 		    }
+			#ifndef FEATURE_VERSION_K232_Y105A
             IMENUCTL_AddItem(pMenu, SERVICE_RES_FILE_LANG,IDS_SERVICE_UTK, IDS_SERVICE_UTK, NULL, 0); 
+			#endif
 			IMENUCTL_AddItem(pMenu, SERVICE_RES_FILE_LANG,IDS_SERVICE_BROWSER, IDS_SERVICE_BROWSER, NULL, 0); 
 			
             return TRUE;

@@ -2249,7 +2249,11 @@ static OEMConfigListType oemi_cache = {
 #endif 
    ,FALSE                //CFGI_LOW_MEMERY_FEATURE, //add by ydecai 20131125
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS   
+#ifdef FEATURE_VERSION_K232_Y105A
+    ,{{AEECLSID_APP_CAMERA,{0}},{AEECLSID_APP_MUSICPLAYER,{0}},{AEECLSID_WMSAPP,{0}},{AEECLSID_SCHEDULEAPP,{0}}}    //CFGI_KEYPAD_SHORTCUTS_TABLE
+#else
    ,{{AEECLSID_APP_CAMERA,{0}},{AEECLSID_APP_FMRADIO,{0}},{AEECLSID_APP_SETTINGMENU,{0}},{AEECLSID_SCHEDULEAPP,{0}}}    //CFGI_KEYPAD_SHORTCUTS_TABLE
+#endif
 #endif   
 };
 
@@ -3083,7 +3087,7 @@ void OEM_RestoreFactorySetting( void )
 #ifndef CUST_EDITION
    oemi_cache.time_format         = OEMNV_TIMEFORM_AMPM;
 #endif
-#ifdef FEATURE_VERSION_K212_HUALU
+#if defined(FEATURE_VERSION_K212_HUALU)|| defined(FEATURE_VERSION_K232_Y105A)
    oemi_cache.time_format         = OEMNV_TIMEFORM_AMPM;
 #endif
    MEMSET((void *)&oemi_cache.cug, 0, sizeof(OEMConfigCugInfo));
@@ -3624,7 +3628,7 @@ void OEM_RestoreFactorySetting( void )
     nvi_cache.handset_ear_level = OEMNV_VOLUME_HIGH;
 #endif
    // CFGI_BEEP_VOL:
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_K232_Y105A)
 	nvi.beep_level = OEMNV_VOLUME_OFF;
    (void) OEMNV_Put( NV_BEEP_LVL_I, &nvi );
    nvi_cache.beep_level = OEMNV_VOLUME_OFF;
@@ -3797,7 +3801,7 @@ void OEM_RestoreFactorySetting( void )
         (void) OEMNV_Put( NV_LANGUAGE_SELECTION_I, &nvi );
         (void) AEE_IssueSystemCallback(AEE_SCB_DEVICE_INFO_CHANGED);
     }
-#if defined (FEATURE_VERSION_W208S) || defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y101)|| defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_W208S) || defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y101)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_K232_Y105A)
    nvi.set_time_format = NV_SET_TIME_FORMAT_12_HOUR;
    (void) OEMNV_Put( NV_SET_TIME_FORMAT_I, &nvi);
    nvi_cache.set_time_format = (byte)NV_SET_TIME_FORMAT_12_HOUR;
@@ -3818,7 +3822,7 @@ void OEM_RestoreFactorySetting( void )
 	(void) OEMNV_Put( NV_SET_DATE_FORMAT_I, &nvi);
 	nvi_cache.set_date_format = (byte)NV_SET_DATE_FORMAT_YYYY_MM_DD_1;
 #endif
-#elif defined (FEATURE_VERSION_C260_IC19) ||defined(FEATURE_VERSION_K232_Y100A) ||defined(FEATURE_VERSION_K232_Y101)   
+#elif defined (FEATURE_VERSION_C260_IC19) ||defined(FEATURE_VERSION_K232_Y100A) ||defined(FEATURE_VERSION_K232_Y101)|| defined(FEATURE_VERSION_K232_Y105A)   
     nvi.set_date_format = NV_SET_DATE_FORMAT_DD_MM_YYYY;
     (void) OEMNV_Put( NV_SET_DATE_FORMAT_I, &nvi);
     nvi_cache.set_date_format = (byte)NV_SET_DATE_FORMAT_DD_MM_YYYY;

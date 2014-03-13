@@ -682,6 +682,21 @@
 	<String Id="1047" Name="IDS_MMS_MENSTATUS">
 		<Text>MMS Memory status</Text>
 	</String>
+	<String Id="1048" Name="IDS_INDEX_TEMPLATE1">
+		<Text>समय की बैठक, बाद में फोन.</Text>
+	</String>
+	<String Id="1049" Name="IDS_INDEX_TEMPLATE2">
+		<Text>जवाब देने के लिए असुविधाजनक, बाद में फोन.</Text>
+	</String>
+	<String Id="1050" Name="IDS_INDEX_TEMPLATE3">
+		<Text>जल्द ही आ जाना, कृपया प्रतीक्षा करें.</Text>
+	</String>
+	<String Id="1051" Name="IDS_INDEX_TEMPLATE4">
+		<Text>तुम कौन हो?</Text>
+	</String>
+	<String Id="1052" Name="IDS_INDEX_TEMPLATE5">
+		<Text>मेरे पास एक एसएमएस भेजें.</Text>
+	</String>
 	<String Id="1101" Name="IDS_TEMPLATETATA1">
 		<Text>Call you later.</Text>
 	</String>

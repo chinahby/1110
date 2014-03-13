@@ -2913,7 +2913,11 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
             IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             // 设置静态文本控件属性
             #ifdef FEATURE_VERSION_C316
+            #ifdef FEATURE_VERSION_K232_Y105A
+            ISTATIC_SetProperties(pStatic, ST_CENTERTITLE | ST_NOSCROLL | ST_DISPLATSMS | ST_GRAPHIC_BG);
+            #else
             ISTATIC_SetProperties(pStatic, ST_CENTERTITLE | ST_NOSCROLL | ST_DISPLATSMS | ST_GRAPHIC_BG |ST_GRAPHIC_BLUE);
+            #endif
 			#else
 			ISTATIC_SetProperties(pStatic, ST_CENTERTITLE | ST_NOSCROLL | ST_DISPLATSMS | ST_GRAPHIC_BG);
 			#endif
@@ -10871,7 +10875,11 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT|TP_FOCUS_NOSEL);
 #else
 #ifdef FEATURE_VERSION_C316
+#ifdef FEATURE_VERSION_K232_Y105A
+                ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+#else
 				ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BGBLUE|TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+#endif
 #else
                 ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
 #endif
@@ -11120,7 +11128,11 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         rc.dx = pMe->m_rc.dx;//five pixels for right edge, 
                         ITEXTCTL_SetRect( pIText, &rc);
 						#ifdef FEATURE_VERSION_C316
+                        #ifdef FEATURE_VERSION_K232_Y105A
+                        ITEXTCTL_SetProperties( pIText, (TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL| TP_STARKEY_SWITCH));
+                        #else
 						ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BGBLUE|TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL| TP_STARKEY_SWITCH);
+                        #endif
 						#else
                         ITEXTCTL_SetProperties( pIText, (TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL| TP_STARKEY_SWITCH));
 						#endif
@@ -11141,7 +11153,11 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT|TP_FOCUS_NOSEL);
 #else
 						#ifdef FEATURE_VERSION_C316
+                        #ifdef FEATURE_VERSION_K232_Y105A
+                        ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+                        #else
 						ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BGBLUE|TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+                        #endif
 						#else
                         ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
 						#endif
@@ -11615,7 +11631,11 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                    // ITEXTCTL_SetRect( pIText, &rc);
                     //MSG_FATAL("EVT_USER_REDRAW rc.x=%d, rc.y=%d, rc.dy=%d", rc.x, rc.y, rc.dy);
 					#ifdef FEATURE_VERSION_C316
+                    #ifdef FEATURE_VERSION_K232_Y105A
+                    ITEXTCTL_SetProperties( pIText, (TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL| TP_STARKEY_SWITCH));
+                    #else
 					ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BGBLUE|TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL| TP_STARKEY_SWITCH);
+                    #endif
 					#else
                     ITEXTCTL_SetProperties( pIText, (TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL| TP_STARKEY_SWITCH));
 					#endif
@@ -13039,6 +13059,13 @@ static boolean IDD_TEMPLATES_Handler(void   *pUser,
                                               IDS_TEMPLATETATA9,
                                               IDS_TEMPLATETATA10,
                                               0};
+                #elif defined(FEATURE_VERSION_K232_Y105A)
+                uint16  nCmdID[PHRASE_MAX] = {IDS_INDEX_TEMPLATE1,
+                                              IDS_INDEX_TEMPLATE2,
+                                              IDS_INDEX_TEMPLATE3,
+                                              IDS_INDEX_TEMPLATE4,
+                                              IDS_INDEX_TEMPLATE5,
+                                              0};
                 #else
                 uint16  nCmdID[PHRASE_MAX] = {IDS_TEMPLATE1,
                                               IDS_TEMPLATE2,
@@ -13208,7 +13235,11 @@ static boolean IDD_EDITTEMPLATE_Handler(void *pUser,
             ITEXTCTL_SetMaxSize(pIText, WMS_TEMPMSG_MAXCHARS);
             IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
 			#ifdef FEATURE_VERSION_C316
+            #ifdef FEATURE_VERSION_K232_Y105A
+            ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG| TP_FRAME | TP_MULTILINE|TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+            #else
 			ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BGBLUE|TP_GRAPHIC_BG| TP_FRAME | TP_MULTILINE|TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+            #endif
 			#else
             ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG| TP_FRAME | TP_MULTILINE|TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
 			#endif
@@ -18961,7 +18992,7 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
                 Msg_Param.pwszMsg = wstrText;
 
 				// add by pyuangui 201312277
-				#ifdef FEATURE_VERSION_K232_X3
+				#if defined(FEATURE_VERSION_K232_X3)||defined(FEATURE_VERSION_K232_Y105A)
 				if (OEMKeyguard_IsEnabled())
 				{
                    Msg_Param.eBBarType = BTBAR_UNLOCK_L;
@@ -21507,7 +21538,11 @@ static boolean IDD_EDIT_ALBUMOREMAIN_Handler(void *pUser,
                 IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
                 SetControlRect(pMe, pIText);   
 				#ifdef FEATURE_VERSION_C316
+                #ifdef FEATURE_VERSION_K232_Y105A
+                ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+                #else
 				ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BGBLUE|TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+                #endif
 				#else
                 ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
 				#endif

@@ -553,7 +553,10 @@ static NextFSMAction SettingMenu_StateMainHandler(CSettingMenu *pMe)
 #ifdef FEATURE_SHOW_PHONE_INFO
         case DLGRET_PHONE_INFO:
             MOVE_TO_STATE(SETTINGMENUST_PHONE_INFO)
-            return NFSMACTION_CONTINUE;  			        								   
+            return NFSMACTION_CONTINUE;  
+        case DLGRET_PHONE_INFO_SW:
+            MOVE_TO_STATE(SETTINGMENUST_PHONE_INFO_SW)
+            return NFSMACTION_CONTINUE; 
 #endif          
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS
         case DLGRET_SHORTCUTS_MENU:
@@ -1139,6 +1142,12 @@ static NextFSMAction SettingMenu_StatePhoneSettingHandler(CSettingMenu *pMe)
 			MOVE_TO_STATE(SETTINGMENUST_SOS)
 			return NFSMACTION_CONTINUE;
 #endif
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
+        case DLGRET_SHORTCUTS_MENU:
+            MOVE_TO_STATE(SETTINGMENUST_SHORTCUTS_MENU)
+            return NFSMACTION_CONTINUE;                                                        
+#endif  
+
 
         default:
             ASSERT_NOT_REACHABLE;

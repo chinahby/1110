@@ -15,6 +15,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_VERSION_K232_Y105A
 #define FEATURE_K_AMPLIFIER
 #define FEATURE_KAMP_ON_OFF_DELAY
+#define FEATURE_SHORTCUT_IN_SETTINGS
+#define FEATURE_SHOW_PHONE_INFO
 #ifdef CUST_EDITION
 
 #define FEATURE_SALESTRACKER
@@ -267,7 +269,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_SDCC_CLK_CONFIG
 #define FEATURE_HS_USB_MS_FD
 #define FEATURE_AUDIO_CAMERA_CONCURRENCY // FOR MP3
-
+#define FEATURE_AAC
+#define FEATURE_AAC_PLUS
+#define FEATURE_ENHANCED_AAC_PLUS
 #endif
 
 #include "custdisplay.h"

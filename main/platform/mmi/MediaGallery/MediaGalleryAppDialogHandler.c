@@ -1306,8 +1306,26 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
 				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_PHONEMEMORY);
+         #ifdef FEATURE_VERSION_K232_Y105A
+         {
+            IFileMgr *pFileMgr ;
+            ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_FILEMGR, (void **)&pFileMgr);
+            if (pFileMgr)
+            {
+    		    if(IFILEMGR_Test(pFileMgr, AEEFS_CARD0_DIR)==SUCCESS)		
+    		     {
+                    MGMENU_ADDITEM(pMenuCtl, IDS_MG_CARDMEMORY);
+                 }
+            }
+            if (pFileMgr)
+            {
+                 IFILEMGR_Release(pFileMgr);
+            }
+       
+         }
+         #else
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_CARDMEMORY);
-
+         #endif
          /*need the two item only when start applet from menu tree, */
          if(pMe->m_StartMode == MGSM_NORMAL_EXPLORER)
          {

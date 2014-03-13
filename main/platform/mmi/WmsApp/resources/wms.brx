@@ -682,6 +682,21 @@
 	<String Id="1047" Name="IDS_MMS_MENSTATUS" Encoding="Unicode">
 		<Text>MMS Memory status</Text>
 	</String>
+	<String Id="1048" Name="IDS_INDEX_TEMPLATE1">
+		<Text>Meeting time, call you back later.</Text>
+	</String>
+	<String Id="1049" Name="IDS_INDEX_TEMPLATE2">
+		<Text>Inconvenient to answer, call you later.</Text>
+	</String>
+	<String Id="1050" Name="IDS_INDEX_TEMPLATE3">
+		<Text>Please wait, be arrived soon. </Text>
+	</String>
+	<String Id="1051" Name="IDS_INDEX_TEMPLATE4">
+		<Text>Who are you?</Text>
+	</String>
+	<String Id="1052" Name="IDS_INDEX_TEMPLATE5">
+		<Text>Please send a SMS to me.</Text>
+	</String>
 	<String Id="1101" Name="IDS_TEMPLATETATA1">
 		<Text>Call you later.</Text>
 	</String>

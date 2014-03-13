@@ -490,7 +490,7 @@ static int CMusicPlayer_InitAppData(CMusicPlayer *pMe)
     {
         return EFAILED;
     }
-    if( ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BACKLIGHT, (void **)&pMe->m_pBacklight)!=AEE_SUCCESS)
+      if( ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BACKLIGHT, (void **)&pMe->m_pBacklight)!=AEE_SUCCESS)
     {
         return EFAILED;
     }
@@ -1134,6 +1134,98 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
                 }
                 
             }
+#elif defined (FEATURE_VERSION_KK5)||defined (FEATURE_VERSION_K232_Y105A)
+        case EVT_USER:
+        {
+            MSG_FATAL("***zzg MusicPlayer EVT_USER wParam=%x, dwParam=%x***", wParam, dwParam, 0);
+            if ((dwParam == AVK_HEADSET_SWITCH) && (GetMp3PlayerStatus() == MP3STATUS_RUNONBACKGROUND))            
+            {
+                switch(wParam)
+                {
+                    case EVT_KEY_PRESS:
+                    {
+                       pMe->keystart_time = GETUPTIMEMS();	
+                       MSG_FATAL("***zzg EVT_KEY_PRESS keystart_time=%d***", pMe->keystart_time,0,0);
+                	   return TRUE;  
+                    }
+                    
+                    case EVT_KEY:
+                    {
+                       (void) ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY) CMusicPlayer_HeadsetSwitchOnHandlerEx,pMe);                      
+                	   return TRUE;  
+                    }
+                    
+                    case EVT_KEY_RELEASE:
+                    {
+                        pMe->keyend_time= GETUPTIMEMS();					
+                        MSG_FATAL("***zzg EVT_KEY_RELEASE keystart_time=%d, keyend_time=%d***", pMe->keystart_time,pMe->keyend_time,0);      
+
+                        ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)CMusicPlayer_HeadsetSwitchOnHandlerEx,pMe);
+                        
+                        if(pMe->keyend_time - pMe->keystart_time < 1500)
+                        {
+                           if ((!pMe->m_bPlaying)&&(!pMe->m_bPaused))
+                	        {
+                	            if (pMe->m_MusicPlayerCfg.eMusicPlayMode == PLAYMODE_RANDOM)
+                	            {            
+                	            	MP3_ResetRandonIdentifier(pMe);
+                	            }
+                				
+                	            if (pMe->m_pMedia)
+                	            {            	
+                	                IMEDIA_Play(pMe->m_pMedia);
+                	                pMe->m_bPlaying=TRUE;
+                	                pMe->m_bPaused = FALSE;            	                
+                	            }   
+                	        }
+                	        else if (pMe->m_bPaused)
+                	        {                  
+                	            if (pMe->bFromResume == TRUE)
+                                {
+                                    pMe->bFromResume = FALSE;
+                                    MSLEEP(1000);
+                                }   
+                                
+                	            if (pMe->m_pMedia)
+                	            {              	
+                	                (void)IMEDIA_Resume(pMe->m_pMedia);
+                	                pMe->m_bPaused=FALSE;
+                	                pMe->m_bPlaying = TRUE;
+                	            }
+                	        }
+                       		else if(pMe->m_bPlaying)
+                	        {
+
+                				//当开始播放和临近结束时暂停会有问题，在这里进行出错处理
+                				if (pMe->m_nCurrentTime == pMe->m_nTotalTime || pMe->m_nCurrentTime == 0)
+                				{          
+                					return TRUE;
+                				}
+                				if (pMe->m_pMedia)
+                				{    
+                					if (SUCCESS == IMEDIA_Pause(pMe->m_pMedia))
+                					{  
+                					   pMe->m_bPaused= TRUE;
+                					   pMe->m_bPlaying = FALSE;  
+                					}
+                				}     
+                	        }    
+                        }      
+                        
+                        pMe->keyend_time = 0;
+                        pMe->keystart_time = 0;
+                        return TRUE;
+                    }                    
+                    default:   
+                        break;
+                }
+            }
+            else
+            {
+                return CMusicPlayer_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+            }
+            return CMusicPlayer_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+        }
 #endif        
 #endif//FEATURE_LCD_TOUCH_ENABLE
 
@@ -1868,7 +1960,7 @@ static void MP3_Build_DefaultPlaylist(CMusicPlayer *pMe)
    //Add By zzg 2010_08_17
     if(CMediaGallery_GetTflashStatus())		//有T 卡时
     {
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)  
+#if defined(FEATURE_VERSION_C337) ||defined (FEATURE_VERSION_K232_Y105A)|| defined(FEATURE_VERSION_IC241A_MMX)  
        (void)IFILEMGR_EnumInit(pMe->m_pFileMgr, MG_MASSCARDMUSIC_PATH, FALSE); //T卡根目录的文件
 #else
        (void)IFILEMGR_EnumInit(pMe->m_pFileMgr, AEEFS_CARD0_DIR, FALSE); //T卡根目录的文件
@@ -1968,7 +2060,7 @@ static void MP3_Build_DefaultPlaylist(CMusicPlayer *pMe)
 	 //枚举playlist文件夹     
     if (CMediaGallery_GetTflashStatus())		//有T 卡时
     {
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)    
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)       
        (void)IFILEMGR_EnumInit(pMe->m_pFileMgr, MG_MASSCARDMUSIC_PATH, FALSE); //T卡根目录的文件
 #else
        (void)IFILEMGR_EnumInit(pMe->m_pFileMgr, AEEFS_CARD0_DIR, TRUE); //T卡根目录的文件

@@ -3292,7 +3292,9 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 #ifdef FEATURE_USES_ZI
 			case TEXT_MODE_ZI_RAPID_ENGLISH:
 #else
+#ifndef FEATURE_VERSION_K232_Y105A
             case TEXT_MODE_T9_RAPID_ENGLISH:
+#endif
 #endif
 #ifdef FEATURE_PREPAID_ISRAEL_HEBREW
 	         pme->m_wResID = IDB_MODE_T9_RAPID_HEBREW_ENGLISH;
@@ -3308,7 +3310,9 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 #ifdef FEATURE_WHITE_BG
             pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH_BLACK;
 #else
+#ifndef FEATURE_VERSION_K232_Y105A
 			pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH;
+#endif
 #endif
 #endif
 

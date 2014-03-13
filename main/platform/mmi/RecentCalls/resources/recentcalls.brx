@@ -26,7 +26,7 @@
 		<Text>Send messages</Text>
 	</STRING>
 	<STRING Id="9" Name="IDS_CALL_TIME">
-		<Text>Call time</Text>
+		<Text>Call timer</Text>
 	</STRING>
 	<STRING Id="10" Name="IDS_ALL_CALLS">
 		<Text>All calls </Text>
@@ -74,7 +74,7 @@
 		<Text>Send contact</Text>
 	</STRING>
 	<STRING Id="25" Name="IDS_RECENT_CALLS">
-		<Text>Recent calls</Text>
+		<Text>Call logs</Text>
 	</STRING>
 	<STRING Id="26" Name="IDS_PASSWORD">
 		<Text>Enter password</Text>
@@ -188,12 +188,13 @@
 		<Controls/>
 	</DIALOG>
 	<DIALOG Id="8" Name="IDD_DETAIL" Focus="0">
-			<Controls>
-			<Static Id="7007" Name="IDC_DETAIL_STATIC">
-				<Items/></Static>
+		<Controls>
 			<Menu Id="7006" Name="IDC_DETAIL_MENU">
 				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
-				<Items/></Menu>
+				<Items/>
+			</Menu>
+			<Static Id="7007" Name="IDC_DETAIL_STATIC">
+				<Items/></Static>
 		</Controls>
 	</DIALOG>
 	<DIALOG Id="9" Name="IDD_VERIFY_PASSWORD" Focus="0">

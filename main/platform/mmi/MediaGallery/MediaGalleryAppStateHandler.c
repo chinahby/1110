@@ -524,13 +524,21 @@ static NextFSMAction MGStateMainMenuHandler(CMediaGalleryApp* pMe)
          {
             uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);
             //uint16   nTextResId;
-
+            #ifdef FEATURE_VERSION_K232_Y105A
+            MediaGalleryApp_ShowMsgBoxDlg(pMe,
+                                          APPSCOMMON_RES_LANG_FILE,
+                                          (uint16)(nMsgBoxId == MG_MSGID_FMPLAYBACKGROUND ?
+                                                   IDS_CONFIRM_OFF_FM : IDS_EXIT_MUSIC),
+                                          MESSAGE_CONFIRM,
+                                          BTBAR_OK_CANCEL);
+            #else
             MediaGalleryApp_ShowMsgBoxDlg(pMe,
                                           APPSCOMMON_RES_LANG_FILE,
                                           (uint16)(nMsgBoxId == MG_MSGID_FMPLAYBACKGROUND ?
                                                    IDS_CONFIRM_OFF_FM : IDS_CONFIRM_OFF_MP),
                                           MESSAGE_CONFIRM,
                                           BTBAR_OK_CANCEL);
+            #endif
          }
          return NFSMACTION_WAIT;
 
@@ -1069,13 +1077,21 @@ static NextFSMAction MGStateMediaMenuHandler(CMediaGalleryApp* pMe)
          {
             uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);
             //uint16   nTextResId;
-
+            #ifdef FEATURE_VERSION_K232_Y105A
+            MediaGalleryApp_ShowMsgBoxDlg(pMe,
+                                          APPSCOMMON_RES_LANG_FILE,
+                                          (uint16)(nMsgBoxId == MG_MSGID_FMPLAYBACKGROUND ?
+                                                   IDS_CONFIRM_OFF_FM : IDS_EXIT_MUSIC),
+                                          MESSAGE_CONFIRM,
+                                          BTBAR_OK_CANCEL);
+            #else
             MediaGalleryApp_ShowMsgBoxDlg(pMe,
                                           APPSCOMMON_RES_LANG_FILE,
                                           (uint16)(nMsgBoxId == MG_MSGID_FMPLAYBACKGROUND ?
                                                    IDS_CONFIRM_OFF_FM : IDS_CONFIRM_OFF_MP),
                                           MESSAGE_CONFIRM,
                                           BTBAR_OK_CANCEL);
+            #endif
          }
          return NFSMACTION_WAIT;
 
@@ -1517,13 +1533,21 @@ static NextFSMAction MGStateVideoAddHandler(CMediaGalleryApp* pMe)
          {
             uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);
             //uint16   nTextResId;
-
+            #ifdef FEATURE_VERSION_K232_Y105A
+            MediaGalleryApp_ShowMsgBoxDlg(pMe,
+                                          APPSCOMMON_RES_LANG_FILE,
+                                          (uint16)(nMsgBoxId == MG_MSGID_FMPLAYBACKGROUND ?
+                                                   IDS_CONFIRM_OFF_FM : IDS_EXIT_MUSIC),
+                                          MESSAGE_CONFIRM,
+                                          BTBAR_OK_CANCEL);
+            #else
             MediaGalleryApp_ShowMsgBoxDlg(pMe,
                                           APPSCOMMON_RES_LANG_FILE,
                                           (uint16)(nMsgBoxId == MG_MSGID_FMPLAYBACKGROUND ?
                                                    IDS_CONFIRM_OFF_FM : IDS_CONFIRM_OFF_MP),
                                           MESSAGE_CONFIRM,
                                           BTBAR_OK_CANCEL);
+            #endif
          }
          return NFSMACTION_WAIT;
 

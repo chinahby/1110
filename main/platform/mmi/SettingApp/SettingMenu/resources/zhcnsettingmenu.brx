@@ -481,6 +481,9 @@
 	<STRING Id="1172" Name="IDS_CALLFORWARD_NOCONNECT_UNCONDITIONAL">
 		<Text>隐含呼叫转移</Text>
 	</STRING>
+	<String Id="1178" Name="IDS_SOFTWARE_VERSION">
+		<Text>软件版本</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">

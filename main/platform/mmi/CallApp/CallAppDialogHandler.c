@@ -3651,14 +3651,22 @@ static void CallApp_Dialer_Show_Animation(void *pUser)
 		#else
         SETAEERECT(&rect,CALL_TEXT_X,CALL_FIRST_LINE_Y,CALL_TEXT_DX,CALL_LINE_HIGHT);
 		#endif
-		#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)    
+		#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)||defined(FEATURE_VERSION_K232_Y105A)    
 		if(pMe->m_isIncoming)
 		{
+		    #ifdef FEATURE_VERSION_K232_Y105A
+            (void) ISHELL_LoadResString(pMe->m_pShell,
+                                                AEE_APPSCALLAPP_RES_FILE,
+                                                IDS_INCOMINGCALL_TEXT_Y105A,
+                                                wBuf,
+                                                sizeof(wBuf));
+            #else
 			(void) ISHELL_LoadResString(pMe->m_pShell,
                                                 AEE_APPSCALLAPP_RES_FILE,
                                                 IDS_INCOMINGCALL_TEXT,
                                                 wBuf,
                                                 sizeof(wBuf));
+            #endif
 		}
 		else
 		#endif
@@ -5024,7 +5032,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
             CallApp_Dialer_Connect_Turn_Off_Recorder( pMe);
 #endif
 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)	
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K232_Y105A) ||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)	
             pMe->m_isIncoming = FALSE;
 #endif
             return TRUE;
@@ -6956,6 +6964,28 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                            CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
                         }                       
                     }
+#elif defined(FEATURE_VERSION_K232_Y105A)
+                    if(wParam == AVK_UP || wParam == AVK_DOWN)
+                    {
+                        boolean  vol_add;
+                        if(wParam == AVK_UP)
+                        {
+                            vol_add=TRUE;
+                        }
+                        else
+                        {
+                            vol_add=FALSE;
+                        }               
+                        CallApp_ChangeCallVolume(pMe, vol_add);
+                    
+        #if !defined( FEATURE_CALL_RECORDER)
+                        CallApp_RefreshVolBar(pMe);
+                        IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                        return TRUE;
+        #endif
+                    }
+                   
+
 #else
                          CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
 #endif
@@ -8144,7 +8174,7 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
 #ifndef FEATURE_ICM
 	AEETCalls po;
 #endif
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT) 	
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K232_Y105A) ||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT) 	
     pMe->m_isIncoming 	= FALSE;
 #endif
 	MSG_FATAL("***zzg CallApp_MakeCall cls=%x***", cls, 0, 0);
@@ -9530,6 +9560,7 @@ SEE ALSO:
 void CallApp_ChangeCallVolume(CCallApp  *pMe,
                                    boolean      louder)
 {
+    MSG_FATAL("CallApp_ChangeCallVolume...........",0,0,0);
     if (louder)
     {
         switch ((OEMSound_Volume_Type)pMe->m_CallVolume)

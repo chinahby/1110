@@ -6701,10 +6701,16 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
         case T9KEYAMBIGA:
         case T9KEYAMBIGB: 
         case T9KEYAMBIGC: 
+            #ifndef FEATURE_VERSION_K232_Y105A
              if (TEXT_MODE_T9_RAPID_ENGLISH== OEM_TextGetCurrentMode(pContext)
                  && MULTITAP_FIRST_CAP == pContext->nMultitapCaps
                  && !OEM_isFirstCap(pContext)
                  && FOCUS_TEXT == pContext->sFocus)
+            #else
+             if (MULTITAP_FIRST_CAP == pContext->nMultitapCaps
+                 && !OEM_isFirstCap(pContext)
+                 && FOCUS_TEXT == pContext->sFocus)
+            #endif
             {
                pContext->nMultitapCaps = MULTITAP_ALL_SMALL;
             } 
@@ -10336,11 +10342,18 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
             }
         }        
         // ÖÇÄÜÊäÈë·¨
+        #ifndef FEATURE_VERSION_K232_Y105A
         if((TEXT_MODE_T9_RAPID_ENGLISH == OEM_TextGetCurrentMode((OEMCONTEXT)pContext))
             &&((FOCUS_SELECTION== pContext->sFocus) 
                 ||(AVK_0 == key) 
                 ||(AVK_SELECT == key) 
                 ||(AVK_INFO == key)))
+        #else
+        if(((FOCUS_SELECTION== pContext->sFocus) 
+                ||(AVK_0 == key) 
+                ||(AVK_SELECT == key) 
+                ||(AVK_INFO == key)))
+        #endif
             {
                if(MULTITAP_ALL_CAPS == pContext->nMultitapCaps)
                 {

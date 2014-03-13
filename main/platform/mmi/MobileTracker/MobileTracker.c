@@ -1157,7 +1157,9 @@ static boolean MobileTracker_ListMenuHandler(MobileTracker *pMe, AEEEvent eCode,
                 }
 				IMENUCTL_AddItem(pMenu, MOBILETRACKER_RES_FILE_LANG,IDS_MOBILETRAXKER_ONOFF, IDS_MOBILETRAXKER_ONOFF, NULL, 0);
 				IMENUCTL_AddItem(pMenu, MOBILETRACKER_RES_FILE_LANG,IDS_MOBILETRACKER_DESIGNATENUMBER, IDS_MOBILETRACKER_DESIGNATENUMBER, NULL, 0);
+                #ifndef FEATURE_VERSION_K232_Y105A
 				IMENUCTL_AddItem(pMenu, MOBILETRACKER_RES_FILE_LANG,IDS_MOBILETRACKER_VIEW_IMSI, IDS_MOBILETRACKER_VIEW_IMSI, NULL, 0);
+                #endif
 				//IMENUCTL_AddItem(pMenu, MOBILETRACKER_RES_FILE_LANG,IDS_MOBILETRACKER_OWNERNAME, IDS_MOBILETRACKER_OWNERNAME, NULL, 0);
 				IMENUCTL_AddItem(pMenu, MOBILETRACKER_RES_FILE_LANG,IDS_CONTENT, IDS_CONTENT, NULL, 0);
 				IMENUCTL_AddItem(pMenu, MOBILETRACKER_RES_FILE_LANG,IDS_MOBILETRAXKER_PWDCHG, IDS_MOBILETRAXKER_PWDCHG, NULL, 0);
@@ -1820,7 +1822,6 @@ static boolean MobileTracker_ContentHandler(MobileTracker *pMe, AEEEvent eCode, 
 			 SETAEERECT(&m_ContentRect,0,0,pMe->m_rc.dx, pMe->m_rc.dy - GetBottomBarHeight(pMe->m_pDisplay));
 			 ITEXTCTL_SetRect(pMe->m_Content, &m_ContentRect);
 			 (void)ITEXTCTL_SetTitle( pMe->m_Content, NULL,0,WTTitle);
-  			 ITEXTCTL_SetInputMode(pMe->m_Content, AEE_TM_LETTERS);
   			 ITEXTCTL_SetProperties(pMe->m_Content, TP_MULTILINE|TP_FRAME|TP_FOCUS_NOSEL|TP_FIXSETRECT|TP_STARKEY_SWITCH|TP_DISPLAY_COUNT|TP_GRAPHIC_BG|TP_NO_HI);
              ITEXTCTL_SetMaxSize(pMe->m_Content, 80);
 			 OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT,&m_wstrContect,sizeof(uint16)*120);
@@ -1840,6 +1841,7 @@ static boolean MobileTracker_ContentHandler(MobileTracker *pMe, AEEEvent eCode, 
 				 ITEXTCTL_SetActive(pMe->m_Content,TRUE);
 	   		     BBarParam.eBBarType = BTBAR_OK_DELETE;
 	   			 DrawBottomBar(pMe->m_pDisplay, &BBarParam);
+                 ITEXTCTL_SetInputMode(pMe->m_Content, AEE_TM_LETTERS);
 				 ITEXTCTL_Redraw(pMe->m_Content);
 	   	       	 // ¸üÐÂÏÔÊ¾
 	   	       	 IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE); 

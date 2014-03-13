@@ -227,7 +227,7 @@ static void MP3_EnableKey( void);
 #if defined(FEATURE_FLASHLIGHT_SUPPORT)
 static boolean  CMusicPlayer_FlashlightMenuHandler(CMusicPlayer *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
 #endif
-#ifdef FEATURE_VERSION_W317A
+#if defined( FEATURE_VERSION_W317A)
 void CMusicPlayer_HeadsetSwitch(CMusicPlayer *pMe);
 #endif
 /*==============================================================================
@@ -750,6 +750,33 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 			 pMe->keyend_time = 0;
 			 pMe->keystart_time = 0;
 			 break;
+#elif defined (FEATURE_VERSION_KK5)||defined (FEATURE_VERSION_K232_Y105A)      
+        case EVT_KEY_PRESS:	
+			if(wParam == AVK_HEADSET_SWITCH)            
+			{
+	            pMe->keystart_time = GETUPTIMEMS();	
+                MSG_FATAL("***zzg EVT_KEY_PRESS keystart_time=%d***", pMe->keystart_time,0,0);
+			}
+			break;
+
+        case EVT_KEY_RELEASE:             
+			 if(wParam == AVK_HEADSET_SWITCH)
+			 {			     
+			      pMe->keyend_time= GETUPTIMEMS();					
+                  MSG_FATAL("***zzg EVT_KEY_RELEASE keystart_time=%d, keyend_time=%d***", pMe->keystart_time,pMe->keyend_time,0);      
+
+                  ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)CMusicPlayer_HeadsetSwitchOnHandler,pMe);
+                  
+                  if(pMe->keyend_time - pMe->keystart_time < 1500)
+                  {
+                    //MP3_MusicPlayerHandleKeyEvent(pMe,EVT_KEY,AVK_INFO,0);     
+                    MP3_MusicPlayerHandleKeyEvent(pMe,EVT_KEY,AVK_INFO,0);    //Pause/Start  
+                  }
+				   
+			 }
+			 pMe->keyend_time = 0;
+			 pMe->keystart_time = 0;
+			 break;
 #endif						
         case EVT_KEY:
 #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
@@ -760,7 +787,17 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 			         return MP3_MusicPlayerHandleKeyEvent(pMe,eCode,wParam,dwParam);
 			     }
              }
-#else
+#elif defined (FEATURE_VERSION_KK5)||defined (FEATURE_VERSION_K232_Y105A)
+            if(wParam == AVK_HEADSET_SWITCH)
+            {
+                (void) ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY) CMusicPlayer_HeadsetSwitchOnHandler,pMe);            
+            }
+            else
+            {
+                pMe->m_times = 0;
+                return MP3_MusicPlayerHandleKeyEvent(pMe,eCode,wParam,dwParam);
+            }
+#else            
 			 pMe->m_times = 0;
              return MP3_MusicPlayerHandleKeyEvent(pMe,eCode,wParam,dwParam);
 #endif             
@@ -3889,7 +3926,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 	//Add End
 
     //Add by pyuangui 20121204
-    #ifdef FEATURE_VERSION_W317A
+    #if defined (FEATURE_VERSION_W317A) 
     case AVK_HEADSET_SWITCH:
 		if(pMe->m_headsetSwitch)
 		{
@@ -5672,6 +5709,18 @@ void CMusicPlayer_HeadsetSwitch(CMusicPlayer *pMe)
 	MP3_MusicPlayerHandleKeyEvent(pMe,EVT_KEY,AVK_INFO,0);
 }
 
+#if defined (FEATURE_VERSION_KK5)||defined (FEATURE_VERSION_K232_Y105A)
+void CMusicPlayer_HeadsetSwitchOnHandler(CMusicPlayer *pMe)
+{  
+    pMe->m_headsetSwitch = TRUE;    
+    MP3_MusicPlayerHandleKeyEvent(pMe,EVT_KEY,AVK_RIGHT,0);
+}
+void CMusicPlayer_HeadsetSwitchOnHandlerEx(CMusicPlayer *pMe)
+{      
+    CMusicPlayer_PlayNext(pMe, TRUE);//播放下一首
+}
+
+#endif
 /*===========================================================================
   播放某首音乐
 ===========================================================================*/      

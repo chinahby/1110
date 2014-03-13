@@ -87,7 +87,11 @@ enum
 #else
 #define ANNUN_FIELD_RSSI                       0   /*Airplane Mode/RSSI*/
 #define ANNUN_FIELD_WAP                       1   /*Wap/1x/Roam*/
+#ifdef FEATURE_VERSION_K232_Y105A
+#define ANNUN_FIELD_LOCKSTATUS           1   /*Voice Privacy/Lockstatus*/
+#else
 #define ANNUN_FIELD_LOCKSTATUS           2   /*Voice Privacy/Lockstatus*/
+#endif
 #define ANNUN_FIELD_CALL                      3   /*Loudspeaker/Mute/Emergency/Inuse/Missed Call*/
 #define ANNUN_FIELD_SMS                       4   /*VMail/SMS/SMS Memory Full*/
 #define ANNUN_FIELD_FMRADIO                5   /*FMRadio/Headset*/

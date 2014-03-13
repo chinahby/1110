@@ -328,6 +328,9 @@
 	<String Id="1005" Name="IDS_REGULATE_NONE">
 		<Text>No qcn!</Text>
 	</String>
+	<String Id="1006" Name="IDS_BUILID_TIME">
+		<Text>Build Time:</Text>
+	</String>
 	<String Id="1011" Name="IDS_STRING_NET_LOCK" Encoding="Unicode">
 		<Text>UIM lock</Text>
 	</String>

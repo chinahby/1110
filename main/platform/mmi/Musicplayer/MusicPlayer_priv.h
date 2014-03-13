@@ -1005,9 +1005,7 @@ typedef enum DLGRetValue
    DLGRET_SETASRINGTONE,
    DLGRET_SETTINGS,
    DLGRET_MINIMIZE,
-  #if defined(FEATURE_FLASHLIGHT_SUPPORT)
-   DLGRET_FLASHLIGHT,
-  #endif
+   
    DLGRET_CREATEORRENAMELIST,
    DLGRET_PLAYLISTPLAY,
    DLGRET_PLAYLISTVIEW,
@@ -1111,9 +1109,6 @@ typedef enum MP3State
    STATE_PLAYLIST,
    STATE_SET_AS_RINGTONE,
    STATE_SETTING,
-   #if defined(FEATURE_FLASHLIGHT_SUPPORT)
-   STATE_FLASHLIGHT,
-   #endif
    STATE_MSG,
    STATE_PLAYLIST_OPTS,
    STATE_CREATEORRENAMELIST,
@@ -1285,7 +1280,7 @@ typedef struct _CMusicPlayer
     MP3Recttype m_rtype;////wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
     IAnnunciator *m_pIAnn;
     boolean       m_isshift;
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined (FEATURE_VERSION_K232_Y105A)
 	uint32 keystart_time;	
     uint32 keyend_time;	
 #endif
@@ -1501,6 +1496,10 @@ void MP3_PlayMusicByBTCallBack(void *pCxt, int nErr);
 void SetIsPlayMP3ByBt(boolean bPlayMp3ByBt);
 #endif
 
+#if defined (FEATURE_VERSION_KK5)||defined (FEATURE_VERSION_K232_Y105A)
+void CMusicPlayer_HeadsetSwitchOnHandler(CMusicPlayer *pMe);
+void CMusicPlayer_HeadsetSwitchOnHandlerEx(CMusicPlayer *pMe);
+#endif
 #endif             
 //MUSICPLAYER_PRIV_H
 

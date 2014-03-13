@@ -190,6 +190,9 @@
 	<String Id="1065" Name="IDS_STRING_EMERGENCY">
 		<Text>आपातकालीन नंबर ही</Text>
 	</String>
+	<String Id="1066" Name="IDS_INCOMINGCALL_TEXT_Y105A">
+		<Text>बुला में</Text>
+	</String>
 	<STRING Id="1100" Name="IDS_OPTION_RECORDER_ON">
 		<Text>पर रिकॉर्डर</Text>
 	</STRING>

@@ -89,7 +89,7 @@
 		<Text>वीडियो प्लेयर</Text>
 	</String>
 	<String Id="1030" Name="IDS_MAIN_MENU_FILEMGR">
-		<Text>File Manager</Text>
+		<Text>फ़ाइल प्रबंधक</Text>
 	</String>
 	<String Id="1031" Name="IDS_MAIN_MENU_MAP">
 		<Text>Map</Text>
@@ -108,6 +108,9 @@
 	</String>
 	<String Id="1036" Name="IDS_SHORT_CUT">
 		<Text>short cut</Text>
+	</String>
+	<String Id="1037" Name="IDS_MAIN_MENU_Y105A">
+		<Text>कॉल इतिहास</Text>
 	</String>
 	<STRING Id="1043" Name="IDS_MAIN_MENU_CALCULATOR">
 		<Text>कैलकुलेटर</Text>

@@ -309,6 +309,7 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
    eBBarType = pBTBarParam->eBBarType;
 
    if(eBBarType & BTBAR_SINGLE_MASK) {
+   
       switch (eBBarType) {
            // -----返回
          case BTBAR_BACK:
@@ -376,12 +377,15 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
 			nResID_L = IDS_SNOOZE;
             nResID_R = IDS_STOP;
             break;
-
+        case BTBAR_UNLOCK_L:
+            nResID_L= IDS_STRING_UNLOCK;
+            break;
          default:
             break;
       }
    }
    else if(eBBarType & BTBAR_DOUBLE_MASK) {
+    
       switch (eBBarType) {
          /*jinqing add,2009/01/08*/
          case BTBAR_ACCEPT_REJECT:
@@ -945,6 +949,7 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
       }
    }
    else if(eBBarType & BTBAR_TRI_MASK) {
+      
       switch (eBBarType) {
 	  	 //Add By zzg 2012_12_10
 	  	 case BTBAR_GALLERY_HELP_BACK:
@@ -1131,6 +1136,9 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_M = IDS_NO;
             nResID_R = IDS_CANCEL;
 			break;
+        case BTBAR_UNLOCK_L:
+            nResID_L= IDS_STRING_UNLOCK;
+            break;
 		case BTBAR_CONTINUE:
 			nResID_L = IDS_CONTINUE;
 			break;
@@ -1224,9 +1232,7 @@ void DrawBottomBar(IDisplay  * pIDisplay, BottomBar_Param_type *BParam)
         ISHELL_GetDeviceInfo(pShell, &devinfo);
         SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
     }
-   
     AppsCommon_GetTxtIDFromBarType(BParam, &nResID_L, &nResID_M, &nResID_R); 
-
    // 加载按钮文本
     if (nResID_L != 0)
     {
@@ -1376,6 +1382,7 @@ void DrawBottomBar(IDisplay  * pIDisplay, BottomBar_Param_type *BParam)
     // 绘制文本-左键
     if (WSTRLEN(wszBar_L)>0)
     {
+        MSG_FATAL("ydc............L",0,0,0);
         (void) IDISPLAY_DrawText(pIDisplay, 
                     AEE_FONT_BOLD, 
                     wszBar_L, 
@@ -1389,6 +1396,7 @@ void DrawBottomBar(IDisplay  * pIDisplay, BottomBar_Param_type *BParam)
     // 绘制文本-右键
     if (WSTRLEN(wszBar_R)>0)
     {
+        MSG_FATAL("ydc............R",0,0,0);
         (void) IDISPLAY_DrawText(pIDisplay, 
                     AEE_FONT_BOLD, 
                     wszBar_R, 
@@ -1402,6 +1410,7 @@ void DrawBottomBar(IDisplay  * pIDisplay, BottomBar_Param_type *BParam)
     // 绘制文本-中间键
     if (WSTRLEN(wszBar_M)>0)
     {
+        MSG_FATAL("ydc............M",0,0,0);
 #ifdef FEATURE_FUNCS_THEME
         (void) IDISPLAY_DrawText(pIDisplay, 
                     AEE_FONT_BOLD, 

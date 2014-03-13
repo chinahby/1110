@@ -1125,7 +1125,7 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
             	Sound_App_Add_Menu(pMenu,IDS_SHUTDOWN_RINGER);	
 			}
 			*/
-			#if defined (FEATURE_VERSION_IN50A)
+			#if defined (FEATURE_VERSION_IN50A)||defined (FEATURE_VERSION_K232_Y105A)
             Sound_App_Add_Menu(pMenu,IDS_STARTUP_RINGER);
             Sound_App_Add_Menu(pMenu,IDS_SHUTDOWN_RINGER);
             #endif

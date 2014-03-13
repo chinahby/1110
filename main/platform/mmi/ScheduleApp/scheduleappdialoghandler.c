@@ -7421,7 +7421,7 @@ static void CScheduleApp_CFGCacheInit(CalCfg *pCFGCache)
 
     pCFGCache->nAutoDelete   = 65535;
     pCFGCache->wDayStart     = 7 * MINUTES_PER_HOUR;;
-    pCFGCache->nSnooze       = 15;
+    pCFGCache->nSnooze       = 5;
 
 #if !FEATURE_ONE_DB
     pCFGCache->maxPermId    = 1;

@@ -838,10 +838,16 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 #endif
 
 #ifdef FEATURE_SHOW_PHONE_INFO
+            #ifdef FEATURE_VERSION_K232_Y105A
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SOFTWARE_VERSION, IDS_SOFTWARE_VERSION, NULL, 0);
+            #else
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PHONE_INFO_TITLE, IDS_PHONE_INFO_TITLE, NULL, 0);
+            #endif
 #endif
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS
+#ifndef FEATURE_VERSION_K232_Y105A
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SHORTCUTS_MENU_TITLE, IDS_SHORTCUTS_MENU_TITLE, NULL, 0);
+#endif
 #endif
 #ifdef FEATURE_PERU_VERSION
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PHONE_NUMBER, IDS_PHONE_NUMBER, NULL, 0);
@@ -939,12 +945,17 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
                 case IDS_PHONE_INFO_TITLE:                    
                     CLOSE_DIALOG(DLGRET_PHONE_INFO)
                     break;
+                case IDS_SOFTWARE_VERSION:
+                    CLOSE_DIALOG(DLGRET_PHONE_INFO_SW)
+                    break;
 #endif                    
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS
+#ifndef FEATURE_VERSION_K232_Y105A
                 case IDS_SHORTCUTS_MENU_TITLE:                    
                     CLOSE_DIALOG(DLGRET_SHORTCUTS_MENU)
                     break;
 #endif  
+#endif
 #ifdef FEATURE_VERSION_W208S
                 case IDS_SMS_RESTRICT:   //¶ÌÐÅºÚÃûµ¥
                     CLOSE_DIALOG(DLGRET_SMSRESTRICT)
@@ -1404,11 +1415,25 @@ static boolean  HandlePhoneInfo_SW_HW_PRL_DialogEvent(CSettingMenu *pMe,
                                             sizeof(WTitle));
                  
  				IANNUNCIATOR_SetFieldText(pMe->m_pAnn,WTitle);
- 
-                 (void) ICONFIG_GetItem(pMe->m_pConfig,
+                WSTRCAT(m_wstr+n,L"SW Ver:");
+                n = WSTRLEN(m_wstr);
+                m_wstr[n++] = (AECHAR) '\n';
+                (void) ICONFIG_GetItem(pMe->m_pConfig,
                                        CFGI_BUILD_VERSION,
                                        (m_wstr + n),
                                        sizeof(m_wstr));
+                n = WSTRLEN(m_wstr);
+                m_wstr[n++] = (AECHAR) '\n'; 
+                WSTRCAT(m_wstr+n,L"Build Time:");
+
+                n = WSTRLEN(m_wstr);
+                m_wstr[n++] = (AECHAR) '\n'; 
+                (void) ICONFIG_GetItem(pMe->m_pConfig,
+                          CFGI_BUILD_TIME,
+                          (m_wstr + n),
+                          sizeof(m_wstr));
+                
+                 
            }                
            else if(IDD_PHONE_INFO_MENU_HW==pMe->m_pActiveDlgID)
            {              
@@ -1538,11 +1563,19 @@ static boolean  HandleShortcutsMenuDialogEvent(CSettingMenu *pMe,
 			//add by yangdecai
 			{
 				AECHAR WTitle[40] = {0};
+                #ifdef FEATURE_VERSION_K232_Y105A
 				(void)ISHELL_LoadResString(pMe->m_pShell,
-                        AEE_APPSSETTINGMENU_RES_FILE,                                
+                        AEE_APPSSETTINGMENU_RES_FILE,  
+                        IDS_STR_NAVIGATION,
+                        WTitle,
+                        sizeof(WTitle));
+                #else
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSETTINGMENU_RES_FILE,  
                         IDS_SHORTCUTS_MENU_TITLE,
                         WTitle,
                         sizeof(WTitle));
+                #endif
 				IANNUNCIATOR_SetFieldText(pMe->m_pAnn,WTitle);
             }            
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_KEYPAD_UP, IDS_KEYPAD_UP, NULL, 0);
@@ -1695,15 +1728,17 @@ static boolean  HandleShortcutsSelectMenuDialogEvent(CSettingMenu *pMe,
             {IDS_SHORTCUTS_CAMERA,AEECLSID_APP_CAMERA,{0}},
             {IDS_SHORTCUTS_CALLLOG,AEECLSID_APP_RECENTCALL,{0}},
             {IDS_SHORTCUTS_SETTINGS,AEECLSID_APP_SETTINGMENU,{0}},
-            {IDS_SHORTCUTS_APPS,AEECLSID_APPLICATION,{0}},
             {IDS_SHORTCUTS_GAMES,AEECLSID_GAME,NULL},
             {IDS_SHORTCUTS_SCHEDULER,AEECLSID_SCHEDULEAPP,{0}},
             {IDS_SHORTCUTS_CALCULATOR,AEECLSID_CALCAPP,{0}},
             {IDS_SHORTCUTS_CONTACTS,AEECLSID_APP_CONTACT,{0}},
             {IDS_SHORTCUTS_EXPLORER,AEECLSID_MEDIAGALLERY,{0}},
-            {IDS_SHORTCUTS_VIDEOPLAYER,AEECLSID_VIDEOPLAYER,{0}},
             {IDS_SHORTCUTS_VOICERECORDER,AEECLSID_RECORDER,{0}},
-            {IDS_SHORTCUTS_VIDEORECORDER,AEECLSID_APP_CAMERA,"record"},                
+            #ifndef FEATURE_VERSION_K232_Y105A
+            {IDS_SHORTCUTS_APPS,AEECLSID_APPLICATION,{0}},
+            {IDS_SHORTCUTS_VIDEOPLAYER,AEECLSID_VIDEOPLAYER,{0}},
+            {IDS_SHORTCUTS_VIDEORECORDER,AEECLSID_APP_CAMERA,"record"},  
+            #endif
     };
 
         
@@ -2042,6 +2077,12 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_YUYIIN_PACKGE, IDS_YUYIIN_PACKGE, NULL, 0);
 #endif
 #endif
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
+#ifdef FEATURE_VERSION_K232_Y105A
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_STR_NAVIGATION, IDS_STR_NAVIGATION, NULL, 0);
+#endif
+#endif
+
 
             return TRUE;
 
@@ -2151,6 +2192,14 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
 					CLOSE_DIALOG(DLGRET_SOS_SETTINGS)
 					break;
 #endif
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
+#ifdef FEATURE_VERSION_K232_Y105A
+                case IDS_STR_NAVIGATION:                    
+                    CLOSE_DIALOG(DLGRET_SHORTCUTS_MENU)
+                    break;
+#endif  
+#endif
+
                 default:
                     ASSERT_NOT_REACHABLE;
             }

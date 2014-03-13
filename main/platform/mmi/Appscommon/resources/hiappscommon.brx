@@ -283,13 +283,13 @@
 	<String Id="1041" Name="IDS_CLEAR_EX">
 		<Text>साफ़</Text>
 	</String>
-	<String Id="1042" Name="IDS_MSG_KEYGUARD_C337" Encoding="Unicode">
+	<String Id="1042" Name="IDS_MSG_KEYGUARD_C337">
 		<Text>Press Unlock &amp; then  *  key</Text>
 	</String>
-	<String Id="1043" Name="IDS_UNLOCK" Encoding="Unicode">
+	<String Id="1043" Name="IDS_UNLOCK">
 		<Text>Keypad unlocked</Text>
 	</String>
-	<String Id="1044" Name="IDS_SHORTCUT" Encoding="Unicode">
+	<String Id="1044" Name="IDS_SHORTCUT">
 		<Text>शॉर्टकट</Text>
 	</String>
 	<String Id="1045" Name="IDS_CONTINUE">
@@ -297,6 +297,9 @@
 	</String>
 	<String Id="1046" Name="IDS_CONTANT_K212">
 		<Text>Contacts</Text>
+	</String>
+	<String Id="1047" Name="IDS_EXIT_MUSIC">
+		<Text>बाहर निकलने संगीत</Text>
 	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>स्नूज</Text>
@@ -363,7 +366,7 @@
 	</STRING>
 	<String Id="2022" Name="IDS_EMERGENCY">
 		<Text>आपातकाल</Text>
-	</String>	
+	</String>
 	<STRING Id="2050" Name="IDS_MSG_KEYGUARD_OK">
 		<Text>प्रेस "अनलॉक" तब ठीक कुंजी </Text>
 	</STRING>
@@ -372,6 +375,6 @@
 	</STRING>
 	<String Id="2052" Name="IDS_SPEAKER">
 		<Text>वक्ता</Text>
-	</String>	
+	</String>
 </Strings>
 </BREWRes>
