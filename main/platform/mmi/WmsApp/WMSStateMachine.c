@@ -121,6 +121,10 @@ static NextFSMAction WMSST_VIEWTEMPLATE_Handler(WmsApp *pMe);
 // WMSST_EDITTEMPLATE 状态处理函数
 static NextFSMAction WMSST_EDITTEMPLATE_Handler(WmsApp *pMe);
 
+#ifdef FEATURE_CALL_REJECT_AUTO_MSG
+static NextFSMAction WMSST_CALL_REJECT_TEMPLATES_Handler(WmsApp *pMe);
+#endif
+
 // WMSST_DELETEMSGS 状态处理函数
 static NextFSMAction WMSST_DELETEMSGS_Handler(WmsApp *pMe);
 
@@ -386,6 +390,11 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
             
         case WMSST_EDITTEMPLATE:
             return WMSST_EDITTEMPLATE_Handler(pMe);
+
+#ifdef FEATURE_CALL_REJECT_AUTO_MSG
+        case WMSST_CALL_REJECT_TEMPLATES:
+            return WMSST_CALL_REJECT_TEMPLATES_Handler(pMe);
+#endif
             
         case WMSST_DELETEMSGS:
             return WMSST_DELETEMSGS_Handler(pMe);
@@ -892,6 +901,12 @@ static NextFSMAction WMSST_MAIN_Handler(WmsApp *pMe)
                 pMe->m_currState = WMSST_CHKPWD;
             }
             return NFSMACTION_CONTINUE;
+
+#ifdef FEATURE_CALL_REJECT_AUTO_MSG
+        case DLGRET_AUTO_MSG_TEMP:            
+            MOVE_TO_STATE(WMSST_TEMPLATES)           
+            return NFSMACTION_CONTINUE;
+#endif
             
         // 用户在主界面选择-- 存储器状态
         case DLGRET_MEMSTATUS:
@@ -3025,6 +3040,86 @@ static NextFSMAction WMSST_EDITTEMPLATE_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
     }
 } // WMSST_EDITTEMPLATE_Handler
+
+#ifdef FEATURE_CALL_REJECT_AUTO_MSG
+static NextFSMAction WMSST_CALL_REJECT_TEMPLATES_Handler(WmsApp *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch (pMe->m_eDlgReturn)
+    {
+        case DLGRET_LOADCANCELED:
+        case DLGRET_CREATE:  
+            WmsApp_ShowDialog(pMe, IDD_CALL_REJECT_TEMPLATES);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(WMSST_MAIN)            
+            return NFSMACTION_CONTINUE;            
+
+        case DLGRET_OPT:
+            pMe->m_eOptType = OPT_VIA_LISTMSG;
+            WmsApp_ShowDialog(pMe, IDD_LOADINGMSG);
+            return NFSMACTION_CONTINUE;
+            
+        case DLGRET_LOAD:
+            pMe->m_eOptType = OPT_VIA_VIEWMSG;
+            WmsApp_ShowDialog(pMe, IDD_LOADINGMSG);
+            return NFSMACTION_WAIT;
+            
+        case DLGRET_LOADOK:
+            if (pMe->m_eInsertType == INSERT_EDITWMS)
+            {// 编辑消息时插入模板
+                // 这里需及时清掉此标记，否则从模板中发短信再插入模板将无法
+                // 通过取消正常退出短信，而进入无限循环
+                pMe->m_eInsertType = INSERT_NONE;
+                MOVE_TO_STATE(WMSST_WRITEMSG)
+                
+                if (pMe->m_bTextFullAlert)
+                {
+                    pMe->m_eDlgReturn = DLGRET_TEXTFULL;
+                    pMe->m_bTextFullAlert = FALSE;
+                    pMe->m_bDoNotOverwriteDlgResult = TRUE;
+                }
+            }
+            else if (pMe->m_eInsertType == INSERT_EDITTEPLATE)
+            {// 编辑模板时插入模板
+                // 这里需及时清掉此标记
+                pMe->m_eInsertType = INSERT_NONE;
+                MOVE_TO_STATE(WMSST_EDITTEMPLATE)
+                
+                if (pMe->m_bTextFullAlert)
+                {
+                    pMe->m_eDlgReturn = DLGRET_TEXTFULL;
+                    pMe->m_bTextFullAlert = FALSE;
+                    pMe->m_bDoNotOverwriteDlgResult = TRUE;
+                }
+            }
+            else
+            {
+                if (pMe->m_eOptType == OPT_VIA_VIEWMSG)
+                {
+                    MOVE_TO_STATE(WMSST_VIEWTEMPLATE)
+                }
+                else
+                {
+                    MOVE_TO_STATE(WMSST_TEMPLATESOPTS)
+                }
+            }
+            return NFSMACTION_CONTINUE;
+
+        default:
+            // 用退出程序代替宏断言
+            MOVE_TO_STATE(WMSST_EXIT)
+            return NFSMACTION_CONTINUE;
+    }
+} // WMSST_TEMPLATES_Handler
+
+#endif
+
 
 /*==============================================================================
 函数:

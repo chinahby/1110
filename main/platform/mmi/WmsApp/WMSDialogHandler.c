@@ -367,6 +367,14 @@ static boolean IDD_EDITTEMPLATE_Handler(void *pUser,
     uint32 dwParam
 );
 
+#ifdef FEATURE_CALL_REJECT_AUTO_MSG
+static boolean IDD_CALL_REJECT_TEMPLATES_Handler(void   *pUser,
+    AEEEvent eCode,
+    uint16 wParam, 
+    uint32 dwParam
+);
+#endif
+
 static void SetControlRect(WmsApp *pMe,void *Ctl);
 
 static boolean IDD_MSGOPTS_Handler(void *pUser,
@@ -799,6 +807,12 @@ void WmsApp_SetDialogHandler(WmsApp *pMe)
         case IDD_TEMPLATES:
             pMe->m_pDialogHandler = IDD_TEMPLATES_Handler;
             break;
+
+#ifdef FEATURE_CALL_REJECT_AUTO_MSG
+        case IDD_CALL_REJECT_TEMPLATES:
+            pMe->m_pDialogHandler = IDD_CALL_REJECT_TEMPLATES_Handler;
+            break;
+#endif
             
         case IDD_EDITTEMPLATE:
             pMe->m_pDialogHandler = IDD_EDITTEMPLATE_Handler;
@@ -1113,6 +1127,9 @@ static boolean IDD_MAIN_Handler(void        *pUser,
             MENU_ADDITEM(pMenu, IDS_MSGMANAGEMENT);
             MENU_ADDITEM(pMenu, IDS_MSGSETTING);
             MENU_ADDITEM(pMenu, IDS_TEMPLATES);   
+#ifdef FEATURE_CALL_REJECT_AUTO_MSG
+            //MENU_ADDITEM(pMenu, IDS_AUTO_MSG_TEMP); 
+#endif
             AEE_CancelTimer(WMSDialog_keypadtimer,pMe);
 			AEE_SetTimer(5*1000,WMSDialog_keypadtimer,pMe);            
             MSG_FATAL("IDD_MAIN_Handler EVT_DIALOG_INIT 6",0,0,0);
@@ -1330,7 +1347,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                     if(gbWMSDialogLock)
                     {
                         OEMKeyguard_SetState(TRUE);	
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 						MSLEEP(500);
 #endif
                         ISHELL_CloseApplet(pMe->m_pShell, TRUE); 
@@ -1413,7 +1430,12 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                 case IDS_TEMPLATES:
                     CLOSE_DIALOG(DLGRET_TEMPLATES)
                     return TRUE;       
-                    
+
+#ifdef FEATURE_CALL_REJECT_AUTO_MSG
+                case IDS_AUTO_MSG_TEMP:
+                    CLOSE_DIALOG(DLGRET_AUTO_MSG_TEMP)
+                    return TRUE;  
+#endif                    
                 // 存储器状态
                 case IDS_MENSTATUS:
                     CLOSE_DIALOG(DLGRET_MEMSTATUS)
@@ -2790,7 +2812,7 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
 
 						MSG_FATAL("***zzg AVK_SEND CallPhoneNumber 111 m_eMBoxType=%x", pMe->m_eMBoxType, 0, 0);
 
-						#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+						#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 						if ((pMe->m_eMBoxType == WMS_MB_INBOX) || (pMe->m_eMBoxType == WMS_MB_OUTBOX))						
 						#else
 						if (pMe->m_eMBoxType == WMS_MB_INBOX)
@@ -3279,7 +3301,7 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
 
 					MSG_FATAL("***zzg AVK_SEND CallPhoneNumber 222 m_currState=%x", pMe->m_currState, 0, 0);
 
-					#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+					#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 					if ((pMe->m_currState == WMSST_VIEWINBOXMSG) || (pMe->m_currState == WMSST_VIEWOUTBOXMSG))	
 					#else
 					if (pMe->m_currState == WMSST_VIEWINBOXMSG)
@@ -5357,7 +5379,7 @@ static boolean IDD_PRIORITY_Handler(void *pUser,
             // 菜单项初始化
             MENU_ADDITEM(pMenu, IDS_NORMAL);
             MENU_ADDITEM(pMenu, IDS_URGENT);
-#ifdef FEATURE_VERSION_K232_Y101
+#if defined (FEATURE_VERSION_K232_Y101) || defined (FEATURE_VERSION_KK5)
             MENU_ADDITEM(pMenu, IDS_EMERGENCY);
 #endif            
             return TRUE;
@@ -10072,7 +10094,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                             MENU_SETBOTTOMBAR((IMenuCtl *)pControl, BTBAR_NONE);
                             MENU_ADDITEM((IMenuCtl *)pControl, IDS_NORMAL);
                             MENU_ADDITEM((IMenuCtl *)pControl, IDS_URGENT);
-#ifdef FEATURE_VERSION_K232_Y101
+#if defined (FEATURE_VERSION_K232_Y101) || defined (FEATURE_VERSION_KK5)
                             MENU_ADDITEM((IMenuCtl *)pControl, IDS_EMERGENCY);
 #endif 
                             
@@ -10881,7 +10903,12 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 				ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BGBLUE|TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
 #endif
 #else
+
+#ifdef FEATURE_VERSION_KK5
+                ITEXTCTL_SetProperties(pIText, TP_LARGE_FONT|TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+#else
                 ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+#endif                
 #endif
 #endif
                 SetControlRect(pMe, pIText);
@@ -13059,6 +13086,18 @@ static boolean IDD_TEMPLATES_Handler(void   *pUser,
                                               IDS_TEMPLATETATA9,
                                               IDS_TEMPLATETATA10,
                                               0};
+				#elif defined (FEATURE_VERSION_KK5)
+                uint16  nCmdID[PHRASE_MAX] = {IDS_LEMON_TEMPLATETATA1,
+                                              IDS_LEMON_TEMPLATETATA2,
+                                              IDS_LEMON_TEMPLATETATA3,
+                                              IDS_LEMON_TEMPLATETATA4,
+                                              IDS_LEMON_TEMPLATETATA5,
+                                              IDS_LEMON_TEMPLATETATA6,
+                                              IDS_LEMON_TEMPLATETATA7,
+                                              IDS_LEMON_TEMPLATETATA8,
+                                              IDS_LEMON_TEMPLATETATA9,
+                                              IDS_LEMON_TEMPLATETATA10,
+                                              0};
                 #elif defined(FEATURE_VERSION_K232_Y105A)
                 uint16  nCmdID[PHRASE_MAX] = {IDS_INDEX_TEMPLATE1,
                                               IDS_INDEX_TEMPLATE2,
@@ -13462,6 +13501,168 @@ static boolean IDD_EDITTEMPLATE_Handler(void *pUser,
 
     return FALSE;
 } // IDD_EDITTEMPLATE_Handler
+
+#ifdef FEATURE_CALL_REJECT_AUTO_MSG
+static boolean IDD_CALL_REJECT_TEMPLATES_Handler(void   *pUser,
+    AEEEvent eCode,
+    uint16   wParam,
+    uint32   dwParam
+)
+{
+    /*
+    IMenuCtl *pMenu = NULL;
+    WmsApp *pMe = (WmsApp *)pUser;
+   
+    if (pMe == NULL)
+    {
+        return FALSE;
+    }
+    
+    pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_CALL_REJECT_TEMPLATES);
+
+    if (NULL == pMenu)
+    {
+        return FALSE;
+    }
+   
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+            return TRUE;
+
+        case EVT_DIALOG_START:      
+            AECHAR WTitle[40] = {0};
+            
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                    AEE_WMSAPPRES_LANGFILE,                                
+                    IDS_AUTO_MSG_TEMP,
+                    WTitle,
+                    sizeof(WTitle));
+			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
+                
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+            IMENUCTL_SetOemProperties(pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
+
+            
+
+            MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
+            
+            {// 添加模板项
+                CtlAddItem  ai;
+                uint16  i;
+                wms_cache_info_node  *pnode = NULL;                
+                uint16  nCmdID[PHRASE_MAX] = {IDS_CALL_REJECT_TEMPLATETATA1,
+                                              IDS_CALL_REJECT_TEMPLATETATA2,
+                                              IDS_CALL_REJECT_TEMPLATETATA3,
+                                              IDS_CALL_REJECT_TEMPLATETATA4,
+                                              IDS_CALL_REJECT_TEMPLATETATA5,
+                                              IDS_CALL_REJECT_TEMPLATETATA6,
+                                              0};                
+                wms_cacheinfolist_enumbegin(WMS_MB_TEMPLATE);
+                pnode = wms_cacheinfolist_enumnext(WMS_MB_TEMPLATE);
+                MEMSET(&ai, 0, sizeof(ai));
+                ai.pszResImage = AEE_APPSCOMMONRES_IMAGESFILE;
+                ai.wImage = IDB_TEMPLATE;
+                while (NULL != pnode)
+                {
+                    if (pnode->mem_store == WMS_MEMORY_STORE_RUIM)
+                    {// 卡上模板
+                        ai.wItemID = pnode->index+MSG_CMD_BASE;
+                        ai.pszResText = NULL;
+                        if (NULL != pnode->pwszTitle)
+                        {
+                            ai.pText = pnode->pwszTitle;
+                            (void)IMENUCTL_AddItemEx(pMenu, &ai);
+                        }
+                        pnode = wms_cacheinfolist_enumnext(WMS_MB_TEMPLATE);
+                        continue;
+                    }
+                    i = pnode->index - PHRASE_START;
+                    nCmdID[i] = pnode->index+MSG_CMD_BASE;
+                    pnode = wms_cacheinfolist_enumnext(WMS_MB_TEMPLATE);
+                }
+                for (i=0; i<PHRASE_MAX; i++)
+                {
+                    ai.wItemID = nCmdID[i];
+                    
+                    if ((ai.wItemID<MSG_CMD_BASE) && (ai.wItemID > 0))
+                    {// 内置常用语
+                        ai.pText = NULL;
+                        ai.pszResText = AEE_WMSAPPRES_LANGFILE;
+                        ai.wText = ai.wItemID;
+                        (void)IMENUCTL_AddItemEx(pMenu, &ai);
+                    }
+                    else
+                    {// 用户常用语
+                        ai.pszResText = NULL;
+                        pnode = wms_cacheinfolist_getnode(WMS_MB_TEMPLATE, WMS_MEMORY_STORE_NV_CDMA, nCmdID[i]-MSG_CMD_BASE);
+                        if ((NULL != pnode) && (NULL != pnode->pwszTitle))
+                        {
+                            ai.pText = pnode->pwszTitle;
+                            (void)IMENUCTL_AddItemEx(pMenu, &ai);
+                        }
+                    }
+                }
+                IMENUCTL_SetSel(pMenu, pMe->m_wCurTemplate);
+            }
+            (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                    EVTFLG_ASYNC,
+                                    AEECLSID_WMSAPP,
+                                    EVT_USER_REDRAW,
+                                    0, 
+                                    0);
+            
+            return TRUE;
+
+        case EVT_USER_REDRAW:            
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+                    
+                case AVK_INFO:
+                    {
+                        uint16 nSelID;
+                        
+                        nSelID = IMENUCTL_GetSel(pMenu);
+                        if (pMe->m_eInsertType == INSERT_NONE)
+                        {
+                            pMe->m_wCurTemplate = nSelID;
+                        }
+                        pMe->m_wInsertTemplate = nSelID;
+                    }
+                    CLOSE_DIALOG(DLGRET_LOAD)
+                    return TRUE;
+   
+                default:
+                    break;
+            }
+            return FALSE;
+
+        case EVT_COMMAND:
+            if (pMe->m_eInsertType == INSERT_NONE)
+            {
+                pMe->m_wCurTemplate = wParam;
+            }
+            pMe->m_wInsertTemplate = wParam;
+            CLOSE_DIALOG(DLGRET_OPT)
+            
+            return TRUE;
+            
+        default:
+            break;
+    }
+    */
+
+    return FALSE;
+} // IDD_TEMPLATES_Handler
+
+#endif
+
 
 /*==============================================================================
 函数:

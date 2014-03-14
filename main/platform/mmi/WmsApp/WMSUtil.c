@@ -37,7 +37,7 @@
 #include "recentcalls.h"
 #include "mobile.h"
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX) || defined(FEATURE_OEMOMH)|| defined(FEATURE_VERSION_K232_Y100A)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX) || defined(FEATURE_OEMOMH)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)  
 #include "AEECARDSESSION_NOTIFIER.BID"
 #include "AEECARDSESSION.BID"
 #include "AEECardSession.h"
@@ -3762,7 +3762,7 @@ GETREGISTERMSG_EXIT:
 #endif
 
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)  
 
 void HextoStr(byte *src,char *dst,char srclen)
 {
@@ -4361,6 +4361,36 @@ wms_client_message_s_type *GetSmsTrackerSms(AECHAR *pwstrType)
 	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
 	STRCAT(pBuf,strBuf);
 #endif	
+#elif defined(FEATURE_VERSION_KK5)
+
+	STRCPY(pBuf,"LEMON TRACK MOD: C9 IMEI:");	
+	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
+	n = WSTRLEN(szBuf);
+	MSG_FATAL("n========%d",n,0,0);
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            H32
+            );
+    n = WSTRLEN(szBuf);
+    STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            L32
+            );
+	n = WSTRLEN(szBuf);
+	MSG_FATAL("2222n========%d",n,0,0);
+	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
+	STRCAT(pBuf,strBuf);
+	STRCAT(pBuf," ");
+	
+	STRCAT(pBuf, "IMSI:");
+	STRCAT(pBuf, mi.szMobileID);
+	STRCAT(pBuf," ");
+	
+	STRCAT(pBuf, "ICCID:");
+	STRCAT(pBuf,"8991100902141191740f");
 #else
     MSG_FATAL("2222n========%d,===%d",cur_bs_ptr->csp.sp.sid,cur_bs_ptr->csp.sp.nid,0);
 	SPRINTF(strSidnid,"%d",cur_bs_ptr->csp.sp.sid);
@@ -4459,6 +4489,11 @@ wms_client_message_s_type *GetSmsTrackerSms(AECHAR *pwstrType)
 	if(STRCMP(strnumber,"+919212230707") == 0)
 	{
 		STRCPY(strnumber,"9212230707");
+	}
+
+    if(STRCMP(strnumber,"+919611124269") == 0)
+	{
+		STRCPY(strnumber,"9611124269");
 	}
 
 	if(STRCMP(strnumber,"+919582943043") == 0)
@@ -4894,6 +4929,11 @@ wms_client_message_s_type *GetNetworkInitiatedEsnTrackerSms(AECHAR *pwstrType)
 		STRCPY(strnumber,"9212230707");
 	}
 
+    if(STRCMP(strnumber,"+919611124269") == 0)
+	{
+		STRCPY(strnumber,"9611124269");
+	}
+
 	if(STRCMP(strnumber,"+919582943043") == 0)
 	{
 		STRCPY(strnumber,"9582943043");
@@ -4937,6 +4977,11 @@ wms_client_message_s_type *GetNetworkInitiatedEsnTrackerSms(AECHAR *pwstrType)
 	if(STRCMP(strnumbertwo,"+919212230707") == 0)
 	{
 		STRCPY(strnumbertwo,"9212230707");
+	}
+
+    if(STRCMP(strnumber,"+919611124269") == 0)
+	{
+		STRCPY(strnumber,"9611124269");
 	}
 
 	if(STRCMP(strnumbertwo,"+919582943043") == 0)
@@ -5116,9 +5161,11 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
             if  (gsdi_uim_omh_cap.omh_enabled)
             {
 				#if defined FEATURE_VERSION_C192_MMX
-                STRCPY(pBuf, "ESNTRACK MTS MICROMAXFF C192FFFFFF PU RUIM_ID: ");  
+                    STRCPY(pBuf, "ESNTRACK MTS MICROMAXFF C192FFFFFF PU RUIM_ID: ");  
+                #elif defined FEATURE_VERSION_KK5
+                    STRCPY(pBuf, "ESNTRACK MTS LEMONFFFFF C9FFFFFFFF PU RUIM_ID: "); 
 				#else
-                STRCPY(pBuf, "ESNTRACK MTS MICROMAXFF C200FFFFFF PU RUIM_ID: ");  
+                    STRCPY(pBuf, "ESNTRACK MTS MICROMAXFF C200FFFFFF PU RUIM_ID: ");  
 				#endif
             }
             else
@@ -5131,6 +5178,8 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
         {
         #if defined FEATURE_VERSION_C192_MMX
 			STRCPY(pBuf, "TRACK FFFFFF MICROMAXFF C192FFFFFF PU RUIM_ID: "); 
+        #elif defined FEATURE_VERSION_KK5
+            STRCPY(pBuf, "TRACK FFFFFF LEMONFFFFF C9FFFFFFFF PU RUIM_ID: ");
 		#else
             STRCPY(pBuf, "TRACK FFFFFF MICROMAXFF C200FFFFFF PU RUIM_ID: ");            
 		#endif
@@ -5201,6 +5250,8 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
             {           
             #if defined FEATURE_VERSION_C192_MMX
 				STRCAT(pBuf," C192_V1.0FFFFFF V1");  
+            #elif defined (FEATURE_VERSION_KK5)
+                STRCAT(pBuf," C9_V1.0FFFFFFFF V1");  
 			#else
                 STRCAT(pBuf," C200_V1.0FFFFFF V1");  
 			#endif
@@ -5216,6 +5267,8 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
         {
 #if defined FEATURE_VERSION_C192_MMX
 			STRCAT(pBuf," C192_V1.0FFFFFF V1"); 
+#elif defined (FEATURE_VERSION_KK5)
+            STRCAT(pBuf," C9_V1.0FFFFFFFF V1");
 #else
             STRCAT(pBuf," C200_V1.0FFFFFF V1");
 #endif
@@ -5263,6 +5316,11 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
 		STRCPY(strnumber,"9212230707");
 	}
 
+    if(STRCMP(strnumber,"+919611124269") == 0)
+	{
+		STRCPY(strnumber,"9611124269");
+	}
+
 	if(STRCMP(strnumber,"+919582943043") == 0)
 	{
 		STRCPY(strnumber,"9582943043");
@@ -5306,6 +5364,11 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
 	if(STRCMP(strnumbertwo,"+919212230707") == 0)
 	{
 		STRCPY(strnumbertwo,"9212230707");
+	}
+
+    if(STRCMP(strnumber,"+919611124269") == 0)
+	{
+		STRCPY(strnumber,"9611124269");
 	}
 
 	if(STRCMP(strnumbertwo,"+919582943043") == 0)
@@ -5486,6 +5549,69 @@ GETREGISTERMSG_EXIT:
 }
 
 #endif
+
+#if defined (FEATURE_LEMON_TWIST)
+wms_client_message_s_type *GetLemonTwistRegisterMsg()
+{
+    char  *pBuf=NULL;
+    int   nMsgSize = 0;
+    int   nSize;	
+	char strDate[64] = {0};    
+	
+    wms_cdma_user_data_s_type    *pUserdata = NULL;
+    wms_client_message_s_type    *pCltMsg = NULL;	
+	
+    nSize = sizeof(char)*120;
+    pBuf = (char *)sys_malloc(nSize);
+    
+    if (NULL == pBuf)
+    {
+        goto GETREGISTERMSG_EXIT;
+    }
+
+    OEM_GetConfig(CFGI_LEMON_TWIST_SMSINFO, strDate, sizeof(strDate));
+  
+	STRCPY(pBuf, strDate);
+	
+    nMsgSize = STRLEN(pBuf);
+
+    if (nMsgSize<=0)
+    {
+        goto GETREGISTERMSG_EXIT;
+    }
+    
+    nSize = sizeof(wms_cdma_user_data_s_type);
+    pUserdata = (wms_cdma_user_data_s_type *)sys_malloc(nSize);
+    
+    if (NULL == pUserdata)
+    {
+        goto GETREGISTERMSG_EXIT;
+    }
+    
+    MEMSET(pUserdata, 0, nSize);
+    pUserdata->encoding = WMS_ENCODING_ASCII;
+	pUserdata->data_len = nMsgSize;
+    pUserdata->number_of_digits =  wms_ts_pack_ascii(pBuf,
+                                                     pUserdata->data,
+                                                     &pUserdata->data_len,
+                                                     &pUserdata->padding_bits);
+
+	OEM_GetConfig(CFGI_LEMON_TWIST_NUM, strDate, sizeof(strDate));
+
+    DBGPRINTF("***zzg GetLemonTwistRegisterMsg CFGI_LEMON_TWIST_NUM=%s***", strDate); 
+	
+    pCltMsg = GetMOClientMsg(strDate, pUserdata, FALSE);    
+    
+GETREGISTERMSG_EXIT:
+    SYS_FREEIF(pBuf);
+    SYS_FREEIF(pUserdata);
+    
+    return pCltMsg;
+}
+
+#endif
+
+
 
 #if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
 wms_client_message_s_type *GetHOPERegisterMsg()
@@ -5737,6 +5863,10 @@ wms_client_message_s_type *CWmsApp_Getspecmsg(AECHAR *pwstrType)
         case MIZONE_MSG:
             return GetMiZoneRegisterMsg();
 #endif
+#if defined (FEATURE_LEMON_TWIST)
+        case LEMONTWIST_MSG:
+            return GetLemonTwistRegisterMsg();
+#endif            
 #if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
         case REGHOPE_MSG:
             return GetHOPERegisterMsg();

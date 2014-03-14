@@ -50,6 +50,10 @@ ifeq ($(USES_CAMERA),yes)
 include $(CAMERALIST)/cameralist.min
 endif
 
+ifeq ($(USES_LEMONTWIST),yes)
+include $(LEMONTWIST)/lemontwist.min
+endif
+
 
 ifeq ($(USES_BT), yes)
 include $(BLUETOOTH)/bthoststatapp.min

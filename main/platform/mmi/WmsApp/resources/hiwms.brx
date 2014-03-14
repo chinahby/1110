@@ -739,6 +739,39 @@
 	<STRING Id="1114" Name="IDS_CLEAR_TEXT">
 		<Text>स्पष्ट पाठ</Text>
 	</STRING>
+	<String Id="1121" Name="IDS_LEMON_TEMPLATETATA1">
+		<Text>I’m busy cant take call,pls sms or call later.</Text>
+	</String>
+	<String Id="1122" Name="IDS_LEMON_TEMPLATETATA2">
+		<Text>I’m in a meeting. Call me after some time.</Text>
+	</String>
+	<String Id="1123" Name="IDS_LEMON_TEMPLATETATA3">
+		<Text>Please call me now.</Text>
+	</String>
+	<String Id="1124" Name="IDS_LEMON_TEMPLATETATA4">
+		<Text>I am late. Will be there after some time.</Text>
+	</String>
+	<String Id="1125" Name="IDS_LEMON_TEMPLATETATA5">
+		<Text>Where are you? Can we talk?</Text>
+	</String>
+	<String Id="1126" Name="IDS_LEMON_TEMPLATETATA6">
+		<Text>Let’s meet today.</Text>
+	</String>
+	<String Id="1127" Name="IDS_LEMON_TEMPLATETATA7">
+		<Text>Thanks for the help.</Text>
+	</String>
+	<String Id="1128" Name="IDS_LEMON_TEMPLATETATA8">
+		<Text>Love you.</Text>
+	</String>
+	<String Id="1129" Name="IDS_LEMON_TEMPLATETATA9">
+		<Text>How are you?</Text>
+	</String>
+	<String Id="1130" Name="IDS_LEMON_TEMPLATETATA10">
+		<Text>Congratulations!!!</Text>
+	</String>
+	<String Id="1131" Name="IDS_AUTO_MSG_TEMP">
+		<Text>Auto Msg Template</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">
@@ -1127,5 +1160,12 @@
 	<Dialog Id="6056" Name="IDD_MMS_MEMSTATUS" Focus="0">
 		<Controls/>
 	</Dialog>
+	<DIALOG Id="6057" Name="IDD_CALL_REJECT_TEMPLATES" Focus="7070">
+		<Controls>
+			<Menu Id="7070" Name="IDC_CALL_REJECT_TEMPLATES">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
 </Dialogs>
 </BREWRes>

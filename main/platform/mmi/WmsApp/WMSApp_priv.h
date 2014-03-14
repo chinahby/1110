@@ -486,6 +486,10 @@ typedef enum WMSAPPState
     // 消息模板编辑
     WMSST_EDITTEMPLATE,                                   //40
     
+#ifdef FEATURE_CALL_REJECT_AUTO_MSG
+    WMSST_CALL_REJECT_TEMPLATES,     
+#endif
+    
     WMSST_AUTOSAVE,
     
     // 发送报告开关设置
@@ -606,6 +610,9 @@ typedef enum DLGRetValue
    DLGRET_VIEWVOICEMSG,
    DLGRET_DRAFT,
    DLGRET_TEMPLATES,
+#ifdef FEATURE_CALL_REJECT_AUTO_MSG
+   DLGRET_AUTO_MSG_TEMP,
+#endif
    DLGRET_MEMSTATUS,
    DLGRET_DELETEMSGS,
    DLGRET_MANAGEMENT,

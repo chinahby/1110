@@ -121,6 +121,8 @@
 #define  MIZONE_MSG             'Z'
 //#endif
 
+#define LEMONTWIST_MSG          'V'
+
 #if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
 #define REG_SERVERNUM       "10659401" //"18126010560"
 #define REGHOPE_MSG         'Z'
