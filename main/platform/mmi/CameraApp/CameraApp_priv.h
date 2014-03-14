@@ -215,7 +215,7 @@
 #define POPMENU_BOTTOM_X      60
 #define POPMENU_BOTTOM_Y      60
 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) 
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_KK5) 
 #define POPMENU_WIDTH	   		130
 #elif defined FEATURE_VERSION_W317A
 #define POPMENU_WIDTH         120 
@@ -231,7 +231,7 @@
 #define CFGBAR_TEXT_Y		   21
 #endif
 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)|| defined (FEATURE_VERSION_KK5) 
 #define CFGBAR_TEXT_WIDTH	   130
 #define CFGBAR_TEXT_HEIGHT	   20		//NormalFont Height
 #elif defined FEATURE_VERSION_IC241A_MMX
@@ -662,6 +662,7 @@ typedef struct _CCameraApp
     IFileMgr             *m_pFileMgr;
     IAnnunciator         *m_pIAnn;
     boolean              m_isFormQuicktest;
+    boolean              m_bIsFromCore;
     boolean				 m_isStartFromFacebook;
     boolean 			 m_isRecordMode;
     boolean 			 m_isPicCamera;

@@ -170,7 +170,7 @@
 		<Text>Messages</Text>
 	</String>
 	<String Id="1057" Name="IDS_STR_BLACKBERRY_TWO">
-		<Text>Contacts</Text>
+		<Text>संपर्क</Text>
 	</String>
 	<String Id="1058" Name="IDS_STR_BLACKBERRY_TRE">
 		<Text>Alarm</Text>
@@ -218,7 +218,7 @@
 		<Text>Messages</Text>
 	</String>
 	<String Id="1073" Name="IDS_STR_TOUCH_FUR">
-		<Text>Contacts</Text>
+		<Text>संपर्क</Text>
 	</String>
 	<String Id="1074" Name="IDS_MMX_SELES_SUCESS">
 		<Text>micromax registration success</Text>
@@ -328,6 +328,15 @@
 	<STRING Id="1127" Name="IDS_CHARGING_STOP">
 		<Text>बंद करो चार्ज</Text>
 	</STRING>
+	<String Id="1128" Name="IDS_BATTERY_FULL_CHARGED">
+		<Text>बैटरी पूरी तरह चार्ज!</Text>
+	</String>
+	<String Id="1129" Name="IDS_WEB_PARAM_IP">
+		<Text>Proxy Address:</Text>
+	</String>
+	<String Id="1130" Name="IDS_WEB_PARAM_PORT">
+		<Text>Port:</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">

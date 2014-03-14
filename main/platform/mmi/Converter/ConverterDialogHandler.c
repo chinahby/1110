@@ -409,7 +409,9 @@ static boolean  Converter_MainEvent(CConverter *pMe, AEEEvent eCode, uint16 wPar
                         sizeof(WTitle));
 				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
+#ifndef FEATURE_VERSION_KK5
             IMENUCTL_AddItem(pMenu, AEE_CONVERTER_LANGFILE, IDS_CURRENCY_TITLE, IDS_CURRENCY_TITLE, NULL, 0);
+#endif
             IMENUCTL_AddItem(pMenu, AEE_CONVERTER_LANGFILE, IDS_LENGTH_TITLE, IDS_LENGTH_TITLE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_CONVERTER_LANGFILE, IDS_WEIGHT_TITLE, IDS_WEIGHT_TITLE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_CONVERTER_LANGFILE, IDS_VOLUME_TITLE, IDS_VOLUME_TITLE, NULL, 0);

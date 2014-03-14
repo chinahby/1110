@@ -3799,7 +3799,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 ITEXTCTL_SetProperties(pTextCtl, TP_FIXOEM|TP_FOCUS_NOSEL | TP_GRAPHIC_BG);
             }
 #else
-			#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+			#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 			ITEXTCTL_SetProperties(pTextCtl, TP_STARKEY_SWITCH | TP_FIXOEM|TP_FOCUS_NOSEL);
 			#else
             ITEXTCTL_SetProperties(pTextCtl, TP_STARKEY_SWITCH | TP_FIXOEM|TP_FOCUS_NOSEL |TP_GRAPHIC_BG);
@@ -5139,7 +5139,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                 AECHAR WTitle[40] = {0};
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
 
-				#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+				#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 				(void)ISHELL_LoadResString(pMe->m_pShell,
                         CONTAPP_RES_FILE_LANG,                                
                         IDS_PHONEBOOK,
@@ -5330,7 +5330,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 			}
 			//Add End
 			
-			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_LEC_6)
+			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_LEC_6)|| defined (FEATURE_VERSION_KK5)
 			if (pMe->m_bSpeedDialParam == TRUE)
 			{
 				CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_BACK);
@@ -5490,7 +5490,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 
 					MSG_FATAL("***zzg pMe->m_eCurState=%x", pMe->m_eCurState, 0, 0);
 					
-                    #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_LEC_6)
+                    #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_LEC_6)|| defined (FEATURE_VERSION_KK5)
 					MSG_FATAL("***zzg pMe->m_bSpeedDialParam=%x", pMe->m_bSpeedDialParam, 0, 0);
 					if (pMe->m_bSpeedDialParam == TRUE)
 					{						
@@ -7338,7 +7338,30 @@ static boolean  CContApp_HandleOptsDlgEvent( CContApp  *pMe,
                 case IDI_OPTS_MENU_DELETE:
                     CLOSE_DIALOG(DLGRET_DELETE);
                     return TRUE;
-                    
+#ifdef FEATURE_CALL_RESTRICT
+                case IDI_OPTS_MENU_ADD_TO_RESTRICT:
+                    if (CContApp_AddToRestrictList(pMe) == FALSE)
+                    {
+                        pMe->m_wErrStrID = IDS_ADD_FAIL;
+		                CLOSE_DIALOG(DLGRET_ERR);
+                    }
+                    else
+                    {
+                        CLOSE_DIALOG(DLGRET_CANCELED);
+                    }                    
+                    return TRUE;
+                case IDI_OPTS_MENU_DEL_FROM_RESTRICT:   
+                    if (CContApp_DelFromRestrictList(pMe) == FALSE)
+                    {
+                        pMe->m_wErrStrID = IDS_DEL_FAIL_OR_RESTRICT_FULL;
+		                CLOSE_DIALOG(DLGRET_ERR);
+                    }
+                    else
+                    {
+                        CLOSE_DIALOG(DLGRET_CANCELED);
+                    }
+                    return TRUE;    
+#endif                    
                 case IDI_OPTS_MENU_COPY:
                     pMe->m_nCopyMoveType = SINGLECOPY;
                     CLOSE_DIALOG(DLGRET_COPY);
@@ -7491,7 +7514,7 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
                 AECHAR WTitle[40] = {0};
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
 
-				#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
+				#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 							                CONTAPP_RES_FILE_LANG,                                
 							                IDS_PHONEBOOK,
@@ -8130,7 +8153,7 @@ static boolean  CContApp_HandleFldOptsDlgEvent( CContApp  *pMe,
             {
                 AECHAR WTitle[40] = {0};
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
-                #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+                #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 							                CONTAPP_RES_FILE_LANG,                                
 							                IDS_PHONEBOOK,
@@ -8570,7 +8593,7 @@ static boolean  CContApp_HandleGroupDlgEvent( CContApp  *pMe,
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
 
                 
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 							                CONTAPP_RES_FILE_LANG, 
 											IDS_CALLER_GROUPS,
@@ -11607,7 +11630,7 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
             }
 			 {
 			 	AECHAR  text[32] = {0}; 
-                #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+                #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 				(void)ISHELL_LoadResString(pMe->m_pShell, 
                                             CONTAPP_RES_FILE_LANG,
                                             IDS_PHONEBOOK, 
@@ -11667,7 +11690,7 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
                 IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc, RGB_BLACK);
                     
                 // 画标题条
-                #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+                #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 				(void)ISHELL_LoadResString(pMe->m_pShell, 
                                             CONTAPP_RES_FILE_LANG,
                                             IDS_PHONEBOOK, 
@@ -11795,7 +11818,7 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
                 IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc, RGB_BLACK);
                     
                 // 画标题条
-                #if defined (FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+                #if defined (FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 				(void)ISHELL_LoadResString(pMe->m_pShell, 
                                             CONTAPP_RES_FILE_LANG,
                                             IDS_PHONEBOOK, 
@@ -12126,7 +12149,7 @@ static boolean  CContApp_HandleSearchDlgEvent( CContApp  *pMe,
                 AECHAR WTitle[40] = {0};
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
 
-				#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+				#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 							                CONTAPP_RES_FILE_LANG,                                
 							                IDS_PHONEBOOK,
@@ -13398,7 +13421,7 @@ static boolean  CContApp_HandleSelectDlgEvent( CContApp  *pMe,
                 AECHAR WTitle[40] = {0};
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
 
-				#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+				#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 							                CONTAPP_RES_FILE_LANG,                                
 							                IDS_PHONEBOOK,
@@ -13902,7 +13925,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
 			#else
             CONTAPP_DRAW_BOTTOMBAR(BTBAR_BACK);	
 			#endif
-#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_LEC_6)
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_LEC_6)|| defined (FEATURE_VERSION_KK5)
             if (pMe->m_bSpeedDialParam == TRUE)
             {
             	CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_CANCEL);	
@@ -13918,7 +13941,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
         {
         	 switch (wParam)
              {
-             	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_LEC_6)
+             	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_LEC_6)|| defined (FEATURE_VERSION_KK5)
 				case AVK_SELECT:					
 					if ((pMe->m_bSpeedDialParam == TRUE) && (pMe->m_nSpeedDialNumber != 0))
 					{
@@ -14008,7 +14031,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
                     CLOSE_DIALOG(DLGRET_CANCELED);
                     return TRUE;		
 
-				#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_LEC_6)
+				#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_LEC_6)|| defined (FEATURE_VERSION_KK5)
 				case AVK_INFO:
 				case AVK_SELECT:
                     MSG_FATAL("***zzg Detail m_bSpeedDialParam=%x",pMe->m_bSpeedDialParam,0,0);
@@ -14912,7 +14935,7 @@ static boolean  CContApp_HandleGroupOptEditDlgEvent( CContApp  *pMe,
                 AECHAR WTitle[40] = {0};
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
                 
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 							                CONTAPP_RES_FILE_LANG,
 											IDS_CALLER_GROUPS,
@@ -17650,6 +17673,7 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
             }
 
 #ifndef FEATURE_VERSION_C337
+#ifndef FEATURE_VERSION_KK5
 #ifndef FEATURE_VERSION_IC241A_MMX
 #ifndef FEATURE_VERSION_K232_Y100A
 
@@ -17683,6 +17707,7 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                 }
 #endif//WIN32                
             }
+#endif
 #endif
 #endif
 #endif            
@@ -17907,4 +17932,212 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
 
     return FALSE;
 } // IDD_EMERGENCYNUMLIST_Handler
+#endif
+#ifdef FEATURE_CALL_RESTRICT
+boolean CContApp_IsRestrictNumber(CContApp *pMe)
+{
+    boolean result = FALSE;    
+    AECHAR strNum[30];
+    char number[30];
+    uint8 byMax = 0;
+    call_restrict_info		call_restrict_list[MAX_CALL_RESTRICT];
+    int i;
+    
+    if(SUCCESS == CContApp_LoadAddrFlds(pMe, pMe->m_wSelectCont, SINGLE_SELECT_NUMBER))
+    {
+        WSTRCPY(strNum, (AECHAR *)CContApp_GetNumberByField(pMe, IDX_NUM_RUIM_FLD));
+        
+        WSTRTOSTR(strNum,number,30);
+
+        DBGPRINTF("***zzg CContApp_IsRestrictNumber numer=%s***", number);
+       
+        if (WSTRLEN(strNum) > 0)
+        {
+            call_restrict_info info = {0};
+           
+            (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_CALL_RESTRICT_TOTAL, &byMax, sizeof(byte));              
+        	
+        	(void) ICONFIG_GetItem(pMe->m_pConfig,
+        						   CFGI_CALL_RESTRICT_INFO,
+        						   (void*)call_restrict_list,
+        						   sizeof(call_restrict_list));             
+
+            for (i=0; i<byMax; i++)
+            {
+                if (WSTRCMP(strNum, call_restrict_list[i].szNumber) == 0)
+                {
+                    return TRUE;
+                }
+            }            
+        }
+       
+    }   
+
+    return  result;
+}
+
+boolean CContApp_AddToRestrictList(CContApp *pMe)
+{
+    boolean result = FALSE;  
+    AEEAddrField  *pNameFld;
+    
+    AECHAR strName[33];
+    char name[33];
+    
+    AECHAR strNum[33];
+    char number[33];
+    
+    uint8 byMax = 0;
+    call_restrict_info		call_restrict_list[MAX_CALL_RESTRICT];
+    
+    if(SUCCESS == CContApp_LoadAddrFlds(pMe, pMe->m_wSelectCont, SINGLE_SELECT_NUMBER))
+    {
+        WSTRCPY(strNum, (AECHAR *)CContApp_GetNumberByField(pMe, IDX_NUM_RUIM_FLD));
+
+        pNameFld = IVector_ElementAt(pMe->m_pFldIv, IDX_NAME_FLD);
+
+        WSTRCPY(strName, (AECHAR *)pNameFld->pBuffer);
+        
+        WSTRTOSTR(strNum,number,33);
+        WSTRTOSTR(strName,name,33);
+
+        DBGPRINTF("***zzg CContApp_AddToRestrictList numer=%s***", number);
+        DBGPRINTF("***zzg CContApp_AddToRestrictList name=%s***", name);
+       
+        if (WSTRLEN(strNum) > 0)
+        {
+            call_restrict_info info = {0};
+
+           
+            (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_CALL_RESTRICT_TOTAL, &byMax, sizeof(byte));              
+        	
+        	(void) ICONFIG_GetItem(pMe->m_pConfig,
+        						   CFGI_CALL_RESTRICT_INFO,
+        						   (void*)call_restrict_list,
+        						   sizeof(call_restrict_list));              
+                        
+            MEMCPY(call_restrict_list[byMax].szNumber, strNum, sizeof(call_restrict_list[byMax].szNumber));
+
+            /*
+            if (WSTRLEN(strName)>0)
+            {
+                MEMCPY(call_restrict_list[byMax].szName, strName, sizeof(call_restrict_list[byMax].szName));
+            }
+            else
+            {
+                MEMSET(call_restrict_list[byMax].szName, 0, sizeof(call_restrict_list[byMax].szName));
+            }
+            */
+            
+            byMax++;
+            DBGPRINTF("***zzg CContApp_AddToRestrictList szName=%S, byMax=%d***",strNum, byMax);
+            
+           (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                  CFGI_CALL_RESTRICT_TOTAL,
+                                  &byMax,
+                                  sizeof(uint8));
+           
+           (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                  CFGI_CALL_RESTRICT_INFO,
+                                  (void*) call_restrict_list,
+                                  sizeof(call_restrict_list));       
+           return TRUE;
+        }
+       
+    }   
+
+    return  result;
+}
+
+boolean CContApp_DelFromRestrictList(CContApp *pMe)
+{
+    boolean result = FALSE;    
+    AECHAR strNum[33];
+    char number[33];
+    uint8 byMax = 0;
+    call_restrict_info		call_restrict_list[MAX_CALL_RESTRICT];
+    int i;
+    
+    if(SUCCESS == CContApp_LoadAddrFlds(pMe, pMe->m_wSelectCont, SINGLE_SELECT_NUMBER))
+    {
+        WSTRCPY(strNum, (AECHAR *)CContApp_GetNumberByField(pMe, IDX_NUM_RUIM_FLD));
+        
+        WSTRTOSTR(strNum,number,33);
+
+        DBGPRINTF("***zzg CContApp_DelFromRestrictList numer=%s***", number);
+       
+        if (WSTRLEN(strNum) > 0)
+        {
+            call_restrict_info info = {0};
+            
+            (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_CALL_RESTRICT_TOTAL, &byMax, sizeof(byte));              
+        	
+        	(void) ICONFIG_GetItem(pMe->m_pConfig,
+        						   CFGI_CALL_RESTRICT_INFO,
+        						   (void*)call_restrict_list,
+        						   sizeof(call_restrict_list));               
+
+            for (i=0; i<byMax; i++)
+            {
+                if (WSTRCMP(strNum, call_restrict_list[i].szNumber) == 0)
+                {
+                    return CContApp_DelIndexfromRestrictList(pMe, i);
+                }
+            }                  
+        }
+       
+    }   
+
+    return  result;
+}
+
+boolean CContApp_DelIndexfromRestrictList(CContApp * pMe,uint16 index)
+{
+    boolean result = FALSE;      
+    char number[33];
+    uint8 byMax = 0;
+    call_restrict_info		call_restrict_list[MAX_CALL_RESTRICT];
+    int i;
+    
+    call_restrict_info info = {0};
+   
+    (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_CALL_RESTRICT_TOTAL, &byMax, sizeof(byte));              
+	
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+						   CFGI_CALL_RESTRICT_INFO,
+						   (void*)call_restrict_list,
+						   sizeof(call_restrict_list));       
+        
+    //WSTRTOSTR(call_restrict_list[index].szName, number, 33);
+
+    //DBGPRINTF("***zzg CContApp_DelIndexfromRestrictList byMax=%x, index=%x, numer=%s***", byMax, index, number);
+
+    if (byMax > 0)
+    {
+        for (i=index; i<(byMax-1); i++)
+        {
+            WSTRCPY(call_restrict_list[i].szNumber, call_restrict_list[i+1].szNumber);   
+            //WSTRCPY(call_restrict_list[i].szName, call_restrict_list[i+1].szName);  
+        }  
+
+        MEMSET(call_restrict_list[byMax-1].szNumber, 0, sizeof(call_restrict_list[byMax-1].szNumber));
+        //MEMSET(call_restrict_list[byMax-1].szName, 0, sizeof(call_restrict_list[byMax-1].szName));
+        
+        byMax --;  
+       
+       (void) ICONFIG_SetItem(pMe->m_pConfig,
+                              CFGI_CALL_RESTRICT_TOTAL,
+                              &byMax,
+                              sizeof(uint8));
+       
+       (void) ICONFIG_SetItem(pMe->m_pConfig,
+                              CFGI_CALL_RESTRICT_INFO,
+                              (void*) call_restrict_list,
+                              sizeof(call_restrict_list));         
+
+       return TRUE;
+    }
+
+    return  result;
+}
 #endif

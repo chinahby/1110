@@ -173,6 +173,26 @@ int CContApp_BuildOptsMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
             }     
 #endif   
 
+#ifdef FEATURE_CALL_RESTRICT
+            if (!CContApp_IsRestrictNumber(pMe))
+            {
+                ai.wText    = IDS_PHONEBOOK_ADD_TO_RESTRICT;
+                ai.wItemID  = IDI_OPTS_MENU_ADD_TO_RESTRICT;                
+            }
+            else
+            {
+                ai.wText    = IDS_PHONEBOOK_DEL_FROM_RESTRICT;
+                ai.wItemID  = IDI_OPTS_MENU_DEL_FROM_RESTRICT;     
+            }
+
+            if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+            {
+                FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
+                return EFAILED;
+            }   
+#endif
+
+
 #if defined(FEATURE_SUPPORT_BT_APP) && defined(FEATURE_SUPPORT_VCARD)
 //#if	defined(FEATURE_SUPPORT_VCARD)	//Modify by zzg 2011_10_25
             // 7
@@ -282,7 +302,7 @@ int CContApp_BuildMainMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
     ai.pszResText = CONTAPP_RES_FILE_LANG;
 
 // 1
-	#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
+	#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 	ai.wText       = IDS_PHONEBOOK;
 	#else
 	ai.wText       = IDS_APPLET;
@@ -340,7 +360,7 @@ int CContApp_BuildMainMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         }  
  }
 #endif *//* FEATURE_RUIM_PHONEBOOK */    
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 	ai.wText       = IDS_CALLER_GROUPS;
 #else
     ai.wText       = IDS_INPUT_GROUP;
@@ -1208,7 +1228,7 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
 
                 if(pMe->m_wSelectGroup != 0)
                 {
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 				   ai.wText       = IDS_CALLER_GROUPS;
 #else
 				   ai.wText       = IDS_INPUT_GROUP;
@@ -1386,7 +1406,7 @@ int CContApp_BuildListMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         return EBADPARM;
     }
 
-	#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+	#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
     #if !defined (FEATURE_VERSION_IN50A)
 	{
 		boolean b_defaultcont = FALSE;	  
@@ -3263,6 +3283,8 @@ int CContApp_BuildSelectOptMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
     {
     	ai.wText       = IDS_EXECUTE;
     }
+#elif defined FEATURE_VERSION_KK5
+    ai.wText       = IDS_SEND;
 #else
     ai.wText       = IDS_EXECUTE;
 #endif

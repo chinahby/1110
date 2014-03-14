@@ -310,6 +310,14 @@ void CoreApp_FreeAppData(IApplet* po)
         IANNUNCIATOR_Release(pMe->m_pIAnn);
         pMe->m_pIAnn= NULL;
     }
+
+#ifdef FEATURE_VERSION_KK5
+    if (pMe->pTmpStatic)
+    {
+        ISTATIC_Release(pMe->pTmpStatic);
+        pMe->pTmpStatic = NULL;
+    }
+#endif
 	
 #ifdef FEATURE_UIALARM    
     // ÊÍ·Å IAlarm ½Ó¿Ú
@@ -379,7 +387,7 @@ void CoreApp_FreeAppData(IApplet* po)
         pMe->m_pIPhoneCtl = NULL;
     }
 #endif
-	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)
+	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 	if(pMe->m_pSmsTrackTime != NULL)
 	   {
 		   (void)IMENUCTL_Release(pMe->m_pSmsTrackTime);
@@ -492,7 +500,7 @@ void CoreApp_FreeAppData(IApplet* po)
 	}
 #endif
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)||defined(FEATURE_SOUND_BO) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)||defined(FEATURE_SOUND_BO) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 #ifdef FEATURE_UIALARM
     
     MSG_FATAL("CoreApp_FreeAppData...",0,0,0);
@@ -516,8 +524,6 @@ void CoreApp_FreeAppData(IApplet* po)
          IFILEMGR_Release(pMe->pFileMgr);
     }
 //#endif
-
-
 } /* End CoreApp_FreeAppData */
 
 
@@ -771,9 +777,15 @@ boolean CoreApp_InitAppData(IApplet* po)
     ISHELL_RegisterHandler(pMe->a.m_pIShell, HTYPE_BROWSE, "http*", 0);
 	ISHELL_RegisterHandler(pMe->a.m_pIShell, HTYPE_BROWSE, "http*", AEECLSID_CORE_APP);
 
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y105A)
+
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y105A)|| defined(FEATURE_VERSION_KK5)
+
 	pMe->keystart_time = 0;	
     pMe->keyend_time = 0;
+#endif
+
+#ifdef FEATURE_VERSION_KK5
+    pMe->pTmpStatic = NULL;
 #endif
 
     g_pCoreApp = pMe;
@@ -1184,7 +1196,9 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
     
 	//MSG_FATAL("***ydc CoreApp_HandleEvent 1 dwTotal======%d,free====%d\n",dwTotal,free,0);
 	//MSG_FATAL("***ydc CoreApp_HandleEvent 1 tot======%d,larg====%d\n",tot,larg,0);
-	//MSG_FATAL("***zzg CoreApp_HandleEvent eCode=%x, wParam=%x, dwParam=%x***", eCode, wParam, dwParam);
+
+    
+	MSG_FATAL("***zzg CoreApp_HandleEvent eCode=%x, wParam=%x, dwParam=%x***", eCode, wParam, dwParam);
 	
     switch (eCode)
     {
@@ -1361,7 +1375,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             pMe->m_bSuspended = FALSE;
             pMe->m_bActive = TRUE;
 //Add by pyuangui 2013-01-08 
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 			if(pMe->m_bemergencymode)
 			{
 			  ICM_SetSystemPreference(pMe->m_pCM,
@@ -1723,6 +1737,33 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             
         case EVT_GSENSOR_SHAKE:
         case EVT_KEY_PRESS:
+#if defined (FEATURE_VERSION_KK5) 
+            if (wParam == AVK_0)
+            {
+                pMe->keystart_time = GETUPTIMEMS();	
+                MSG_FATAL("***zzg EVT_KEY_PRESS keystart_time=%d***", pMe->keystart_time,0,0);
+        	    return TRUE;
+            }
+            else
+            {
+#if MIN_BREW_VERSION(3,0)
+                // do not want to handle au
+                if ((dwParam & KB_AUTOREPEAT) != 0)
+                {
+                    if ((wParam & AVK_CLR)!=0)
+                    {
+                        return TRUE;
+                    }
+                    else
+                    {
+                        return FALSE;
+                    }
+                }
+#endif			
+                return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+            }
+#else
+
 #if MIN_BREW_VERSION(3,0)
             // do not want to handle au
             if ((dwParam & KB_AUTOREPEAT) != 0)
@@ -1739,6 +1780,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 #endif
 			
             return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+#endif
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 		case EVT_PEN_UP:
@@ -1749,8 +1791,63 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
         case EVT_KEY_RELEASE:
         case EVT_COMMAND:
         {
-				
+#ifdef FEATURE_VERSION_KK5            
+            if (wParam == AVK_0)   
+            {
+                if (eCode == EVT_KEY)
+                {
+                    (void) ISHELL_SetTimer(pMe->a.m_pIShell,1500,(PFNNOTIFY) CoreApp_HandleTorch,pMe);  
+                    return TRUE;
+                }
+                else if (eCode == EVT_KEY_RELEASE)
+                {
+                    pMe->keyend_time= GETUPTIMEMS();
+                    
+                    MSG_FATAL("***zzg EVT_KEY_RELEASE keystart_time=%d, keyend_time=%d***", pMe->keystart_time,pMe->keyend_time,0);      
+
+                    ISHELL_CancelTimer(pMe->a.m_pIShell,(PFNNOTIFY)CoreApp_HandleTorch,pMe);
+                    
+                    if (pMe->keyend_time - pMe->keystart_time < 1500)
+                    {
+                        pMe->keyend_time = 0;
+                        pMe->keystart_time = 0;
+
+                        /*
+                        //AVK_INFO
+                        if (pMe->m_pAppStart)
+                        {
+                          return FALSE;
+                        }
+
+                        if (SUCCESS != ISHELL_StartApplet(pMe->a.m_pIShell, AEECLSID_MAIN_MENU)) 
+                        {
+                            return FALSE;
+                        } 
+                        pMe->m_pAppStart = TRUE;
+
+                        return TRUE;
+                        */
+
+                        return CoreApp_RouteDialogEvent(pMe,EVT_KEY_PRESS,wParam,dwParam);                        
+                    }
+
+                    pMe->keyend_time = 0;
+                    pMe->keystart_time = 0;
+                    
+                    return TRUE;
+                }
+                else
+                {
+                    return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+                }
+            }
+            else  
+            {
+                return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+            }               
+#else
             return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+#endif            
         }
             
         case EVT_HEADSET_CONNECT:
@@ -2235,6 +2332,11 @@ case EVT_ALARM:
 */
 
 			//Add End
+			case 555:
+            {
+                MSG_FATAL("***zzg CoreApp EVT_USER case 555 for KK5 sale trcker***",0,0,0);
+				return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);	
+            }
             case EVT_UI_EXIT:
                 /* AEE is about to exit, set the exit flag to TRUE */
                 pMe->m_bExit = TRUE;
@@ -2564,6 +2666,8 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
     pEvtInfo = pNotify->pData;
     
     SysMode = pEvtInfo->event_data.ss.ss_info.sys_mode;
+
+    MSG_FATAL("***zzg CoreApp_HandleCMNotify pNotify->dwMask=%x, pEvtInfo->event=%x***", pNotify->dwMask, pEvtInfo->event, 0);
     
     switch (pNotify->dwMask)
     {
@@ -3106,7 +3210,9 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                     pMe->m_bChargFull = TRUE;
                     pMe->m_bExtPwrState = TRUE;
 #if defined(FEATURE_VERSION_C316)		
-                    CoreApp_Process_Batty_Msg(pMe, IDS_COMPLETE_CHARGED); 						
+                    CoreApp_Process_Batty_Msg(pMe, IDS_COMPLETE_CHARGED); 		
+#elif defined (FEATURE_VERSION_KK5)                    
+                    CoreApp_Process_Batty_Msg(pMe, IDS_BATTERY_FULL_CHARGED);   
 #else
                     CoreApp_Process_Batty_Msg(pMe, IDS_FULLY_CHARGED);
 #endif
@@ -4014,7 +4120,7 @@ static void CoreApp_Process_Batty_Msg(CCoreApp   *pMe, uint16  msg_id)
 }
 static void CoreApp_Process_BattyLow_Msg(CCoreApp   *pMe, uint16  msg_id)
 {
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
     if(pMe->m_battery_state)
 #endif
     {
@@ -4050,7 +4156,7 @@ static void CoreApp_Process_BattyLow_Msg(CCoreApp   *pMe, uint16  msg_id)
            pMe->m_nMsgID = msg_id;
            MSG_FATAL("CoreApp_Process_Batty_Msg 1",0,0,0); 
            pMe->m_battery_state = FALSE ;
-           #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+           #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
            AEE_SetSysTimer(10000, CoreApp_Process_Batty_Msg_CB, (void*)pMe);
            #endif
            CLOSE_DIALOG(DLGRET_BATT_INFO)
@@ -4079,7 +4185,7 @@ static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe)
         MSG_FATAL("CoreApp_Process_Charger_Msg Start",0,0,0); 
         if(pMe->m_bExtPwrState)
         {
-            #if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+			#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_KK5)
             pMe->m_nMsgID = IDS_CHARGER_CONNECTED;
 			#elif defined(FEATURE_VERSION_W317A)
 			pMe->m_nMsgID = IDS_CHARGING_CONNECTED;
@@ -4095,7 +4201,7 @@ static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe)
         } 
        else
        {
-          #if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A))
+          #if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_KK5))
           pMe->m_nMsgID = IDS_CHARGER_REMOVED;
 		  #elif defined(FEATURE_VERSION_K202)
 		  pMe->m_nMsgID = IDS_CHARGER_FINISH;
@@ -5761,6 +5867,10 @@ static void HeadsetOff(CCoreApp *pMe)
 
 	snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_MESSAGE,set_ringer_level, NULL, NULL );	
 	snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_RING,set_ringer_level, NULL, NULL );	
+
+#ifdef FEATURE_VERSION_KK5  //turn off bg playing fm when headset plug out.
+    (void)ICONFIG_SetItem( pMe->m_pConfig, CFGI_FM_BACKGROUND, &headSetOn, sizeof(headSetOn));
+#endif
 	
 #ifdef FEATURE_MULTIMEDIA
 	//if(!IsMp3PlayerStatusNone())  //add by miaoxiaoming

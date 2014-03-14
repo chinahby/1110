@@ -202,6 +202,30 @@ static NextFSMAction CameraApp_StateMainMenuHandle(CCameraApp *pMe)
             pMe->m_bNotOverwriteDlgRet = FALSE; 
             /*IANNUNCIATOR_SetField(pMe->m_pIAnn, AEECLSID_DISPLAY1, TRUE);
             IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn, AEECLSID_DISPLAY1, TRUE);*/
+            
+#ifdef FEATURE_VERSION_KK5
+            if (pMe->m_bIsFromCore == TRUE)
+            {
+                pMe->m_bIsPreview = FALSE;
+    			pMe->m_bCanPress = TRUE;
+    			pMe->m_bCapturePic = FALSE;
+                pMe->m_nCameraState = CAM_START;
+                
+                pMe->m_wMsgID = IDS_MSG_WAITING;
+                pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
+
+                if (pMe->m_pIAnn)
+                {
+                    IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);                                    
+                }
+                
+                pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_MEMORY_CARD;                
+
+                MOVE_TO_STATE(STATE_CPOPMSG)
+                return NFSMACTION_CONTINUE;
+            }
+            else
+#endif            
             CameraApp_ShowDialog(pMe, IDD_CMAINMENU);
             return NFSMACTION_WAIT;
 
@@ -289,7 +313,16 @@ static NextFSMAction CameraApp_StatePreviewHandle(CCameraApp *pMe)
 			}
 			else
 			{
-            	MOVE_TO_STATE(STATE_CMAINMENU)                              
+#ifdef FEATURE_VERSION_KK5			
+                if (pMe->m_bIsFromCore == TRUE)
+                {
+                    pMe->m_bIsFromCore = FALSE;
+                    MOVE_TO_STATE(STATE_EXIT)
+                    return NFSMACTION_CONTINUE;    
+                }
+                else
+#endif                
+            	MOVE_TO_STATE(STATE_CMAINMENU)    
 			}          
             return NFSMACTION_CONTINUE;
 

@@ -328,6 +328,15 @@
 	<STRING Id="1127" Name="IDS_CHARGING_STOP">
 		<Text>Charging Stop</Text>
 	</STRING>
+	<String Id="1128" Name="IDS_BATTERY_FULL_CHARGED">
+		<Text>Battery full charged!</Text>
+	</String>
+	<String Id="1129" Name="IDS_WEB_PARAM_IP">
+		<Text>Proxy Address:</Text>
+	</String>
+	<String Id="1130" Name="IDS_WEB_PARAM_PORT">
+		<Text>Port:</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">

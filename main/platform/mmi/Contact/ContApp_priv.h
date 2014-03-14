@@ -162,7 +162,7 @@ extern sSelectFieldListNode* pCurSelectFieldNode;
 #define MAX_INPUT_NAME_CARD             (28)
 #define MAX_INPUT_NAME_CN               (28)
 #define MAX_INPUT_NAME_EN               (28)
-#elif defined (FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+#elif defined (FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 #define MAX_INPUT_NAME_CARD             (20)
 #define MAX_INPUT_NAME_CN               (20)
 #define MAX_INPUT_NAME_EN               (20)
@@ -182,7 +182,7 @@ extern sSelectFieldListNode* pCurSelectFieldNode;
 
 #ifdef FEATURE_VERSION_1110W516
 #define MAX_PHONEBOOK_CAPACITY          (1000)
-#elif defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_K232_Y105A)
+#elif defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_K232_Y105A)|| defined (FEATURE_VERSION_KK5)
 #define MAX_PHONEBOOK_CAPACITY          (1000)
 #elif defined(FEATURE_VERSION_EC99)
 #define MAX_PHONEBOOK_CAPACITY          (150)  /*(300)*/
@@ -1977,6 +1977,13 @@ SEE ALSO:
 int CContApp_CopyMultipe(CContApp *pMe);
 #ifndef FEATURE_LOW_MEM_BIGFONT
 extern void OEM_SetNotUpdateScreen(boolean bOn);
+#endif
+
+#ifdef FEATURE_CALL_RESTRICT
+boolean CContApp_IsRestrictNumber(CContApp *pMe);
+boolean CContApp_AddToRestrictList(CContApp *pMe);
+boolean CContApp_DelFromRestrictList(CContApp *pMe);
+boolean CContApp_DelIndexfromRestrictList(CContApp *pMe, uint16 index);
 #endif
 #endif// CONTAPP_PRIV_H
 

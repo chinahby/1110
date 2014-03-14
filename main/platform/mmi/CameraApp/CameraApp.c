@@ -537,6 +537,7 @@ static int CameraApp_InitAppData(CCameraApp *pMe)
     pMe->m_pCamera = NULL;  
     pMe->m_pMedia = NULL;
     pMe->m_isFormQuicktest = FALSE;
+    pMe->m_bIsFromCore = FALSE;
 #ifdef FEATURE_USES_MMS  
     pMe->m_isFormMMS = FALSE;
 #endif
@@ -753,6 +754,10 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
                 {
                     pMe->m_isFormQuicktest = TRUE;
                 }
+                else if( STRCMP(as->pszArgs, "FromCore") == 0 )
+				{
+					pMe->m_bIsFromCore = TRUE;
+				}
                 else if( STRCMP(as->pszArgs, "facebook") == 0 )
                 {
 					pMe->m_isStartFromFacebook = TRUE;
@@ -949,7 +954,7 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 		case EVT_PEN_UP:
 #endif          
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99) && !defined(FEATURE_QVGA_INHERIT_K212)&& !defined(FEATURE_LOW_MEM_BIGFONT)&& !defined(FEATURE_VERSION_IN50A)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99) && !defined(FEATURE_QVGA_INHERIT_K212)&& !defined(FEATURE_LOW_MEM_BIGFONT)&& !defined(FEATURE_VERSION_IN50A)&& !defined(FEATURE_VERSION_KK5)
             if(!pMe->m_bAppIsReady)
             {
                 return TRUE;

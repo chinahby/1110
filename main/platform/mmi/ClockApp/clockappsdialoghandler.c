@@ -1350,6 +1350,7 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
             //根据重复方式选择方式List选项
 #if defined( FEATURE_ONCE_ALARM)         
 #ifndef FEATURE_VERSION_C337  
+#ifndef FEATURE_VERSION_KK5
 #ifndef FEATURE_VERSION_IC241A_MMX
 #ifndef FEATURE_VERSION_K232_Y100A
 
@@ -1360,7 +1361,8 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
             else
 #endif      
 #endif
-#endif				
+#endif		
+#endif
 #endif //defined( FEATURE_ONCE_ALARM)         
             {
                 if(pMe->m_ClockCfg.Snooze[pMe->m_eCurAlarmType] == 5*60)
@@ -1387,7 +1389,7 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
                 }
             }
             
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)      
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)  || defined (FEATURE_VERSION_KK5)
             IMENUCTL_SetSel( pMe->m_pRepMode, WEEK_ALARM_REP11);		
 #else
             IMENUCTL_SetSel( pMe->m_pRepMode, pMe->m_ClockCfg.RepMode[pMe->m_eCurAlarmType]);	    
@@ -2207,7 +2209,7 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
                     CClockApps_DeActivate( pMe);
 #endif
 
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 #ifdef FEATURE_ONCE_ALARM  
                     if (pMe->m_ClockCfg.RepMode[pMe->m_eCurAlarmType] == WEEK_ALARM_REP11)
                     {
@@ -3170,6 +3172,7 @@ static boolean CClockApps_HandleKeyEvent(CClockApps *pMe, uint16 wParam)
             }
 #if defined( FEATURE_ONCE_ALARM)         
 #ifndef FEATURE_VERSION_C337  
+#ifndef FEATURE_VERSION_KK5
 #ifndef FEATURE_VERSION_IC241A_MMX
 #ifndef FEATURE_VERSION_K232_Y100A
 
@@ -3188,7 +3191,8 @@ static boolean CClockApps_HandleKeyEvent(CClockApps *pMe, uint16 wParam)
                     IMENUCTL_SetSel(pMe->m_pSnooze,ITEM_SNOOZE_4);
                 }
             }  
-#endif            
+#endif   
+#endif
 #endif		
 #endif
 #endif //defined( FEATURE_ONCE_ALARM)         

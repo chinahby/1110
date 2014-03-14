@@ -73,6 +73,9 @@ static NextFSMAction STATE_MISSEDCALLHandler(CCallApp *pMe);
 // 状态 STATE_INCOMINGCALL 处理函数
 static NextFSMAction STATE_INCOMINGCALLHandler(CCallApp *pMe);
 
+// STATE_SAR
+static NextFSMAction STATE_SARVALUEHanlder(CCallApp *pMe);
+
 // 状态 STATE_PW 处理函数
 static NextFSMAction STATE_PWHandler(CCallApp *pMe);
 
@@ -167,6 +170,10 @@ NextFSMAction CallApp_ProcessState(CCallApp *pMe)
             retVal = STATE_ORIGINATIONHanlder(pMe);
             break;
 
+        case STATE_SAR:
+            retVal = STATE_SARVALUEHanlder(pMe);
+            break;
+            
         case STATE_CONVERSATION:
             retVal = STATE_CONVERSATIONHandler(pMe);
             break;
@@ -684,6 +691,10 @@ static NextFSMAction STATE_NUMBER_FROM_COREHandler(CCallApp *pMe)
 			CallApp_ShowDialog(pMe, IDD_PROMPT);
             return NFSMACTION_WAIT;
 		//Add End
+
+        case DLGRET_SAR:
+            MOVE_TO_STATE(STATE_SAR)
+            return NFSMACTION_CONTINUE;
 		
         case DLGRET_MSGBOX:
             CallApp_ShowDialog(pMe, IDD_MSGBOX);
@@ -841,6 +852,33 @@ static NextFSMAction STATE_ORIGINATIONHanlder(CCallApp *pMe)
 
     return NFSMACTION_WAIT;
 } // STATE_ORIGINATIONHanlder
+
+
+static NextFSMAction STATE_SARVALUEHanlder(CCallApp *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            FREEIF(pMe->m_pwstrDialStringkeep);
+            CallApp_ShowDialog(pMe, IDD_SAR_VALUE);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_OK:
+            MOVE_TO_STATE(STATE_EXIT)
+            return NFSMACTION_CONTINUE;
+
+        default:
+            break;
+    }
+
+    return NFSMACTION_WAIT;
+} // StateCallSettingHandler
 
 
 /*==============================================================================
@@ -1200,6 +1238,26 @@ static NextFSMAction STATE_INCOMINGCALLHandler(CCallApp *pMe)
                         return NFSMACTION_WAIT;
                     }
                 }
+
+#ifdef FEATURE_CALL_RESTRICT    
+                {
+                    int len;
+                    char str[33];
+
+                    WSTRTOSTR(pMe->m_CallsTable->call_number, str, sizeof(str));
+
+                    str[sizeof(str)-1] = '\0';
+                    len = STRLEN(str);
+                        
+                    DBGPRINTF("***zzg STATE_INCOMINGCALLHandler call_number=%s, len=%d***", str, len);
+
+                    if (CallApp_IsRestrictNumber(pMe, pMe->m_CallsTable->call_number))   
+                    {
+                        MOVE_TO_STATE(STATE_EXIT)
+                        return NFSMACTION_CONTINUE;
+                    }       
+                }
+#endif
 
                 if(AEECM_CALL_STATE_IDLE == ci.call_state)
 #else

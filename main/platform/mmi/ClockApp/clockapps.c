@@ -773,7 +773,7 @@ static boolean ClockApps_HandleEvent(IClockApps *pi,
 		case EVT_PEN_UP:
 		//case EVT_PEN_DOWN: 
 #endif
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_LOW_MEM_BIGFONT)&&!defined(FEATURE_VERSION_IN50A)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_LOW_MEM_BIGFONT)&&!defined(FEATURE_VERSION_IN50A)&& !defined(FEATURE_VERSION_KK5)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
@@ -782,7 +782,7 @@ static boolean ClockApps_HandleEvent(IClockApps *pi,
             return ClockApps_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_KEY_RELEASE:
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_LOW_MEM_BIGFONT)&&!defined(FEATURE_VERSION_IN50A)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_LOW_MEM_BIGFONT)&&!defined(FEATURE_VERSION_IN50A)&& !defined(FEATURE_VERSION_KK5)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
@@ -791,7 +791,7 @@ static boolean ClockApps_HandleEvent(IClockApps *pi,
             return ClockApps_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_KEY_HELD:
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_LOW_MEM_BIGFONT)&&!defined(FEATURE_VERSION_IN50A)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_LOW_MEM_BIGFONT)&&!defined(FEATURE_VERSION_IN50A)&& !defined(FEATURE_VERSION_KK5)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
@@ -801,7 +801,7 @@ static boolean ClockApps_HandleEvent(IClockApps *pi,
 
         case EVT_GSENSOR_SHAKE:
         case EVT_KEY:
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_LOW_MEM_BIGFONT)&&!defined(FEATURE_VERSION_IN50A)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_LOW_MEM_BIGFONT)&&!defined(FEATURE_VERSION_IN50A)&& !defined(FEATURE_VERSION_KK5)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
@@ -821,7 +821,7 @@ static boolean ClockApps_HandleEvent(IClockApps *pi,
             return ClockApps_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 */
         case EVT_COMMAND:
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_IN50A)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_IN50A)&& !defined(FEATURE_VERSION_KK5)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
@@ -960,7 +960,7 @@ static boolean ClockApps_Expired(CClockApps *pMe, AlarmType eAlarmType, boolean 
     boolean continueAlarm    = 0;
 #endif
 
-#if defined (FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5) 
 	continueAlarm    = TRUE;
 #endif
     if (pMe == NULL)

@@ -221,6 +221,12 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp *pMe,
                                         uint16     wParam,
                                         uint32     dwParam);
 
+
+static boolean  CallApp_SarValue_DlgHandler(CCallApp *pMe,
+                                        AEEEvent   eCode,
+                                        uint16     wParam,
+                                        uint32     dwParam);    
+
 // 对话框 IDD_INCOMINGCALL 事件处理函数
 static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                                         AEEEvent   eCode,
@@ -777,6 +783,9 @@ boolean CallApp_RouteDialogEvent(CCallApp *pMe,
         case IDD_MISSED:
             return CallApp_Missedcall_DlgHandler(pMe,eCode,wParam,dwParam);
 
+        case IDD_SAR_VALUE:
+            return CallApp_SarValue_DlgHandler(pMe,eCode,wParam,dwParam);    
+
 #ifdef FEATURE_UTK2
         case IDD_USERCONFIRM:
             return IDD_USERCONFIRM_Handler(pMe,eCode,wParam,dwParam);
@@ -1144,7 +1153,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                      case IDS_MUTE:
                      case IDS_UNMUTE:
 //Add by pyuangui 2013-01-17					
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
                      if(wParam == IDS_MUTE) 
 					 	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_MUTE*/, ANNUN_STATE_CALL_MUTE_ON/*ANNUN_STATE_ON*/);
 					 else
@@ -1485,12 +1494,21 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                             ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#06#");
                             return TRUE;
                         }
+
+                        if (WSTRCMP(pMe->m_DialString, L"*#888*#") == 0)
+                        {
+                            ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#888*#");
+                            return TRUE;
+                        }
+                        
                         if (WSTRCMP(pMe->m_DialString, L"*08#") == 0)
                         {
                             CallApp_StartCallTest();
                             return TRUE;
                         }                        
                         if ((WSTRCMP(pMe->m_DialString, L"*#*#8378#0#") == 0)||
+                            (WSTRCMP(pMe->m_DialString, L"*#53666*#") == 0)||
+                            (WSTRCMP(pMe->m_DialString, L"*#66635*#") == 0)||                            
                         	(WSTRCMP(pMe->m_DialString, L"*#4224876#") == 0)||
                         	(WSTRCMP(pMe->m_DialString, L"*#18375#") == 0)||
                         	(WSTRCMP(pMe->m_DialString, L"*#8375#") == 0)||
@@ -1557,6 +1575,16 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 							return TRUE;
                         }     
 #endif   
+#elif defined (FEATURE_VERSION_KK5)
+                        if (WSTRCMP(pMe->m_DialString, L"*#07#") == 0)       	//SAR                 	
+                        { 
+							//pMe->m_msg_text_id = IDS_SAR_KK5;   //IDS_SAR_C260_IC18;	
+        					//CLOSE_DIALOG(DLGRET_MSGBOX);
+
+                            CLOSE_DIALOG(DLGRET_SAR)
+							return TRUE;
+                        }  
+
 #elif defined (FEATURE_VERSION_IC241A_MMX)
                         if (WSTRCMP(pMe->m_DialString, L"*#07#") == 0)       	//SAR                 	
                         { 
@@ -1620,6 +1648,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         }
                         else if ((WSTRCMP(pMe->m_DialString, L"*#*#8378#1#") == 0)|| //add by yangdecai 2010-11-16
                         		 (WSTRCMP(pMe->m_DialString, L"*#37*#") == 0)||
+                        		 (WSTRCMP(pMe->m_DialString, L"*#8378*#") == 0)||                        		 
                         		 (WSTRCMP(pMe->m_DialString, L"*#7548*#") == 0)||
                         		 (WSTRCMP(pMe->m_DialString, L"*#629#") == 0)||
                         		 (WSTRCMP(pMe->m_DialString, L"*85241#") == 0)||
@@ -3414,7 +3443,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
             //CallApp_Draw_Softkey(pMe, 0, IDS_CANCEL);
             //drawBottomBar(pMe->m_pDisplay, AEE_FONT_NORMAL,BTBAR_END);
 
-			#if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)
+			#if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 			REFUI_DRAW_BOTTOMBAR(BTBAR_END_CALL)
 			#elif defined(FEATURE_VERSION_K232_Y105A)
 			REFUI_DRAW_BOTTOMBAR(BTBAR_SPEAKER_ENDCALL)
@@ -3651,7 +3680,7 @@ static void CallApp_Dialer_Show_Animation(void *pUser)
 		#else
         SETAEERECT(&rect,CALL_TEXT_X,CALL_FIRST_LINE_Y,CALL_TEXT_DX,CALL_LINE_HIGHT);
 		#endif
-		#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)||defined(FEATURE_VERSION_K232_Y105A)    
+		#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)||defined(FEATURE_VERSION_K232_Y105A) || defined (FEATURE_VERSION_KK5)   
 		if(pMe->m_isIncoming)
 		{
 		    #ifdef FEATURE_VERSION_K232_Y105A
@@ -4244,6 +4273,39 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
         		return TRUE;
         	}
 #endif
+
+#ifdef FEATURE_VERSION_KK5            
+            {
+                boolean headsetPresent;
+                byte    vol;    
+
+                if (SUCCESS != ICONFIG_GetItem(pMe->m_pConfig,
+                                                CFGI_HEADSET_PRESENT,
+                                                &headsetPresent,
+                                                sizeof(headsetPresent)))
+                {
+                     headsetPresent = FALSE;
+                }
+                
+                pMe->m_TempCallVolume = pMe->m_CallVolume;
+                vol = OEMSOUND_5TH_VOL;
+                
+                MSG_FATAL("***zzg CallApp_Dialer_Connect EVT_APP_START m_TempCallVolume=%d***",pMe->m_TempCallVolume,0,0);
+
+                if (headsetPresent) 
+                {                       
+                    (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                                CFGI_EAR_VOL,
+                                                &vol,
+                                                sizeof(byte));                    
+                    
+                    ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(vol));
+                }                         
+
+                //CallApp_RefreshVolBar(pMe);
+            }
+#endif
+
             if( pMe->m_bShowPopMenu)
         	{
         		return TRUE;
@@ -4424,6 +4486,14 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             // event because the softkey will hijack the EVT_KEY event.
             switch ((AVKType)wParam)
             {
+#ifdef FEATURE_VERSION_KK5
+                case AVK_HEADSET_SWITCH:
+                {
+                    pMe->keystart_time = GETUPTIMEMS();	
+                    MSG_FATAL("***zzg CallApp IncomingCall EVT_KEY_PRESS keystart_time=%d***", pMe->keystart_time,0,0);
+                    return TRUE;  
+                }
+#endif            
                 case AVK_UP:
                 case AVK_VOLUME_UP:
 #ifdef FEATURE_ALL_KEY_PAD                     
@@ -4500,7 +4570,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 
         case EVT_KEY_HELD:
             switch ((AVKType)wParam){
-            #if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)
+            #if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
             case AVK_STAR:
                 CallApp_Process_HeldKey_Event(pMe,eCode,wParam,dwParam);
                 return TRUE;
@@ -4550,6 +4620,13 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 
             switch ((AVKType)wParam)
             {
+#ifdef FEATURE_VERSION_KK5
+                case AVK_HEADSET_SWITCH:
+                {
+                    (void) ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY) CallApp_Connect_HeadsetSwitchOnHandler,pMe);  //Next                    
+                	return TRUE;  
+                }
+#endif            
                 case AVK_CLR:
                     //ICM_EndAllCalls(pMe->m_pICM);
 
@@ -4764,6 +4841,43 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             break;
         case EVT_KEY_RELEASE:
             switch(wParam){
+#ifdef FEATURE_VERSION_KK5
+            case AVK_HEADSET_SWITCH:
+            {
+                pMe->keyend_time= GETUPTIMEMS();					
+                MSG_FATAL("***zzg CallApp EVT_KEY_RELEASE keystart_time=%d, keyend_time=%d***", pMe->keystart_time,pMe->keyend_time,0);      
+
+                ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)CallApp_Connect_HeadsetSwitchOnHandler,pMe);
+                
+                if(pMe->keyend_time - pMe->keystart_time < 1500)
+                {
+                    MSG_FATAL("***zzg CallApp Incoming m_b_incall==%d***",pMe->m_b_incall,0,0);                    
+                    
+                    if (HS_HEADSET_ON())
+					{
+					    pMe->m_userCanceled = TRUE;
+#ifdef FEATURE_ICM
+                        ICM_EndAllCalls(pMe->m_pICM);
+#else
+                        ICALLMGR_EndAllCalls(pMe->m_pICallMgr);
+#endif
+					}
+                    else
+                    {
+                        //modi by yangdecai
+                        ISHELL_PostEvent( pMe->m_pShell, AEECLSID_DIALER,EVT_USER_REDRAW,0,0 );
+                        pMe->m_bHandFree = !pMe->m_bHandFree;
+                        CallApp_SetupCallAudio(pMe);
+                    }
+                    return TRUE;  //make the dialog can't closed by avk_clr.                                            
+                    
+                }      
+                
+                pMe->keyend_time = 0;
+                pMe->keystart_time = 0;
+                return TRUE;  
+            }
+#endif                
             case AVK_0:
             case AVK_1:
             case AVK_2:
@@ -4886,7 +5000,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                 case IDS_MUTE:
                 case IDS_UNMUTE:
 //Add by pyuangui 2013-01-17					
-#if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
                      if(wParam == IDS_MUTE) 
 					 	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_MUTE*/, ANNUN_STATE_CALL_MUTE_ON/*ANNUN_STATE_ON*/);
 					 else
@@ -5032,7 +5146,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
             CallApp_Dialer_Connect_Turn_Off_Recorder( pMe);
 #endif
 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K232_Y105A) ||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)	
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K232_Y105A) ||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)	|| defined (FEATURE_VERSION_KK5)
             pMe->m_isIncoming = FALSE;
 #endif
             return TRUE;
@@ -5050,7 +5164,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
 			IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_OFF/*ANNUN_STATE_OFF*/);
 
 			//Add By pyuangui 2013-01-17
-			#if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)
+			#if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 			IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_MUTE*/, ANNUN_STATE_CALL_MUTE_OFF/*ANNUN_STATE_OFF*/);
             #endif
 			//Add End
@@ -5260,7 +5374,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                 //  Position NAME
                 // Display on secend line
                 AECHAR mui_call[MAX_SIZE_NAME_TEXT] ={0};
-#if defined(FEATURE_VERSION_C337)  ||defined(FEATURE_VERSION_IC241A_MMX) 				
+#if defined(FEATURE_VERSION_C337)  ||defined(FEATURE_VERSION_IC241A_MMX) || defined (FEATURE_VERSION_KK5)				
                 (void) ISHELL_LoadResString(pMe->m_pShell,
                                                         AEE_APPSCALLAPP_RES_FILE,
 							    IDS_MULTICALL,                                                       
@@ -5622,8 +5736,8 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
 
         case EVT_DIALOG_START:     
             if(pMe->m_msg_text_id != IDS_INVALIDEMGNUM && pMe->m_msg_text_id != IDS_NOOMH_CARD 
-                && pMe->m_msg_text_id != IDS_SAR && pMe->m_msg_text_id != IDS_SAR_C337&&
-                pMe->m_msg_text_id != IDS_SAR_C260_IC18&&pMe->m_msg_text_id != IDS_SAR_CT100
+                && pMe->m_msg_text_id != IDS_SAR && pMe->m_msg_text_id != IDS_SAR_C337&&  
+                pMe->m_msg_text_id != IDS_SAR_C260_IC18 && pMe->m_msg_text_id != IDS_SAR_KK5 &&pMe->m_msg_text_id != IDS_SAR_CT100
                 &&pMe->m_msg_text_id != IDS_SAR_CT100_X2&&pMe->m_msg_text_id != IDS_SAR_CT100_VERSION_02
                 &&pMe->m_msg_text_id != IDS_SAR_CT100_VERSION_I225C&&pMe->m_msg_text_id != IDS_SAR_CT100_VERSION_C444
                 || (pMe->m_msg_text_id == IDS_REGULATE_SUCCEED)|| (pMe->m_msg_text_id == IDS_REGULATE_FAIL))
@@ -5867,7 +5981,7 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
                 }
             }            
             else if((pMe->m_msg_text_id == IDS_NOOMH_CARD) || (pMe->m_msg_text_id == IDS_SAR)
-                || (pMe->m_msg_text_id == IDS_SAR_C337)|| (pMe->m_msg_text_id == IDS_SAR_C260_IC18)
+                || (pMe->m_msg_text_id == IDS_SAR_C337)|| (pMe->m_msg_text_id == IDS_SAR_KK5)|| (pMe->m_msg_text_id == IDS_SAR_C260_IC18)
                 ||(pMe->m_msg_text_id == IDS_SAR_CT100)||(pMe->m_msg_text_id == IDS_SAR_CT100_X2)
                 ||(pMe->m_msg_text_id == IDS_SAR_CT100_VERSION_02)||(pMe->m_msg_text_id == IDS_SAR_CT100_VERSION_I225C)
 				||(pMe->m_msg_text_id == IDS_SAR_CT100_VERSION_C444)
@@ -5915,6 +6029,108 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
 
     return FALSE;
 }  // CallApp_MsgBox_DlgHandler()
+
+
+static boolean  CallApp_SarValue_DlgHandler(CCallApp *pMe,
+                                        AEEEvent   eCode,
+                                        uint16     wParam,
+                                        uint32     dwParam)
+{
+    BottomBar_Param_type  BBarParam ={0};
+    AECHAR m_wstr[256]={0};    
+    AECHAR WTitle[40] ={0};
+    int n=0;
+    IDialog *p_dlg = NULL;
+    IStatic *p_stk = NULL;
+    
+    AECHAR model_number[]=L"Model No: Lemon C9\n";    
+    AECHAR sar_value_title[]=L"Tested SAR Values:\n"; 
+    AECHAR sar_value_head[]=L"For Head: 0.801W/Kg(1g)\n";
+    AECHAR sar_value_body[]=L"For Body: 0.623W/Kg(1g)\n";       
+    AECHAR permitted_value_title[]=L"Permitted SAR Value:\n"; 
+    AECHAR permitted_value_info[]=L"1.6W/Kg(1g)\n";    
+    
+    MSG_FATAL("%x, %x ,%x,CallApp_SarValue_DlgHandler",eCode,wParam,dwParam);
+    
+    p_dlg = ISHELL_GetActiveDialog(pMe->m_pShell); 
+    
+    if(p_dlg==NULL)
+    {
+        return FALSE;
+    }
+
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:  
+          return TRUE;
+
+        case EVT_DIALOG_START:
+            ISHELL_PostEvent(pMe->m_pShell, AEECLSID_DIALER, EVT_USER_REDRAW, 0,0);                                     
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+                 
+             p_stk = (IStatic *) IDIALOG_GetControl(p_dlg, IDC_SAR_VALUE);          
+ 
+             (void) ISHELL_LoadResString(pMe->m_pShell,
+                                        AEE_APPSCALLAPP_RES_FILE,
+                                        IDS_SAR_TITLE,
+                                        WTitle,
+                                        sizeof(WTitle));
+             
+			 IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+
+             WSTRCPY(m_wstr,model_number);
+             WSTRCAT(m_wstr,sar_value_title);    
+             WSTRCAT(m_wstr,sar_value_head); 
+             WSTRCAT(m_wstr,sar_value_body); 
+             WSTRCAT(m_wstr,permitted_value_title); 
+             WSTRCAT(m_wstr,permitted_value_info);
+          
+            BBarParam.eBBarType = BTBAR_BACK;            
+            Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+           
+            if(p_stk!=NULL)
+            {
+                 ISTATIC_SetProperties(p_stk, ST_UNDERLINE|ST_NOSCROLL|ST_CENTERTITLE|ST_GRAPHIC_BG);
+
+                 ISTATIC_SetFontColor(p_stk, RGB_BLACK);
+                 
+                 (void) ISTATIC_SetText(p_stk,
+                                   NULL,
+                                   m_wstr,
+                                   AEE_FONT_NORMAL,
+                                   AEE_FONT_NORMAL);
+                 
+                 (void) ISTATIC_Redraw(p_stk);
+            } 
+            DrawBottomBar(pMe->m_pDisplay, &BBarParam); 
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                default:
+                    break;
+            }
+            return TRUE;
+
+        
+
+        default:
+            break;
+    }
+    return FALSE;
+}
+
 
 //Add By zzg 2012_10_31
 static boolean  CallApp_ProMpt_DlgHandler(CCallApp  *pMe,
@@ -6071,7 +6287,8 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 
     //IImage  *pImage = NULL;
     PARAM_NOT_REF(dwParam)
-    MSG_FATAL("eCode= %x,w=%x,dw=%x CallApp_IncomingCall_DlgHandler ",eCode,wParam,dwParam);
+    
+    MSG_FATAL("***zzg CallApp_IncomingCall_DlgHandler eCode= %x,w=%x,dw=%x***",eCode,wParam,dwParam);
 
     switch (eCode)
     {
@@ -6170,7 +6387,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             
 		case EVT_NO_CLOSEBACKLIGHT:
 			//wParam 1:背光半亮, 0: 背光灭	
-#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 			return TRUE;
 #else
 			if(wParam == 0)			
@@ -6479,7 +6696,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             }
             else if (pMe->m_CallMuted == TRUE)
             {
-            	#if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)
+            	#if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 				REFUI_DRAW_BOTTOMBAR(BTBAR_ANSWER_SILENT);
 				#else
                	REFUI_DRAW_BOTTOMBAR(BTBAR_ANSWER_MUTE);
@@ -6608,6 +6825,14 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
         case EVT_KEY_PRESS:
             switch ((AVKType)wParam)
             {
+#ifdef FEATURE_VERSION_KK5
+                case AVK_HEADSET_SWITCH:
+                {
+                    pMe->keystart_time = GETUPTIMEMS();	
+                    MSG_FATAL("***zzg CallApp IncomingCall EVT_KEY_PRESS keystart_time=%d***", pMe->keystart_time,0,0);
+                    return TRUE;  
+                }
+#endif
                 case AVK_UP:
                 case AVK_DOWN:
                 {
@@ -6644,6 +6869,59 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
         case EVT_KEY_RELEASE:
             switch ((AVKType)wParam)
             {
+#ifdef FEATURE_VERSION_KK5
+                case AVK_HEADSET_SWITCH:
+                {
+                    pMe->keyend_time= GETUPTIMEMS();					
+                    MSG_FATAL("***zzg CallApp EVT_KEY_RELEASE keystart_time=%d, keyend_time=%d***", pMe->keystart_time,pMe->keyend_time,0);      
+
+                    ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)CallApp_Incoming_HeadsetSwitchOnHandler,pMe);
+                    
+                    if(pMe->keyend_time - pMe->keystart_time < 1500)
+                    {
+                        MSG_FATAL("***zzg CallApp Incoming m_b_incall==%d***",pMe->m_b_incall,0,0);
+                        
+                        if (pMe->m_b_incall == FALSE) 
+                        {
+#ifdef FEATURE_ICM
+                            AEECMCallID nCallID ;
+#if defined(FEATURE_VERSION_C01) 
+        					{
+            					nv_item_type	SimChoice;
+            					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+            					if(SimChoice.sim_select==AVK_SEND_TWO)
+            					{
+            						break;
+            					}
+        					}
+#endif
+                            MSG_FATAL("AVK_SEND_TWO...............33333==%d",pMe->m_b_press_1,0,0);
+                            if(pMe->m_b_press_1)
+                            {                            	
+                                ICM_OriginateVoiceCall(pMe->m_pICM, L"1", &nCallID);
+                            }
+
+#else
+                            if(pMe->m_b_press_1)
+                            {   
+                                ICall *pCall = NULL;
+                                ICALLMGR_OriginateVoice(pMe->m_pICallMgr,"1", (ICall **)&pCall,NULL);
+        						if (pCall != NULL)
+        						{
+        							ICALL_Release(pCall);
+        						}
+                            }
+#endif
+        					 CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+                        }                        
+                        
+                    }      
+                    
+                    pMe->keyend_time = 0;
+                    pMe->keystart_time = 0;
+                    return TRUE;  
+                }
+#endif             
                 case AVK_SELECT:
                     #if defined(NOFEATURE_VERSION_S1000T)|| defined(NOFEATURE_VERSION_W515V3)
                     if(pMe->Ispwpass && bValue)
@@ -6706,9 +6984,22 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             
             switch ((AVKType)wParam)
             {
+#ifdef FEATURE_VERSION_KK5
+                case AVK_HEADSET_SWITCH:
+                {
+                    (void) ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY) CallApp_Incoming_HeadsetSwitchOnHandler,pMe);  //Next                    
+                	return TRUE;  
+                }
+#endif            
 
                 case AVK_ENDCALL:					
                     pMe->m_userCanceled = TRUE;
+
+                    if ((pMe->m_CallsTable != NULL) && (pMe->m_CallsTable->call_number != NULL))
+                    {
+                        CallApp_SendRejectMessage(pMe,  pMe->m_CallsTable->call_number);
+                    }
+                    
 #ifdef FEATURE_ICM
                     pMe->m_lastCallState = AEECM_CALL_STATE_IDLE;
                     ICM_EndAllCalls(pMe->m_pICM);
@@ -7503,7 +7794,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
 			#ifdef FEATURE_VERSION_W317A
 			REFUI_DRAW_BOTTOMBAR(BTBAR_VIEW_CANCEL);
 			#else
-			#if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)
+			#if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 			REFUI_DRAW_BOTTOMBAR(BTBAR_OK);
 			#else
             REFUI_DRAW_BOTTOMBAR(BTBAR_OK_CANCEL);
@@ -7527,6 +7818,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
 #else
 
 #ifndef FEATURE_VERSION_C337   
+#ifndef FEATURE_VERSION_KK5
 #ifndef FEATURE_VERSION_IC241A_MMX
 
                 notifyFMRadioAlertEvent( pMe, TRUE);
@@ -7536,6 +7828,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
                                                         3000,
                                                         CallApp_HandleStopMissedAlertTimer,
                                                         pMe);
+#endif
 #endif
 #endif			
 
@@ -7588,6 +7881,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
 								
                 case AVK_CLR:
 					#ifndef FEATURE_VERSION_C337
+                    #ifndef FEATURE_VERSION_KK5
                     #ifndef FEATURE_VERSION_IC241A_MMX
                     if (NULL != pMe->m_pwstrDialStringkeep)
                     {
@@ -7600,6 +7894,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
                     {
                         CLOSE_DIALOG(DLGRET_BACK_TO_IDLE)
                     }
+                    #endif
                     #endif
 					#endif                    
                     return TRUE;			
@@ -7949,10 +8244,9 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
         pMe->m_CallVolume = OEMSOUND_1ST_VOL;
     }
 	
-    #ifdef FEATURE_VERSION_K202
-	ISOUND_SetVolume(pMe->m_pSound,
-                                            GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*3/5);
-	#else
+#ifdef FEATURE_VERSION_K202
+	ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*3/5);
+#else
 	#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 	if(pMe->m_bHandFree)
 	{
@@ -8037,7 +8331,7 @@ static void CallApp_MakeSpeedDialCall(CCallApp  *pMe)
             return;
         }
         //load the speed dial empty resource string
-        #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_IC241A_MMX)
+        #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 		pMe->m_prompt_id = IDS_SPEED_DIAL_QUERY;
 		CLOSE_DIALOG(DLGRET_PROMPT)
 		#else
@@ -8174,7 +8468,7 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
 #ifndef FEATURE_ICM
 	AEETCalls po;
 #endif
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K232_Y105A) ||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT) 	
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K232_Y105A) ||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT) || defined (FEATURE_VERSION_KK5) 	
     pMe->m_isIncoming 	= FALSE;
 #endif
 	MSG_FATAL("***zzg CallApp_MakeCall cls=%x***", cls, 0, 0);
@@ -8414,7 +8708,7 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
         &&!b_energency)
     {
     //Add by pyuangui 2013-01-08
-    #if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y105A)
+    #if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y105A)|| defined (FEATURE_VERSION_KK5) 
         ICM_SetSystemPreference(pMe->m_pICM,
                             AEECM_MODE_PREF_PERSISTENT, AEECM_PREF_TERM_PERMANENT, 0,
                             AEECM_GW_ACQ_ORDER_PREF_NO_CHANGE, AEECM_BAND_PREF_NO_CHANGE,
@@ -10124,6 +10418,21 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
 	else
 	#endif
 	{
+#ifdef FEATURE_VERSION_KK5
+    if((((wParam == AVK_SEND|| wParam == AVK_HEADSET_SWITCH) && (pMe->m_anykey_answer & 0x4))
+        ||(eCode == EVT_FLIP && ((boolean)wParam == TRUE)  && (pMe->m_anykey_answer & 0x2))
+        ||(((wParam == AVK_USER_HEADSET) || (wParam == AVK_SEND )|| (wParam == AVK_HEADSET_SWITCH) ) && (pMe->m_anykey_answer & 0x8))
+        ||(((((AVK_FIRST < wParam && wParam <AVK_POWER ) ||(wParam == AVK_INFO)||(wParam == AVK_SHIFT)||(wParam == AVK_VOLUME_UP)||(wParam == AVK_VOLUME_DOWN)||
+        	   (wParam == AVK_ENTER)||(wParam == AVK_CAPLK)||(wParam == AVK_SYMBOL)||
+        	   (wParam == AVK_RWD)||(wParam == AVK_LCTRL)||(wParam == AVK_SPACE)||
+        	   (AVK_A <= wParam && wParam <= AVK_Z) ||(AVK_CLR < wParam && wParam <AVK_SOFT1 ))
+                 && !bKeyguardEnabled)
+                 ||(wParam == AVK_SEND                   
+                 || wParam == AVK_CAMERA || wParam == AVK_MUSIC
+                 ))
+                 && (pMe->m_anykey_answer & 0x1))
+        ) ||auto_answer ||wParam == AVK_SELECT)
+#else
     if((((wParam == AVK_SEND/*|| wParam == AVK_CAMERA*/) && (pMe->m_anykey_answer & 0x4))
         ||(eCode == EVT_FLIP && ((boolean)wParam == TRUE)  && (pMe->m_anykey_answer & 0x2))
         ||(((wParam == AVK_USER_HEADSET) || (wParam == AVK_SEND )/*|| (wParam == AVK_CAMERA) || (wParam == AVK_MUSIC)*/) && (pMe->m_anykey_answer & 0x8))
@@ -10137,6 +10446,7 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
                  ))
                  && (pMe->m_anykey_answer & 0x1))
         ) ||auto_answer ||wParam == AVK_SELECT)
+#endif        
     {
 #ifdef FEATURE_ICM
         if(AEE_SUCCESS != ICM_GetCallInfo(pMe->m_pICM, pMe->m_CallsTable->call_id, &ci, sizeof(AEECMCallInfo)))
@@ -10767,7 +11077,7 @@ static void CallApp_Draw_Connect_Time(void *pUser)
                             IDF_TEXT_TRANSPARENT|IDF_ALIGN_LEFT);
     IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
 
-#if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)  
+#if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)  || defined (FEATURE_VERSION_KK5)
     MSG_FATAL("CallApp_Draw_Connect_Time m_isIncoming=%d",pMe->m_isIncoming,0,0);
     if(!pMe->m_isIncoming)
     {
@@ -11085,7 +11395,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
         if(!b_cdg)
         {
             AECHAR mui_call[MAX_SIZE_NAME_TEXT] ={0};
-#if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)			
+#if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)			
             (void) ISHELL_LoadResString(pMe->m_pShell,
                                                 AEE_APPSCALLAPP_RES_FILE,
 							    IDS_MULTICALL,
@@ -11425,7 +11735,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
             }
         }
     }
-#if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)  
+#if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX) || defined (FEATURE_VERSION_KK5) 
     if(pMe->m_isIncoming)
     {
         AECHAR         szText[20];  
@@ -11707,7 +12017,11 @@ static void CallApp_RefreshVolBar(CCallApp *pMe)
 #endif
         IIMAGE_SetParm(pImage, IPARM_NFRAMES, REFUI_VOLUME_LEVELS, 0);
         IIMAGE_GetInfo(pImage, &imageInfo);
+#ifdef FEATURE_VERSION_KK5
+        SETAEERECT(&rect, (pMe->m_rc.dx - imageInfo.cxFrame)/2, CALL_ANIM_IMG_Y, imageInfo.cxFrame, imageInfo.cy);
+#else
         SETAEERECT(&rect, (pMe->m_rc.dx - imageInfo.cxFrame)/2, CALL_ANIM_IMG_Y - CALL_LINE_HIGHT, imageInfo.cxFrame, imageInfo.cy);
+#endif
         #ifdef  FEATURE_DISP_176X220
 		rect.y = rect.y+50;
 		#endif
@@ -13188,7 +13502,7 @@ static void CallApp_Draw_Connect_Softkey(CCallApp *pMe)
 		}
 		else if (pMe->m_bHandFree)
 		{
-			#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+			#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 			REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_HANDS_HELD)
 			#elif defined FEATURE_VERSION_W317A
 			REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_NORMAL)
@@ -13198,7 +13512,7 @@ static void CallApp_Draw_Connect_Softkey(CCallApp *pMe)
 		}
 		else
 		{
-			#if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)
+			#if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 			REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_HANDS_FREE)			
 			#else
 			REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_HANDSFREEON)
@@ -16700,4 +17014,86 @@ static void CallApp_Media_time_Notify(void *pUser, AEEMediaCmdNotify *pCmdNotify
 }
 #endif
 
+
+boolean CallApp_SendRejectMessage(CCallApp *pMe, AECHAR *number)
+{
+	//if(!pMe->m_CallsTable->in_phonebook)
+
+    /*
+	IWmsApp *pSMSApp;
+    AECHAR *pText = NULL;
+    boolean   m_b_call_reject_auto_msg = FALSE;
+
+    ASSERT(pMe != NULL);
+    
+    OEM_GetConfig(CFGI_CALL_REJECT_AUTO_MSG,&m_b_call_reject_auto_msg, sizeof(m_b_call_reject_auto_msg));
+
+    if (m_b_call_reject_auto_msg == FALSE)
+    {
+        return EFAILED;
+    }
+    
+    if ((number == NULL) && (NULL == pText))
+    {
+        return EFAILED;
+    }
+    
+    if (SUCCESS != ISHELL_CreateInstance( pMe->m_pShell,
+                                          AEECLSID_WMSAPP,
+                                          (void**)&pSMSApp))
+    {
+        return EFAILED;
+    }
+
+    if (SUCCESS != IWmsApp_SendTextMessageExt(pSMSApp, number, pText))
+    {
+        (void)IWmsApp_Release(pSMSApp);
+        pSMSApp = NULL;
+        return EFAILED;
+    }    
+    
+    (void)IWmsApp_Release(pSMSApp);
+    pSMSApp = NULL;
+    */
+    return SUCCESS;
+	
+}
+
+void CallApp_Incoming_HeadsetSwitchOnHandler(CCallApp *pMe)
+{
+    pMe->m_userCanceled = TRUE;
+
+    if ((pMe->m_CallsTable != NULL) && (pMe->m_CallsTable->call_number != NULL))
+    {
+        CallApp_SendRejectMessage(pMe,  pMe->m_CallsTable->call_number);
+    }
+    
+#ifdef FEATURE_ICM
+    pMe->m_lastCallState = AEECM_CALL_STATE_IDLE;
+    ICM_EndAllCalls(pMe->m_pICM);
+#else
+    pMe->m_lastCallState = AEET_CALL_STATE_IDLE;
+    ICALLMGR_EndAllCalls(pMe->m_pICallMgr);
+#endif
+}
+
+void CallApp_Connect_HeadsetSwitchOnHandler(CCallApp *pMe)
+{
+    if (HS_HEADSET_ON())
+	{
+	    pMe->m_userCanceled = TRUE;
+#ifdef FEATURE_ICM
+        ICM_EndAllCalls(pMe->m_pICM);
+#else
+        ICALLMGR_EndAllCalls(pMe->m_pICallMgr);
+#endif
+	}
+    else
+    {
+        //modi by yangdecai
+        ISHELL_PostEvent( pMe->m_pShell, AEECLSID_DIALER,EVT_USER_REDRAW,0,0 );
+        pMe->m_bHandFree = !pMe->m_bHandFree;
+        CallApp_SetupCallAudio(pMe);
+    }    
+}
 

@@ -283,6 +283,12 @@
 	<String Id="1137" Name="IDS_FACEBOOK">
 		<Text>Facebook</Text>
 	</String>
+	<String Id="1138" Name="IDS_SAR_KK5">
+		<Text>Model No – Lemon C9         Tested SAR Values For Head : 0.21W/Kg (1g) For Body : 0.16W/Kg  (1g)       Permitted SAR Value : 1.6W/Kg  (1g)</Text>
+	</String>
+	<String Id="1139" Name="IDS_SAR_TITLE">
+		<Text>SAR</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="0">
@@ -333,5 +339,11 @@
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
+	<DIALOG Id="6012" Name="IDD_SAR_VALUE" Focus="7007">
+		<Controls>
+			<Static Id="7007" Name="IDC_SAR_VALUE">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
 </Dialogs>
 </BREWRes>

@@ -171,7 +171,7 @@
 #define CALL_NAME_DX                          (pMe->m_rc.dx- 2*CALL_TEXT_X -CALL_ANIMATION_WIDTH)
 #define CALL_NUM_DX                            (pMe->m_rc.dx- 2*CALL_TEXT_X -CALL_ANIMATION_WIDTH)
 /*两边各空2个像素*/
-#if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 #define CALL_TEXT_X                             (2)
 #else
 #define CALL_TEXT_X                             (3)
@@ -185,7 +185,7 @@
 #define CALL_NUM_DX                            (pMe->m_rc.dx- 4*CALL_TEXT_X -CALL_ANIMATION_WIDTH)
 /*两边各空2个像素*/
 
-#if defined(FEATURE_VERSION_C337)  ||defined(FEATURE_VERSION_IC241A_MMX)  
+#if defined(FEATURE_VERSION_C337)  ||defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)  
 #define CALL_TEXT_X                             (2)
 #else
 #define CALL_TEXT_X                             (3)
@@ -233,7 +233,7 @@
 #endif 
 #define CALL_FIRST_LINE_Y                   (CALL_ANNU_HEIGHT)
 
-#if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 #define CALL_SECOND_UP_LINE_Y               (CALL_FIRST_LINE_Y +    CALL_LINE_HIGHT)
 #define CALL_SECOND_LINE_Y               (CALL_FIRST_LINE_Y +    2*CALL_LINE_HIGHT)
 #define CALL_THIRD_LINE_Y                  (CALL_FIRST_LINE_Y +3*CALL_LINE_HIGHT )
@@ -505,6 +505,7 @@ typedef enum DLGRetValue
    DLGRET_INVALID_LINK_NUM,
 #endif
 #endif
+   DLGRET_SAR, 
    // 对话框关闭时可返回的通用值
    DLGRET_OK,
    DLGRET_CANCELED
@@ -539,6 +540,7 @@ typedef enum _CallAppState
 #ifdef FEATURE_OEMOMH
    STATE_NONOMH,
 #endif
+   STATE_SAR,
    STATE_EXIT             /*13d*/
 
 } CallAppState;
@@ -881,7 +883,7 @@ typedef struct _CCallApp
 	int16   m_i;
 #endif
 	boolean            m_penup;
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K232_Y105A)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)  ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)  
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K232_Y105A)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)  ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT) || defined (FEATURE_VERSION_KK5) 
        boolean                    m_isIncoming;
 #endif
 #if defined(FEATURE_VERSION_K212) ||defined(FEATURE_VERSION_K212_BH)   
@@ -890,6 +892,11 @@ typedef struct _CCallApp
     IStatic *pStatic;           //Add By zzg 2013_08_23
     uint32   num_edit_start_time;   //Add By zzg 2014_02_22    
 //   boolean            m_short_hit;
+
+    byte     m_TempCallVolume;
+
+    uint32 keystart_time;	
+    uint32 keyend_time;
 } CCallApp;
 
 /*==============================================================================
@@ -1147,6 +1154,16 @@ boolean bt_ui_process_vol_change(byte vol);
 boolean bt_ui_process_cmcall_notify(CCallApp *pMe,uint32 event/*,void  *pCallInfo*/,boolean cm_event);
 #endif
 void CallAppNotifyMP3PlayerAlertEvent(CCallApp *pMe, boolean toStartAlert);
+
+boolean CallApp_SendRejectMessage(CCallApp *pMe, AECHAR *number);
+
+void CallApp_Incoming_HeadsetSwitchOnHandler(CCallApp *pMe);
+void CallApp_Connect_HeadsetSwitchOnHandler(CCallApp *pMe);
+
+#ifdef FEATURE_CALL_RESTRICT
+boolean CallApp_IsRestrictNumber(CCallApp *pMe, AECHAR *number);
+#endif
+
 #endif
 //CALLAPP_PRIV_H
 

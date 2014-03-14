@@ -609,6 +609,13 @@ typedef enum
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweronoff.gif"
 #define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
 #define    PWROFF_ANI_RATE                       (7000)
+#elif defined FEATURE_VERSION_KK5
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronoff.gif"
+#define    PWRON_ANI_FRAME_COUNT                 (1)
+#define    PWRON_ANI_RATE                        (6000)
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweronoff.gif"
+#define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
+#define    PWROFF_ANI_RATE                       (6000)
 #elif defined FEATURE_VERSION_GECOMSA_C204
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronoff.gif"
 #define    PWRON_ANI_FRAME_COUNT                 (1)
@@ -1381,6 +1388,11 @@ typedef struct _CCoreApp
    ITextCtl       *m_pESNTrackTime;
    char           m_strEsnTrackNUM[PHONENUMBER];   
    char           m_strEsnTrackNUMTwo[PHONENUMBER];
+   
+   ITextCtl       *m_pWebParamIp;
+   ITextCtl       *m_pWebParamPort;
+   char           m_strWebParamIp[MAX_STRING_LENGTH];   
+   char           m_strWebParamPort[MAX_STRING_LENGTH];
 #endif
    boolean         m_IsEanbleBatAlarm;
 
@@ -1393,11 +1405,16 @@ typedef struct _CCoreApp
 //#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K212_HUALU))
    IFileMgr *pFileMgr ;
 //#endif
-#if defined (FEATURE_VERSION_K232_Y101)||defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y105A)
+
+#if defined (FEATURE_VERSION_K232_Y101)||defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y105A)|| defined (FEATURE_VERSION_KK5)
+
     uint32 keystart_time;	
     uint32 keyend_time;	
 #endif
 
+#ifdef FEATURE_VERSION_KK5
+    IStatic         *pTmpStatic;
+#endif
 } CCoreApp;
 
 /*==============================================================================
@@ -1658,6 +1675,9 @@ int  CoreApp_SendSeamlessSMS(CCoreApp *pMe);
 #if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_BH)
 void CoreApp_ReginfosmsTimer(void *pme);
 int  CoreApp_SendReginfosms(CCoreApp *pMe);
+#endif
+#if defined (FEATURE_VERSION_KK5)
+void CoreApp_HandleTorch(CCoreApp *pMe);
 #endif
 #ifdef FEATURE_ICM
 void InitAfterPhInfo(CCoreApp *pMe, AEECMOprtMode mode);

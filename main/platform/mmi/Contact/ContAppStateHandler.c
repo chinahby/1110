@@ -948,7 +948,7 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
             // store the menu index
             PUSH_LISTMENU_IDX(pMe->m_wMainListIdx);
 
-			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 			MSG_FATAL("***zzg m_bSpeedDialParam=%x",pMe->m_bSpeedDialParam,0,0);
 			if ((pMe->m_bSpeedDialParam == TRUE) && (pMe->m_nSpeedDialNumber != 0))
 			{
@@ -7693,7 +7693,7 @@ static NextFSMAction Handler_STATE_SUCCESS(CContApp *pMe)
             
             // Show dialog
             pMe->m_eMsgType = MESSAGE_INFORMATIVE; 
-			#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+			#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 			if (pMe->m_bNameLengthLonger == TRUE)
 			{
 				if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_NAME_MODIFIED))
@@ -7851,6 +7851,14 @@ static NextFSMAction Handler_STATE_ERROR(CContApp *pMe)
             }
             else
 #endif
+
+#ifdef FEATURE_CALL_RESTRICT
+            if ((pMe->m_wErrStrID == IDS_DEL_FAIL_OR_RESTRICT_FULL) || (pMe->m_wErrStrID == IDS_ADD_FAIL))
+            {
+                MOVE_TO_STATE(STATE_MAINLIST);
+            }
+            else
+#endif
             {
                 MOVE_TO_STATE(STATE_EXIT);
             }
@@ -7949,7 +7957,7 @@ static NextFSMAction Handler_STATE_DETAIL(CContApp *pMe)
         //Proccess yourself dialog retrn value here
         case DLGRET_OK:
 			
-			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 			if ((pMe->m_bSpeedDialParam == TRUE) && (pMe->m_nSpeedDialNumber != 0))
 			{
 				//pMe->m_bSpeedDialParam = FALSE;					

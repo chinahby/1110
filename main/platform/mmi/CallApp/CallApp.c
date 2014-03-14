@@ -904,7 +904,7 @@ static int CallApp_InitAppData(CCallApp *pMe)
     pMe->m_cdg_row = 0;
     pMe->m_anykey_answer = OEM_AUTO_ANSWER_MODE;
     pMe->m_b_incoming = FALSE;
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K232_Y105A) ||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)   	
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K232_Y105A) ||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT) || defined (FEATURE_VERSION_KK5)  	
     pMe->m_isIncoming 	= FALSE;
 #endif
     pMe->m_b_auto_redial = FALSE;
@@ -978,6 +978,10 @@ static int CallApp_InitAppData(CCallApp *pMe)
 #endif
 	pMe->m_bShift = FALSE;   //add by yangdecai 2010-07-27
 
+    pMe->m_TempCallVolume = 0;
+
+    pMe->keystart_time = 0;	
+    pMe->keyend_time = 0;
     pMe->num_edit_start_time = 0;
 
    
@@ -1248,6 +1252,38 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
             pMe->m_CallMuted = TRUE;
 #ifdef FEATRUE_SET_IP_NUMBER
             pMe->m_b_ip_call[0] = 0;
+#endif
+
+#ifdef FEATURE_CALL_RESTRICT   
+            {
+                AEECMCallInfo ci;
+
+                int len;
+                char str[33];
+                    
+                if(pMe->m_CallsTable)
+                {
+                    if(AEE_SUCCESS != ICM_GetCallInfo(pMe->m_pICM, pMe->m_CallsTable->call_id, &ci, sizeof(AEECMCallInfo)))
+                    {
+                        DBGPRINTF("***zzg EVT_APP_START ICM_GetCallInfo Failed!***");
+                    }
+                    else
+                    {
+                        WSTRTOSTR(pMe->m_CallsTable->call_number, str, sizeof(str));
+
+                        str[sizeof(str)-1] = '\0';
+                        len = STRLEN(str);
+                            
+                        DBGPRINTF("***zzg EVT_APP_START call_number=%s, len=%d***", str, len);
+
+                        if (CallApp_IsRestrictNumber(pMe, pMe->m_CallsTable->call_number))   
+                        {
+                            (void)ISHELL_CloseApplet(pMe->m_pShell, FALSE);
+                            return TRUE;
+                        }        
+                    }
+                }
+            }
 #endif
             IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn, NULL, FALSE);
 
@@ -2878,7 +2914,7 @@ static void CallApp_ProcessCallStateDATA(CCallApp                 *pMe,
 #else
            case AEET_EVENT_CALL_ORIG:
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_C316) ||defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_C316) ||defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 #else
                ISHELL_SendEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_OMH_PROMPT,0,0);
 #endif
@@ -3404,7 +3440,7 @@ static void CallApp_ProcessCallStateVoice_Incoming(CCallApp      *pMe,
     pMe->m_auto_redial_count = 0;
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_ANYKEY_ANSWER, &pMe->m_anykey_answer, sizeof(byte));
     pMe->m_b_incoming = TRUE;
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K232_Y105A)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)   	
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K232_Y105A)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)|| defined (FEATURE_VERSION_KK5)   	
     pMe->m_isIncoming = TRUE;
 #endif
 #ifdef FEATURE_ICM
@@ -7388,4 +7424,47 @@ void CallApp_StartCallTest(void)
     #endif
     AEE_SetSysTimer(0,CallApp_CallTestCB,NULL);
 }
+
+#ifdef FEATURE_CALL_RESTRICT
+boolean CallApp_IsRestrictNumber(CCallApp *pMe, AECHAR *number)
+{
+    boolean result = FALSE;    
+    char strNum[33];    
+    uint8 byMax = 0;
+    call_restrict_info		call_restrict_list[MAX_CALL_RESTRICT];
+    int i;
+        
+    WSTRTOSTR(number,strNum,33);
+
+    DBGPRINTF("***zzg CallApp_IsRestrictNumber WSTRLEN(number)=%d***", WSTRLEN(number));
+    DBGPRINTF("***zzg CallApp_IsRestrictNumber strNum=%s***", strNum);
+   
+    if (WSTRLEN(number) > 0)
+    {
+        call_restrict_info info = {0};
+        
+        (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_CALL_RESTRICT_TOTAL, &byMax, sizeof(byte));  
+
+        DBGPRINTF("***zzg CallApp_IsRestrictNumber byMax=%d***", byMax);
+        
+    	(void) ICONFIG_GetItem(pMe->m_pConfig,
+    						   CFGI_CALL_RESTRICT_INFO,
+    						   (void*)call_restrict_list,
+    						   sizeof(call_restrict_list));            
+
+        for (i=0; i<byMax; i++)
+        {
+            if (WSTRCMP(number, call_restrict_list[i].szNumber) == 0)
+            {
+                MSG_FATAL("***zzg CallApp_IsRestrictNumber return TRUE***", 0, 0, 0);
+                return TRUE;
+            }
+        }            
+    }
+
+    MSG_FATAL("***zzg CallApp_IsRestrictNumber return result=%d***", result, 0, 0);
+    return  result;
+}
+
+#endif
 

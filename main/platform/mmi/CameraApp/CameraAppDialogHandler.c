@@ -314,7 +314,7 @@ static const CCameraSize g_CameraSizeCFG[] =
  #ifndef FEATURE_VERSION_K232_Y105A
     {300,400,L"480*640"}, // VGA
  #endif
- #elif defined (FEATURE_VERSION_C260_IC18)
+#elif defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_KK5)
     {352,464,L"352*464"}, // VGA 
  #endif
 #elif defined(FEATURE_DISP_176X220)
@@ -383,7 +383,7 @@ static const CCameraSize g_CameraSizeCFG_10[] =
 #endif    
 #if defined( FEATURE_VERSION_C316)//||defined(FEATURE_VERSION_C117_M74)
     {300,400,L"480*640"}, // VGA
-#elif defined (FEATURE_VERSION_C260_IC18)
+#elif defined (FEATURE_VERSION_C260_IC18)|| defined (FEATURE_VERSION_KK5)
     {352,464,L"352*464"}, // VGA    
 #endif
 
@@ -1336,7 +1336,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 	                {
 	                	if ( pMe->m_isStartFromFacebook == TRUE)
 	                	{
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)   	 
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A) || defined (FEATURE_VERSION_KK5)   	 
 				            pMe->m_wMsgID = IDS_NOMEMORY;
 #else
 	                    	pMe->m_wMsgID = IDS_MSG_NOMEMORY;
@@ -1346,7 +1346,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 	                    {
 							if(pMe->m_bMemoryCardExist)
 		                    {
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)   	 
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A) || defined (FEATURE_VERSION_KK5) 	 
     				            pMe->m_wMsgID = IDS_NOMEMORY;
 #else
     	                    	pMe->m_wMsgID = IDS_MSG_NOMEMORY;
@@ -1433,7 +1433,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 	                {
 						if(pMe->m_bMemoryCardExist)
 	                    {
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)   	 
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A) || defined (FEATURE_VERSION_KK5)   	 
 				            pMe->m_wMsgID = IDS_NOMEMORY;
 #else
 	                    	pMe->m_wMsgID = IDS_MSG_NOMEMORY;
@@ -1832,7 +1832,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                     MSG_FATAL("CameraApp_CameraCFGHandleEvent RIGHT END:%d",pMe->m_nCameraCFG,0,0);
                     break;
 
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5) 
                 case AVK_1:
                      pMe->m_nCameraCFG=CAMERACFGENVIRMENT;
                      break;
@@ -2240,7 +2240,7 @@ static boolean CameraApp_VideoHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint1
            
 			if (WSTRLEN(wfileName)>0)
 			{      
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5) 
             pMe->m_rc.y += 20;    
             DrawTextWithProfile(pMe->m_pShell, 
 			                        pMe->m_pDisplay, 
@@ -2445,7 +2445,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 				pMe->m_bIsPreview = FALSE;
 	            pMe->m_nCameraState = CAM_START;
                 //Add By zzg 2013_03_28
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5) 
                 if (pMe->m_wMsgID  != IDS_MSG_NOSDCARD)             
                 {
                     pMe->m_wMsgID = IDS_MSG_WAITING; 
@@ -2606,7 +2606,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
                     case IDS_MSG_NOSDCARD:
                     case IDS_MSG_NOCAMERA:
                     case IDS_MSG_NOMEMORY:
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)   
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A) || defined (FEATURE_VERSION_KK5) 
 		            case IDS_NOMEMORY:	
 #endif
                     case IDS_MSG_CAPTURE_FAILED:
@@ -2641,7 +2641,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 #ifdef FEATURE_DSP
             if(pMe->m_wMsgID == IDS_MSG_WAITING || pMe->m_wMsgID == IDS_DONE
                || pMe->m_wMsgID == IDS_MSG_NOSDCARD || pMe->m_wMsgID == IDS_MSG_NOMEMORY
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)      
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A) || defined (FEATURE_VERSION_KK5)      
 		       || pMe->m_wMsgID == IDS_NOMEMORY
 #endif
                ) // &&(!pMe->m_pCamera)
@@ -2657,7 +2657,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 #else                 
             
              //Add By zzg 2013_03_28
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5) 
             if(((pMe->m_wMsgID == IDS_MSG_WAITING) || pMe->m_wMsgID == IDS_MSG_NOSDCARD) &&(!pMe->m_pCamera))
 #else
             if((pMe->m_wMsgID == IDS_MSG_WAITING) &&(!pMe->m_pCamera))
@@ -4697,8 +4697,8 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 #endif	
 
 //Add By zzg 2012_10_30
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337) 
-#if defined (FEATURE_VERSION_C260_IC18)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_KK5)
+#if defined (FEATURE_VERSION_C260_IC18)||defined(FEATURE_VERSION_KK5)
     // size cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_SIZE,

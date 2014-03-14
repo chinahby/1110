@@ -792,7 +792,7 @@ uint16  CContApp_GetFldTitleID(AEEAddrFieldID wFldID)
             return IDS_ADDRESS;
 
         case AEE_ADDRFIELD_GROUP:
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 			return IDS_CALLER_GROUPS;
 #else
             return IDS_INPUT_GROUP;
@@ -1029,7 +1029,7 @@ uint16 CContApp_SetFldMaxSize(CContApp *pMe,ITextCtl *pIText,AEEAddrFieldID wFld
 #ifndef WIN32
                 nMaxchars = OEMRUIMAddr_GetRUIMMaxNumberSize();
 #else
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 				nMaxchars = MAX_INPUT_NAME_EN;
 #else
                 nMaxchars = MAX_INPUT_NUM;
@@ -1038,7 +1038,7 @@ uint16 CContApp_SetFldMaxSize(CContApp *pMe,ITextCtl *pIText,AEEAddrFieldID wFld
             }
             else
             {
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 				nMaxchars = MAX_INPUT_NAME_EN;
 #else            
                 nMaxchars = MAX_INPUT_NUM;
@@ -4469,8 +4469,85 @@ int CContApp_CreateDefaultCont( CContApp *pMe)
 	
 	int 			index = 0;
 	boolean 		sameRecord = FALSE;
-	boolean			m_bdftcont = FALSE;
+	boolean			m_bdftcont = FALSE;   
 
+#ifdef FEATURE_VERSION_KK5
+    AECHAR 			pNameEx[5][20];
+    AECHAR          pNumberEx[5][20];
+    int             i;
+
+    STRTOWSTR("100", pNameEx[0], sizeof(pNameEx[0]));
+	STRTOWSTR("100", pNumberEx[0], sizeof(pNumberEx[0]));	
+
+    STRTOWSTR("101", pNameEx[1], sizeof(pNameEx[1]));
+	STRTOWSTR("101", pNumberEx[1], sizeof(pNumberEx[1]));	
+
+    STRTOWSTR("102", pNameEx[2], sizeof(pNameEx[2]));
+	STRTOWSTR("102", pNumberEx[2], sizeof(pNumberEx[2]));	
+
+    STRTOWSTR("112", pNameEx[3], sizeof(pNameEx[3]));
+	STRTOWSTR("112", pNumberEx[3], sizeof(pNumberEx[3]));	
+
+    STRTOWSTR("911", pNameEx[4], sizeof(pNameEx[4]));
+	STRTOWSTR("911", pNumberEx[4], sizeof(pNumberEx[4]));	
+
+	MSG_FATAL("***zzg CContApp_CreateDefaultCont***", 0, 0, 0);
+    
+    ASSERT(pMe != NULL);
+
+    for (i=0; i<5; i++)
+    {
+        if(SUCCESS == IADDRBOOK_CheckSameRecord(pMe->m_pAddrPhone, pNameEx[i], &sameRecord) && sameRecord == TRUE)
+        {
+        	MSG_FATAL("***zzg IADDRBOOK_CheckSameRecord sameRecord=%x***", sameRecord, 0, 0);
+            return EFAILED;
+        }
+    	
+        // Set the name field
+        if(SUCCESS != CContApp_BuildAddrField( AEE_ADDRFIELD_NAME,
+                                               pNameEx[i],
+                                               &addrFld[0],
+                                               FALSE))
+        {
+            return EFAILED;
+        }
+    	
+        // Set the number field
+        if(SUCCESS != CContApp_BuildAddrField( AEE_ADDRFIELD_PHONE_GENERIC,
+                                               pNumberEx[i],
+                                               &addrFld[1],
+                                               FALSE))
+        {
+            return EFAILED;
+        }
+    	
+        //index = 1;
+
+    	// Set the Group field
+        if(SUCCESS != CContApp_BuildAddrField( AEE_ADDRFIELD_GROUP,
+                                               &mGroupCat,
+                                               &addrFld[2], 
+                                               FALSE))//++index
+        {
+             return EFAILED;
+        }	
+        
+    	pAddrRec = IADDRBOOK_CreateRec( pMe->m_pAddrPhone,
+                                        pMe->m_nGroupCat,
+                                        addrFld,
+                                        2);//index
+       
+        if(NULL == pAddrRec)
+        {
+            MSG_FATAL("***zzg CContApp_CreateDefaultCont return 444***", 0, 0, 0);
+            return EFAILED;
+        }
+        
+        pMe->m_wEditCont = CContApp_RawToContID( pMe,
+                                                 IADDRREC_GetRecID(pAddrRec),
+                                                 FALSE);
+    }
+#else
 	STRTOWSTR("Micromax care", pName, sizeof(pName));
 	STRTOWSTR("18605008286", pNumber, sizeof(pNumber));		
 
@@ -4527,7 +4604,8 @@ int CContApp_CreateDefaultCont( CContApp *pMe)
                                              IADDRREC_GetRecID(pAddrRec),
                                              FALSE);
 
-	#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+	#endif
+	#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 	m_bdftcont = TRUE;
 	ICONFIG_SetItem(pMe->m_pConfig, CFGI_DEFAULTCONT, &m_bdftcont, sizeof(m_bdftcont));
 
@@ -6050,7 +6128,7 @@ int CContApp_GetPrimaryNumFld(CContApp *pMe)
 Numbermatch_e_Type ContApp_NumberMatch(const AECHAR * wstrNum1, const AECHAR * wstrNum2, int *pMatchChars)
 {
 
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
     int nLen1, nLen2;
     AECHAR wstrNum1cmpbuff[MAX_INPUT_NUM + 1] = {(AECHAR)'\0'};
     AECHAR wstrNum2cmpbuff[MAX_INPUT_NUM + 1] = {(AECHAR)'\0'};

@@ -484,10 +484,25 @@
 	<STRING Id="1096" Name="IDS_PHONEBOOK_SETTINGS">
 		<Text>Phonebook settings</Text>
 	</STRING>
-	<STRING Id="1097" Name="IDS_APPLET_909C">
+	<STRING Id="1097" Name="IDS_PHONEBOOK_ADD_TO_RESTRICT">
+		<Text>Add to restrict</Text>
+	</STRING>
+	<STRING Id="1098" Name="IDS_PHONEBOOK_DEL_FROM_RESTRICT">
+		<Text>Del from restrict</Text>
+	</STRING>
+	<STRING Id="1099" Name="IDS_DEL_FAIL_OR_RESTRICT_FULL">
+		<Text>Del failed! or restirct is full!</Text>
+	</STRING>
+	<STRING Id="1100" Name="IDS_ADD_FAIL">
+		<Text>Add failed!</Text>
+	</STRING>
+	<STRING Id="1101" Name="IDS_SEND">
+		<Text>Send</Text>
+	</STRING>
+	<STRING Id="1102" Name="IDS_APPLET_909C">
 		<Text>Contacts</Text>
 	</STRING>
-	<STRING Id="1098" Name="IDS_APPLET_M10C">
+	<STRING Id="1103" Name="IDS_APPLET_M10C">
 		<Text>Contacts</Text>
 	</STRING>
 </Strings>
@@ -593,6 +608,10 @@
 					<Item Id="8078" Name="IDI_OPTS_MENU_DELETE">
 					</Item>
 					<Item Id="8079" Name="IDI_OPTS_MENU_COPY">
+					</Item>
+					<Item Id="9001" Name="IDI_OPTS_MENU_ADD_TO_RESTRICT">
+					</Item>
+					<Item Id="9002" Name="IDI_OPTS_MENU_DEL_FROM_RESTRICT">
 					</Item>
 				</Items>
 			</Menu>

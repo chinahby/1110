@@ -469,10 +469,10 @@
 	<String Id="1091" Name="IDS_CALLER_GROUPS">
 		<Text>Caller Groups</Text>
 	</String>
-	<STRING Id="1097" Name="IDS_APPLET_909C">
+	<STRING Id="1102" Name="IDS_APPLET_909C">
 		<Text>通讯录</Text>
 	</STRING>
-	<STRING Id="1098" Name="IDS_APPLET_M10C">
+	<STRING Id="1103" Name="IDS_APPLET_M10C">
 		<Text>电话簿</Text>
 	</STRING>
 </Strings>

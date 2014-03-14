@@ -290,7 +290,8 @@ NextFSMAction CoreApp_ProcessState(CCoreApp *pMe)
 			break;
         case COREST_ESN_EDIT:
 			retVal = COREST_ESN_EDIT_Handler(pMe);
-			break;    
+			break;               
+            
 #endif
 #ifdef FEATURE_SHOW_RSSI_INFO
         case COREST_RSSI_INFO:
@@ -1093,6 +1094,8 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                     #else
                     static const char mnBuf[] = "MMX C260";
                     #endif
+                    #elif defined (FEATURE_VERSION_KK5)					
+					static const char mnBuf[] = "LEMON C9";
 					#elif defined (FEATURE_VERSION_V3CM301)					
 					static const char mnBuf[] = "V3MOBILE";
 					#else				

@@ -256,8 +256,14 @@
 	<String Id="1135" Name="IDS_SAR_CT100_VERSION_C444">
 		<Text>SAR:CDMA800 Head:0.744W/Kg; Body:0.666W/Kg</Text>
 	</String>
+	<String Id="1136" Name="IDS_MSG_SILENT">
+		<Text>Silent Mode</Text>
+	</String>		
 	<String Id="1137" Name="IDS_FACEBOOK">
 		<Text>Facebook</Text>
+	</String>
+	<String Id="1138" Name="IDS_SAR_KK5">
+		<Text>Model No – Lemon C9         Tested SAR Values For Head : 0.21W/Kg (1g) For Body : 0.16W/Kg  (1g)       Permitted SAR Value : 1.6W/Kg  (1g)</Text>
 	</String>
 </Strings>
 <Dialogs>
@@ -309,5 +315,11 @@
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
+	<DIALOG Id="6012" Name="IDD_SAR_VALUE" Focus="7007">
+		<Controls>
+			<Static Id="7007" Name="IDC_SAR_VALUE">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
 </Dialogs>
 </BREWRes>

@@ -607,9 +607,10 @@ static void CoreApp_Issametimer(void *pUser);
 
 static void CoreApp_UpdateBottomBar(CCoreApp    *pMe); 
 //Add by pyuangui 20121220
-#if defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_W021_C11) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_V3CM301)||defined(FEATURE_VERSION_K252_JT)||defined(FEATURE_VERSION_K292)
+#if defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_KK5)|| defined(FEATURE_VERSION_W021_C11) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_V3CM301)||defined(FEATURE_VERSION_K252_JT)||defined(FEATURE_VERSION_K292)
 static void CCoreApp_TorchTipTimeOut(CCoreApp *pMe);
 #endif
+static void CCoreApp_SaleSucessTimeOut(CCoreApp *pMe);
 //Add End
 //static void CoreApp_GetRecordCount(CCoreApp *pMe);
 
@@ -4425,6 +4426,60 @@ static boolean fireShortcutsKeyEvent(void  *pUser,
 }
 #endif
 
+#ifdef FEATURE_VERSION_KK5
+void CoreApp_HandleTorch(CCoreApp *pMe)
+{
+    boolean TorchOn = FALSE;
+    OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+    if (TorchOn == FALSE )
+    {
+        TorchOn = TRUE;
+        if (pMe->m_pBacklight)
+        {
+            IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+        }
+    }
+    else
+    {
+        TorchOn = FALSE;
+        if (pMe->m_pBacklight)
+        {                           
+            IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+        }
+    }
+    OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+
+    if (NULL == pMe->pTmpStatic)
+    {
+        AEERect rect = {0};
+        if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,AEECLSID_STATIC,(void **)&pMe->pTmpStatic))
+        {
+            return;
+        }
+        ISTATIC_SetRect(pMe->pTmpStatic, &rect);
+    }
+    
+    {
+        PromptMsg_Param_type m_PromptMsg;
+        MEMSET(&m_PromptMsg,0,sizeof(PromptMsg_Param_type));
+        if(TorchOn)
+        {
+            m_PromptMsg.nMsgResID= IDS_MAIN_MENU_TORCHON;
+        }
+        else
+        {
+            m_PromptMsg.nMsgResID= IDS_MAIN_MENU_TORCHOFF;   
+        }
+        m_PromptMsg.ePMsgType = MESSAGE_WARNNING;
+        STRLCPY(m_PromptMsg.strMsgResFile, AEE_COREAPPRES_LANGFILE,MAX_FILE_NAME);
+        m_PromptMsg.eBBarType = BTBAR_NONE;
+        DrawPromptMessage(pMe->m_pDisplay,pMe->pTmpStatic,&m_PromptMsg);
+        IDISPLAY_UpdateEx(pMe->m_pDisplay,TRUE);
+        (void)ISHELL_SetTimer(pMe->a.m_pIShell, 2000, (PFNNOTIFY)CCoreApp_TorchTipTimeOut,pMe);        
+    }
+}
+#endif
+
 static boolean  IDD_IDLE_Handler(void       *pUser,
                                  AEEEvent   eCode,
                                  uint16     wParam,
@@ -4737,7 +4792,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
         {   
 			
 			//Add By zzg 2012_10_29
-			#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_K232_Y101)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K212_HUALU)||defined (FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_K232_Y105A))
+			#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_K232_Y101)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K212_HUALU)||defined (FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_K232_Y105A)|| defined (FEATURE_VERSION_KK5))
 		    if (pMe->pFileMgr)
 		    {
 				if (IFILEMGR_Test(pMe->pFileMgr, AEEFS_CARD0_DIR)==SUCCESS)		
@@ -4792,7 +4847,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			}
 #else
 // Add by pyuangui 20121220
-#if defined (FEATURE_VERSION_C11)||(defined(FEATURE_VERSION_K292)&&(!defined(FEATURE_FLASHLIGHT_SUPPORT)&&!defined(FEATURE_VERSION_K292_WSF_K8C)))|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W021_CT100)//||defined(FEATURE_VERSION_W027_HC_KK3)
+#if defined (FEATURE_VERSION_C11)||(defined(FEATURE_VERSION_K292)&&(!defined(FEATURE_FLASHLIGHT_SUPPORT)&&!defined(FEATURE_VERSION_K292_WSF_K8C)))|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_KK5)//||defined(FEATURE_VERSION_W027_HC_KK3)
             if(wParam == AVK_INFO)
             {
                 boolean TorchOn = FALSE;
@@ -5366,6 +5421,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					}
 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202_LM129C) || defined(FEATURE_VERSION_IC241A_MMX)   //add by yangdecai
             	    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
+#elif defined (FEATURE_VERSION_KK5)
+                    return ISHELL_StartAppletArgs(pMe->a.m_pIShell, AEECLSID_APP_CAMERA, "FromCore");
+                    //return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);					
 #elif defined (FEATURE_VERSION_W208S)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #elif defined(FEATURE_VERSION_W027_HC_KK3)
@@ -5432,6 +5490,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
     #elif defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+    #elif defined(FEATURE_VERSION_KK5)
+					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 	#elif defined(FEATURE_VERSION_C316)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_VIDEOPLAYER);
 	#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K232_Y101)
@@ -5501,6 +5561,11 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APPMANAGER);
 #elif defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y101)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
+#elif defined(FEATURE_VERSION_KK5)
+					if(SUCCESS==ISHELL_StartAppletArgs(pMe->a.m_pIShell, AEECLSID_WMSAPP, "WMSST_WRITEMSG"))
+    					return TRUE;
+    				else 
+    					return FALSE;
 #elif defined(FEATURE_VERSION_K212_ND)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SOUNDMENU);
 #elif defined(FEATURE_VERSION_W317A)
@@ -5574,6 +5639,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                             return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SOUNDMENU);
                         #elif defined(FEATURE_VERSION_VG68)||defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
                             return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK);
+                        #elif defined(FEATURE_VERSION_KK5)
+                            return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SOUNDMENU);
                         #elif defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W027V3)
                             return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
 						#elif defined(FEATURE_VERSION_C316)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_K292)||defined(FEATURE_VERSION_W021_CT100)
@@ -5599,7 +5666,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				    int ret = 0;
 				    if(!OEMKeyguard_IsEnabled())
                     {
-                        #if defined( FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_K212_HUALU)|| defined(FEATURE_VERSION_K212_ND)|| defined(FEATURE_VERSION_K232_Y101)||defined(FEATURE_VERSION_W516_C260)
+                        #if defined( FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_K212_HUALU)|| defined(FEATURE_VERSION_K212_ND)|| defined(FEATURE_VERSION_K232_Y101)||defined(FEATURE_VERSION_W516_C260)|| defined (FEATURE_VERSION_KK5)
                            Mainmenu_KeypadLock(TRUE);
 			            #elif defined ( FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
 						   WMSDialog_KeypadLock(TRUE);
@@ -5627,7 +5694,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     						pMe->m_iskeypadtime = TRUE;
     					}
 #else
-#if defined (FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_K232_Y101)
+#if defined (FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_K232_Y101) || defined(FEATURE_VERSION_KK5)
                         ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #endif
 #if defined	(FEATURE_VERSION_FLEXI203) 
@@ -5780,7 +5847,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 							//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
 						}
 #if defined(FEATURE_VERSION_W027)  
-#if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX))
+#if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5))
 			  ;
 #else
                         Mainmenu_KeypadLock(TRUE);
@@ -6463,6 +6530,12 @@ static boolean	IDD_SALESTRACKER_Handler(void *pUser,
                                 IDS_MMX_SELES_TRACK,
                                 wstrText,
                                 sizeof(wstrText));
+                #elif defined (FEATURE_VERSION_KK5)
+                (void)ISHELL_LoadResString(pMe->a.m_pIShell,
+                                AEE_COREAPPRES_LANGFILE,                                
+                                IDS_LEMON_SALES_TRACK,
+                                wstrText,
+                                sizeof(wstrText));
                 #else
                 (void)ISHELL_LoadResString(pMe->a.m_pIShell,
                                 AEE_COREAPPRES_LANGFILE,                                
@@ -6605,6 +6678,12 @@ static boolean  IDD_SALESSUCCESS_Handler(void *pUser,
 								IDS_MMX_SALES_SUCCESS,
 								wstrText,
 								sizeof(wstrText));
+                #elif defined (FEATURE_VERSION_KK5)
+                (void)ISHELL_LoadResString(pMe->a.m_pIShell,
+								AEE_COREAPPRES_LANGFILE,								
+								IDS_LEMON_SALES_SUCCESS,
+								wstrText,
+								sizeof(wstrText));
                 #else
 				(void)ISHELL_LoadResString(pMe->a.m_pIShell,
 								AEE_COREAPPRES_LANGFILE,								
@@ -6619,6 +6698,9 @@ static boolean  IDD_SALESSUCCESS_Handler(void *pUser,
 								wstrText,
 								sizeof(wstrText));
 				#endif
+
+                (void)ISHELL_SetTimer(pMe->a.m_pIShell,5000, (PFNNOTIFY)CCoreApp_SaleSucessTimeOut,pMe);
+                
 				/*
 				Msg_Param.ePMsgType = MESSAGE_INFORMATION;
 				Msg_Param.pwszMsg = wstrText;
@@ -6647,6 +6729,14 @@ static boolean  IDD_SALESSUCCESS_Handler(void *pUser,
 			
 			return TRUE;
 
+        case EVT_USER:
+        {
+             if (wParam == 555)
+             {
+                CLOSE_DIALOG(DLGRET_MSGOK)
+             }       
+             return TRUE;   
+        }
 		case EVT_DIALOG_END:
 			ISTATIC_Release(pStatic);
 			pStatic = NULL;
@@ -7422,7 +7512,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
 #ifdef FEATURE_VERSION_W208S
 				//Do Nothing
 #else
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 				//STRTOWSTR("C260", wszBuf, nSize);
 				STRTOWSTR("", wszBuf, nSize);
 #else
@@ -7547,7 +7637,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                                       wszBuf2, -1,
                                       0, 0, &rc, 
                           #ifdef FEATURE_OEMOMH
-                          #ifdef FEATURE_VERSION_K232_Y101
+                          #if defined (FEATURE_VERSION_K232_Y101) || defined (FEATURE_VERSION_KK5)
                                       IDF_ALIGN_CENTER
                           #else
                                       IDF_ALIGN_LEFT 
@@ -7570,7 +7660,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                                       wszBuf1, -1,
                                       0, 0, &rc, 
                           #ifdef FEATURE_OEMOMH
-                          #ifdef FEATURE_VERSION_K232_Y101
+                          #if defined (FEATURE_VERSION_K232_Y101) || defined (FEATURE_VERSION_KK5)
                                       IDF_ALIGN_CENTER
                           #else
                                       IDF_ALIGN_LEFT 
@@ -7599,7 +7689,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                                   wszBufncard1, -1,
                                   0, 0, &Temprc, 
                                   #ifdef FEATURE_OEMOMH
-                                  #ifdef FEATURE_VERSION_K232_Y101
+                                  #if defined (FEATURE_VERSION_K232_Y101) || defined (FEATURE_VERSION_KK5)
                                   IDF_ALIGN_CENTER
                                   #else
                                   IDF_ALIGN_LEFT 
@@ -7621,7 +7711,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                                   wszBufncard2, -1,
                                   0, 0, &rc, 
                                   #ifdef FEATURE_OEMOMH
-                                  #ifdef FEATURE_VERSION_K232_Y101
+                                  #if defined (FEATURE_VERSION_K232_Y101) || defined (FEATURE_VERSION_KK5)
                                   IDF_ALIGN_CENTER
                                   #else
                                   IDF_ALIGN_LEFT 
@@ -7644,7 +7734,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                                   wszBuf, -1,
                                   0, 0, &rc, 
                                   #ifdef FEATURE_OEMOMH
-                                  #ifdef FEATURE_VERSION_K232_Y101
+                                  #if defined (FEATURE_VERSION_K232_Y101) || defined (FEATURE_VERSION_KK5)
                                   IDF_ALIGN_CENTER
                                   #else
                                   IDF_ALIGN_LEFT 
@@ -8575,7 +8665,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	                              wszDate, -1,
 	                              0, 0, &rc, 
 	                              IDF_ALIGN_MIDDLE
-	                              #ifdef FEATURE_VERSION_K212_ND
+	                              #if defined (FEATURE_VERSION_K212_ND)||defined (FEATURE_VERSION_KK5)
 	                              | IDF_ALIGN_CENTER
 	                              #else
 								  | IDF_ALIGN_LEFT
@@ -8786,7 +8876,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                   | IDF_ALIGN_RIGHT          
                                   | IDF_TEXT_TRANSPARENT); 
 #elif defined(FEATURE_DISP_128X160)
-#ifdef FEATURE_VERSION_MYANMAR
+#if defined (FEATURE_VERSION_MYANMAR) || defined (FEATURE_VERSION_KK5)
 		DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
                                   RGB_WHITE_NO_TRANS,
@@ -8925,6 +9015,17 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                               | IDF_ALIGN_LEFT
                               | IDF_TEXT_TRANSPARENT);
 #elif defined(FEATURE_DISP_128X160)
+#if defined (FEATURE_VERSION_KK5)
+    (void)DrawTextWithProfile(pMe->a.m_pIShell,
+                              pMe->m_pDisplay,
+                              RGB_WHITE_NO_TRANS,
+                              AEE_FONT_NORMAL,
+                              &wszDate[5], -1,
+                              0, 0, &rc_date, 
+                              IDF_ALIGN_MIDDLE
+                              | IDF_ALIGN_CENTER
+                              | IDF_TEXT_TRANSPARENT);
+#else
 	(void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
@@ -8934,6 +9035,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                               IDF_ALIGN_MIDDLE
                               | IDF_ALIGN_LEFT
                               | IDF_TEXT_TRANSPARENT);
+#endif
 #elif defined(FEATURE_DISP_240X320)
 	(void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
@@ -9114,7 +9216,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 							  | IDF_ALIGN_RIGHT		
 #endif							  
 #elif defined(FEATURE_DISP_128X160)
-#ifdef FEATURE_VERSION_MYANMAR
+#if defined (FEATURE_VERSION_MYANMAR)||defined (FEATURE_VERSION_KK5)
 							  | IDF_ALIGN_CENTER
 #else
 							  | IDF_ALIGN_RIGHT	
@@ -9219,7 +9321,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
             #elif defined(FEATURE_VERSION_W027)
             #ifdef FEATURE_VERSION_W317A
                 eBBarType = BTBAR_UNLOCK_L;
-	        #elif defined(FEATURE_VERSION_C337) 
+	        #elif defined(FEATURE_VERSION_C337) || defined (FEATURE_VERSION_KK5)
                 eBBarType = BTBAR_UNLOCK_M;
             #else
                 eBBarType = BTBAR_UNLOCK_M;			
@@ -9284,7 +9386,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 	    eBBarType = BTBAR_RECENTCALLS_CONTACTS; 
     #elif defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_W516_C260)
 	    eBBarType = BTBAR_MENU_CONTACTS;      
-    #elif defined(FEATURE_VERSION_K232_Y101)
+    #elif defined(FEATURE_VERSION_K232_Y101) || defined(FEATURE_VERSION_KK5)
 	    eBBarType = BTBAR_MENU_CONTACTS;
     #else
         eBBarType = BTBAR_MESSAGES_CONTACTS; //add by yangdecai  BTBAR_MESSAGES_CONTACTS
@@ -9899,7 +10001,7 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 	
 
 	//Add By zzg 2012_10_29
-	#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_K232_Y105A)||defined (FEATURE_VERSION_K232_Y101)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_IC241A_MMX))
+	#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_K232_Y105A)||defined (FEATURE_VERSION_K232_Y101)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5))
     if (pMe->pFileMgr)
     {
 		if (IFILEMGR_Test(pMe->pFileMgr, AEEFS_CARD0_DIR)==SUCCESS)		
@@ -10151,7 +10253,7 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 #endif
     if((missed_call_icon) && (pMe->m_pIAnn != NULL))
     {
-    	#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+    	#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 		if (pMe->m_pIRUIM != NULL)
 		{
 			if(IRUIM_IsCardConnected(pMe->m_pIRUIM))
@@ -10990,7 +11092,7 @@ static const ServiceProviderList List_SP[] =
 };
 //#endif
 //Add by pyuangui 20121220
-#if defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_V3CM301)
+#if defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_KK5)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_V3CM301)
 static void CCoreApp_TorchTipTimeOut(CCoreApp *pMe)
 {
     if (NULL == pMe)
@@ -11006,6 +11108,22 @@ static void CCoreApp_TorchTipTimeOut(CCoreApp *pMe)
 }
 #endif
 
+
+static void CCoreApp_SaleSucessTimeOut(CCoreApp *pMe)
+{
+    if (NULL == pMe)
+    {
+        return;
+    }
+
+    MSG_FATAL("***zzg CCoreApp_SaleSucessTimeOut***", 0, 0, 0);
+    
+    (void) ISHELL_PostEvent(pMe->a.m_pIShell,
+                            AEECLSID_CORE_APP,
+                            EVT_USER,
+                            555,
+                            0);
+}
 
 static void CCoreApp_LaunchApplication(CCoreApp *pMe)
 {
