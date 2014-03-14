@@ -3466,7 +3466,6 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.mmsInCount = 0;
    oemi_cache.mmsOutCount = 0;
    oemi_cache.mmsDraftCount = 0;
-#endif  
 
    {
 #ifdef FEATURE_VERSION_W208S
