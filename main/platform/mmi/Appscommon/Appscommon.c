@@ -706,8 +706,10 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
 
          case BTBAR_GALLERY_PLAY_BACK:
 #ifndef FEATURE_VERSION_C337
+#ifndef FEATURE_VERSION_KK5
 #ifndef FEATURE_VERSION_IC241A_MMX
             nResID_L = IDS_GALLERY;
+#endif
 #endif
 #endif
             nResID_M = IDS_PLAY;            
@@ -839,7 +841,7 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_R = IDS_STRING_UNLOCK;
             break;
             
-#if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX))
+#if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_KK5))
 		case BTBAR_UNLOCK_M:
             nResID_L = IDS_STRING_UNLOCK;
             break; 
@@ -967,7 +969,9 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
          case BTBAR_FULLSCREEN_PAUSE_STOP:
 		 	#ifndef FEATURE_VERSION_C337
             #ifndef FEATURE_VERSION_IC241A_MMX
+            #ifndef FEATURE_VERSION_KK5
             nResID_L = IDS_FULLSCREEN; 
+            #endif
             #endif
 			#endif
             nResID_M = IDS_PAUSE;            
@@ -1040,7 +1044,7 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
          case BTBAR_OPTION_SAVE_DEL:
             nResID_L = IDS_OPTION_EX;   //IDS_OPTION;
             nResID_M = IDS_SAVE;
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_KK5)
             nResID_R = IDS_CLEAR_EX;	
 #else
             nResID_R = IDS_DEL;	
@@ -1057,7 +1061,7 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_L = IDS_OPTION_Y100A;
             nResID_M = IDS_TODAY_Y100A;
 #else
-#ifdef FEATURE_VERSION_C260_IC19
+#if defined (FEATURE_VERSION_C260_IC19) || defined (FEATURE_VERSION_KK5)
             nResID_L = IDS_OPTION_EX;
 #else
             nResID_L = IDS_OPTION;
@@ -1980,7 +1984,7 @@ void DrawTitleBar(IDisplay  * pIDisplay, TitleBar_Param_type *TParam)
         else
         #endif
 
-		#if defined (FEATURE_VERSION_C337)|| defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_K232_Y101)
+		#if defined (FEATURE_VERSION_C337)|| defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_K232_Y101)|| defined (FEATURE_VERSION_KK5)
 		{
 #ifdef FEATURE_VERSION_IN50_MMX
             IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_WHITE);
@@ -3146,7 +3150,12 @@ void DrawPromptMessage (IDisplay *pIDisplay,
         strrect.x += 5;
         strrect.dx -= 10;        
         strrect.dy -= 20;
-#endif        
+#endif    
+#elif defined (FEATURE_VERSION_KK5)    
+        strrect.x += 5;
+        strrect.y += 15;
+        strrect.dx -= 10;        
+        strrect.dy -= 35;
 #endif
 #endif
     MSG_FATAL("***zzg DrawPromptMessage strrect.x=%d, strrect.y=%d***",strrect.x,strrect.y,0);
@@ -3183,7 +3192,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
         if (TRUE== drawbgimage)
         {
         	DBGPRINTF("***zzg Appscommon DrawPromptMessage***");                 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_IC241A_MMX)         
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_IC241A_MMX) ||defined(FEATURE_VERSION_KK5)        
 #if defined(FEATURE_VERSION_W027_HC_KK3)
 			ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT|ST_TRANSPARENTBACK);   
 #else
@@ -3643,7 +3652,7 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
 			//#ifdef FEATURE_VERSION_C337
 			//nResID_R = IDS_PHONE_BOOK;
 			//#else
-#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_KK5)
 			nResID_R = IDS_NAMES;
 #else
 			nResID_R = IDS_STRING_CONTACTS;
@@ -3720,7 +3729,7 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
             nResID_L = IDS_EMERGENCY;
             nResID_R = IDS_STRING_UNLOCK;
             break;    
-#if (defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316) || defined (FEATURE_VERSION_IC241A_MMX))
+#if (defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316) || defined (FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_KK5))
 		case BTBAR_UNLOCK_M:
             nResID_L = IDS_STRING_UNLOCK;
             break; 

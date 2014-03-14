@@ -447,7 +447,7 @@ uint16 BTApp_FormatBTName(
 	AECHAR wBuf1[ 24 ];	//16 
 	AECHAR wStr[3];	
 
-#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5
 	MEMSET(pwStr, 0, WSTRLEN(pwStr)*sizeof(AECHAR));	
 	
 	ISHELL_LoadResString(pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_BT_NAME, wBuf1, sizeof( wBuf1 )); 
