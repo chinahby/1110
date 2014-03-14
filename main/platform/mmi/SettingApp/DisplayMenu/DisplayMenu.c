@@ -802,7 +802,7 @@ static boolean DisplayMenu_HandleEvent(IDisplayMenu *pi,
         case EVT_KEY_RELEASE:
         case EVT_KEY:
         case EVT_COMMAND: 
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99) && !defined(FEATURE_QVGA_INHERIT_K212)&& !defined(FEATURE_LOW_MEM_BIGFONT)&&!defined(FEATURE_VERSION_IN50A)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99) && !defined(FEATURE_QVGA_INHERIT_K212)&& !defined(FEATURE_LOW_MEM_BIGFONT)&&!defined(FEATURE_VERSION_IN50A)&& !defined(FEATURE_VERSION_KK5)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;

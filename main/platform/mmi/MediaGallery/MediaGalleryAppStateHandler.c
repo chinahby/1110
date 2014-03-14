@@ -59,6 +59,7 @@ static NextFSMAction MGStateExitHandler(CMediaGalleryApp* pMe);
 static NextFSMAction MGStateImageViewerHandler(CMediaGalleryApp* pMe);
 static NextFSMAction MGStateRenameHandler(CMediaGalleryApp* pMe);
 static NextFSMAction MGStateSetAsHandler(CMediaGalleryApp* pMe);
+static NextFSMAction MGStateOptionHandler(CMediaGalleryApp* pMe);
 static NextFSMAction MGStateSavetoplaylistHandler(CMediaGalleryApp* pMe);
 static NextFSMAction MGStateDetailHandler(CMediaGalleryApp* pMe);
 static NextFSMAction MGStateSortHandler(CMediaGalleryApp *pMe);
@@ -166,6 +167,11 @@ NextFSMAction MediaGalleryApp_ProcessState(CMediaGalleryApp* pMe)
          case STATE_SETAS:
             fcnPtr = MGStateSetAsHandler;
             break;
+
+         case STATE_OPTION:
+            fcnPtr = MGStateOptionHandler;
+            break;
+            
 		 case STATE_SAVETOPLAYLIST:
 		 	fcnPtr = MGStateSavetoplaylistHandler;
 		 	break;
@@ -1072,7 +1078,7 @@ static NextFSMAction MGStateMediaMenuHandler(CMediaGalleryApp* pMe)
          return NFSMACTION_WAIT;
      }
 
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)  
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A) || defined (FEATURE_VERSION_KK5)
       case MGDLGRET_BGPLAYPROMPT:
          {
             uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);
@@ -1275,6 +1281,34 @@ static NextFSMAction MGStateMediaMenuHandler(CMediaGalleryApp* pMe)
 
    return NFSMACTION_CONTINUE;
 }//MGStateSetAsHandler
+
+
+static NextFSMAction MGStateOptionHandler(CMediaGalleryApp* pMe)
+{
+   if(!pMe)
+      return NFSMACTION_WAIT;
+   
+   switch(pMe->m_eDlgRet)
+   {
+      case MGDLGRET_CREATE:
+         if(SUCCESS != MediaGalleryApp_ShowDialog(pMe, IDD_OPTION))
+         {
+             return MGState_ExitOperateDialog(pMe);
+         }
+         return NFSMACTION_WAIT;
+
+      case MGDLGRET_CANCELED:
+          MGMOVE_TO_STATE(pMe,STATE_MUSIC_ADD);
+          break;          
+         
+      default:
+         MGMOVE_TO_STATE(pMe,STATE_EXIT);
+         break;
+   }
+
+   return NFSMACTION_CONTINUE;
+}//MGStateSetAsHandler
+
 /*===========================================================================
  * FUNCTION:
  *
@@ -1483,7 +1517,10 @@ static NextFSMAction MGStateMusicAddHandler(CMediaGalleryApp* pMe)
 
       case MGDLGRET_CANCELED:
          MGMOVE_TO_STATE(pMe,STATE_MAINMENU);
+         break;
 
+      case MGDLGRET_OPTION:
+         MGMOVE_TO_STATE(pMe,STATE_OPTION);  
          break;
 
       case MGDLGRET_FILEADD_FINISH:
@@ -1528,7 +1565,7 @@ static NextFSMAction MGStateVideoAddHandler(CMediaGalleryApp* pMe)
          MGMOVE_TO_STATE(pMe, STATE_EXIT);
          break;
 
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)  
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)  || defined (FEATURE_VERSION_KK5)
       case MGDLGRET_BGPLAYPROMPT:
          {
             uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);

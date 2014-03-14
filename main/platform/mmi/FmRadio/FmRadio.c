@@ -528,6 +528,9 @@ static int FmRadio_InitAppData(CFmRadio *pMe)
 
     pMe->bMsgBoxExist = FALSE;  //Add By zzg 2013_09_03
     pMe->bCurrect = FALSE;      //Add By zzg 2013_09_03
+
+    pMe->keystart_time = 0;	
+    pMe->keyend_time = 0;
     
     //初始化必要的数据
     FmRadio_InitFmRadioResource( pMe);
@@ -623,7 +626,9 @@ static void FmRadio_InitFmRadioResource(CFmRadio *pMe)
 		}
 		else
 		{
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
+
 			pMe->cfg.channel = 36;
 #else
 			pMe->cfg.channel = 0;
@@ -633,7 +638,9 @@ static void FmRadio_InitFmRadioResource(CFmRadio *pMe)
 		pMe->cfg.tuningMode = FM_RADIO_TUNNING_MODE_LIST;
 	}
 #else
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
+
 	pMe->cfg.channel = 36;
 #else
 	pMe->cfg.channel = 96;
@@ -1260,7 +1267,120 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
         case EVT_OPENSHAKE:
             Fm_Shake_Open();
             return TRUE;
+
+#if defined (FEATURE_VERSION_KK5)
+        case EVT_USER:
+        {
+            MSG_FATAL("***zzg FmRadio EVT_USER wParam=%x, dwParam=%x***", wParam, dwParam, 0);
             
+            if (dwParam == AVK_HEADSET_SWITCH)            
+            {
+                switch(wParam)
+                {
+                    case EVT_KEY_PRESS:
+                    {
+                       pMe->keystart_time = GETUPTIMEMS();	
+                       MSG_FATAL("***zzg FmRadio EVT_KEY_PRESS keystart_time=%d***", pMe->keystart_time,0,0);
+                	   return TRUE;  
+                    }
+                    
+                    case EVT_KEY:
+                    {
+                       (void) ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY) FmRadio_HeadsetSwitchOnHandler,pMe);  //Next                    
+                	   return TRUE;  
+                    }
+                    
+                    case EVT_KEY_RELEASE:
+                    {
+                        pMe->keyend_time= GETUPTIMEMS();					
+                        MSG_FATAL("***zzg FmRadio EVT_KEY_RELEASE keystart_time=%d, keyend_time=%d***", pMe->keystart_time,pMe->keyend_time,0);      
+
+                        ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)FmRadio_HeadsetSwitchOnHandler,pMe);
+                        
+                        if(pMe->keyend_time - pMe->keystart_time < 1500)
+                        {
+                            //PAUSE/PLAY
+                            if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
+                            {
+                                byte newvolumeLevel=0; 
+
+                                if(pMe->fmVolumeStop)
+                                {
+                                    if (HS_HEADSET_ON())  
+                                    {
+                                        fm_set_volume( newvolumeLevel,pMe->fmSpeaker);
+                                        pMe->fmVolumeStop=FALSE;
+                                    }
+                                }
+                                else
+                                {
+                                    (void) ICONFIG_GetItem(pMe->m_pConfig,
+                            						   CFGI_FMRADIO_VOLUME,
+                            						   &pMe->byVolumeLevel,
+                            						   sizeof(byte));                                    
+                            		
+                                    newvolumeLevel = pMe->byVolumeLevel;
+                                    
+                                    if (HS_HEADSET_ON())   
+                                    {
+                                        fm_set_volume(newvolumeLevel,pMe->fmSpeaker);
+                                        pMe->fmVolumeStop=TRUE;
+                                    }
+                                }
+
+                                ISHELL_HandleEvent( pMe->m_pShell, EVT_USER_REDRAW, 0, 0);
+                             }
+                        }      
+                        
+                        pMe->keyend_time = 0;
+                        pMe->keystart_time = 0;
+                        return TRUE;
+                    }                    
+                    default:   
+                        break;
+                }
+            }
+            else
+            {
+                switch(wParam) 
+                {
+                    case EVT_UI_EXIT:            
+                    {
+                        /* AEE is about to exit, set the exit flag to TRUE */
+                        pMe->startFromBackground = FALSE;
+#if FEATURE_FMRADIO_SUPPORT_BACKGROUND
+                        pMe->runOnBackground = FALSE;
+#endif
+                        ISHELL_CloseApplet( pMe->m_pShell, FALSE);
+                        return TRUE;
+                    }
+                    
+                    default:
+        			{
+        				MSG_FATAL("FmRadio_RouteDialogEvent..............",0,0,0);
+        				if (wParam == AVK_CLR)
+        				{
+        					eCode = EVT_KEY;
+        				}
+        				else if ((wParam == AVK_SELECT)||(wParam == AVK_INFO))
+        				{
+        					if (dwParam == 0)
+        					{
+        						
+        						eCode = EVT_KEY;
+        					}
+        					else
+        					{
+        						eCode = EVT_COMMAND;
+        					}
+        				}
+        				return FmRadio_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+                    }
+                }
+            }
+            break;            
+        }
+#else           
         case EVT_USER:
         {
             switch(wParam) 
@@ -1297,6 +1417,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
                 break;
             }
         }
+#endif        
         default:
             // 将接收到的事件路由至当前活动的对话框事件处理函数。
             return FmRadio_RouteDialogEvent(pMe,eCode,wParam,dwParam);

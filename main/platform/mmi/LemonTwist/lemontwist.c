@@ -2536,7 +2536,7 @@ static boolean Lemontwist_LiveMsgHandler(Lemontwist *pMe, AEEEvent eCode, uint16
                             case IDS_LEMON_PULL_CRICKET:
                             {
                                 STRCPY(SMSINFO,"LMPCRI");
-                                STRCPY(SMSNUM,"13725575946");   //58558
+                                STRCPY(SMSNUM,"58558");   
                                 break;
                             }
                             case IDS_LEMON_PULL_BREAKING:

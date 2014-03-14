@@ -68,22 +68,22 @@
 		<Text>कैमरा</Text>
 	</String>
 	<String Id="1023" Name="IDS_MAIN_MENU_RECORDER">
-		<Text>Recorder</Text>
+		<Text>रिकॉर्डर</Text>
 	</String>
 	<String Id="1024" Name="IDS_MAIN_MENU_TIMER">
 		<Text>घड़ी</Text>
 	</String>
 	<String Id="1025" Name="IDS_MAIN_MENU_CONVERTER">
-		<Text>Converter</Text>
+		<Text>परिवर्तक</Text>
 	</String>
 	<String Id="1026" Name="IDS_MAIN_MENU_STOPWATCH">
-		<Text>Stopwatch</Text>
+		<Text>स्टॉपवॉच देखनी</Text>
 	</String>
 	<String Id="1027" Name="IDS_MAIN_MENU_WORLDTIME">
-		<Text>WorldTime</Text>
+		<Text>दुनिया का समय</Text>
 	</String>
 	<String Id="1028" Name="IDS_MAIN_MENU_ALARM">
-		<Text>Alarm</Text>
+		<Text>अलार्म</Text>
 	</String>
 	<String Id="1029" Name="IDS_MAIN_MENU_VIDEOPLAYER">
 		<Text>वीडियो प्लेयर</Text>
@@ -92,7 +92,7 @@
 		<Text>फ़ाइल प्रबंधक</Text>
 	</String>
 	<String Id="1031" Name="IDS_MAIN_MENU_MAP">
-		<Text>Map</Text>
+		<Text>नक्शा</Text>
 	</String>
 	<String Id="1032" Name="IDS_MAIN_MENU_NEO_APP">
 		<Text>Neo Application</Text>
@@ -101,13 +101,13 @@
 		<Text>Neo Navigation</Text>
 	</String>
 	<STRING Id="1034" Name="IDS_MENU_LIST">
-		<Text>Menu</Text>
+		<Text>मेनू</Text>
 	</STRING>
 	<String Id="1035" Name="IDS_MAIN_MENU_CALL_LOGS">
-		<Text>Call Logs</Text>
+		<Text>लॉग्स कॉल करें</Text>
 	</String>
 	<String Id="1036" Name="IDS_SHORT_CUT">
-		<Text>short cut</Text>
+		<Text>छोटा रास्ता</Text>
 	</String>
 	<String Id="1037" Name="IDS_MAIN_MENU_Y105A">
 		<Text>कॉल इतिहास</Text>
@@ -116,7 +116,7 @@
 		<Text>कैलकुलेटर</Text>
 	</STRING>
 	<STRING Id="1046" Name="IDS_MAIN_MENU_FMRADIO">
-		<Text>FM Radio</Text>
+		<Text>एफएम रेडियो</Text>
 	</STRING>
 	<STRING Id="1051" Name="IDS_MAIN_MENU_MUSICPLAYER">
 		<Text>संगीत प्लेयर</Text>
@@ -149,13 +149,13 @@
 		<Text>Frenduo</Text>
 	</String>
 	<String Id="1086" Name="IDS_MAIN_WAPBROWSER">
-		<Text>ब्राउजर</Text>
+		<Text>ब्राउज़र </Text>
 	</String>
 	<STRING Id="1087" Name="IDS_PHONEBOOK">
 		<Text>फोन की किताब</Text>
 	</STRING>
 	<STRING Id="1088" Name="IDS_MAIN_MENU_USER_PROFILE">
-		<Text>प्रयोक्ता रेखाचित्र</Text>
+		<Text>उपयोगकर्ता प्रोफ़ाइल</Text>
 	</STRING>
 	<STRING Id="1089" Name="IDS_MAIN_MENU_MSTORE">
 		<Text>M! Live</Text>
@@ -182,16 +182,16 @@
 		<Text>इंटेक्स जोन</Text>
 	</STRING>
 	<STRING Id="1097" Name="IDS_MAIN_MENU_TORCH">
-		<Text>Torch</Text>
+		<Text>मशाल</Text>
 	</STRING>
 	<STRING Id="1098" Name="IDS_MAIN_MENU_TORCH_ON">
-		<Text>On</Text>
+		<Text>पर</Text>
 	</STRING>
 	<STRING Id="1099" Name="IDS_MAIN_MENU_TORCH_OFF">
-		<Text>Off</Text>
+		<Text>बंद</Text>
 	</STRING>
 	<STRING Id="1100" Name="IDS_MAIN_MENU_CAMERA_LIST">
-		<Text>Camera</Text>
+		<Text>कैमरा</Text>
 	</STRING>
 	<STRING Id="1101" Name="IDS_MAIN_MENU_MY_MTS">
 		<Text>My MTS</Text>

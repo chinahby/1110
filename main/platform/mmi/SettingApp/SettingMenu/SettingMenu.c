@@ -541,6 +541,9 @@ static int SettingMenu_InitAppData(CSettingMenu *pMe)
     pMe->m_shaketype_sel = SET_SHAKE_NONE;
     pMe->m_strPhonePWD = NULL;
 
+    pMe->m_index = 0;
+    pMe->m_msgid = 0;
+
     if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
                                             AEECLSID_CONFIG,
                                             (void **)&pMe->m_pConfig))

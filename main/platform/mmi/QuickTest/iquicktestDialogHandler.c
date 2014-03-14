@@ -610,7 +610,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
                             IIMAGE_Draw(image, 85, 32);
 #elif defined(FEATURE_DISP_128X160)
-#ifdef FEATURE_VERSION_C260_IC18
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_KK5)
                             IIMAGE_Draw(image, 85, 32);
                             IIMAGE_Draw(image, 85, 42);
 #else
@@ -669,7 +669,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_176X220)
                             IIMAGE_Draw(image, 118, 57);
 #elif defined(FEATURE_DISP_128X160)
-#ifdef FEATURE_VERSION_C260_IC18
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_KK5)
                             IIMAGE_Draw(image, 85, 32);
                             IIMAGE_Draw(image, 85, 42);
 #else
@@ -722,7 +722,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_176X220)
                             IIMAGE_Draw(image, 118, 0);
 #elif defined(FEATURE_DISP_128X160)
-#ifdef FEATURE_VERSION_C260_IC18
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_KK5)
                         IIMAGE_Draw(image, 85, 0);
                         IIMAGE_Draw(image, 85, 10);
 #else
@@ -1347,7 +1347,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128) || defined(FEATURE_DISP_176X220)
                             IIMAGE_Draw(image, 0, 0);
 #elif defined(FEATURE_DISP_128X160)
-#ifdef FEATURE_VERSION_C260_IC18
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_KK5)
                             IIMAGE_Draw(image, 0, 0);
                             IIMAGE_Draw(image, 0, 10);
 #else
@@ -1403,7 +1403,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_176X220)
                             IIMAGE_Draw(image, 0, 57);
 #elif defined(FEATURE_DISP_128X160)
-#ifdef FEATURE_VERSION_C260_IC18
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_KK5)
                             IIMAGE_Draw(image, 0, 32);
                             IIMAGE_Draw(image, 0, 42);
 #else

@@ -2490,6 +2490,8 @@ static void MainMenu_DrawBackGround(MainMenu *pMe, AEERect *pRect);
 
 int SetBrowserArr_Main(IShell *pShell ,char *purl);
 
+int SetBrowserArrEx_Main(MainMenu *pMe ,char *purl);
+
 static void DrawMatrix(MainMenu *pMe);
 
 //static void DrawFocusIcon(MainMenu *pMe);
@@ -15670,6 +15672,17 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[9]     = IDS_MAIN_MENU_USER_PROFILE;	//IDS_MAIN_MENU_USERPROFILE;	//IDS_MAIN_MENU_APPLICATION;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_SETTINGS;	
+
+    #elif defined(FEATURE_VERSION_KK5)
+    pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CONTACTS;		
+	pMe->m_IconTitle[1]     = IDS_MAIN_MENU_MESSAGES;	
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_CALL_LOGS;	
+    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_SETTINGS;	
+    pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MULTIMEDIA;
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_FILEMGR;	
+    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_LEMON_TWIST;	    
+    pMe->m_IconTitle[7]     = IDS_MAIN_WAPBROWSER;	
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_ORGANIZER;	    
     #elif defined (FEATURE_VERSION_K232_Y101)
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CONTACTS;      
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_MESSAGES;      
@@ -16660,9 +16673,13 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
         case EVT_KEY_HELD:
         {                
         #if defined(FEATURE_TORCH_KEY_INFO)
-            int nFocus = pMe->m_nRow * MAX_MATRIX_COLS + pMe->m_nColumn;      
-        
-            if ((nFocus == 3) || (nFocus == 6))
+            int nFocus = pMe->m_nRow * MAX_MATRIX_COLS + pMe->m_nColumn;    
+           
+#ifdef FEATURE_VERSION_KK5
+            if (nFocus != (1*MAX_MATRIX_COLS + 1))
+#else   
+            if ((nFocus == 3) || (nFocus == 6)) 
+#endif                
             {
                 return TRUE;
             }
@@ -17117,6 +17134,9 @@ static void CalculateScreenParameters(MainMenu *pMe)
 
 #ifdef FEATURE_VERSION_H19C   
     iconSpaceHorizontal = 12;
+    iconSpaceVertical = 2;
+#elif defined (FEATURE_VERSION_KK5) 
+    iconSpaceHorizontal = 2;
     iconSpaceVertical = 2;
 #elif defined FEATURE_VERSION_K232_Y101
     iconSpaceHorizontal = 2;
@@ -17611,12 +17631,13 @@ static int StartApplet(MainMenu *pMe, int i)
         IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
     }
 #endif
-		#ifdef FEATURE_VERSION_K202_LM129C //xxzhen
-		  if(pMe->m_pIAnn != NULL)
-          {
-              IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
-          }
-		#endif
+
+#ifdef FEATURE_VERSION_K202_LM129C //xxzhen
+    if(pMe->m_pIAnn != NULL)
+    {
+        IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
+    }
+#endif
 
     switch(i)
 	{
@@ -17752,6 +17773,12 @@ static int StartApplet(MainMenu *pMe, int i)
     case IDS_MAIN_MENU_SETTINGS:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
         break;
+        
+#ifdef FEATURE_VERSION_KK5
+    case IDS_MAIN_MENU_LEMON_TWIST:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_LEMON_TWIST);
+        break;
+#endif
 
 	//Add By zzg 2012_11_08 for C337 
 	case IDS_MAIN_MENU_SERVICES:
@@ -17853,9 +17880,45 @@ static int StartApplet(MainMenu *pMe, int i)
         Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.google.com.hk/"); 
         #else
         Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
-        #endif        
+        #endif   
+        #elif defined (FEATURE_VERSION_KK5)
+        {
+            AECHAR WBrowserTitle[40] = {0};
+    		(void)ISHELL_LoadResString(pMe->m_pShell,
+    									MAINMENU_RES_FILE_LANG, 							   
+    									IDS_MAIN_MENU_SERVICES,
+    									WBrowserTitle,
+    									sizeof(WBrowserTitle));
+    		if(pMe->m_pIAnn != NULL)
+    		{
+    		
+    		    DBGPRINTF("IDS_MAIN_MENU_MSTORE IANNUNCIATOR_Redraw");
+    			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WBrowserTitle,FALSE);
+    			IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+    		}
+
+            Result = SetBrowserArrEx_Main(pMe,(char*)"http://Google.co.in");    
+            //Result = SetBrowserArr_Main(pMe->m_pShell, (char*)"http://Google.co.in"); 
+        }
         #else
+        {
+            AECHAR WBrowserTitle[40] = {0};
+    		(void)ISHELL_LoadResString(pMe->m_pShell,
+    									MAINMENU_RES_FILE_LANG, 							   
+    									IDS_MAIN_MENU_SERVICES,
+    									WBrowserTitle,
+    									sizeof(WBrowserTitle));
+    		if(pMe->m_pIAnn != NULL)
+    		{
+    		
+    		    DBGPRINTF("IDS_MAIN_MENU_MSTORE IANNUNCIATOR_Redraw");
+    			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WBrowserTitle,FALSE);
+    			IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+    		}
+        }       
+        
         Result = SetBrowserArr_Main(pMe->m_pShell,(char*)""); //ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
+        
         #endif
         break;
     
@@ -17974,6 +18037,9 @@ int SetBrowserArr_Main(IShell *pShell ,char *purl)
 	int Result = EUNSUPPORTED;
 	char urlCan[1024] = {0};
 
+    char strip[60] = {0};
+    char strport[60] = {0};
+
     OEM_SetUCBROWSER_ADSAccount();
     
 	DBGPRINTF("svc_p_name %s %d",charsvc_p_name,charsvc_p_name[0],0);
@@ -17987,7 +18053,90 @@ int SetBrowserArr_Main(IShell *pShell ,char *purl)
 	{
 		STRCPY(urlCan,"useragent:BREW-Applet/0x20068888 (BREW/3.1.5.20; DeviceId: 8976509865757e; Lang: hi; Profile/MIDP-2.0_Configuration/CLDC-1.1) ucweb-squid\2\3");
 	}
+  
+	if(STRISTR (charsvc_p_name,"mts"))
+	{
+		MSG_FATAL("mst................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:10.50.5.140:8080");
+	}
+	else if(STRISTR (charsvc_p_name,"tata"))
+	{
+        MSG_FATAL("tata................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:172.23.252.15:9401");
+	}
+	else if(STRISTR (charsvc_p_name,"reliance"))
+	{
+        MSG_FATAL("reliance................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:http://wapgw.ricinfo.com:8080");
+	}
+	else if(STRISTR (charsvc_p_name,"vmi"))
+	{
+        MSG_FATAL("vmi................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:172.23.142.15:9401");
+	}    
+	
+	DBGPRINTF("urlCan==%s", urlCan);
     
+    if(urlCan[0])
+    {
+	    Result = ISHELL_StartAppletArgs(pShell, AEECLSID_UCWEB, (char*)urlCan);
+    }
+    else
+    {
+        Result = ISHELL_StartApplet(pShell, AEECLSID_UCWEB);
+    }
+
+	return Result;	
+}
+
+int SetBrowserArrEx_Main(MainMenu *pMe, char *purl)
+{
+	int Result = EUNSUPPORTED;
+	char urlCan[1024] = {0};
+
+    char strip[64] = {0};
+    char strport[64] = {0};
+    char tmp[128] = {0};
+
+    OEM_SetUCBROWSER_ADSAccount();
+
+    MSG_FATAL("***zzg SetBrowserArrEx_Main***", 0, 0, 0);
+    
+	DBGPRINTF("svc_p_name %s %d",charsvc_p_name,charsvc_p_name[0],0);
+	
+	if(purl && STRLEN(purl)>1)
+	{
+        SPRINTF(urlCan,"call_ucweb:setexternurl:%s\2\3",purl);
+		STRCAT(urlCan,"useragent:BREW-Applet/0x20068888 (BREW/3.1.5.20; DeviceId: 8976509865757e; Lang: hi; Profile/MIDP-2.0_Configuration/CLDC-1.1) ucweb-squid\2\3");
+	}
+	else
+	{
+		STRCPY(urlCan,"useragent:BREW-Applet/0x20068888 (BREW/3.1.5.20; DeviceId: 8976509865757e; Lang: hi; Profile/MIDP-2.0_Configuration/CLDC-1.1) ucweb-squid\2\3");
+	}
+   
+#ifdef FEATURE_VERSION_KK5
+    if(STRISTR (charsvc_p_name,"mts"))
+	{
+		MSG_FATAL("mst................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:10.50.5.140:8080");
+	}
+	else if(STRISTR (charsvc_p_name,"tata"))
+	{
+        MSG_FATAL("tata................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:172.23.252.15:9401");
+	}
+	else if(STRISTR (charsvc_p_name,"reliance"))
+	{
+        MSG_FATAL("reliance................",0,0,0);
+        //STRCAT(urlCan,"access_point:proxy_is:97.253.98.33:8080");
+        STRCAT(urlCan,"access_point:proxy_is:10.239.221.6:8080");
+	}
+	else if(STRISTR (charsvc_p_name,"vmi"))
+	{
+        MSG_FATAL("vmi................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:172.23.142.15:9401");
+	}
+#else
 	if(STRISTR (charsvc_p_name,"mts"))
 	{
 		MSG_FATAL("mst................",0,0,0);
@@ -18008,19 +18157,22 @@ int SetBrowserArr_Main(IShell *pShell ,char *purl)
         MSG_FATAL("vmi................",0,0,0);
         STRCAT(urlCan,"access_point:proxy_is:172.23.142.15:9401");
 	}
-	
+#endif    
+    	
 	DBGPRINTF("urlCan==%s", urlCan);
+    
     if(urlCan[0])
     {
-	    Result = ISHELL_StartAppletArgs(pShell, AEECLSID_UCWEB, (char*)urlCan);
+	    Result = ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)urlCan);
     }
     else
     {
-        Result = ISHELL_StartApplet(pShell, AEECLSID_UCWEB);
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
     }
 
 	return Result;	
 }
+
 #endif
 #endif
 

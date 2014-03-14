@@ -98,6 +98,14 @@ static NextFSMAction SettingMenu_StateCallForwardInputHandler(CSettingMenu *pMe)
 static NextFSMAction SettingMenu_StateAKGHandler(CSettingMenu *pMe);
 #endif
 
+#ifdef FEATURE_VERSION_KK5 
+// 状态 SETTINGMENUST_NETWORK_SETTINGS 处理函数
+static NextFSMAction SettingMenu_StateNetworkSettingsHandler(CSettingMenu *pMe);
+// 状态 SETTINGMENUST_NETWORK_PARAMS_EDIT 处理函数
+static NextFSMAction SettingMenu_StateNetworkParamsEditHandler(CSettingMenu *pMe);
+
+#endif
+
 #ifdef FEATURE_SET_BANNER
 // 状态 SETTINGMENUST_BANNER 处理函数
 static NextFSMAction SettingMenu_StateBannerHandler(CSettingMenu *pMe);
@@ -122,7 +130,7 @@ static NextFSMAction SettingMenu_StateDateHandler(CSettingMenu *pMe);
 static NextFSMAction SettingMenu_StateLanguageHandler(CSettingMenu *pMe);
 #endif
 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 static NextFSMAction SettingMenu_StateTrackSmsHandler(CSettingMenu *pMe);
 #endif
 
@@ -148,6 +156,15 @@ static NextFSMAction SettingMenu_StateCallRestrictHandler(CSettingMenu *pMe);
 static NextFSMAction SettingMenu_StateOutGoingHandler(CSettingMenu *pMe); 
 
 static NextFSMAction SettingMenu_StateIncomingHandler(CSettingMenu *pMe);
+
+#ifdef FEATURE_CALL_RESTRICT
+static NextFSMAction SettingMenu_StateRestrictNumbersHandler(CSettingMenu *pMe); 
+static NextFSMAction SettingMenu_StateRestrictOptHandler(CSettingMenu *pMe); 
+
+#endif
+static NextFSMAction SettingMenu_StatePromptHandler(CSettingMenu *pMe); 
+static NextFSMAction SettingMenu_StateNumEditHandler(CSettingMenu *pMe); 
+static NextFSMAction SettingMenu_StateViewDetailHandler(CSettingMenu *pMe); 
 
 static NextFSMAction SettingMenu_StateAutoAnswer_Mode(CSettingMenu *pMe);
 #ifdef FEATURE_VERSION_K232_Y101
@@ -177,6 +194,9 @@ static NextFSMAction SettingMenu_StateSpeechHandler(CSettingMenu *pMe);
 #endif
 #if defined(FEATURE_VERSION_K212_ND)
 static NextFSMAction SettingMenu_StateSosHandler(CSettingMenu *pMe);
+#endif
+#if defined(FEATURE_CALL_REJECT_AUTO_MSG)
+static NextFSMAction SettingMenu_StateCall_Reject_Auto_Msg_Handler(CSettingMenu *pMe);
 #endif
 
 /*==============================================================================
@@ -218,6 +238,8 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
     {
         return retVal;
     }
+
+    MSG_FATAL("***zzg SettingMenu_ProcessState m_eCurState=%x***",pMe->m_eCurState,0,0);
 
     // 根据当前状态调用相应的状态处理函数
     switch (pMe->m_eCurState)
@@ -306,6 +328,15 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
             break;
 #endif
 
+#ifdef FEATURE_VERSION_KK5
+        case SETTINGMENUST_NETWORK_SETTINGS:
+            retVal = SettingMenu_StateNetworkSettingsHandler(pMe);
+            break;
+        case SETTINGMENUST_NETWORK_PARAMS_EDIT:
+            retVal = SettingMenu_StateNetworkParamsEditHandler(pMe);
+            break;    
+#endif
+
 #ifdef FEATURE_SET_BANNER
         case SETTINGMENUST_BANNER:
             retVal = SettingMenu_StateBannerHandler(pMe);
@@ -322,7 +353,7 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
             break;
 #endif
 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
    	   case	SETTINGMENUST_TRACKERSMSSETTING: 	//TRRACK SMS设置
    	   		retVal = SettingMenu_StateTrackSmsHandler(pMe);
             break;
@@ -371,6 +402,27 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
         case SETTINGMENUST_RESTRICTINCOMING:
             retVal = SettingMenu_StateIncomingHandler(pMe);
             break;
+            
+#ifdef FEATURE_CALL_RESTRICT
+        case SETTINGMENUST_RESTRICTNUMBERS:
+            retVal = SettingMenu_StateRestrictNumbersHandler(pMe);
+            break;
+        case SETTINGMENUST_RESTRICTOPT:
+            retVal = SettingMenu_StateRestrictOptHandler(pMe);
+            break;    
+#endif
+        case SETTINGMENUST_PROMPT:
+            retVal = SettingMenu_StatePromptHandler(pMe);
+            break;
+
+        case SETTINGMENUST_NUMEDIT:
+            retVal = SettingMenu_StateNumEditHandler(pMe);  
+            break;
+
+        case SETTINGMENUST_VIEW_DETAIL:
+            retVal = SettingMenu_StateViewDetailHandler(pMe);  
+            break;
+            
         case SETTINGMENUST_AUTO_ANSWER:
             retVal = SettingMenu_StateAutoAnswer_Mode(pMe);
             break;
@@ -446,6 +498,11 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
 		case SETTINGMENUST_SOS:
 			retVal = SettingMenu_StateSosHandler(pMe);
 			break;
+#endif
+#if defined(FEATURE_CALL_REJECT_AUTO_MSG)
+        case SETTINGMENUST_CALL_REJECT_AUTO_MSG:
+            retVal = SettingMenu_StateCall_Reject_Auto_Msg_Handler(pMe);
+            break;
 #endif
         default:
             ASSERT_NOT_REACHABLE;
@@ -701,6 +758,11 @@ static NextFSMAction SettingMenu_StateCallSettingHandler(CSettingMenu *pMe)
         case DLGRET_KEYLENGTH:
             MOVE_TO_STATE(SETTINGMENUST_KEYLENGTH)
             return NFSMACTION_CONTINUE;
+#ifdef FEATURE_CALL_REJECT_AUTO_MSG
+        case DLGRET_CALL_REJECT_AUTO_MSG:
+            MOVE_TO_STATE(SETTINGMENUST_CALL_REJECT_AUTO_MSG)
+            return NFSMACTION_CONTINUE;
+#endif
         default:
             ASSERT_NOT_REACHABLE;
     }
@@ -1094,6 +1156,15 @@ static NextFSMAction SettingMenu_StatePhoneSettingHandler(CSettingMenu *pMe)
             return NFSMACTION_CONTINUE;
 #endif
 
+#ifdef FEATURE_VERSION_KK5
+        case DLGRET_NETWORK_SETTINGS:
+            MOVE_TO_STATE(SETTINGMENUST_NETWORK_SETTINGS)
+            return NFSMACTION_CONTINUE;
+        case DLGRET_NETWORK_PARAMS_EDIT:
+            MOVE_TO_STATE(SETTINGMENUST_NETWORK_PARAMS_EDIT)
+            return NFSMACTION_CONTINUE;
+#endif
+
 #ifdef FEATURE_SET_BANNER
         case DLGRET_BANNER:
             MOVE_TO_STATE(SETTINGMENUST_BANNER)
@@ -1109,7 +1180,7 @@ static NextFSMAction SettingMenu_StatePhoneSettingHandler(CSettingMenu *pMe)
             MOVE_TO_STATE(SETTINGMENUST_DATESETTING)
             return NFSMACTION_CONTINUE;
          #endif
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 		case DLGRET_TRACKERSMSSETTING: 	//TRRACK SMS设置
 			MOVE_TO_STATE(SETTINGMENUST_TRACKERSMSSETTING)
             return NFSMACTION_CONTINUE;
@@ -1534,6 +1605,64 @@ static NextFSMAction SettingMenu_StateAKGHandler(CSettingMenu *pMe)
     return NFSMACTION_WAIT;
 } // StateAKGHandler
 #endif
+
+
+#ifdef FEATURE_VERSION_KK5
+static NextFSMAction SettingMenu_StateNetworkSettingsHandler(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_NETWORK_SETTINGS);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+        case DLGRET_MSGBOX_OK:            
+            MOVE_TO_STATE(SETTINGMENUST_PHONESETTING)
+            return NFSMACTION_CONTINUE;        
+
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+} 
+
+static NextFSMAction SettingMenu_StateNetworkParamsEditHandler(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_NETWORK_PARAMS_EDIT);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+        case DLGRET_MSGBOX_OK:            
+            MOVE_TO_STATE(SETTINGMENUST_PHONESETTING)
+            return NFSMACTION_CONTINUE;        
+
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+}
+
+#endif
+
+
 #ifdef FEATURE_SET_BANNER
 /*==============================================================================
 函数：
@@ -1676,7 +1805,7 @@ static NextFSMAction SettingMenu_StateDateHandler(CSettingMenu *pMe)
 } // StatedateHandler
 
 #endif
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 /*==============================================================================
 函数：
        SettingMenu_StateTrackSmsHandler
@@ -2562,6 +2691,10 @@ static NextFSMAction SettingMenu_StateCallRestrictHandler(CSettingMenu *pMe)
             MOVE_TO_STATE(SETTINGMENUST_RESTRICTINCOMING)
             return NFSMACTION_CONTINUE;
 
+        case DLGRET_RESTRICTNUMBERS:
+            MOVE_TO_STATE(SETTINGMENUST_RESTRICTNUMBERS)
+            return NFSMACTION_CONTINUE;    
+
         case DLGRET_CANCELED:
             MOVE_TO_STATE(SETTINGMENUST_CALLSETTING)
             return NFSMACTION_CONTINUE;
@@ -2666,6 +2799,195 @@ static NextFSMAction SettingMenu_StateIncomingHandler(CSettingMenu *pMe)
 
     return NFSMACTION_WAIT;
 }
+
+#ifdef FEATURE_CALL_RESTRICT
+/*==============================================================================
+函数：
+       SettingMenu_StateRestrictNumbersHandler
+说明：
+       SETTINGMENUST_RestrictNumbers状态处理函数
+
+参数：
+       pMe [in]：指向SettingMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值：
+       NFSMACTION_CONTINUE：指示后有子状态，状态机不能停止。
+       NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
+
+备注：
+
+==============================================================================*/ 
+static NextFSMAction SettingMenu_StateRestrictNumbersHandler(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_RESTRICT_NUMBERS);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+        case DLGRET_MSGBOX_OK:            
+            MOVE_TO_STATE(SETTINGMENUST_CALLRESTRICT)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_RESTRICTOPT:
+            MOVE_TO_STATE(SETTINGMENUST_RESTRICTOPT)
+            return NFSMACTION_CONTINUE;     
+
+        case DLGRET_VIEW_DETAIL:
+            MOVE_TO_STATE(SETTINGMENUST_VIEW_DETAIL)
+            return NFSMACTION_CONTINUE; 
+            
+        case DLGRET_WARNING:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            pMe->m_msg_id = IDS_DONE;
+            SettingMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
+            return NFSMACTION_WAIT;
+
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+}
+
+
+static NextFSMAction SettingMenu_StateRestrictOptHandler(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_RESTRICT_OPTS);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:  
+        case DLGRET_MSGBOX_OK: 
+        case DLGRET_MSGBOX_CANCEL:      
+            MOVE_TO_STATE(SETTINGMENUST_RESTRICTNUMBERS)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_PROMPT:
+            MOVE_TO_STATE(SETTINGMENUST_PROMPT)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_NUM_EDIT:
+            MOVE_TO_STATE(SETTINGMENUST_NUMEDIT)
+            return NFSMACTION_CONTINUE;
+            
+        case DLGRET_VIEW_DETAIL:
+            MOVE_TO_STATE(SETTINGMENUST_VIEW_DETAIL)
+            return NFSMACTION_CONTINUE;
+            
+        case DLGRET_WARNING:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            pMe->m_msg_id = IDS_DONE;
+            SettingMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
+            return NFSMACTION_WAIT;
+
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+}
+#endif
+
+
+static NextFSMAction SettingMenu_StatePromptHandler(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    MSG_FATAL("***zzg SettingMenu_StatePromptHandler m_eDlgRet=%x***", pMe->m_eDlgRet, 0, 0);
+    
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_PROMPT);
+            return NFSMACTION_WAIT;
+            
+        case DLGRET_MSGBOX_OK: 
+        case DLGRET_MSGBOX_CANCEL:  
+        case DLGRET_CANCELED:       
+            MOVE_TO_STATE(SETTINGMENUST_RESTRICTNUMBERS)
+            return NFSMACTION_CONTINUE;
+            
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+}
+
+static NextFSMAction SettingMenu_StateNumEditHandler(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    MSG_FATAL("***zzg SettingMenu_StateNumEditHandler pMe->m_eDlgRet=%x***", pMe->m_eDlgRet, 0, 0);
+        
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_NUM_EDIT);
+            return NFSMACTION_WAIT;      
+
+        case DLGRET_MSGBOX_OK:
+        case DLGRET_MSGBOX_CANCEL:
+        case DLGRET_CANCELED:                
+            MOVE_TO_STATE(SETTINGMENUST_RESTRICTNUMBERS)
+            return NFSMACTION_CONTINUE;
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+}
+
+static NextFSMAction SettingMenu_StateViewDetailHandler(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    MSG_FATAL("***zzg SettingMenu_StateViewDetailHandler pMe->m_eDlgRet=%x***", pMe->m_eDlgRet, 0, 0);
+        
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_VIEW_DETAIL);
+            return NFSMACTION_WAIT;      
+
+        case DLGRET_MSGBOX_OK:
+        case DLGRET_MSGBOX_CANCEL:
+        case DLGRET_CANCELED:                
+            MOVE_TO_STATE(SETTINGMENUST_RESTRICTNUMBERS)
+            return NFSMACTION_CONTINUE;
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+}
+
 /*==============================================================================
 函数：
        SettingMenu_StatePasswordHandler
@@ -2922,4 +3244,31 @@ static NextFSMAction SettingMenu_StateSMSRestrictReceiveADDHandler(CSettingMenu 
     return NFSMACTION_WAIT;
 }
 
+#endif
+
+#ifdef FEATURE_CALL_REJECT_AUTO_MSG
+static NextFSMAction SettingMenu_StateCall_Reject_Auto_Msg_Handler(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_CALL_REJECT_AUTO_MSG);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(SETTINGMENUST_CALLSETTING)
+            return NFSMACTION_CONTINUE;
+
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+} // StateKeylengthHandler
 #endif

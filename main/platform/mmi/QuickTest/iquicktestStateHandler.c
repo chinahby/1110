@@ -466,7 +466,7 @@ static NextFSMAction QUICKTESTSTYAMAHATestHandler(CQuickTest *pMe)
             }
             else
             {
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
             MOVE_TO_STATE(QUICKTESTST_VIBRATETEST)
 #else
             MOVE_TO_STATE(QUICKTESTST_HEADSETTEST)
@@ -517,7 +517,7 @@ static NextFSMAction QUICKTESTSTHEADSETTestHandler(CQuickTest *pMe)
             }
             else
             {
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
             MOVE_TO_STATE(QUICKTESTST_VIBRATETEST)
 #else
             MOVE_TO_STATE(QUICKTESTST_KEYTEST)
@@ -569,7 +569,7 @@ static NextFSMAction QUICKTESTSTVibrateTestHandler(CQuickTest *pMe)
             }
             else
             {
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
             MOVE_TO_STATE(QUICKTESTST_KEYTEST)
 #else
             MOVE_TO_STATE(QUICKTESTST_YAMAHATEST)
@@ -624,7 +624,7 @@ static NextFSMAction QUICKTESTSTBackLightTestHandler(CQuickTest *pMe)
             MOVE_TO_STATE(QUICKTESTST_FLIPTEST)
 #else //FEATRUE_DEVICETYPE_FLIP  
 #if 1 //ndef FEATURE_VERSION_C180 //xxzhen
-#if defined (FEATURE_VERSION_C337)||defined(FEATURE_NO_VIBRATE)||defined(FEATURE_VERSION_K212_20D) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337)||defined(FEATURE_NO_VIBRATE)||defined(FEATURE_VERSION_K212_20D) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
             MOVE_TO_STATE(QUICKTESTST_YAMAHATEST)
 #else
             MOVE_TO_STATE(QUICKTESTST_VIBRATETEST)

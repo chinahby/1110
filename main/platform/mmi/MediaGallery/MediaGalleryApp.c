@@ -1425,6 +1425,7 @@ static int MediaGalleryApp_InitAppData(CMediaGalleryApp* pMe)
 #ifdef FEATURE_ANICTL
    pMe->m_pAniCtl = NULL;
 #endif
+   pMe->m_option_sel = 0;
 
    pMe->m_bKeepMediaMenu = FALSE;
 

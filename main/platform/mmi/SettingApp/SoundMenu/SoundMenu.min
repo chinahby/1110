@@ -549,6 +549,32 @@ else
             midi_03.mid|fs:/ringers/midi_03.mid \
             midi_04.mid|fs:/ringers/midi_04.mid \
             midi_05.mid|fs:/ringers/midi_05.mid
+    else ifeq ($(USES_RESDIR),KK5)                                           
+        CONSTFILE_FILES+=\
+            alarm_default.mid|fs:/ringers/alarm_default.mid \
+            alarm_01.mid|fs:/ringers/alarm_01.mid \
+            alarm_02.mid|fs:/ringers/alarm_02.mid \
+            midi_01.mid|fs:/ringers/midi_01.mid \
+            midi_02.mid|fs:/ringers/midi_02.mid \
+            midi_03.mid|fs:/ringers/midi_03.mid \
+            midi_04.mid|fs:/ringers/midi_04.mid \
+            midi_05.mid|fs:/ringers/midi_05.mid \
+            midi_06.mid|fs:/ringers/midi_06.mid \
+            midi_07.mid|fs:/ringers/midi_07.mid \
+            midi_08.mid|fs:/ringers/midi_08.mid \
+            midi_09.mid|fs:/ringers/midi_09.mid \
+            midi_10.mid|fs:/ringers/midi_10.mid \
+            midi_11.mid|fs:/ringers/midi_11.mid \
+            sms_01.mid|fs:/ringers/sms_01.mid \
+            sms_02.mid|fs:/ringers/sms_02.mid \
+            sms_03.mid|fs:/ringers/sms_03.mid \
+            sms_04.mid|fs:/ringers/sms_04.mid \
+            sms_05.mid|fs:/ringers/sms_05.mid \
+            sms_06.mid|fs:/ringers/sms_06.mid \
+            sms_07.mid|fs:/ringers/sms_07.mid \
+            poweronoff.mp3|fs:/ringers/poweronoff.mp3 \
+            default_ringtone.mp3|fs:/ringers/default_ringtone.mp3 \
+            default_smstone.mp3|fs:/ringers/default_smstone.mp3
 	else ifeq ($(USES_RESDIR),KK3_MMX)                                           
         CONSTFILE_FILES+=\
             alarm_default.mid|fs:/ringers/alarm_default.mid \

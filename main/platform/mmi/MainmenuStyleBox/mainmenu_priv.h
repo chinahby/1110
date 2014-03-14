@@ -59,7 +59,7 @@
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 3
 #elif defined (FEATURE_DISP_128X160)
-#if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W450_JFY)||defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W021_WSF_P7)
+#if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W450_JFY)||defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W021_WSF_P7)||defined(FEATURE_VERSION_KK5)
 #define  MAX_MATRIX_ITEMS 9
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 3
@@ -309,6 +309,13 @@ typedef struct _MainMenu
 #define ICON_HEIGHT             40
 #define ICON_ANIMATED_WIDTH     42
 #define ICON_ANIMATED_HEIGHT    40
+
+#elif defined(FEATURE_VERSION_KK5)
+#define ICON_WIDTH              40
+#define ICON_HEIGHT             40
+#define ICON_ANIMATED_WIDTH     40
+#define ICON_ANIMATED_HEIGHT    40
+
 #elif defined(FEATURE_VERSION_K232_Y101)
 #define ICON_WIDTH              40  //40
 #define ICON_HEIGHT             40  //24

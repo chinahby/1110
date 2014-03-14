@@ -85,7 +85,11 @@
 #define FEATURE_FMRADIO_PROMPT_HEADSET_PLUG_OUT
 #endif 
 
+#if defined (FEATURE_VERSION_KK5)
+#define FEATURE_FMRADIO_SUPPORT_BACKGROUND  1   //0
+#else
 #define FEATURE_FMRADIO_SUPPORT_BACKGROUND  0
+#endif
 
 #define FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT 1
 #define COREAPP_PATH "fs:/mod/coreapp/"
@@ -331,6 +335,9 @@ typedef struct _CFmRadio
 
     boolean bMsgBoxExist;   //Add By zzg 2013_09_03
     boolean bCurrect;       //Add By zzg 2013_09_03
+
+    uint32 keystart_time;	
+    uint32 keyend_time;	
 } CFmRadio;
 
 /*==============================================================================
@@ -819,6 +826,8 @@ int  FmRadio_ShowMsgBoxDialog( CFmRadio *pMe,
                                uint16      dlgResId,                               
                                AECHAR     *msg, 
                                int         msglen);
+
+void FmRadio_HeadsetSwitchOnHandler(CFmRadio *pMe);
 #endif
 //__FM_RADIO_RIV_H
 

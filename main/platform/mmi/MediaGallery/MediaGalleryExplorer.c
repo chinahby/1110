@@ -1634,6 +1634,8 @@ void MGExplorer_GetMediaMenuSelectItem(CFSExplorer *pFSExplorer,
 
    nDirDepth = MGExplorer_GetCurrentDepth(pFSExplorer);
 
+   MSG_FATAL("***zzg MGExplorer_GetMediaMenuSelectItem nDirDepth=%d***", nDirDepth, 0, 0);
+
    if(TRUE == MGExplorer_CheckMediaMenuEmpty(pMenuCtl))
    {
       MG_FARF(ADDR, ("MENU have no item, set current node to NULL"));
@@ -1655,6 +1657,8 @@ void MGExplorer_GetMediaMenuSelectItem(CFSExplorer *pFSExplorer,
    if(pSelItemID)
    {
       *pSelItemID =  IMENUCTL_GetSel(pMenuCtl);
+
+      MSG_FATAL("***zzg MGExplorer_GetMediaMenuSelectItem pSelItemID=%d***", *pSelItemID, 0, 0);
 
       bGet = IMENUCTL_GetItemData(pMenuCtl,
                                   *pSelItemID,

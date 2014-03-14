@@ -76,6 +76,15 @@ boolean start_security_setting_by_user;
                                      (void) ISHELL_EndDialog(pMe->m_pShell);  \
                                  }
 
+
+#define DRAW_BOTTOMBAR(x)                           \
+{                                                   \
+    BottomBar_Param_type BarParam;                  \
+    MEMSET(&BarParam, 0, sizeof(BarParam));         \
+    BarParam.eBBarType = x;                         \
+    DrawBottomBar(pMe->m_pDisplay, &BarParam);      \
+}
+
 /*==============================================================================
                                  类型定义
 ==============================================================================*/
@@ -207,7 +216,7 @@ static boolean  HandleDateDialogEvent(CSettingMenu *pMe,
 );
 #endif
 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_KK5)
 static boolean   HandleTrackSmsDialogEvent(CSettingMenu *pMe,
     AEEEvent eCode,
     uint16 wParam,
@@ -253,6 +262,23 @@ static boolean  HandleAKGDialogEvent(CSettingMenu *pMe,
     uint16 wParam,
     uint32 dwParam
 );
+#endif
+
+#ifdef FEATURE_VERSION_KK5
+//对话框 IDD_NETWORK_SETTINGS 事件处理函数
+static boolean  HandleNetworkSettingsDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+
+//对话框 IDD_NETWORK_PARAMS_EDIT 事件处理函数
+static boolean  HandleNetworkParamsEditDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+
 #endif
 
 #ifdef FEATURE_LANGUAGE
@@ -366,6 +392,38 @@ static boolean Setting_Handle_Incoming(CSettingMenu *pMe,
 	uint16 wParam,
 	uint32 dwParam
 );
+
+#ifdef FEATURE_CALL_RESTRICT
+static boolean Setting_Handle_RestrictNumbers(CSettingMenu *pMe,
+	AEEEvent eCode,
+	uint16 wParam,
+	uint32 dwParam
+);
+static boolean Setting_BuildRestrictList(CSettingMenu *pMe, IMenuCtl *pMenu);
+static boolean Setting_RestrictOptsDlgEvent(CSettingMenu  *pMe,
+                                                       AEEEvent   eCode,
+                                                       uint16     wParam,
+                                                       uint32     dwParam);
+static boolean Setting_DelRestrict(CSettingMenu *pMe, uint16 index);
+static boolean Setting_DelAllRestrict(CSettingMenu *pMe);
+
+#endif
+static boolean Setting_Handle_Prompt(CSettingMenu *pMe,
+	AEEEvent eCode,
+	uint16 wParam,
+	uint32 dwParam
+);
+static boolean Setting_Handle_NumEdit(CSettingMenu *pMe,
+	AEEEvent eCode,
+	uint16 wParam,
+	uint32 dwParam
+);
+static boolean Setting_Handle_View_Detail(CSettingMenu *pMe,
+	AEEEvent eCode,
+	uint16 wParam,
+	uint32 dwParam
+);
+
 static boolean Setting_Handle_Password(CSettingMenu *pMe,
 	AEEEvent eCode,
 	uint16 wParam,
@@ -442,6 +500,15 @@ static boolean Setting_Handle_SMSRestrict_RECEIVE_ADD(CSettingMenu *pMe,
 	AEEEvent eCode,
 	uint16 wParam,
 	uint32 dwParam
+);
+
+#endif
+
+#ifdef FEATURE_CALL_REJECT_AUTO_MSG
+static boolean  Setting_Handle_Call_Reject_Auto_Msg_DialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
 );
 
 #endif
@@ -591,6 +658,14 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
             return HandleAKGDialogEvent(pMe,eCode,wParam,dwParam);
 #endif
 
+#ifdef FEATURE_VERSION_KK5
+        case IDD_NETWORK_SETTINGS:
+            return HandleNetworkSettingsDialogEvent(pMe, eCode, wParam, dwParam);
+
+        case IDD_NETWORK_PARAMS_EDIT:
+            return HandleNetworkParamsEditDialogEvent(pMe, eCode, wParam, dwParam);
+#endif
+
 #ifdef FEATURE_SET_BANNER
         case IDD_BANNER_TXT:
             return HandleBannerDialogEvent(pMe,eCode,wParam,dwParam);
@@ -603,7 +678,7 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
         case IDD_DATESETTING:
             return HandleDateDialogEvent(pMe,eCode,wParam,dwParam);
 #endif
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_KK5)
 		case IDD_TRACKSMSTIME_MENU:
 			return HandleTrackSmsDialogEvent(pMe,eCode,wParam,dwParam);
 #endif
@@ -644,7 +719,23 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
             
         case IDD_RESTRICT_INCOMING:
             return Setting_Handle_Incoming(pMe,eCode,wParam,dwParam);
-            
+
+#ifdef FEATURE_CALL_RESTRICT
+        case IDD_RESTRICT_NUMBERS:
+            return Setting_Handle_RestrictNumbers(pMe,eCode,wParam,dwParam);
+
+        case IDD_RESTRICT_OPTS:            
+            return Setting_RestrictOptsDlgEvent(pMe,eCode,wParam,dwParam);    
+#endif
+        case IDD_PROMPT:
+            return Setting_Handle_Prompt(pMe,eCode,wParam,dwParam);
+
+        case IDD_NUM_EDIT:
+            return Setting_Handle_NumEdit(pMe,eCode,wParam,dwParam); 
+
+        case IDD_VIEW_DETAIL:
+            return Setting_Handle_View_Detail(pMe,eCode,wParam,dwParam);    
+
         case IDD_MSGBOX:
             return Setting_Handle_Msgbox(pMe,eCode,wParam,dwParam);
 
@@ -707,6 +798,10 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
 #if defined(FEATURE_VERSION_K212_ND)
 	   case IDD_SOS:
 	   	    return HandleSosDialogEvent(pMe,eCode,wParam,dwParam);
+#endif
+#if defined(FEATURE_CALL_REJECT_AUTO_MSG)
+        case IDD_CALL_REJECT_AUTO_MSG:
+            return Setting_Handle_Call_Reject_Auto_Msg_DialogEvent(pMe,eCode,wParam,dwParam);
 #endif
         default:
             return FALSE;
@@ -805,8 +900,14 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 #endif
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SECURITY_TITLE, IDS_SECURITY_TITLE, NULL, 0);
 #ifdef FEATURE_SET_SCENEMODE
+#ifdef FEATURE_VERSION_KK5
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SCENEMODE_TITLE, IDS_SCENEMODE_TITLE, NULL, 0);
+#endif
+#endif
 
+#ifdef FEATURE_SET_SCENEMODE
 #ifndef FEATURE_VERSION_H19C 
+#ifndef FEATURE_VERSION_KK5
 #ifndef FEATURE_VERSION_C337
 #ifndef FEATURE_VERSION_IC241A_MMX
 #ifndef FEATURE_VERSION_K212
@@ -831,6 +932,8 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 #endif
 
 #endif
+#endif
+            
 #ifdef FEATURE_SET_SOUND_TITLE
 #if !defined (FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K292)&&!defined(FEATURE_VERSION_W021_C11)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_W021_CT100)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_K212_BH)&&!defined(FEATURE_VERSION_GECOMSA_C204)
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SOUND_TITLE, IDS_SOUND_TITLE, NULL, 0);
@@ -1075,6 +1178,10 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
 #endif
 #endif
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALL_RESTRICT, IDS_CALL_RESTRICT, NULL, 0);   
+
+#ifdef FEATURE_CALL_REJECT_AUTO_MSG
+            //IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_REJECT_CALL_SMS, IDS_REJECT_CALL_SMS, NULL, 0);            
+#endif            
             #if defined(FEATURE_CALL_RECORDER)&&defined(FEATURE_VERSION_W317A)//def FEATURE_VERSION_W317A
 			//Add by pyuangui 2012-01-04
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLSETTING_CALLRECORD, IDS_CALLSETTING_CALLRECORD, NULL, 0);
@@ -1201,6 +1308,12 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
                 case IDS_CALL_RESTRICT:
                     CLOSE_DIALOG(DLGRET_PASSWORD)
                     break;
+
+#ifdef FEATURE_CALL_REJECT_AUTO_MSG
+                case IDS_REJECT_CALL_SMS:
+                    CLOSE_DIALOG(DLGRET_CALL_REJECT_AUTO_MSG)
+                    break;
+#endif
 					
 //Add by pyuangui 20130104
 #ifdef FEATURE_VERSION_W317A
@@ -2064,6 +2177,11 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AUTOKEYGUARD_TITLE, IDS_AUTOKEYGUARD_TITLE, NULL, 0);
             #endif
 #endif
+
+#ifdef FEATURE_VERSION_KK5
+            //IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_NETWORK_SETTINGS, IDS_NETWORK_SETTINGS, NULL, 0);
+#endif
+
 #ifdef	FEATURE_VERSION_MYANMAR
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SEARCHNET_MODE, IDS_SEARCHNET_MODE, NULL, 0);
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_IDLE_DATETIME_MOCD, IDS_IDLE_DATETIME_MOCD, NULL, 0);
@@ -2144,6 +2262,14 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
                     CLOSE_DIALOG(DLGRET_AKG)
                     break;
 #endif
+
+#ifdef FEATURE_VERSION_KK5
+                case IDS_NETWORK_SETTINGS:         
+                    //CLOSE_DIALOG(DLGRET_NETWORK_SETTINGS)
+                    CLOSE_DIALOG(DLGRET_NETWORK_PARAMS_EDIT)
+                    break;
+#endif
+
 #ifdef FEATURE_SET_BANNER
                 case IDS_BANNER_TITLE:      //待机问候语
                     CLOSE_DIALOG(DLGRET_BANNER)
@@ -2163,7 +2289,7 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
                     CLOSE_DIALOG(DLGRET_DATESETTING)
                     break;
 #endif
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 		 	   case IDS_SMS_TREACKER_TIME:     //TRRACK SMS设置
 			   		CLOSE_DIALOG(DLGRET_TRACKERSMSSETTING)
 			   		break;
@@ -3092,7 +3218,7 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
         case EVT_DIALOG_INIT:
             pMe->m_input_mode = 0;
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLFORWARD_START, IDS_CALLFORWARD_START, NULL, 0);
-            #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+            #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLFORWARD_DEACTIVATE, IDS_CALLFORWARD_DEACTIVATE, NULL, 0);
             #else
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLFORWARD_CANCEL, IDS_CALLFORWARD_CANCEL, NULL, 0);
@@ -4067,6 +4193,329 @@ static boolean  HandleAKGDialogEvent(CSettingMenu *pMe,
     return FALSE;
 } // HandleAKGDialogEvent
 #endif
+
+
+#ifdef FEATURE_VERSION_KK5
+static boolean  HandleNetworkSettingsDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+{
+    PARAM_NOT_REF(dwParam)
+
+    IMenuCtl  *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
+                                                     IDC_NETWORK_SETTINGS);
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    MSG_FATAL("%x, %x ,%x,HandleAKGDialogEvent",eCode,wParam,dwParam);
+    //实现菜单循环滚动功能
+    //SettingMenu_AutoScroll(pMenu,eCode,wParam);
+
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+        {         
+			AECHAR WTitle[40] = {0};
+            
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                    AEE_APPSSETTINGMENU_RES_FILE,                                
+                    IDS_NETWORK_SETTINGS,
+                    WTitle,
+                    sizeof(WTitle));
+			IANNUNCIATOR_SetFieldTextEx(pMe->m_pAnn,WTitle,FALSE);
+       
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_NETWORK_PROFILE_MTS, IDS_NETWORK_PROFILE_MTS, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_NETWORK_PROFILE_RELIANCE, IDS_NETWORK_PROFILE_RELIANCE, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_NETWORK_PROFILE_VIRGIN, IDS_NETWORK_PROFILE_VIRGIN, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_NETWORK_PROFILE_GARUDA, IDS_NETWORK_PROFILE_GARUDA, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_NETWORK_PROFILE_TATA, IDS_NETWORK_PROFILE_TATA, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_NETWORK_PROFILE_CUSTOM, IDS_NETWORK_PROFILE_CUSTOM, NULL, 0);            
+            
+            return TRUE;
+        }
+
+        case EVT_DIALOG_START:
+            {
+                byte value = 0;   
+                uint16    ui16_return = IDS_NETWORK_PROFILE_MTS;               
+
+                char strUser[64];
+                char strPwd[64];
+
+                OEM_GetAdsAccount_Param(strUser, strPwd);
+				
+				switch (value)
+                {
+                    case 0: 
+                      ui16_return = IDS_NETWORK_PROFILE_MTS;
+                      break;
+                    case 1:    
+                      ui16_return = IDS_NETWORK_PROFILE_RELIANCE;
+                      break;
+                    case 2:    
+                      ui16_return = IDS_NETWORK_PROFILE_VIRGIN;
+                      break;
+                    case 3:
+                      ui16_return = IDS_NETWORK_PROFILE_GARUDA;
+                      break;  
+                    case 4:
+                      ui16_return = IDS_NETWORK_PROFILE_TATA;
+                      break;  
+                    default:  
+                    case 5:
+                      ui16_return = IDS_NETWORK_PROFILE_CUSTOM;
+                      break;   
+                      
+                }
+				
+				
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, ui16_return, TRUE);
+                IMENUCTL_SetSel(pMenu, ui16_return);
+
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT|MP_ACTIVE_NO_REDRAW);
+                IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
+#endif
+                IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+            }
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                default:
+                    break;
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+            {
+                byte AKG = 0;
+
+                char strUser[64];
+                char strPwd[64];
+
+				switch (wParam)
+                {
+                    case IDS_NETWORK_PROFILE_MTS:    
+                        //STRCPY();
+                        //STRCPY();
+                        break;
+                    case IDS_NETWORK_PROFILE_RELIANCE:     
+                        //STRCPY();
+                        //STRCPY();
+                        break;
+                    case IDS_NETWORK_PROFILE_VIRGIN:     
+                        //STRCPY();
+                        //STRCPY();
+                        break;
+                    case IDS_NETWORK_PROFILE_GARUDA:     
+                        //STRCPY();
+                        //STRCPY();
+                        break;
+                    case IDS_NETWORK_PROFILE_TATA:     
+                        //STRCPY(strUser, "");
+                        //STRCPY(strPwd, "");
+                        break;
+                        
+                    default:    
+                    case IDS_NETWORK_PROFILE_CUSTOM:     //关
+                        CLOSE_DIALOG(DLGRET_CANCELED)
+                        break;
+                        
+                }
+
+                OEM_SetAdsAccount_Param(strUser, strPwd);
+                
+				
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, wParam, TRUE);
+                CLOSE_DIALOG(DLGRET_WARNING)
+            }
+            return TRUE;
+
+        default:
+            break;
+    }
+    return FALSE;
+}
+
+
+
+static boolean  HandleNetworkParamsEditDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+{    
+	AEERect rt = {0};	
+	uint16  time = 0;
+   
+	AECHAR      wstrUsernameTitle[20]; 
+    AECHAR      wstrPasswordTitle[20];        
+    AECHAR      wstrUsernameValue[64];  
+    AECHAR      wstrPasswordValue[64]; 
+
+    ITextCtl    *pUser = NULL;
+    ITextCtl    *pPwd = NULL;
+  
+    if (NULL == pMe)
+    {
+        return FALSE;
+    }
+   
+  	pUser= (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_NETWORK_PARAMS_USERNAME);  
+    pPwd= (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_NETWORK_PARAMS_PASSWORD); 
+
+	if ((pUser == NULL) || (pPwd == NULL))      
+    {
+        return FALSE;
+    }  
+    
+    MSG_FATAL("***zzg HandleNetworkParamsEditDialogEvent eCode=%x, wParam=%x, dwParam=%d***", eCode, wParam, dwParam);
+
+	switch (eCode)
+    {
+        case EVT_DIALOG_INIT:	            
+		{
+            AECHAR WTitle[2] = {0};
+            char strUser[64];
+            char strPwd[64];
+                
+            OEM_GetAdsAccount_Param(strUser, strPwd);
+            
+            SETAEERECT(&rt,0,20,128,40);
+			ITEXTCTL_SetRect(pUser, &rt);
+			ITEXTCTL_SetProperties(pUser, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_FIXSETRECT|TP_NOUPDATE);
+            ITEXTCTL_SetMaxSize(pUser, 64); 
+            (void)ITEXTCTL_SetTitle(pUser, NULL,0,WTitle);
+            //设置文本
+            STRTOWSTR(strUser, wstrUsernameValue, sizeof(wstrUsernameValue));
+            (void)ITEXTCTL_SetText(pUser, wstrUsernameValue, -1);	            
+
+            SETAEERECT(&rt,0,90,128,40);
+			ITEXTCTL_SetRect(pPwd, &rt);
+            ITEXTCTL_SetProperties(pPwd, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_FIXSETRECT|TP_NOUPDATE); 
+            ITEXTCTL_SetMaxSize(pPwd, 64);     
+            (void)ITEXTCTL_SetTitle(pPwd, NULL,0,WTitle);
+            
+            STRTOWSTR(strPwd, wstrPasswordValue, sizeof(wstrPasswordValue));
+            (void)ITEXTCTL_SetText(pPwd,wstrPasswordValue, -1);			
+
+            ITEXTCTL_SetActive(pUser, TRUE);     
+            return TRUE;
+        }
+        
+        case EVT_DIALOG_START:
+        {
+            ISHELL_PostEvent( pMe->m_pShell,AEECLSID_APP_SETTINGMENU,EVT_USER_REDRAW,0,0);
+
+            return TRUE;
+        }    
+        
+        case EVT_USER_REDRAW:        
+        {
+            BottomBar_Param_type  BBarParam ={0};                 
+            BBarParam.eBBarType = BTBAR_OK_DELETE;				 
+                            
+            (void) ISHELL_LoadResString(pMe->m_pShell,
+                                         AEE_APPSSETTINGMENU_RES_FILE,
+                                         IDS_NETWORK_PARAMS_USERNAME,
+                                         wstrUsernameTitle,
+                                         sizeof(wstrUsernameTitle));
+
+            (void) ISHELL_LoadResString(pMe->m_pShell,
+                                         AEE_APPSSETTINGMENU_RES_FILE,
+                                         IDS_NETWORK_PARAMS_PASSWORD,
+                                         wstrPasswordTitle,
+                                         sizeof(wstrPasswordTitle));
+
+            
+             SETAEERECT(&pMe->m_rc,0,0,128,160);                 
+			 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);    
+			 
+			 IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);		             
+			 IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wstrUsernameTitle, -1, 0, 0, 0, IDF_TEXT_TRANSPARENT);         
+             IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wstrPasswordTitle, -1, 0, 70, 0, IDF_TEXT_TRANSPARENT);
+			                  
+			 IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);	             
+			               	
+             ITEXTCTL_SetActive(pUser,TRUE);             
+             ITEXTCTL_SetActive(pPwd,FALSE); 
+
+             DrawBottomBar(pMe->m_pDisplay, &BBarParam);    
+             
+        	 // 更新显示
+        	 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
+             return TRUE;
+        }            
+            
+        case EVT_DIALOG_END:
+        {
+            CLOSE_DIALOG(DLGRET_CANCELED)  
+            return TRUE;
+        }
+
+        case EVT_KEY:
+        {
+			switch (wParam)
+            {
+            	case AVK_INFO:
+				case AVK_SELECT:
+				{      
+                    char           str1[MAS_BREWSETINT_STRING]; 
+                    char           str2[MAS_BREWSETINT_STRING]; 
+                    
+                    AECHAR *pwstrUsername  = ITEXTCTL_GetTextPtr(pUser);  
+                    AECHAR *pwstrPassword = ITEXTCTL_GetTextPtr(pPwd);   
+                    
+					WSTRTOSTR(pwstrUsername,str1,sizeof(str1));	                    
+                    WSTRTOSTR(pwstrPassword,str2,sizeof(str2));	
+
+                    OEM_SetAdsAccount_Param(str1, str2);
+                    
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+					break;
+				}
+					
+            	case AVK_CLR:
+				{
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                }
+                
+				default:					
+				{
+                    break;
+                }
+					
+			}
+            return TRUE;
+        }
+            
+        default:
+        {
+            break;
+        }
+    }
+
+    return FALSE;
+}
+
+#endif
+
+
 #ifdef FEATURE_SET_BANNER
 /*==============================================================================
 函数：
@@ -4527,7 +4976,7 @@ static boolean  HandleDateDialogEvent(CSettingMenu *pMe,
 
 #endif
 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 
 
 static boolean   HandleTrackSmsDialogEvent(CSettingMenu *pMe,
@@ -6762,9 +7211,15 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
 
             // 时间控件的矩形
             {
+#ifdef FEATURE_VERSION_KK5
+                SETAEERECT(&rc,  CONTROL_RECT_START_X, titleheight + lineSpace*3 +itemheight*2+CONTROL_RECT_RESET_Y,
+                                                pMe->m_rc.dx - CONTROL_RECT_START_X-10,
+                                                itemheight + 8);
+#else
                 SETAEERECT(&rc,  CONTROL_RECT_START_X+10, titleheight + lineSpace*3 +itemheight*2+CONTROL_RECT_RESET_Y,
                                                 pMe->m_rc.dx - CONTROL_RECT_START_X - 20,
                                                 itemheight + 8);
+#endif
                 ITIMECTL_SetRect(pMe->m_pTime, &rc);
                 IDISPLAY_FillRect(pMe->m_pDisplay, &rc,  RGB_WHITE);
             }
@@ -9346,6 +9801,9 @@ static boolean  Setting_Handle_CallRestrict(CSettingMenu *pMe,
             }
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_RESTRICT_OUTGOING, IDS_RESTRICT_OUTGOING, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_RESTRICT_INCOMING, IDS_RESTRICT_INCOMING, NULL, 0);
+#ifdef FEATURE_CALL_RESTRICT
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_RESTRICT_NUMBERS, IDS_RESTRICT_NUMBERS, NULL, 0);
+#endif
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -9387,6 +9845,12 @@ static boolean  Setting_Handle_CallRestrict(CSettingMenu *pMe,
                 case IDS_RESTRICT_INCOMING:   //呼入限制
                     CLOSE_DIALOG(DLGRET_RESTRICTINCOMING)
                     break;
+                    
+#ifdef FEATURE_CALL_RESTRICT
+                case IDS_RESTRICT_NUMBERS:   //呼出限制
+                    CLOSE_DIALOG(DLGRET_RESTRICTNUMBERS)
+                    break;
+#endif
 
                 default:
                     ASSERT_NOT_REACHABLE;
@@ -9705,6 +10169,813 @@ static boolean  Setting_Handle_Incoming(CSettingMenu *pMe,
     }
     return FALSE;
 } // HandleRestrictIncomingDialogEvent
+
+
+#ifdef FEATURE_CALL_RESTRICT
+static boolean  Setting_Handle_RestrictNumbers(CSettingMenu *pMe,
+                                           AEEEvent       eCode,
+                                           uint16         wParam,
+                                           uint32         dwParam)
+{
+    PARAM_NOT_REF(dwParam)
+    static byte bytData = 0;
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
+                                                    IDC_RESTRICT_NUMBERS);
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+
+    MSG_FATAL("***zzg Setting_Handle_RestrictNumbers eCode=%x, wParam=%x, dwParam=%x***", eCode ,wParam,dwParam);
+    
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                                            AEE_APPSSETTINGMENU_RES_FILE,                                
+                                            IDS_RESTRICT_NUMBERS,
+                                            WTitle,
+                                            sizeof(WTitle));
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pAnn,WTitle,FALSE);
+
+                Setting_BuildRestrictList(pMe, pMenu);
+            }
+            
+            return TRUE;
+
+        case EVT_DIALOG_START:
+            {
+                //设定标题格式
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE | MP_WRAPSCROLL | MP_ACTIVE_NO_REDRAW);   
+                IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
+#endif
+                IMENUCTL_SetBottomBarType(pMenu,BTBAR_OPTION_BACK);
+
+                IMENUCTL_SetSel(pMenu, pMe->m_sSubDlgId);      
+
+                return TRUE;
+            }            
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        //case EVT_KEY_PRESS:        
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_SELECT:
+                {
+                    uint8 byMax = 0;
+                    (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_CALL_RESTRICT_TOTAL, &byMax, sizeof(byte));    
+
+                    if (byMax == 0)                    
+                    {
+                        pMe->m_index = MAX_CALL_RESTRICT;   
+                        CLOSE_DIALOG(DLGRET_RESTRICTOPT)                    
+                    }
+                    return TRUE;
+                }
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                default:
+                    break;
+            }
+            return TRUE;
+            
+        case EVT_COMMAND:
+            {
+                MSG_FATAL("***zzg Setting_Handle_RestrictNumbers EVT_COMMAND wParam=%x, dwParam=%x***", wParam, dwParam, 0);
+                pMe->m_index = wParam;
+                
+                CLOSE_DIALOG(DLGRET_RESTRICTOPT)
+                return TRUE;
+            }
+            return TRUE;            
+        default:
+            break;
+    }
+    return FALSE;
+} 
+
+static boolean Setting_BuildRestrictList(CSettingMenu *pMe, IMenuCtl *pMenu)
+{    
+    CtlAddItem ai;
+   
+    uint8 byMax = 0;
+    char str[33];
+    call_restrict_info		call_restrict_list[MAX_CALL_RESTRICT];
+    int i;   
+
+    AECHAR  text[32];
+
+    (void)IMENUCTL_DeleteAll(pMenu);
+    
+    (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_CALL_RESTRICT_TOTAL, &byMax, sizeof(byte));              
+	
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+						   CFGI_CALL_RESTRICT_INFO,
+						   (void*)call_restrict_list,
+						   sizeof(call_restrict_list));        
+
+    MSG_FATAL("***zzg Setting_BuildRestrictList byMax=%x***", byMax, 0, 0);    
+
+    if (byMax > 0)
+    {
+        for (i=0; i<byMax; i++)
+        {
+            MEMSET(&ai, 0, sizeof(ai));
+
+            /*
+            if (WSTRLEN(call_restrict_list[i].szName)>0)
+            {
+                ai.pText       = call_restrict_list[i].szName; 
+                ai.wItemID     = i;
+
+                ai.pszResImage = AEE_APPSCOMMONRES_IMAGESFILE;
+                ai.wImage = IDB_ALERT;
+            }
+            else
+            */    
+            {
+                ai.pText       = call_restrict_list[i].szNumber; 
+                ai.wItemID     = i;
+
+                ai.pszResImage = AEE_APPSCOMMONRES_IMAGESFILE;
+                ai.wImage = IDB_INUSE;
+            }
+
+            WSTRTOSTR(call_restrict_list[i].szNumber, str, 33);
+
+            DBGPRINTF("***zzg Setting_BuildRestrictList call_restrict_list[%x].szName=%s***", i, str);
+            
+            if (FALSE == IMENUCTL_AddItemEx(pMenu, &ai))
+            {
+                MSG_FATAL("***zzg Setting_BuildRestrictList FAILED i=%x***", i, 0, 0); 
+                return EFAILED;
+            }
+            else
+            {
+                MSG_FATAL("***zzg Setting_BuildRestrictList SUCCEED i=%x***", i, 0, 0); 
+            }
+        }         
+    }  
+
+    return SUCCESS;
+}
+
+
+static boolean  Setting_RestrictOptsDlgEvent(CSettingMenu  *pMe,
+                                                       AEEEvent   eCode,
+                                                       uint16     wParam,
+                                                       uint32     dwParam)
+{
+    IMenuCtl  *pMenuCtl;
+    
+#if defined(AEE_STATIC)
+    ASSERT(pMe != NULL);
+#endif
+    
+    pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg,
+                                              IDC_RESTRICT_OPTS);
+
+	MSG_FATAL("***zzg Setting_RestrictOptsDlgEvent eCode=%x, wParam=%x***", eCode, wParam, 0);
+        
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+            return TRUE;
+            
+        case EVT_DIALOG_START:
+        {
+            AEERect rc={0};
+            AEEDeviceInfo devinfo={0};
+            
+            ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+            rc = pMe->m_rc;
+            rc.dy = devinfo.cyScreen;
+            rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
+            MSG_FATAL("rc.y=%d, rc.dx=%d, rc.dy=%d", rc.y, rc.dx, rc.dy);
+            IMENUCTL_SetRect(pMenuCtl, &rc);
+            
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
+            IMENUCTL_SetPopMenuRect(pMenuCtl); 
+          
+            IMENUCTL_SetBottomBarType(pMenuCtl, BTBAR_SELECT_BACK);
+            IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);            
+
+            if (pMe->m_index == MAX_CALL_RESTRICT)
+            {
+                IMENUCTL_AddItem(pMenuCtl, AEE_APPSSETTINGMENU_RES_FILE, IDS_ADD, IDS_ADD, NULL, 0);
+            }
+            else
+            {
+                IMENUCTL_AddItem(pMenuCtl, AEE_APPSSETTINGMENU_RES_FILE, IDS_ADD, IDS_ADD, NULL, 0);
+                IMENUCTL_AddItem(pMenuCtl, AEE_APPSSETTINGMENU_RES_FILE, IDS_DELETE, IDS_DELETE, NULL, 0);
+                IMENUCTL_AddItem(pMenuCtl, AEE_APPSSETTINGMENU_RES_FILE, IDS_RESTRICT_VIEW, IDS_RESTRICT_VIEW, NULL, 0);  
+                IMENUCTL_AddItem(pMenuCtl, AEE_APPSSETTINGMENU_RES_FILE, IDS_RESTRICT_DEL_ALL, IDS_RESTRICT_DEL_ALL, NULL, 0); 
+            }
+            
+           
+            (void)ISHELL_PostEvent( pMe->m_pShell,
+                                    AEECLSID_APP_SETTINGMENU,
+                                    EVT_USER_REDRAW,
+                                    0,
+                                    0);
+            return TRUE;                        
+        }      
+        
+        case EVT_USER_REDRAW:          
+            IMENUCTL_SetSel(pMenuCtl, IMENUCTL_GetItemID(pMenuCtl, 0));                
+            IDISPLAY_Update(pMe->m_pDisplay);  
+            return TRUE;
+            
+        case EVT_DIALOG_END:      
+            return TRUE;
+            
+        case EVT_KEY:
+            switch (wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED);
+                    return TRUE;
+                    
+                default:
+                    break;
+                    
+            }
+            break;
+            
+        case EVT_COMMAND:           
+            switch (wParam)
+            {
+                case IDS_ADD:
+                {
+                    CLOSE_DIALOG(DLGRET_NUM_EDIT);
+                    return TRUE;
+                }
+                case IDS_DELETE:
+                {
+                    pMe->m_msgid = IDS_DELETE;
+                    CLOSE_DIALOG(DLGRET_PROMPT);
+                    return TRUE;
+                }
+                case IDS_RESTRICT_DEL_ALL:
+                {
+                    pMe->m_msgid = IDS_RESTRICT_DEL_ALL;    
+                    CLOSE_DIALOG(DLGRET_PROMPT);
+                    return TRUE;
+                }
+                case IDS_RESTRICT_VIEW:
+                {
+                    CLOSE_DIALOG(DLGRET_VIEW_DETAIL);
+                    return TRUE;
+                }
+                default:
+                    break;
+                    
+            }
+            break;
+
+        default:
+            break;
+            
+    }
+    
+    return FALSE;
+}
+
+static boolean Setting_DelRestrict(CSettingMenu *pMe, uint16 index)
+{
+    boolean result = FALSE;      
+    char number[30];
+    uint8 byMax = 0;
+    call_restrict_info		call_restrict_list[MAX_CALL_RESTRICT];
+    int i;
+    
+    call_restrict_info info = {0};
+   
+    (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_CALL_RESTRICT_TOTAL, &byMax, sizeof(byte));              
+	
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+						   CFGI_CALL_RESTRICT_INFO,
+						   (void*)call_restrict_list,
+						   sizeof(call_restrict_list));      
+       
+    WSTRTOSTR(call_restrict_list[index].szNumber, number, 30);
+
+    DBGPRINTF("***zzg Setting_DelRestrict byMax=%x, index=%x, numer=%s***", byMax, index, number);
+
+    if (byMax > 0)
+    {
+        for (i=index; i<(byMax-1); i++)
+        {
+            WSTRCPY(call_restrict_list[i].szNumber, call_restrict_list[i+1].szNumber);  
+            //WSTRCPY(call_restrict_list[i].szName, call_restrict_list[i+1].szName); 
+        }  
+
+        MEMSET(call_restrict_list[byMax-1].szNumber, 0, sizeof(call_restrict_list[byMax-1].szNumber));
+        //MEMSET(call_restrict_list[byMax-1].szName, 0, sizeof(call_restrict_list[byMax-1].szName));
+        byMax --;  
+       
+       (void) ICONFIG_SetItem(pMe->m_pConfig,
+                              CFGI_CALL_RESTRICT_TOTAL,
+                              &byMax,
+                              sizeof(uint8));
+       
+       (void) ICONFIG_SetItem(pMe->m_pConfig,
+                              CFGI_CALL_RESTRICT_INFO,
+                              (void*) call_restrict_list,
+                              sizeof(call_restrict_list));   
+
+       return TRUE;
+    }
+
+    return  result;
+}
+
+static boolean Setting_DelAllRestrict(CSettingMenu *pMe)
+{
+    boolean result = FALSE;      
+    
+    uint8 byMax = 0;
+    call_restrict_info		call_restrict_list[MAX_CALL_RESTRICT];
+    int i;
+    
+    call_restrict_info info = {0};
+    
+    (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_CALL_RESTRICT_TOTAL, &byMax, sizeof(byte));              
+	
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+						   CFGI_CALL_RESTRICT_INFO,
+						   (void*)call_restrict_list,
+						   sizeof(call_restrict_list));    
+
+    if (byMax > 0)
+    {
+        for (i=0; i<byMax; i++)
+        {
+            MEMSET(call_restrict_list[i].szNumber, 0, sizeof(call_restrict_list[i].szNumber));
+            //MEMSET(call_restrict_list[i].szName, 0, sizeof(call_restrict_list[i].szName));
+        }  
+        
+        byMax = 0;  
+       
+       (void) ICONFIG_SetItem(pMe->m_pConfig,
+                              CFGI_CALL_RESTRICT_TOTAL,
+                              &byMax,
+                              sizeof(uint8));
+       
+       (void) ICONFIG_SetItem(pMe->m_pConfig,
+                              CFGI_CALL_RESTRICT_INFO,
+                              (void*) call_restrict_list,
+                              sizeof(call_restrict_list));        
+       return TRUE;
+    }
+
+    return  result;
+}
+
+#endif
+
+static boolean  Setting_Handle_Prompt(CSettingMenu *pMe,
+                                               AEEEvent       eCode,
+                                               uint16         wParam,
+                                               uint32         dwParam)
+{
+    static IStatic * pStatic = NULL;
+
+    if (NULL == pMe)
+    {
+        return FALSE;
+    }
+
+    if (NULL == pStatic)
+    {
+        AEERect rect = {0};
+        if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+                                                 AEECLSID_STATIC,
+                                                 (void **)&pStatic))
+
+        {
+            return FALSE;
+            ERR("ISHELL_CreateInstance,AEECLSID_STATIC 2",0,0,0);
+        }        
+        ISTATIC_SetRect(pStatic, &rect);  
+    }
+   
+    switch(eCode)
+    {
+        case EVT_DIALOG_INIT:
+            return TRUE;
+
+        case EVT_DIALOG_START:
+            (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                        EVTFLG_ASYNC,
+                                        AEECLSID_APP_SETTINGMENU,
+                                        EVT_USER_REDRAW,
+                                        0, 
+                                        0);
+
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            {
+                PromptMsg_Param_type  Msg_Param={0};
+                AECHAR  wstrText[MSGBOX_MAXTEXTLEN];
+                
+                // 从资源文件取消息内容
+                if (pMe->m_msgid != 0)
+                {
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                            AEE_APPSSETTINGMENU_RES_FILE,                                
+                                            pMe->m_msgid,
+                                            wstrText,
+                                            sizeof(wstrText));
+                }
+                                
+                Msg_Param.ePMsgType = MESSAGE_WARNNING;
+                Msg_Param.pwszMsg = wstrText;
+                Msg_Param.eBBarType = BTBAR_YES_NO;
+                DrawPromptMessage(pMe->m_pDisplay, pStatic, &Msg_Param);
+            }
+            // 更新界面
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);           
+
+            
+            return TRUE;
+
+        case EVT_DIALOG_END:
+
+            ISTATIC_Release(pStatic);
+            pStatic = NULL;
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_SELECT:
+                {
+                    if (pMe->m_msgid == IDS_DELETE)
+                    {
+                        //Setting_DelRestrict(pMe, pMe->m_index); 
+                    }
+                    else if (pMe->m_msgid == IDS_RESTRICT_DEL_ALL)
+                    {
+                        //Setting_DelAllRestrict(pMe); 
+                    }
+                    
+                    CLOSE_DIALOG(DLGRET_MSGBOX_OK)
+                    break;
+                }
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_MSGBOX_CANCEL)
+                    break;
+                default:
+                    break;
+            }
+            return TRUE;
+
+        default:
+            break;
+    }
+
+    return FALSE;
+}
+
+
+static boolean  Setting_Handle_NumEdit(CSettingMenu *pMe,
+                                               AEEEvent       eCode,
+                                               uint16         wParam,
+                                               uint32         dwParam)
+{
+    ITextCtl *pTextCtl = NULL;
+    IMenuCtl *pMenuCtl = NULL;
+    
+    if (NULL == pMe)
+    {
+        return FALSE;
+    }
+
+    pTextCtl = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_NUM_EDIT);
+    pMenuCtl = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_NUM_EDIT_MENU);
+    
+    if (NULL == pTextCtl)
+    {
+        return FALSE;
+    }
+
+    switch(eCode)
+    {
+        case EVT_DIALOG_INIT:
+            ITEXTCTL_SetProperties(pTextCtl, TP_FRAME | TP_NOUPDATE|TP_FOCUS_NOSEL);
+            return TRUE;
+
+        case EVT_DIALOG_START:
+        {
+            AEERect ctlRect;
+            AEERect menuRt;
+            AECHAR  WTitle[40] = {0};
+            
+            (void)ISHELL_LoadResString(pMe->m_pShell,
+                                      AEE_APPSSETTINGMENU_RES_FILE,                                
+                                      IDS_SET_EDIT,
+                                      WTitle,
+                                      sizeof(WTitle));
+            if(pMe->m_pAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldTextEx(pMe->m_pAnn,WTitle,FALSE);
+            }
+
+            MSG_FATAL("***zzg Setting_Handle_NumEdit pMe->m_rc: x=%d, y=%x***", pMe->m_rc.x, pMe->m_rc.y, 0);
+            MSG_FATAL("***zzg Setting_Handle_NumEdit pMe->m_rc: dx=%d, dy=%x***", pMe->m_rc.dx, pMe->m_rc.dy, 0);
+
+            SETAEERECT(&menuRt,  0, MENUITEM_HEIGHT,
+                        SCREEN_WIDTH,
+                        (SCREEN_HEIGHT-STATEBAR_HEIGHT-BOTTOMBAR_HEIGHT-MENUITEM_HEIGHT));     
+
+            IMENUCTL_SetRect(pMenuCtl, &menuRt);
+            IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+            IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_GRAPHIC_BG|OEMMP_USE_MENU_STYLE);
+
+            
+            SETAEERECT(&ctlRect,  0, 0,
+                        SCREEN_WIDTH,
+                        MENUITEM_HEIGHT);    //pMe->m_rc.dy - GetBottomBarHeight(pMe->m_pDisplay));     
+                      
+            ICONTROL_SetRect((IControl*)pTextCtl, &ctlRect);
+            ITEXTCTL_SetMaxSize(pTextCtl, OEMNV_VOICEMAIL_MAXLEN-1);              
+            (void) ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_NUMBERS);   
+
+            ITEXTCTL_SetActive(pTextCtl,TRUE);        
+            IMENUCTL_SetActive(pMenuCtl,FALSE);
+            
+            (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                        EVTFLG_ASYNC,
+                                        AEECLSID_APP_SETTINGMENU,
+                                        EVT_USER_REDRAW,
+                                        0, 
+                                        0);
+            return TRUE;
+        }
+        case EVT_USER_REDRAW:
+        case EVT_KEY_RELEASE:
+            // 绘制底条提示
+            {
+                AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pTextCtl);
+                int nLen = 0;
+                
+                if (NULL != pwstrText)
+                {
+                    nLen = WSTRLEN(pwstrText);
+                }
+
+                (void)ITEXTCTL_Redraw(pTextCtl);
+
+                ITEXTCTL_SetActive(pTextCtl,TRUE);
+                IMENUCTL_SetActive(pMenuCtl,FALSE);                
+                
+                if (nLen > 0)
+                {
+                	#ifndef FEATURE_ALL_KEY_PAD
+                    if (ITEXTCTL_GetCursorPos(pTextCtl) != TC_CURSORSTART)
+                    {
+                        // Save       Delete
+                        DRAW_BOTTOMBAR(BTBAR_SAVE_DELETE)
+                    }
+                    else
+                    #endif
+                    {
+                        // Save       Back
+                        DRAW_BOTTOMBAR(BTBAR_SAVE_BACK)
+                    }
+                }
+                else
+                {
+                    //            Back
+                    DRAW_BOTTOMBAR(BTBAR_BACK)
+                }
+            }
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            #ifdef FEATURE_LCD_TOUCH_ENABLE
+            TSIM_NumberKeypad(FALSE);
+            #endif
+            
+            
+            return TRUE;
+            
+        case EVT_DIALOG_END:            
+            return TRUE;
+            
+        case EVT_KEY:
+            switch (wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+  
+                case AVK_INFO:
+                case AVK_SELECT:
+                    {                         
+                        int i;
+                        AECHAR    num[OEMNV_VOICEMAIL_MAXLEN]={0};
+                        uint16    byMax=0;
+                        call_restrict_info  call_restrict_list[MAX_CALL_RESTRICT];
+                        call_restrict_info info = {0};
+                        
+                        (void) ITEXTCTL_GetText(pTextCtl,
+                                                num,
+                                                OEMNV_VOICEMAIL_MAXLEN);
+      
+                        if (WSTRLEN(num) == 0) 
+                        {
+                            return TRUE;
+                        }   
+
+                        for (i=0; i<byMax; i++)
+                        {
+                            if (WSTRCMP(call_restrict_list[i].szNumber, num) == 0)
+                            {
+                                CLOSE_DIALOG(DLGRET_CANCELED)
+                                return TRUE;
+                            }
+                        }
+                        
+                        (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_CALL_RESTRICT_TOTAL, &byMax, sizeof(byte));              
+                    	
+                    	(void) ICONFIG_GetItem(pMe->m_pConfig,
+                    						   CFGI_CALL_RESTRICT_INFO,
+                    						   (void*)call_restrict_list,
+                    						   sizeof(call_restrict_list));  
+                       
+                        
+                        MEMCPY(call_restrict_list[byMax].szNumber, num, sizeof(call_restrict_list[byMax].szNumber));
+                        byMax++;
+                        DBGPRINTF("***zzg CContApp_AddToRestrictList szName=%S, byMax=%d***",num, byMax);
+
+                       
+                       (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                              CFGI_CALL_RESTRICT_TOTAL,
+                                              &byMax,
+                                              sizeof(uint8));
+                       
+                       (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                              CFGI_CALL_RESTRICT_INFO,
+                                              (void*) call_restrict_list,
+                                              sizeof(call_restrict_list));     
+                    }
+      
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+  
+                default:
+                    break;
+            }
+            return TRUE;
+  
+        default:
+            break;
+    }
+}
+
+
+
+static boolean  Setting_Handle_View_Detail(CSettingMenu  *pMe,
+                                                       AEEEvent   eCode,
+                                                       uint16     wParam,
+                                                       uint32     dwParam)
+{
+    IMenuCtl  *pMenuCtl;
+    
+#if defined(AEE_STATIC)
+    ASSERT(pMe != NULL);
+#endif
+    
+    pMenuCtl = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_VIEW_DETAIL);
+
+	MSG_FATAL("***zzg Setting_Handle_View_Detail eCode=%x, wParam=%x***", eCode, wParam, 0);
+        
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+            return TRUE;
+            
+        case EVT_DIALOG_START:
+        {
+            AEERect rc={0};
+            AEEDeviceInfo devinfo={0};
+
+            CtlAddItem ai;                    
+            call_restrict_info      call_restrict_list[MAX_CALL_RESTRICT];
+            
+            ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+            rc = pMe->m_rc;
+            rc.dy = devinfo.cyScreen;
+            rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
+            IMENUCTL_SetRect(pMenuCtl, &rc);
+            
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
+            IMENUCTL_SetPopMenuRect(pMenuCtl); 
+          
+            IMENUCTL_SetBottomBarType(pMenuCtl, BTBAR_BACK);
+            IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);    
+            IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
+
+                 
+            (void)IMENUCTL_DeleteAll(pMenuCtl);        
+           
+            (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                  CFGI_CALL_RESTRICT_INFO,
+                                  (void*)call_restrict_list,
+                                  sizeof(call_restrict_list)); 
+
+            /*                                    
+            if (WSTRLEN(call_restrict_list[pMe->m_index].szName)>0)
+            {
+               MEMSET(&ai, 0, sizeof(ai));
+               ai.pText       = call_restrict_list[pMe->m_index].szName; 
+               ai.wItemID     = 0;
+
+               ai.pszResImage = AEE_APPSCOMMONRES_IMAGESFILE;
+               ai.wImage = IDB_ALERT;
+                                
+
+               if (FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+               {
+                   return EFAILED;
+               }
+               
+               MEMSET(&ai, 0, sizeof(ai));
+               ai.pText       = call_restrict_list[pMe->m_index].szNumber; 
+               ai.wItemID     = 1;
+
+               ai.pszResImage = AEE_APPSCOMMONRES_IMAGESFILE;
+               ai.wImage = IDB_INUSE;
+
+               if (FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+               {
+                   return EFAILED;
+               }
+            }
+            else
+            */    
+            {
+               MEMSET(&ai, 0, sizeof(ai));
+               ai.pText       = call_restrict_list[pMe->m_index].szNumber; 
+               ai.wItemID     = 0;
+
+               ai.pszResImage = AEE_APPSCOMMONRES_IMAGESFILE;
+               ai.wImage = IDB_INUSE;
+
+               if (FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+               {
+                   return EFAILED;
+               }
+            }            
+           
+            (void)ISHELL_PostEvent( pMe->m_pShell,
+                                    AEECLSID_APP_SETTINGMENU,
+                                    EVT_USER_REDRAW,
+                                    0,
+                                    0);
+            return TRUE;                        
+        }      
+        
+        case EVT_USER_REDRAW:                    
+            IDISPLAY_Update(pMe->m_pDisplay);  
+            return TRUE;
+            
+        case EVT_DIALOG_END:      
+            return TRUE;
+            
+        case EVT_KEY:
+            switch (wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED);
+                    return TRUE;
+                    
+                default:
+                    break;
+                    
+            }
+            break;
+        
+
+        default:
+            break;
+            
+    }
+    
+    return FALSE;
+}
+
 
 /*==============================================================================
 函数：
@@ -10855,4 +12126,108 @@ static boolean  Setting_Handle_SMSRestrict_RECEIVE_ADD(CSettingMenu *pMe,
     return FALSE;
 } // Setting_Handle_SMSRestrict_RECEIVE_ADD
 
+#endif
+
+#ifdef FEATURE_CALL_REJECT_AUTO_MSG
+static boolean  Setting_Handle_Call_Reject_Auto_Msg_DialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+{
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
+                                                    IDC_CALL_REJECT_AUTO_MSG);
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    MSG_FATAL("%x,%x,%x,SettingMenu_Handle_Call_Reject_Auto_Msg_DialogEvent",eCode,wParam,dwParam);
+
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSETTINGMENU_RES_FILE,                                
+                        IDS_REJECT_CALL_SMS,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pAnn,WTitle,FALSE);
+            }
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_DISABLE, IDS_DISABLE, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_ENABLE, IDS_ENABLE, NULL, 0);
+            return TRUE;
+
+        case EVT_DIALOG_START:
+            {
+                uint16     ui16_return = IDS_ENABLE;
+                boolean    tmp = FALSE;
+                
+                OEM_GetConfig(CFGI_CALL_REJECT_AUTO_MSG,&tmp, sizeof(tmp));
+
+                MSG_FATAL("***zzg Call_Reject EVT_DIALOG_START tmp=%d***", tmp, 0, 0);
+
+                if (tmp == TRUE)
+                {
+                    ui16_return = IDS_ENABLE;
+                }
+                else
+                {
+                    ui16_return = IDS_DISABLE;
+                }
+                
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, ui16_return, TRUE);
+                IMENUCTL_SetSel(pMenu, ui16_return);
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT|MP_ACTIVE_NO_REDRAW);
+                IMENUCTL_SetOemProperties(pMenu, OEMMP_GRAPHIC_BG);
+                IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+                ISHELL_PostEvent( pMe->m_pShell,AEECLSID_APP_SETTINGMENU,EVT_USER_REDRAW,0,0);
+            }
+            return TRUE;
+
+        case EVT_USER_REDRAW:            
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                default:
+                    break;
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+        {
+            boolean set;
+            switch (wParam)
+            {
+                case IDS_DISABLE:      
+                    set = FALSE;
+                    break;
+                
+                case IDS_ENABLE: 
+                default:    
+                    set = TRUE;
+                    break;
+            }
+
+            ICONFIG_SetItem(pMe->m_pConfig,CFGI_CALL_REJECT_AUTO_MSG,&set,sizeof(set));
+            CLOSE_DIALOG(DLGRET_CANCELED)
+            return TRUE;
+        }
+        default:
+            break;
+    }
+    return FALSE;
+} // HandleKeyToneLengthDialogEvent
 #endif

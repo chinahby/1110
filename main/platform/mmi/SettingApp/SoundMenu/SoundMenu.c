@@ -1074,7 +1074,7 @@ static boolean SoundMenu_HandleEvent(ISoundMenu *pi,
         case EVT_KEY_RELEASE:
         case EVT_KEY:
         case EVT_COMMAND:
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_W021_WSF_CN)&&!defined(FEATURE_LOW_MEM_BIGFONT)&&!defined(FEATURE_VERSION_W516_C260)&&!defined(FEATURE_VERSION_IN50A)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_W021_WSF_CN)&&!defined(FEATURE_LOW_MEM_BIGFONT)&&!defined(FEATURE_VERSION_W516_C260)&&!defined(FEATURE_VERSION_IN50A)&& !defined(FEATURE_VERSION_KK5)
             //if (!pMe->m_bAppIsReady)
             {
 				//return TRUE;
@@ -1254,7 +1254,7 @@ void SoundMenu_InitRingerList(CSoundMenu *pMe)
                    {
                        AECHAR memo[64] = {0};
 
-					   #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+					   #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 					   if( ISHELL_LoadResString( pMe->m_pShell,
                                              APP_RECORDER_RES_FILE,
                                              IDS_RECORDER_MEMO_RINGER_NAME_C337,
@@ -1284,7 +1284,7 @@ void SoundMenu_InitRingerList(CSoundMenu *pMe)
                        }
                        else
                        {
-                       		#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+                       		#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 							(void)WSTRCPY( ri.szName, L"Record");
 							#else
                            (void)WSTRCPY( ri.szName, L"Voice memo");

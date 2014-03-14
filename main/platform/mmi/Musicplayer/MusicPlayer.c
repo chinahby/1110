@@ -413,7 +413,7 @@ static int CMusicPlayer_InitAppData(CMusicPlayer *pMe)
 	pMe->m_times = 0;
     g_nInterruptRef = 0;
     pMe->m_nRandNum = 0;
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 	pMe->keystart_time = 0;	
     pMe->keyend_time = 0;
 #endif
@@ -689,7 +689,7 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
     AEEAppStart *as;
     MSG_FATAL("IMusicPlayer_HandleEvent,eCode = %x",eCode,0,0);
 	
-	MSG_FATAL("***zzg IMusicPlayer_HandleEvent,eCode = %x,dwParam=%d***",eCode,dwParam,0);
+	MSG_FATAL("***zzg IMusicPlayer_HandleEvent,eCode = %x,wParam=%x,dwParam=%x***",eCode,wParam, dwParam);
 	
     switch (eCode)
     {
@@ -958,12 +958,13 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
 			(void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume); 
 			return TRUE;
 			}
-			break;
+			break;                    
+           
         case EVT_KEY_PRESS:
         case EVT_KEY:
-        case EVT_KEY_RELEASE:
+        case EVT_KEY_RELEASE: 
         case EVT_COMMAND:
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&& !defined(FEATURE_VERSION_KK5)
             if(!pMe->m_bAppReady)
             {
                 return TRUE;
@@ -1960,7 +1961,7 @@ static void MP3_Build_DefaultPlaylist(CMusicPlayer *pMe)
    //Add By zzg 2010_08_17
     if(CMediaGallery_GetTflashStatus())		//有T 卡时
     {
-#if defined(FEATURE_VERSION_C337) ||defined (FEATURE_VERSION_K232_Y105A)|| defined(FEATURE_VERSION_IC241A_MMX)  
+#if defined(FEATURE_VERSION_C337) ||defined (FEATURE_VERSION_K232_Y105A)|| defined(FEATURE_VERSION_IC241A_MMX) || defined (FEATURE_VERSION_KK5) 
        (void)IFILEMGR_EnumInit(pMe->m_pFileMgr, MG_MASSCARDMUSIC_PATH, FALSE); //T卡根目录的文件
 #else
        (void)IFILEMGR_EnumInit(pMe->m_pFileMgr, AEEFS_CARD0_DIR, FALSE); //T卡根目录的文件
@@ -2060,7 +2061,7 @@ static void MP3_Build_DefaultPlaylist(CMusicPlayer *pMe)
 	 //枚举playlist文件夹     
     if (CMediaGallery_GetTflashStatus())		//有T 卡时
     {
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)       
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)    || defined (FEATURE_VERSION_KK5)   
        (void)IFILEMGR_EnumInit(pMe->m_pFileMgr, MG_MASSCARDMUSIC_PATH, FALSE); //T卡根目录的文件
 #else
        (void)IFILEMGR_EnumInit(pMe->m_pFileMgr, AEEFS_CARD0_DIR, TRUE); //T卡根目录的文件

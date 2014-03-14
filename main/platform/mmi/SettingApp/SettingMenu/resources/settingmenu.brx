@@ -616,6 +616,48 @@
 	<STRING Id="1408" Name="IDS_PREFIX_AUTO">
 		<Text>Auto</Text>
 	</STRING>
+	<String Id="1409" Name="IDS_REJECT_CALL_SMS">
+		<Text>Call Reject Auto Msg</Text>
+	</String>
+	<String Id="1410" Name="IDS_RESTRICT_NUMBERS">
+		<Text>Restrict numbers</Text>
+	</String>
+	<String Id="1411" Name="IDS_RESTRICT_VIEW">
+		<Text>View</Text>
+	</String>
+	<String Id="1412" Name="IDS_NO_RECORD">
+		<Text>No record!</Text>
+	</String>
+	<String Id="1413" Name="IDS_RESTRICT_DEL_ALL">
+		<Text>Delete all</Text>
+	</String>
+	<String Id="1420" Name="IDS_NETWORK_SETTINGS">
+		<Text>Network Settings</Text>
+	</String>
+	<String Id="1421" Name="IDS_NETWORK_PROFILE_MTS">
+		<Text>Mts</Text>
+	</String>	
+	<String Id="1422" Name="IDS_NETWORK_PROFILE_RELIANCE">
+		<Text>Reliance</Text>
+	</String>
+	<String Id="1423" Name="IDS_NETWORK_PROFILE_VIRGIN">
+		<Text>Virgin</Text>
+	</String>
+	<String Id="1424" Name="IDS_NETWORK_PROFILE_GARUDA">
+		<Text>Garuda</Text>
+	</String>	
+	<String Id="1425" Name="IDS_NETWORK_PROFILE_TATA">
+		<Text>Tata</Text>
+	</String>
+	<String Id="1426" Name="IDS_NETWORK_PROFILE_CUSTOM">
+		<Text>Custom</Text>
+	</String>
+	<String Id="1430" Name="IDS_NETWORK_PARAMS_USERNAME">
+		<Text>Username</Text>
+	</String>
+	<String Id="1431" Name="IDS_NETWORK_PARAMS_PASSWORD">
+		<Text>Password</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">
@@ -942,5 +984,61 @@
 				<Items/></Text>
 		</Controls>
 	</Dialog>
+	<Dialog Id="6051" Name="IDD_CALL_REJECT_AUTO_MSG" Focus="7051">
+		<Controls>
+			<Menu Id="7051" Name="IDC_CALL_REJECT_AUTO_MSG">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6052" Name="IDD_RESTRICT_NUMBERS" Focus="7052">
+		<Controls>
+			<Menu Id="7052" Name="IDC_RESTRICT_NUMBERS">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6053" Name="IDD_RESTRICT_OPTS" Focus="7053">
+		<Controls>
+			<Menu Id="7053" Name="IDC_RESTRICT_OPTS">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6054" Name="IDD_PROMPT" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>	
+	<Dialog Id="6055" Name="IDD_NUM_EDIT" Focus="7055">
+		<Controls>
+			<Menu Id="7054" Name="IDC_NUM_EDIT_MENU">
+				<Items/>
+			</Menu>
+			<Text Id="7055" Name="IDC_NUM_EDIT">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6056" Name="IDD_VIEW_DETAIL" Focus="7056">
+		<Controls>
+			<Menu Id="7056" Name="IDC_VIEW_DETAIL">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6060" Name="IDD_NETWORK_SETTINGS" Focus="7060">
+		<Controls>
+			<Menu Id="7060" Name="IDC_NETWORK_SETTINGS">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6061" Name="IDD_NETWORK_PARAMS_EDIT" Focus="7061">
+		<Controls>
+			<Text Id="7061" Name="IDC_NETWORK_PARAMS_USERNAME">
+				<Items/></Text>
+			<Text Id="7062" Name="IDC_NETWORK_PARAMS_PASSWORD">
+				<Items/></Text>
+		</Controls>
+	</Dialog>	
 </Dialogs>
 </BREWRes>

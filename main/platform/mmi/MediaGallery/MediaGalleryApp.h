@@ -112,6 +112,7 @@ typedef enum _MGAppState
    STATE_VIEW,     //state to view a picture
    STATE_RENAME,   //state to rename file name
    STATE_SETAS,    //state to set the current file as wallpaper if a picture, or ringtone if a sound
+   STATE_OPTION,
    STATE_SORT,     //state to set sort type for media menu list
 
    STATE_SELECTPATH,
@@ -166,6 +167,7 @@ typedef enum _MGDLGRetValue
 /*    MGDLGRET_WALLPAPER,
  */
    MGDLGRET_SETAS,
+   MGDLGRET_OPTION,
    MGDLGRET_RENAME,
 /*    MGDLGRET_DELETE,
  *    MGDLGRET_DELALL,
@@ -488,6 +490,7 @@ struct  _CMediaGalleryApp{
 #if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316)
    char              *m_strPhonePWD;
 #endif
+   uint16             m_option_sel;
 } ;
 
 /*===========================================================================

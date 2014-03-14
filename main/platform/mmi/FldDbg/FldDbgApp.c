@@ -1562,7 +1562,7 @@ static boolean CFieldDebug_VersionMenuHandleEvent(CFieldDebug *pme,
          {
             (void) CFieldDebug_MoveToDialog(pme, IDD_TOP_DIALOG);
          }
-#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T) 
+#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T) ||defined(FEATURE_VERSION_KK5)
          else if (pme->m_dlgID == IDD_VERSION_DIALOG)
          {
             //ISHELL_CloseApplet(pme->a.m_pIShell, FALSE); // This return the EditNum dialog
@@ -4643,6 +4643,12 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
               {
                  pme->m_dlgID = IDD_ESN_DIALOG;
               }
+
+              if(STRNCMP(args->pszArgs,"*#888*#",7) == 0)
+              {
+                 pme->m_dlgID = IDD_VERSION_DIALOG;
+              }
+              
                if(STRNCMP(args->pszArgs,"*#*#8378#0#",11) == 0)
                {
                   pme->m_dlgID = IDD_TOP_DIALOG;

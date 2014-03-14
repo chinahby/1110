@@ -23,7 +23,7 @@
 		<Text>एफएम रेडियो</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_MULTIMEDIA_MUSICPLAYER">
-		<Text>म्यूजिक</Text>
+		<Text>संगीत</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_MULTIMEDIA_RECORDER">
 		<Text>रिकॉर्डर</Text>

@@ -540,7 +540,7 @@ static boolean  RecentCalls_VerifyPasswordEvent(CRecentCalls *pMe,
             }
 			 {
                  AECHAR  text[32] = {0};
-                #if defined(FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+                #if defined(FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_KK5)
 				(void)ISHELL_LoadResString(pMe->m_pShell, 
                                             AEE_RECENTCALLSRES_LANGFILE,
                                             IDS_RECENT_CALLS_C337, 
@@ -593,7 +593,7 @@ static boolean  RecentCalls_VerifyPasswordEvent(CRecentCalls *pMe,
                 //IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc, RGB_BLACK);
                     
                 // »­±êÌâÌõ
-                #if defined(FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+                #if defined(FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_KK5)
 				(void)ISHELL_LoadResString(pMe->m_pShell, 
                                             AEE_RECENTCALLSRES_LANGFILE,
                                             IDS_RECENT_CALLS_C337, 
@@ -892,7 +892,7 @@ static boolean RecentCalls_MainMenuEvent(CRecentCalls *pMe,
 			{
 				AECHAR WTitle[40] = {0};
 
-				#if defined(FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+				#if defined(FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_KK5)
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 					                        AEE_RECENTCALLSRES_LANGFILE,                                
 					                        IDS_RECENT_CALLS_C337,
@@ -1478,7 +1478,7 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                                            &missed_call_icon,
                                            sizeof(missed_call_icon));  
                     }
-					#if defined(FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+					#if defined(FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_KK5)
 					pMe->selectState = IDS_RECENT_CALLS_C337;
 					#else
                     pMe->selectState = IDS_RECENT_CALLS;
@@ -2140,7 +2140,7 @@ static boolean RecentCalls_DetailEvent(CRecentCalls *pMe,
                                 IDS_OUTGOING_CALLS, wstrDevice,sizeof(wstrDevice));
                   break;
                 case AEECALLHISTORY_CALL_TYPE_ALL://CALLHISTORY_ALL_CATEGORY:
-                  #if defined(FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+                  #if defined(FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_KK5)
 				  (void)ISHELL_LoadResString(pMe->m_pShell, AEE_RECENTCALLSRES_LANGFILE,
                                 IDS_RECENT_CALLS_C337, wstrDevice,sizeof(wstrDevice));
 				  #else

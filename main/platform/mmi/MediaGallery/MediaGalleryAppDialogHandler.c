@@ -251,6 +251,11 @@ static boolean MGAppPopupMenu_OnSetAs(CMediaGalleryApp* pMe,
                                       AEEEvent eCode,
                                       uint16 wParam,
                                       uint32 dwParam);
+static boolean MediaGalleryApp_Option_HandleEvent(CMediaGalleryApp* pMe,
+                                       AEEEvent eCode,
+                                       uint16 wParam,
+                                       uint32 dwParam);
+
 
 static boolean MGAppPopupMenu_OnSavetoplaylist(CMediaGalleryApp* pMe,
                                       			AEEEvent eCode,
@@ -394,6 +399,11 @@ boolean MediaGalleryApp_RouteDialogEvent(CMediaGalleryApp* pMe,
       case IDD_MG_SETAS:
          fcnPtr = MGAppPopupMenu_OnSetAs;
          break;
+         
+      case IDD_OPTION:
+         fcnPtr = MediaGalleryApp_Option_HandleEvent;
+         break;   
+         
 	  case IDD_MG_SAVETOPLAYLIST:
 	  	 fcnPtr = MGAppPopupMenu_OnSavetoplaylist;
 	  	 break;
@@ -489,6 +499,12 @@ static boolean  MediaGalleryApp_ShowMsgBox(CMediaGalleryApp* pMe,
       return FALSE;
    }
 
+
+   if (pMe->m_pMediaMenu)
+   {
+        IMENUCTL_SetActive(pMe->m_pMediaMenu, FALSE);
+   }
+    
    if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_STATIC,
             (void **)&pPromTxt))
    {
@@ -684,6 +700,11 @@ static void MediaGalleryApp_MsgBoxTimeout(void* pUser)
    }
 
    MGAppUtil_SetMediaDlgStat(pMe, MG_DLGSTAT_NORMAL);
+
+   if (pMe->m_pMediaMenu)
+   {
+        IMENUCTL_SetActive(pMe->m_pMediaMenu, TRUE);
+   }
 
    if(TRUE == pMe->m_bSuspending)
    {
@@ -1289,7 +1310,7 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
 			{
 				AECHAR WTitle[40] = {0};
 				
-				#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+				#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 					                        MGRES_LANGFILE,                                
 					                        IDS_MG_MEDIAGALLERY_C337,
@@ -1343,7 +1364,7 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
       {
          const char *pszResFile = MGRES_LANGFILE;
 
-		 #if  defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+		 #if  defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 		 uint16 wResID = IDS_MG_MEDIAGALLERY_C337;
 		 #else
 		 uint16 wResID = IDS_MG_MEDIAGALLERY;
@@ -1353,7 +1374,7 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
 
          if(eStartMode == MGSM_NORMAL_EXPLORER)
          {
-         	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+         	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 			wResID = IDS_MG_MEDIAGALLERY_C337;
 			#else
             wResID = IDS_MG_MEDIAGALLERY;
@@ -1386,7 +1407,7 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
          else if(eStartMode == MGSM_RECORD_VIEW ||
                  eStartMode == MGSM_FILE_SELECT)
          {
-         	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+         	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 			wResID = IDS_MG_MEDIAGALLERY_C337;
 			#else
             wResID = IDS_MG_MEDIAGALLERY;
@@ -1427,6 +1448,7 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
          uint8 nState;
          IANNUNCIATOR_Redraw(pMe->m_pIAnn);
 #ifndef FEATURE_VERSION_C337  
+#ifndef FEATURE_VERSION_KK5
 #ifndef FEATURE_VERSION_IC241A_MMX
 #ifndef FEATURE_VERSION_K232_Y100A
 
@@ -1440,7 +1462,8 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
             MGCLOSE_DIALOG(MGDLGRET_BGPLAYPROMPT);
          }
          else
-#endif            
+#endif   
+#endif
 #endif		
 #endif
 	  if(MG_MENUITEM_NULL == *pPrevSelItemID)
@@ -2871,7 +2894,7 @@ static boolean MediaGalleryApp_OnDefaultOperate(CMediaGalleryApp* pMe,
    else
    {
       MGMimeType     eMimeBase;
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
       int nBackground; 	    		 
      if((nBackground = app_media_scheduler()) != APP_MEDIA_ALLOW)
      {
@@ -4334,6 +4357,101 @@ static boolean MGAppPopupMenu_OnSetAs(CMediaGalleryApp *pMe,
 
    return FALSE;
 }//MGAppPopupMenu_OnSetAs
+
+
+ static boolean MediaGalleryApp_Option_HandleEvent(CMediaGalleryApp* pMe,
+                                        AEEEvent eCode,
+                                        uint16 wParam,
+                                        uint32 dwParam)
+
+ {
+    IMenuCtl* pMenuCtl;
+   MediaDlgStat eDlgStat;
+
+   if(!pMe)
+   {
+      return FALSE;
+   }
+
+   MGAppUtil_GetMediaDlgStat(pMe, &eDlgStat);
+   pMenuCtl = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_OPTION);
+
+   if(NULL == pMenuCtl)
+      return FALSE;
+
+   switch(eCode)
+   {
+      case EVT_DIALOG_INIT:
+         return TRUE;
+
+      case EVT_DIALOG_START:
+         {
+            IConfig *pConfig = NULL;
+            MGFileInfo *pSelData = NULL;
+
+            AECHAR WTitle[40] = {0};
+            
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                                        MGRES_LANGFILE,                                
+                                        IDS_MG_OPTION,
+                                        WTitle,
+                                        sizeof(WTitle));
+            
+			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
+        
+            MGAppUtil_SetMenuCtlRectProp(pMe,
+               MP_UNDERLINE_TITLE | MP_WRAPSCROLL | MP_BIND_ITEM_TO_NUMBER_KEY,
+               pMenuCtl);
+
+            IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
+                
+            MGMENU_ADDITEM(pMenuCtl, IDS_MG_MARK);
+            MGMENU_ADDITEM(pMenuCtl, IDS_MG_UNMARK);
+            MGMENU_ADDITEM(pMenuCtl, IDS_MG_MARKALL);
+            MGMENU_ADDITEM(pMenuCtl, IDS_MG_UNMARKALL);
+            MGMENU_ADDITEM(pMenuCtl, IDS_MG_SAVE);
+            
+            IMENUCTL_SetBottomBarType(pMenuCtl, BTBAR_OK_CANCEL);     
+            return TRUE;
+         }
+
+      case EVT_DIALOG_END:
+      {
+         if(TRUE == pMe->m_bSuspending)
+         {
+
+         }
+
+         return TRUE;
+      }
+
+      case EVT_KEY:
+      {
+        if (wParam == AVK_CLR)
+         {
+                    
+            MGCLOSE_DIALOG(MGDLGRET_CANCELED);              
+            return TRUE;                      
+         }
+         return FALSE;
+      }
+      
+      case EVT_COMMAND:
+      {
+        pMe->m_option_sel = wParam;            
+        MGCLOSE_DIALOG(MGDLGRET_CANCELED);
+        return TRUE;        
+      }
+
+      default:
+         break;
+   }
+
+   return FALSE;
+ }
+
+ 
+
  void MGAppPopupMenuTimer(CMediaGalleryApp *pMe)
  {
  	MGCLOSE_DIALOG(MGDLGRET_CANCELED);
@@ -6251,6 +6369,14 @@ static boolean MediaGalleryApp_MusicAddDlg_HandleEvent(CMediaGalleryApp* pMe,
                MGAppUtil_StartMediaMenu(pMe, pMenuCtl, eCode, wParam, dwParam);
             }
 
+#ifdef FEATURE_VERSION_KK5  
+            ISHELL_PostEvent(pMe->m_pShell,
+                              AEECLSID_MEDIAGALLERY,
+                              EVT_USER_REDRAW,
+                              0,
+                              0);
+#endif
+
             return TRUE;
          }
 
@@ -6260,12 +6386,77 @@ static boolean MediaGalleryApp_MusicAddDlg_HandleEvent(CMediaGalleryApp* pMe,
 
       case EVT_USER_REDRAW:
          {
+#ifdef FEATURE_VERSION_KK5            
+            uint16 item = IMENUCTL_GetSel(pMe->m_pMediaMenu);
+            uint16 itenEx = IMENUCTL_GetItemCount(pMe->m_pMediaMenu);           
+            uint16 id = 0;
+            uint16 i = 0;
+
+            MSG_FATAL("***zzg MediaGalleryApp IMENUCTL_GetSel item=%x, itenEx=%d, m_option_sel=%d***", item, itenEx, pMe->m_option_sel);
+            
+            if (((pMe->m_option_sel == IDS_MG_MARK) || (pMe->m_option_sel == IDS_MG_UNMARK)
+                || (pMe->m_option_sel == IDS_MG_MARKALL) || (pMe->m_option_sel == IDS_MG_UNMARKALL) 
+                || (pMe->m_option_sel == IDS_MG_SAVE))
+                && (itenEx > 0))
+            {
+                if(eDlgStat == MG_DLGSTAT_NORMAL)
+                { 
+                    if (pMe->m_option_sel == IDS_MG_MARK) 
+                    {
+                        IMENUCTL_SetSelEx(pMe->m_pMediaMenu, item, TRUE);
+
+                        MGAppUtil_OnMediaMenuSelChange(pMe, MG_DLGSTAT_NORMAL);
+                    }
+                    else if (pMe->m_option_sel == IDS_MG_UNMARK)
+                    {
+                        IMENUCTL_SetSelEx(pMe->m_pMediaMenu, item, FALSE);
+
+                        MGAppUtil_OnMediaMenuSelChange(pMe, MG_DLGSTAT_NORMAL);
+                    }                      
+                    else if (pMe->m_option_sel == IDS_MG_MARKALL) 
+                    {
+                        for (i = 0; i< itenEx; i++)
+                        {
+                            id = IMENUCTL_GetItemID(pMe->m_pMediaMenu, i);
+                            IMENUCTL_SetSelEx(pMe->m_pMediaMenu, id, TRUE);
+                            IMENUCTL_SetSel(pMe->m_pMediaMenu,item);
+                        }
+                    }
+                    else if (pMe->m_option_sel == IDS_MG_UNMARKALL)
+                    {
+                        for (i = 0; i< itenEx; i++)
+                        {
+                            id = IMENUCTL_GetItemID(pMe->m_pMediaMenu, i);
+                            IMENUCTL_SetSelEx(pMe->m_pMediaMenu, id, FALSE);
+                            IMENUCTL_SetSel(pMe->m_pMediaMenu,item);                            
+                        }
+
+                        MGAppUtil_OnMediaMenuSelChange(pMe, eDlgStat);
+                    }
+                    else if (pMe->m_option_sel == IDS_MG_SAVE)
+                    {
+                        MGAppUtil_UpdateSelItemCheck(pMe);
+                        MGAppUtil_ExplorerBuildSelItems(pMe, pMenuCtl);
+                    }                          
+                                        
+                    MGAppUtil_ExplorerGetSelectCount(pMe, pMe->m_pMediaMenu);                        
+                 }
+            }            
+
+            //MGAppUtil_UpdateMediaMenuSoftkey(pMe);
+            IMENUCTL_SetBottomBarType(pMe->m_pMediaMenu, BTBAR_OPTION_BACK);
+            IMENUCTL_Redraw(pMe->m_pMediaMenu);
+#else
             MGAppUtil_UpdateMediaMenuSoftkey(pMe);
+#endif
+   
             return TRUE;
          }
 
       case EVT_KEY:
       {
+         MSG_FATAL("***zzg MedidaGalleryApp_MusicAddDlg EVT_KEY wParam=%x***", wParam, 0, 0);
+         
          if(FALSE == MGAppUtil_IsNeedHandleKey(pMe, wParam))
          {
             return TRUE;
@@ -6276,15 +6467,27 @@ static boolean MediaGalleryApp_MusicAddDlg_HandleEvent(CMediaGalleryApp* pMe,
             case AVK_CLR:
                return MGAppUtil_OnMediaMenuClrKeyEvt(pMe, pMenuCtl);
 
-            //dele by yangdecai 2010-08-06
+#ifdef FEATURE_VERSION_KK5  
+            case AVK_SELECT:
+            {
+               if(eDlgStat == MG_DLGSTAT_NORMAL) 
+               {                
+                  MGCLOSE_DIALOG(MGDLGRET_OPTION);
+               }
+            }
+            return TRUE;   
+#else            
+
+            //dele by yangdecai 2010-08-06            
             case AVK_SELECT:
                if(eDlgStat == MG_DLGSTAT_NORMAL)
                {
-                  /*finish select file */
+                  //finish select file 
                   MGAppUtil_UpdateSelItemCheck(pMe);
                   MGAppUtil_ExplorerBuildSelItems(pMe, pMenuCtl);
                }
                return TRUE;
+#endif
 			//modi by yangdecai 2010-08-06  
 			//case AVK_RIGHT:
 			case AVK_INFO: 
@@ -6299,7 +6502,14 @@ static boolean MediaGalleryApp_MusicAddDlg_HandleEvent(CMediaGalleryApp* pMe,
                                                            wParam,
                                                            dwParam);
                         MGAppUtil_ExplorerGetSelectCount(pMe, pMenuCtl);
+
+#ifdef FEATURE_VERSION_KK5                         
+                        //MGAppUtil_UpdateMediaMenuSoftkey(pMe);
+                        IMENUCTL_SetBottomBarType(pMe->m_pMediaMenu, BTBAR_OPTION_BACK);
+                        IMENUCTL_Redraw(pMe->m_pMediaMenu);
+#else
                         MGAppUtil_UpdateMediaMenuSoftkey(pMe);
+#endif
                      }
                      else
                      {
@@ -6335,7 +6545,15 @@ static boolean MediaGalleryApp_MusicAddDlg_HandleEvent(CMediaGalleryApp* pMe,
                                                     wParam,
                                                     dwParam);
                  MGAppUtil_ExplorerGetSelectCount(pMe, pMenuCtl);
+                 
+#ifdef FEATURE_VERSION_KK5                         
+                 //MGAppUtil_UpdateMediaMenuSoftkey(pMe);
+                 IMENUCTL_SetBottomBarType(pMe->m_pMediaMenu, BTBAR_OPTION_BACK);
+                 IMENUCTL_Redraw(pMe->m_pMediaMenu);
+#else
                  MGAppUtil_UpdateMediaMenuSoftkey(pMe);
+#endif
+
               }
               else
               {
@@ -6363,7 +6581,15 @@ static boolean MediaGalleryApp_MusicAddDlg_HandleEvent(CMediaGalleryApp* pMe,
             {
                IMENUCTL_SetActive(pMenuCtl, TRUE);
             }
+            
+#ifdef FEATURE_VERSION_KK5                         
+            //MGAppUtil_UpdateMediaMenuSoftkey(pMe);
+            IMENUCTL_SetBottomBarType(pMe->m_pMediaMenu, BTBAR_OPTION_BACK);
+            IMENUCTL_Redraw(pMe->m_pMediaMenu);
+#else
             MGAppUtil_UpdateMediaMenuSoftkey(pMe);
+#endif
+
          }
          return TRUE;
 
