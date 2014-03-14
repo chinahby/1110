@@ -3174,7 +3174,11 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                 //CLOSE_DIALOG(DLGRET_OK)
                 CoreApp_Process_Batty_Msg(pMe, IDS_POWEROFF_1);
                 //     DBGPRINTF("NMASK_BATTERY_EXTPWR_CHANGE");
+                #if 1//wren add for short the powerdown time when plugout the charging cable.test20140314.
+                AEE_SetSysTimer(1000 , CoreApp_Poweroff_Phone, pMe);
+                #else
                 AEE_SetSysTimer(POWER_DOWN_TIME , CoreApp_Poweroff_Phone, pMe);
+                #endif
                 return TRUE;
             }
             #ifdef FEATURE_VERSION_V3CM301
