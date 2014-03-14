@@ -1066,7 +1066,7 @@ static const AECHAR sszSymbolList[] =
     ',','.','@','\'','(',')','_','!',' ','?',
     '*','#','%','\"',':','+','<','>','=',
     '/','&','-','$',';',
-#ifdef FEATURE_VERSION_C316
+#if defined (FEATURE_VERSION_C316)||defined (FEATURE_VERSION_KK5)
     0x20B9,
 #endif
 #endif
