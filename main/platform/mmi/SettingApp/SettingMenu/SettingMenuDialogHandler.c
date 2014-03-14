@@ -10624,11 +10624,11 @@ static boolean  Setting_Handle_Prompt(CSettingMenu *pMe,
                 {
                     if (pMe->m_msgid == IDS_DELETE)
                     {
-                        //Setting_DelRestrict(pMe, pMe->m_index); 
+                        Setting_DelRestrict(pMe, pMe->m_index); 
                     }
                     else if (pMe->m_msgid == IDS_RESTRICT_DEL_ALL)
                     {
-                        //Setting_DelAllRestrict(pMe); 
+                        Setting_DelAllRestrict(pMe); 
                     }
                     
                     CLOSE_DIALOG(DLGRET_MSGBOX_OK)
