@@ -192,6 +192,8 @@ Constants and Macros
 /* Taken from services\dload\dloadusb.c line 447 */
 #ifdef FEATURE_VERSION_K232_Y100A
 #define HSU_PRODUCT_STRING       "Micromax C205"
+#elif defined FEATURE_VERSION_KK5
+#define HSU_PRODUCT_STRING       "Lemon C9"
 #else
 #define HSU_PRODUCT_STRING       "Qualcomm CDMA Technologies MSM"
 #endif

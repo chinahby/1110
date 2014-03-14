@@ -5486,7 +5486,7 @@ void          (*task_wait_handler)( rex_sigs_type )
 #endif
 #endif
 #else
-#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W023)||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_S600)\
+#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W023)||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_S600)|| defined (FEATURE_VERSION_KK5)\
 	||defined(FEATURE_VERSION_C117_M74)  || defined(FEATURE_VERSION_IC241A_MMX) || defined(FEATURE_VERSION_W516_C260)//xxzhen
 	gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_LOW_VALUE);
 #else

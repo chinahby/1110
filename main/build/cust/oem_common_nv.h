@@ -139,6 +139,22 @@
 #define OEMNV_CALLFORWARD_WAIT_DISABLE              "*119"                      //CFGI_CALLFORWARD_WAIT_DISABLE
 #define OEMNV_CALLFORWARD_VOICEMAIL_ENABLE          "0"                         //CFGI_CALLFORWARD_VOICEMAIL_ENABLE 
 #define OEMNV_VOICEMAIL_NUMBER                      L"0"                         //NV_SMS_VM_NUMBER_I  
+#elif defined (FEATURE_VERSION_KK5)
+//Operator parameters
+#define OEMNV_EMERGENCYNUM_TABLE_NUM                {{{"100",3},{"101",3},{"102",3},{"112",3},{"911",3},{"",0},{"",0},{"",0},{"",0},{"",0}},5} //CFGI_EMERGENCYNUM_TABLE
+#define OEMNV_CALLFORWARD_BUSY_ENABLE               "*75"                       //CFGI_CALLFORWARD_BUSY_ENABLE
+#define OEMNV_CALLFORWARD_BUSY_DISABLE              "*65"                      //CFGI_CALLFORWARD_BUSY_DISABLE
+#define OEMNV_CALLFORWARD_NOANSWER_ENABLE           "*74"                       //CFGI_CALLFORWARD_NOANSWER_ENABLE
+#define OEMNV_CALLFORWARD_NOANSWER_DISABLE          "*67"                      //CFGI_CALLFORWARD_NOANSWER_DISABLE
+#define OEMNV_CALLFORWARD_UNCONDITIONAL_ENABLE      "*72"                       //CFGI_CALLFORWARD_UNCONDITIONAL_ENABLE
+#define OEMNV_CALLFORWARD_UNCONDITIONAL_DISABLE     "*73"                      //CFGI_CALLFORWARD_UNCONDITIONAL_DISABLE
+#define OEMNV_CALLFORWARD_UNREACHABLE_ENABLE        "*74"                       //CFGI_CALLFORWARD_UNREACHABLE_ENABLE
+#define OEMNV_CALLFORWARD_UNREACHABLE_DISABLE       "*67"                      //CFGI_CALLFORWARD_UNREACHABLE_DISABLE
+#define OEMNV_CALLFORWARD_DISABLE_ALL               "*73"                      //CFGI_CALLFORWARD_DISABLE_ALL
+#define OEMNV_CALLFORWARD_WAIT_ENABLE               "*118"                       //CFGI_CALLFORWARD_WAIT_ENABLE
+#define OEMNV_CALLFORWARD_WAIT_DISABLE              "*119"                      //CFGI_CALLFORWARD_WAIT_DISABLE
+#define OEMNV_CALLFORWARD_VOICEMAIL_ENABLE          "0"                         //CFGI_CALLFORWARD_VOICEMAIL_ENABLE 
+#define OEMNV_VOICEMAIL_NUMBER                      L"0"                         //NV_SMS_VM_NUMBER_I  
 #elif defined(FEATURE_VERSION_W021_CT100_16A)
 //Operator parameters
 #define OEMNV_EMERGENCYNUM_TABLE_NUM                {{{"110",3},{"112",3},{"911",3},{"999",3},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0}},4} //CFGI_EMERGENCYNUM_TABLE

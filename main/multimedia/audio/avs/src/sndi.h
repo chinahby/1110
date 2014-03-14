@@ -429,7 +429,7 @@ when       who     what, where, why
 /* If this is entered as the volume, then the database volume setting will
 ** be used.
 */
-#if defined (FEATURE_VERSION_C337) //|| defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_KK5)//|| defined(FEATURE_VERSION_IC241A_MMX)
 #define SND_VOL_USE_DEFAULT 0x01
 #else
 #define SND_VOL_USE_DEFAULT 0xff

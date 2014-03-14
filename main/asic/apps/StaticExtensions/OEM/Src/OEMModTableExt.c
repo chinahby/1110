@@ -977,6 +977,10 @@ extern int  CCameraAppMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 extern int CameralistMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
 
+#if defined(FEATURE_LEMON_TWIST)
+extern int LemontwistMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
+#endif
+
 #if defined(FEATURE_APP_MUSICPLAYER)
 extern int MusicPlayer_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
@@ -1390,6 +1394,11 @@ static const AEEStaticMod gOEMStaticModList[] =
     {AEEFS_MIF_DIR"cameraapp.mif", CCameraAppMod_Load}, 
     {AEEFS_MIF_DIR"cameralist.mif", CameralistMod_Load},
 #endif
+
+#ifdef FEATURE_LEMON_TWIST 
+    {AEEFS_MIF_DIR"lemontwist.mif", LemontwistMod_Load},
+#endif
+
 
 #if defined(FEATURE_APP_MUSICPLAYER)
       {AEEFS_MIF_DIR"musicplayer.mif", MusicPlayer_Load},

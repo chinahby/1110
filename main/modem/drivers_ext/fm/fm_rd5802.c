@@ -863,7 +863,7 @@ int fm_set_volume(word wVolume,boolean speaker)
 {
 	uint8 level = (uint8)wVolume;
 
-    #if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+    #if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 	#if !defined(FEATURE_VERSION_C192_MMX)
     level = (level*3)/5;
 	#endif

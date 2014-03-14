@@ -879,6 +879,7 @@ endif
 
 MULTIMEDIA =            $(MMIDIR)/Multimedia
 CAMERALIST =            $(MMIDIR)/CameraList
+LEMONTWIST = 						$(MMIDIR)/LemonTwist
 STATIC_BREW_APP=        $(MMIDIR)/staticbrewapp/$(USES_LCD_SIZE)
 STATIC_APP=             $(MMIDIR)/staticapp
 

@@ -133,6 +133,8 @@ when       who     what, where, why
 #else
 #define OEMNV_ALERT_TYPE_INIT {OEMNV_ALERTTYPE_RINGER,OEMNV_ALERTTYPE_OFF,OEMNV_ALERTTYPE_VIB,OEMNV_ALERTTYPE_VIBANDRINGER,OEMNV_ALERTTYPE_VIBANDRINGER} 
 #endif
+#elif defined (FEATURE_VERSION_KK5)
+#define OEMNV_ALERT_TYPE_INIT {OEMNV_ALERTTYPE_RINGER,OEMNV_ALERTTYPE_OFF,OEMNV_ALERTTYPE_VIB,OEMNV_ALERTTYPE_VIBRINGER,OEMNV_ALERTTYPE_VIBRINGER} 
 #elif defined(FEATURE_VERSION_EC99) 
 #if defined(FEATURE_NO_VIBRATE) 
 #define OEMNV_ALERT_TYPE_INIT {OEMNV_ALERTTYPE_RINGER,OEMNV_ALERTTYPE_OFF,OEMNV_ALERTTYPE_OFF,OEMNV_ALERTTYPE_RINGER,OEMNV_ALERTTYPE_RINGER} 
@@ -177,6 +179,8 @@ when       who     what, where, why
 #else
 #define OEMNV_SMS_RINGER_INIT {OEMNV_ALERTTYPE_RINGER,OEMNV_SMS_OFF,OEMNV_ALERTTYPE_VIB,OEMNV_ALERTTYPE_VIBANDRINGER,OEMNV_ALERTTYPE_VIBANDRINGER}  
 #endif
+#elif defined (FEATURE_VERSION_KK5)
+#define OEMNV_SMS_RINGER_INIT {OEMNV_ALERTTYPE_RINGER,OEMNV_SMS_OFF,OEMNV_ALERTTYPE_VIB,OEMNV_ALERTTYPE_VIBRINGER,OEMNV_ALERTTYPE_VIBRINGER}  
 #else
 #define OEMNV_SMS_RINGER_INIT {OEMNV_ALERTTYPE_RINGER,OEMNV_SMS_OFF,OEMNV_ALERTTYPE_VIB,OEMNV_ALERTTYPE_VIBRINGER,OEMNV_ALERTTYPE_VIBANDRINGER}
 
@@ -201,6 +205,8 @@ when       who     what, where, why
 #else
 #define OEMNV_POWERONOFF_ALERT_INIT {OEMNV_POWERONOFF_DISABLE,OEMNV_POWERONOFF_DISABLE,OEMNV_POWERONOFF_DISABLE,OEMNV_POWERONOFF_DISABLE,OEMNV_POWERONOFF_DISABLE}
 #endif
+#elif defined(FEATURE_VERSION_KK5)
+#define OEMNV_POWERONOFF_ALERT_INIT {OEMNV_POWERONOFF_ENABLE,OEMNV_POWERONOFF_DISABLE,OEMNV_POWERONOFF_DISABLE,OEMNV_POWERONOFF_ENABLE,OEMNV_POWERONOFF_ENABLE}
 #elif defined(FEATURE_VERSION_C117_M74)//xxzhen
 #define OEMNV_POWERONOFF_ALERT_INIT {OEMNV_POWERONOFF_DISABLE,OEMNV_POWERONOFF_DISABLE,OEMNV_POWERONOFF_DISABLE,OEMNV_POWERONOFF_ENABLE,OEMNV_POWERONOFF_ENABLE}
 #elif defined(FEATURE_VERSION_K232_Y105A)
@@ -260,7 +266,11 @@ when       who     what, where, why
 #elif defined(FEATURE_VERSION_W516_C260)
 #define OEMNV_RINGER_VOL_INIT {5,0,0,4,4} 
 #elif defined(FEATURE_ALERT_3AND1)
+#ifdef FEATURE_VERSION_KK5
+#define OEMNV_RINGER_VOL_INIT {4,0,4,4,4} 
+#else
 #define OEMNV_RINGER_VOL_INIT {5,0,4,4,4} 
+#endif
 #else
 #define OEMNV_RINGER_VOL_INIT {3,0,0,4,4}  
 #endif
@@ -504,11 +514,13 @@ typedef PACKED struct _Key_pad_Cfg
 #define OEMNV_DEFAULTNUMBER    			"8800933044" 
 #elif defined(FEATURE_VERSION_C260_IC19)
 #define OEMNV_DEFAULTNUMBER    			"00919212230707" 
+#elif defined(FEATURE_VERSION_KK5)
+#define OEMNV_DEFAULTNUMBER    			"+919611124269" 
 #else
 #define OEMNV_DEFAULTNUMBER    			"+919212230707" 
 #endif
 
-#if defined (FEATURE_VERSION_C260_IC19)||defined (FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_W021_GD821)
+#if defined (FEATURE_VERSION_C260_IC19)||defined(FEATURE_VERSION_KK5)||defined (FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_W021_GD821)
 #define OEMNV_ESN_TRACK_NUM    			"51718" 
 #define OEMNV_ESN_TRACK_NUM_TWO    		"09223053751" 
 #elif defined (FEATURE_VERSION_K232_Y101)
@@ -564,6 +576,8 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_DEFAULTRINGER       10
 #elif defined(FEATURE_VERSION_C01)
 #define   OEMNV_DEFAULTRINGER       1
+#elif defined(FEATURE_VERSION_KK5)
+#define   OEMNV_DEFAULTRINGER       23
 #elif defined(FEATURE_VERSION_C11)
 #ifdef FEATURE_VERSION_C310
 #define   OEMNV_DEFAULTRINGER       13
@@ -576,6 +590,8 @@ typedef PACKED struct _Key_pad_Cfg
 #endif
 #elif defined(FEATURE_VERSION_M74)
 #define   OEMNV_DEFAULTRINGER       11
+#elif defined (FEATURE_VERSION_KK5)
+#define   OEMNV_DEFAULTRINGER       23
 #elif defined(FEATURE_VERSION_GECOMSA_C204)
 #define   OEMNV_DEFAULTRINGER       13
 #elif defined(FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K232_Y100A)   
@@ -662,6 +678,9 @@ typedef PACKED struct _Key_pad_Cfg
 #elif defined(FEATURE_VERSION_IN50A)
 #define   OEMNV_STARTUP_MUSIC 12
 #define   OEMNV_SHUTDOWN_MUSIC 12
+#elif defined (FEATURE_VERSION_KK5)
+#define   OEMNV_STARTUP_MUSIC 22
+#define   OEMNV_SHUTDOWN_MUSIC 22
 #elif defined FEATURE_VERSION_C01
 #define   OEMNV_STARTUP_MUSIC 12
 #define   OEMNV_SHUTDOWN_MUSIC 12
@@ -778,6 +797,11 @@ typedef PACKED struct _Key_pad_Cfg
 /////////////////////////////////////////////////////////////////////////
 #define   OEMNV_SMARTSOUND_ENABLE   1
 #define   OEMNV_SMARTSOUND_DISABLE  0
+
+#ifdef FEATURE_CALL_REJECT_AUTO_MSG
+#define   OEMNV_CALL_REJECT_AUTO_MSG_ENABLE   1
+#define   OEMNV_CALL_REJECT_AUTO_MSG_DISABLE  0
+#endif
 
 /////////////////////////////////////////////////////////////////////////
 // Alert Type -- CFGI_ALERT_TYPE
@@ -1141,6 +1165,14 @@ typedef struct _OEMErrLogType {
 #define OEMNV_EMERG_NUM_TWO                    "101"
 #define OEMNV_EMERG_NUM_TRE                    "102"
 #define OEMNV_EMERG_NUM_FOR                    "108"
+#elif defined (FEATURE_VERSION_KK5)
+#define OEMNV_EMERT_SEZE                       5
+#define OEMNV_EMERG_NUM_LEN                    3
+#define OEMNV_EMERG_NUM_ONE                    "100"
+#define OEMNV_EMERG_NUM_TWO                    "101"
+#define OEMNV_EMERG_NUM_TRE                    "102"
+#define OEMNV_EMERG_NUM_FOR                    "112"
+#define OEMNV_EMERG_NUM_FIV                    "911"
 #elif defined(FEATURE_VERSION_K232_Y100A)
 #define OEMNV_EMERT_SEZE                       2
 #define OEMNV_EMERG_NUM_LEN                    3
@@ -1301,6 +1333,16 @@ typedef struct _SMS_RESTRICT_RECEIVE_Info
     AECHAR          szName[32 + 1];              //phoneNumber
 } sms_restrict_recive_info;
 #endif
+
+#ifdef FEATURE_CALL_RESTRICT
+#define MAX_CALL_RESTRICT 40//最多只能设40个黑名单
+typedef struct _CALL_RESTRICT_INFO
+{
+    //AECHAR          szName[33];                  //Name if exist
+    AECHAR          szNumber[33];                //Number
+} call_restrict_info;
+#endif
+
 
 typedef enum {
     OEMNV_RING_FIRST,

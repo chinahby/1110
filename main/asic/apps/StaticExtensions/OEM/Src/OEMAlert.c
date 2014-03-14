@@ -127,7 +127,7 @@ when       who     what, where, why
                            ( (vol) = (OEMSound_Volume_Type)((int)(vol) + 2) )
                            
 // How long the phone vibrates for each "ring"
-#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 #define TIME_MS_RINGERVIBRATE_DURATION          1000
 #else
 #define TIME_MS_RINGERVIBRATE_DURATION          2000
@@ -139,7 +139,7 @@ when       who     what, where, why
 #ifdef FEATURE_VERSION_W317A
 #define TIME_MS_RINGERVIBRATE_ALERT_DURATION    4000
 #else
-#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 #define TIME_MS_RINGERVIBRATE_ALERT_DURATION    6000
 #else
 #define TIME_MS_RINGERVIBRATE_ALERT_DURATION    12000
@@ -162,7 +162,7 @@ when       who     what, where, why
 #define TIME_MS_SMSVIBRATE_DURATION             8000
 #define COUNT_SMSVIBRATE_ALERTS_THEN_RING       2
 #else
-#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 #define TIME_MS_SMSVIBRATE_DURATION             1000
 #else
 #define TIME_MS_SMSVIBRATE_DURATION             2000
@@ -1995,7 +1995,7 @@ static int OEMALERT_PlayRinger
     OEMALERT_GetRingerVol(pMe);
 	#endif
 	#endif
-    #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+    #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
     pMe->m_ringCurVol = OEMSOUND_1ST_VOL;
     pMe->m_ringEndVol = OEMSOUND_1ST_VOL;
     #endif
@@ -3019,7 +3019,7 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
             break;
     }   
 
-    #if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)
+    #if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
     (void) ISHELL_SetTimer(pMe->m_pIShell,
                             (TIMEOUT_MS_RINGERVIB_TIMER*2),
                             OEMALERT_HandleRingerAlertTimer,

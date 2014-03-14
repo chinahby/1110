@@ -204,7 +204,11 @@ static rex_timer_type hsu_al_ms_rpt_timer;        /* dog report timer     */
 static rex_timer_type hsu_al_ms_polling_timer;    /* polling timer     */
 
 /* For INQUIRY data (vget_desc()) */
+#ifdef FEATURE_VERSION_KK5
+static char* inquiry_data_vendor = "Lemon C9";
+#else
 static char* inquiry_data_vendor = "Qualcomm";
+#endif
 static char* inquiry_data_product = "MMC Storage     ";
 static char* inquiry_data_prod_rev = "2.31";
 
