@@ -161,10 +161,11 @@ static NextFSMAction SettingMenu_StateIncomingHandler(CSettingMenu *pMe);
 static NextFSMAction SettingMenu_StateRestrictNumbersHandler(CSettingMenu *pMe); 
 static NextFSMAction SettingMenu_StateRestrictOptHandler(CSettingMenu *pMe); 
 
-#endif
+
 static NextFSMAction SettingMenu_StatePromptHandler(CSettingMenu *pMe); 
 static NextFSMAction SettingMenu_StateNumEditHandler(CSettingMenu *pMe); 
 static NextFSMAction SettingMenu_StateViewDetailHandler(CSettingMenu *pMe); 
+#endif
 
 static NextFSMAction SettingMenu_StateAutoAnswer_Mode(CSettingMenu *pMe);
 #ifdef FEATURE_VERSION_K232_Y101
@@ -410,7 +411,7 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
         case SETTINGMENUST_RESTRICTOPT:
             retVal = SettingMenu_StateRestrictOptHandler(pMe);
             break;    
-#endif
+
         case SETTINGMENUST_PROMPT:
             retVal = SettingMenu_StatePromptHandler(pMe);
             break;
@@ -422,7 +423,7 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
         case SETTINGMENUST_VIEW_DETAIL:
             retVal = SettingMenu_StateViewDetailHandler(pMe);  
             break;
-            
+#endif
         case SETTINGMENUST_AUTO_ANSWER:
             retVal = SettingMenu_StateAutoAnswer_Mode(pMe);
             break;
@@ -2690,11 +2691,11 @@ static NextFSMAction SettingMenu_StateCallRestrictHandler(CSettingMenu *pMe)
         case DLGRET_RESTRICTINCOMING:
             MOVE_TO_STATE(SETTINGMENUST_RESTRICTINCOMING)
             return NFSMACTION_CONTINUE;
-
+#ifdef FEATURE_CALL_RESTRICT
         case DLGRET_RESTRICTNUMBERS:
             MOVE_TO_STATE(SETTINGMENUST_RESTRICTNUMBERS)
             return NFSMACTION_CONTINUE;    
-
+#endif
         case DLGRET_CANCELED:
             MOVE_TO_STATE(SETTINGMENUST_CALLSETTING)
             return NFSMACTION_CONTINUE;
@@ -2900,7 +2901,6 @@ static NextFSMAction SettingMenu_StateRestrictOptHandler(CSettingMenu *pMe)
 
     return NFSMACTION_WAIT;
 }
-#endif
 
 
 static NextFSMAction SettingMenu_StatePromptHandler(CSettingMenu *pMe)
@@ -2987,6 +2987,7 @@ static NextFSMAction SettingMenu_StateViewDetailHandler(CSettingMenu *pMe)
 
     return NFSMACTION_WAIT;
 }
+#endif
 
 /*==============================================================================
 º¯Êý£º

@@ -407,7 +407,6 @@ static boolean Setting_RestrictOptsDlgEvent(CSettingMenu  *pMe,
 static boolean Setting_DelRestrict(CSettingMenu *pMe, uint16 index);
 static boolean Setting_DelAllRestrict(CSettingMenu *pMe);
 
-#endif
 static boolean Setting_Handle_Prompt(CSettingMenu *pMe,
 	AEEEvent eCode,
 	uint16 wParam,
@@ -423,6 +422,7 @@ static boolean Setting_Handle_View_Detail(CSettingMenu *pMe,
 	uint16 wParam,
 	uint32 dwParam
 );
+#endif
 
 static boolean Setting_Handle_Password(CSettingMenu *pMe,
 	AEEEvent eCode,
@@ -726,7 +726,6 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
 
         case IDD_RESTRICT_OPTS:            
             return Setting_RestrictOptsDlgEvent(pMe,eCode,wParam,dwParam);    
-#endif
         case IDD_PROMPT:
             return Setting_Handle_Prompt(pMe,eCode,wParam,dwParam);
 
@@ -735,6 +734,7 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
 
         case IDD_VIEW_DETAIL:
             return Setting_Handle_View_Detail(pMe,eCode,wParam,dwParam);    
+#endif
 
         case IDD_MSGBOX:
             return Setting_Handle_Msgbox(pMe,eCode,wParam,dwParam);
@@ -10542,7 +10542,6 @@ static boolean Setting_DelAllRestrict(CSettingMenu *pMe)
     return  result;
 }
 
-#endif
 
 static boolean  Setting_Handle_Prompt(CSettingMenu *pMe,
                                                AEEEvent       eCode,
@@ -10976,6 +10975,7 @@ static boolean  Setting_Handle_View_Detail(CSettingMenu  *pMe,
     return FALSE;
 }
 
+#endif
 
 /*==============================================================================
 º¯Êý£º
