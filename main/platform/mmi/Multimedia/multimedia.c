@@ -1116,7 +1116,7 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
 #ifdef FEATURE_ANALOG_TV
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_TV, IDS_MULTIMEDIA_TV, NULL, 0);
 #endif
-#if defined (FEATURE_VERSION_VG68) ||defined(FEATURE_VERSION_C01)
+#if defined (FEATURE_VERSION_VG68) ||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_K292_WSF_CN)
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_MEDIAGALLERY,IDS_MULTIMEDIA_MEDIAGALLERY, NULL, 0);
 #endif
 #if !defined(FEATURE_VERSION_K232_Y100)&&!defined(FEATURE_VERSION_K232_Y100A)&&!defined(FEATURE_VERSION_W021_GD821)
@@ -1673,7 +1673,7 @@ static int StartApplet(Multimed *pMe, int i)
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_TVAPP);
             break;
 #endif
-#if defined(FEATURE_VERSION_VG68)||defined(FEATURE_VERSION_C01)
+#if defined(FEATURE_VERSION_VG68)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_K292_WSF_CN)
         case IDS_MULTIMEDIA_MEDIAGALLERY:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
             break;
