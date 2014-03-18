@@ -1967,7 +1967,7 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
     // Press and hold the number key to get the number
 	#ifndef FEATURE_ALL_KEY_PAD
 
-	#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_1110W516) ||defined(FEATURE_VERSION_W027) || defined(FEATURE_VERSION_M74)||defined(FEATURE_VERSION_W516_C260)
+	#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_1110W516) ||defined(FEATURE_VERSION_W027) || defined(FEATURE_VERSION_M74)||defined(FEATURE_VERSION_W516_C260)|| defined(FEATURE_VERSION_K232_Y101)
 
     if ((eCode == EVT_KEY_RELEASE)||(eCode == EVT_KEY_PRESS))
     #else
@@ -13297,7 +13297,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 #if !defined (FEATURE_ALL_KEY_PAD)
 	        case AVK_STAR:
 
-#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_M74)||defined(FEATURE_VERSION_W516_C260)
+#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_M74)||defined(FEATURE_VERSION_W516_C260)|| defined(FEATURE_VERSION_K232_Y101)
 
               if(eCode == EVT_KEY_HELD)
               {
@@ -13315,7 +13315,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 #endif
               {
 
-                #if defined(FEATURE_VERSION_W515V3) ||defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_M74)||defined(FEATURE_VERSION_W516_C260)
+                #if defined(FEATURE_VERSION_W515V3) ||defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_M74)||defined(FEATURE_VERSION_W516_C260)|| defined(FEATURE_VERSION_K232_Y101)
 
                 	AEE_CancelTimer(TextCtl_keypadtimer,pContext);
                 	{    

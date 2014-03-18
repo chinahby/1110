@@ -327,6 +327,7 @@ enum
 	EVT_SMS_TRACKER,
 #endif
     EVT_ESN_EDIT_TRACKER,
+    EVT_ADS_ACCOUNT_EDIT,
 #if defined(FEATURE_SHOW_RSSI_INFO)
     EVT_RSSI_INFO,
 #endif

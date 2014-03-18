@@ -107,6 +107,7 @@ typedef struct _FileInfo
 #define AEEFS_ADDRESS_DIR  "fs:/address/"
 #define AEEFS_RINGERS_DIR  "fs:/ringers/"
 #define AEEFS_CARD0_DIR    "fs:/card0/"
+//#define AEEFS_MCF_PICTURE_DIR    "fs:/mod/10888/"
 
 //
 //
