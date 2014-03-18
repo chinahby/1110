@@ -52,6 +52,7 @@ ifneq ($(RESOURCEDIR),IN50_MMX)
 ifneq ($(RESOURCEDIR),KK3_MMX)
 ifneq ($(RESOURCEDIR),WSF_CN_P6)
 ifneq ($(RESOURCEDIR),WSF_CN_P7)
+ifneq ($(RESOURCEDIR),K292_WSF_K8C)
 ifeq ($(RESOURCEDIR),VHOPE)
 	CONSTFILE_FILES+=\
 		music.mp3|fs:/hsmm/music/music.mp3
@@ -75,6 +76,7 @@ endif
 endif
 endif
 endif	
+endif
 endif
 endif
 endif
@@ -122,6 +124,11 @@ ifeq ($(RESOURCEDIR),WSF_CN_P7)
     CONSTFILE_FILES+=\
 		Zadangbingderen.mp3|fs:/hsmm/music/Zadangbingderen.mp3\
 		Jiefangjunqichuanghao.mp3|fs:/hsmm/music/Jiefangjunqichuanghao.mp3
+endif
+ifeq ($(RESOURCEDIR),K292_WSF_K8C)
+    CONSTFILE_FILES+=\
+		Wufayuanliang.mp3|fs:/hsmm/music/Wufayuanliang.mp3\
+		Tianlaichuanqi.mp3|fs:/hsmm/music/Tianlaichuanqi.mp3
 endif
 # 加入另外一种语言资源文件
 ifneq ($(EXTLANG1),NO)
