@@ -206,9 +206,9 @@ static boolean initialize_sp0828_registers(uint16 dx, uint16 dy)
 	sp0828_i2c_write_byte(0x31,0x10);   //Upside/mirr/Pclk inv/sub
 	#endif
 	sp0828_i2c_write_byte(0xd8,0x58);
-	sp0828_i2c_write_byte(0xd9,0x60);   //0x50 //0x80
-	sp0828_i2c_write_byte(0xda,0x50);   // 0x48
-	sp0828_i2c_write_byte(0xdb,0x50);   //0x40
+	sp0828_i2c_write_byte(0xd9,0x80);   //0x50
+	sp0828_i2c_write_byte(0xda,0x48);
+	sp0828_i2c_write_byte(0xdb,0x40);
     sp0828_i2c_write_byte(0x36,0x00);
     
 	sp0828_i2c_write_byte(0x5f,0x11);
@@ -267,9 +267,9 @@ static boolean initialize_sp0828_registers(uint16 dx, uint16 dy)
 	sp0828_i2c_write_byte(0x57,0x10);
 	sp0828_i2c_write_byte(0x58,0x10);
 	sp0828_i2c_write_byte(0x59,0x10);
-	sp0828_i2c_write_byte(0x5a,0x0a);  //0x02 0x12
-	sp0828_i2c_write_byte(0x5b,0x0d);  //0x06 0x16
-	sp0828_i2c_write_byte(0x5c,0x30);  //0x28 0x38
+	sp0828_i2c_write_byte(0x5a,0x12);  //0x02
+	sp0828_i2c_write_byte(0x5b,0x16);  //0x06
+	sp0828_i2c_write_byte(0x5c,0x38);  //0x28
 	sp0828_i2c_write_byte(0x65,0x03);//sharpness
 	sp0828_i2c_write_byte(0x66,0x01);
 	sp0828_i2c_write_byte(0x67,0x03);
@@ -333,7 +333,7 @@ static boolean initialize_sp0828_registers(uint16 dx, uint16 dy)
 	sp0828_i2c_write_byte(0xd4,0x00);
 	sp0828_i2c_write_byte(0xd6,0x1c);
 	sp0828_i2c_write_byte(0xd7,0x16);
-	sp0828_i2c_write_byte(0xdd,0x68);// ;heq 0x70
+	sp0828_i2c_write_byte(0xdd,0x70);// ;heq
 	sp0828_i2c_write_byte(0xde,0xa0);  //0x90
 	sp0828_i2c_write_byte(0xb9,0x00);//;Ygamma F
 	sp0828_i2c_write_byte(0xba,0x04); 
@@ -367,8 +367,8 @@ static boolean initialize_sp0828_registers(uint16 dx, uint16 dy)
 	sp0828_i2c_write_byte(0xef,0x6c);
 	sp0828_i2c_write_byte(0xf7,0x70);//AEtarget   //0x88
 	sp0828_i2c_write_byte(0xf8,0x5b);//AEtarget   //0x73
-	sp0828_i2c_write_byte(0xf9,0x64);//AEtarget  //0x74
-	sp0828_i2c_write_byte(0xfa,0x4f);//AEtarget //0x5f
+	sp0828_i2c_write_byte(0xf9,0x74);//AEtarget
+	sp0828_i2c_write_byte(0xfa,0x5f);//AEtarget
 	sp0828_i2c_write_byte(0xfd,0x01);
 	sp0828_i2c_write_byte(0x09,0x31);	
 	sp0828_i2c_write_byte(0x0a,0x85);
