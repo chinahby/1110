@@ -443,7 +443,15 @@ typedef struct {
 #define DEFAULT_BREW_DOWNLOAD_FLG   (DIF_TEST_ALLOWED | DIF_SID_VALIDATE_ALL | DIF_MIN_FOR_SID)
 #define DEFAULT_BREW_APOLICY        APOLICY_SID
 #define DEFAULT_BREW_PPOLICY        PPOLICY_BREW_OR_CARRIER
-
+#elif defined(FEATURE_VERSION_K232_Y101)
+#define DEFAULT_BREW_CARRIER_ID     27
+#define DEFAULT_BREW_PLATFORM_ID    805004
+#define DEFAULT_BREW_USERNAME       "brew@brew.mtsindia.in"
+#define DEFAULT_BREW_PASSWORD       "MTS"
+#define DEFAULT_BREW_SERVER         "oemdemo.qualcomm.com"
+#define DEFAULT_BREW_DOWNLOAD_FLG   (DIF_TEST_ALLOWED | DIF_SID_VALIDATE_ALL | DIF_RUIM_DEL_OVERRIDE | DIF_MIN_FOR_SID)
+#define DEFAULT_BREW_APOLICY        APOLICY_SID
+#define DEFAULT_BREW_PPOLICY        PPOLICY_BREW_OR_CARRIER
 #elif defined(FEATURE_VERSION_KK5)
 #define DEFAULT_BREW_CARRIER_ID     27
 #define DEFAULT_BREW_PLATFORM_ID    600
@@ -649,8 +657,9 @@ typedef struct
    sChanInfo   fmRadio_chan_info[MAX_FMRADIO_STORED_CHANNEL];   //CFGI_FMRADIO_CHAN_INFO
    byte        fmRadio_chan_total;                              //CFGI_FMRADIO_CHAN_TOTAL
    EmergencyNum_Table    emerg_table;                 //CFGI_EMERGENCYNUM_TABLE
-#ifdef FEATURE_VERSION_K232_Y101
+#ifdef FEATURE_INTERNATIONAL_PREFIX
    AECHAR      prefix[FEATURE_CODE_MAX_LENTH];
+   boolean     b_prefix;    //CFGI_PREFIX_AUTO_MANUAL
 #endif   
    char     BUSY_ENABLE[FEATURE_CODE_MAX_LENTH];      //CFGI_CALLFORWARD_BUSY_ENABLE
    char     BUSY_DISABLE[FEATURE_CODE_MAX_LENTH];     //CFGI_CALLFORWARD_BUSY_DISABLE
@@ -1297,9 +1306,11 @@ static int OEMPriv_GetItem_CFGI_PEDOMETER_CHECK(void *pBuff);
 static int OEMPriv_SetItem_CFGI_PEDOMETER_CHECK(void *pBuff);
 static int OEMPriv_GetItem_CFGI_EMERGENCYNUM_TABLE(void *pBuff);
 static int OEMPriv_SetItem_CFGI_EMERGENCYNUM_TABLE(void *pBuff);
-#ifdef FEATURE_VERSION_K232_Y101
+#ifdef FEATURE_INTERNATIONAL_PREFIX
 static int OEMPriv_GetItem_CFGI_PREFIX(void *pBuff);
 static int OEMPriv_SetItem_CFGI_PREFIX(void *pBuff);
+static int OEMPriv_GetItem_CFGI_PREFIX_AUTO_MANUAL(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PREFIX_AUTO_MANUAL(void *pBuff);
 #endif
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_BUSY_ENABLE(void *pBuff);
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_BUSY_ENABLE(void *pBuff);
@@ -2093,8 +2104,9 @@ static OEMConfigListType oemi_cache = {
    , 0                                              //CFGI_FMRADIO_CHAN_TOTAL
 #endif
    ,OEMNV_EMERGENCYNUM_TABLE_NUM                                            //CFGI_EMERGENCYNUM_TABLE
-#ifdef FEATURE_VERSION_K232_Y101
+#ifdef FEATURE_INTERNATIONAL_PREFIX
    ,{OEMNV_PREFIX_DEFAULT}
+   ,TRUE                                                                   //CFGI_PREFIX_AUTO_MANUAL
 #endif   
    ,{OEMNV_CALLFORWARD_BUSY_ENABLE}                                         //CFGI_CALLFORWARD_BUSY_ENABLE
    ,{OEMNV_CALLFORWARD_BUSY_DISABLE}                                        //CFGI_CALLFORWARD_BUSY_DISABLE
@@ -2778,8 +2790,9 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_FMRADIO_CHAN_INFO, sizeof(sChanInfo) * MAX_FMRADIO_STORED_CHANNEL),
    CFGTABLEITEM(CFGI_FMRADIO_CHAN_TOTAL, sizeof(byte)),
    CFGTABLEITEM(CFGI_EMERGENCYNUM_TABLE,sizeof(EmergencyNum_Table)),
-#ifdef FEATURE_VERSION_K232_Y101
+#ifdef FEATURE_INTERNATIONAL_PREFIX
    CFGTABLEITEM(CFGI_PREFIX, FEATURE_CODE_MAX_LENTH), 
+   CFGTABLEITEM(CFGI_PREFIX_AUTO_MANUAL, sizeof(boolean)),     //CFGI_PREFIX_AUTO_MANUAL
 #endif   
    CFGTABLEITEM(CFGI_CALLFORWARD_BUSY_ENABLE,FEATURE_CODE_MAX_LENTH),
    CFGTABLEITEM(CFGI_CALLFORWARD_BUSY_DISABLE,FEATURE_CODE_MAX_LENTH),
@@ -3293,8 +3306,9 @@ void OEM_RestoreFactorySetting( void )
 #else
    oemi_cache.headset_autoanswer       = OEMNV_HEADSET_AUTOANSWER_OFF;
 #endif
-#ifdef FEATURE_VERSION_K232_Y101
-   WSTRCPY(oemi_cache.prefix, L"0091");  
+#ifdef FEATURE_INTERNATIONAL_PREFIX
+   WSTRCPY(oemi_cache.prefix, L"00");
+   oemi_cache.b_prefix= TRUE;     //CFGI_PREFIX_AUTO_MANUAL
 #endif
    oemi_cache.phone_password         = OEMNV_PHONE_PASSWORD;
    //oemi_cache.phone_password_check   = OEMNV_PHONE_PASSWORD_CHECK;  //ª÷∏¥≥ˆ≥ß…Ë÷√≤ªª÷∏¥Œ™≤ªºÏ≤‚ ÷ª˙√‹¬Î
@@ -3635,7 +3649,7 @@ void OEM_RestoreFactorySetting( void )
 
 #endif
 
-#ifdef FEATURE_VERSION_K232_Y101
+#ifdef FEATURE_INTERNATIONAL_PREFIX
    WSTRCPY(oemi_cache.prefix,OEMNV_PREFIX_DEFAULT);   //CFGI_PREFIX
 #endif
    STRCPY(oemi_cache.BUSY_ENABLE,OEMNV_CALLFORWARD_BUSY_ENABLE);   //CFGI_CALLFORWARD_BUSY_ENABLE
@@ -11290,7 +11304,7 @@ static int OEMPriv_SetItem_CFGI_EMERGENCYNUM_TABLE(void *pBuff)
     return SUCCESS;
 }
 
-#ifdef FEATURE_VERSION_K232_Y101
+#ifdef FEATURE_INTERNATIONAL_PREFIX
 static int OEMPriv_GetItem_CFGI_PREFIX(void *pBuff)
 {
     MEMCPY(pBuff, oemi_cache.prefix, sizeof(uint16) * FEATURE_CODE_MAX_LENTH);
@@ -11302,7 +11316,17 @@ static int OEMPriv_SetItem_CFGI_PREFIX(void *pBuff)
     OEMPriv_WriteOEMConfigList(); 
     return SUCCESS;
 }
-
+static int OEMPriv_GetItem_CFGI_PREFIX_AUTO_MANUAL(void *pBuff)   //CFGI_PREFIX_AUTO_MANUAL
+{
+    *(boolean *) pBuff = oemi_cache.b_prefix;
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_PREFIX_AUTO_MANUAL(void *pBuff)
+{
+    oemi_cache.b_prefix= *(boolean *)pBuff;
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
 #endif
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_BUSY_ENABLE(void *pBuff)
 {
@@ -13219,6 +13243,27 @@ extern char charsvc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1];
 void OEM_SetUCBROWSER_ADSAccount(void)
 {
 #ifndef WIN32
+
+#ifdef FEATURE_VERSION_K232_Y101
+    nv_item_type nvi;
+    char username[MAS_BREWSETINT_STRING] = {0};
+    char password[MAS_BREWSETINT_STRING] = {0};
+
+    OEMPriv_GetItem_CFGI_BREWSET_USENAME((void*)username);
+    OEMPriv_GetItem_CFGI_BREWSET_PASSWORD((void*)password);
+    
+    DBGPRINTF("OEM_SetBROWSER_ADSAccount username=%s ",username);
+    DBGPRINTF("OEM_SetBROWSER_ADSAccoun passwordt=%s",password);
+    
+    // ’À∫≈
+    (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)username);
+    nvi.pap_user_id.user_id_len = STRLEN((char *)username);
+    (void)OEMNV_Put(NV_PPP_USER_ID_I, &nvi);
+    // ’À∫≈√‹¬Î
+    (void)STRCPY((char *)nvi.pap_password.password, (char *)password);
+    nvi.pap_password.password_len = STRLEN((char *)password);
+    (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
+#else
     if(!gsdi_uim_omh_cap.omh_enabled)
     {
         nv_item_type nvi;
@@ -13239,6 +13284,7 @@ void OEM_SetUCBROWSER_ADSAccount(void)
         nvi.pap_password.password_len = STRLEN((char *)password);
         (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
     }
+#endif
 #endif
 } /* OEM_SetBAM_ADSAccount */
 //*************

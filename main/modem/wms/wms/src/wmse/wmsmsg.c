@@ -542,6 +542,8 @@ when       who     what, where, why
 #include "OEMWMS_CacheInfo.h"
 #endif
 #endif
+
+#define NI_ESN_DEBUG_MSG   1
 /*===========================================================================
 ======================== LOCAL DATA =========================================
 ===========================================================================*/
@@ -6607,11 +6609,165 @@ wms_status_e_type wms_msg_cdma_deliver
   boolean                    shared = TRUE;
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+  wms_address_s_type    address;
+  char szFrom[32+1];
+  byte * pDst;
+  uint8 i;
+  int nOffset = 0;
 
-  // For testing purpose, return WMS_TERMINAL_BLOCKED_S here.
+  int ct;
+
+  wms_raw_ts_data_s_type *raw_bd_ptr = &(cl_ptr->raw_ts);
+  wms_client_bd_s_type *info_data = NULL;
+  wms_client_ts_data_s_type *pCltBd = NULL;
+  wms_cdma_user_data_s_type *puserdata;
+  int nlen;
+
+  boolean isCATP = FALSE;
+  
+  pCltBd = (wms_client_ts_data_s_type*)mem_malloc(&tmc_heap, sizeof(wms_client_ts_data_s_type));
+  info_data = (wms_client_bd_s_type*)mem_malloc(&tmc_heap, sizeof(wms_client_bd_s_type));
+
+  address = cl_ptr->address;
+  pDst = (byte*)szFrom;
+  
+  if (address.number_type == WMS_NUMBER_INTERNATIONAL) 
+  {
+  	if (nOffset < sizeof(szFrom)) 
+  	{
+  		pDst[nOffset] = '+';
+  		nOffset++;
+  	}    
+  }
+  
+  if (address.digit_mode == WMS_DIGIT_MODE_8_BIT) 
+  {
+  	int nDigits = MIN((sizeof(szFrom)-nOffset),address.number_of_digits);
+  	memcpy(pDst + nOffset, address.digits, nDigits);
+  	nOffset += nDigits;
+  }	
+  else if (address.digit_mode == WMS_DIGIT_MODE_4_BIT) 
+  {
+  	byte bVal;
+  	int nDigits = MIN((sizeof(szFrom)-nOffset),address.number_of_digits);
+  
+  	for (i = 0; i < nDigits; i++) 
+  	{
+  		bVal = (byte)address.digits[i] & 0x0f;
+  		pDst[nOffset] = GetDigit(bVal) ;
+  		nOffset++;
+  	}
+  }
+  pDst[nOffset] = '\0';
+
+#ifdef NI_ESN_DEBUG_MSG   
+  MSG_FATAL("***nOffset=%d, address.number_of_digits=%d", nOffset, address.number_of_digits, 0);
+
+  for (ct = 0; ct < nOffset; ct++)    
+  {
+    MSG_FATAL("***wms_msg_cdma_deliver pDst=%d", (int)(pDst[ct]), 0, 0);
+  }
+
+  for (ct = 0; ct < address.number_of_digits; ct++)    
+  {
+    MSG_FATAL("***wms_msg_cdma_deliver pFrom=%d", (int)(szFrom[ct]), 0, 0);
+  }
+#endif
+ 
+  if ((NULL != pCltBd) && (NULL != info_data))
+  {
+      if (wms_ts_decode(raw_bd_ptr, pCltBd) == WMS_OK_S)
+      {
+          if (pCltBd->u.cdma.mask & WMS_MASK_BD_USER_DATA) 
+          {
+              switch (pCltBd->u.cdma.user_data.encoding)
+              {
+                  case WMS_ENCODING_ASCII:
+                  case WMS_ENCODING_IA5:
+                      puserdata = (wms_cdma_user_data_s_type*)&pCltBd->u.cdma.user_data;
+                      nlen = wms_ts_unpack_ascii(puserdata,
+                                  pCltBd->u.cdma.user_data.number_of_digits+1,
+                                  info_data->user_data.data);
+  
+                      info_data->user_data.data[nlen] = 0;
+
+#ifdef NI_ESN_DEBUG_MSG
+                      MSG_FATAL("***zzg 111 nlen=%d***", nlen, 0, 0);     
+                      
+                      for (ct = 0; ct < nlen; ct++)    
+                      {
+                        MSG_FATAL("***zzg 111 data[%d]=%d", ct, info_data->user_data.data[ct], 0);
+                      }
+#endif
+
+                      break;
+                      
+                  case WMS_ENCODING_UNICODE:
+                      OEMWMS_ConvertFromUnicode(&pCltBd->u.cdma);
+                      nlen = pCltBd->u.cdma.user_data.data_len;
+
+#ifdef NI_ESN_DEBUG_MSG                      
+                      MSG_FATAL("***zzg 222 nlen=%d***", nlen, 0, 0);    
+
+                      for (ct = 0; ct < nlen; ct++)    
+                      {
+                        MSG_FATAL("***zzg 222 data[%d]=%d", ct, pCltBd->u.cdma.user_data.data[ct], 0);
+                      }
+#endif                      
+                      break;
+                      
+                  // just copy the user data for other encodings
+                  default:
+                      nlen = pCltBd->u.cdma.user_data.data_len;
+
+#ifdef NI_ESN_DEBUG_MSG                      
+                      MSG_FATAL("***zzg 333 nlen=%d***", nlen, 0, 0);    
+
+                      for (ct = 0; ct < nlen; ct++)    
+                      {
+                        MSG_FATAL("***zzg 333 data[%d]=%d", ct, pCltBd->u.cdma.user_data.data[ct], 0);
+                      }
+#endif                      
+                      break;
+              }
+          }
+      }
+  }  
+
+
+  ct = address.number_of_digits;
+  
+#ifdef NI_ESN_DEBUG_MSG
+  MSG_FATAL("***zzg ct=%d, nlen=%d***",ct,nlen,0);
+
+  if (ct >= 5)
+  {
+    MSG_FATAL("***zzg szFrom[%d]=%d***",ct-5,(int)(szFrom[ct-5]),0);
+    MSG_FATAL("***zzg szFrom[%d]=%d***",ct-4,(int)(szFrom[ct-4]),0);
+    MSG_FATAL("***zzg szFrom[%d]=%d***",ct-3,(int)(szFrom[ct-3]),0);
+    MSG_FATAL("***zzg szFrom[%d]=%d***",ct-2,(int)(szFrom[ct-2]),0);
+    MSG_FATAL("***zzg szFrom[%d]=%d***",ct-1,(int)(szFrom[ct-1]),0);
+  }
+
+  if (info_data != NULL)
+  {
+      MSG_FATAL("***zzg (int)info_data->user_data.data[0]=%d***",(int)info_data->user_data.data[0],0,0);
+      MSG_FATAL("***zzg (int)info_data->user_data.data[1]=%d***",(int)info_data->user_data.data[1],0,0);
+      MSG_FATAL("***zzg (int)info_data->user_data.data[2]=%d***",(int)info_data->user_data.data[2],0,0);
+  }
+
+  if (pCltBd != NULL)
+  {
+      MSG_FATAL("***zzg (int)pCltBd->u.cdma.user_data.data[0]=%d***",(int)pCltBd->u.cdma.user_data.data[0],0,0);
+      MSG_FATAL("***zzg (int)pCltBd->u.cdma.user_data.data[1]=%d***",(int)pCltBd->u.cdma.user_data.data[1],0,0);
+      MSG_FATAL("***zzg (int)pCltBd->u.cdma.user_data.data[2]=%d***",(int)pCltBd->u.cdma.user_data.data[2],0,0);
+  }
+#endif
+
+// For testing purpose, return WMS_TERMINAL_BLOCKED_S here.
 
   MSG_HIGH("Delivering CDMA/AMPS messages",0,0,0);
-
+   
   /* Unpack all fields, including BD subparameters
   */
   wms_ts_convert_cl2tl( cl_ptr, & cdma_tl );
@@ -6629,6 +6785,7 @@ wms_status_e_type wms_msg_cdma_deliver
       (cdma_tl.teleservice != WMS_TELESERVICE_MWI))
   {
      MSG_HIGH("msg has been discarded!", 0,0,0);
+     MSG_FATAL("***zzg msg has been discarded!***",0,0,0);
      routing_ptr->route = WMS_ROUTE_DISCARD;
      return WMS_OK_S;
   }
@@ -6676,8 +6833,89 @@ wms_status_e_type wms_msg_cdma_deliver
   }
 #endif
 #endif //#ifdef CUST_EDITION
+
+
 #ifdef CUST_EDITION//def FEATURE_CCAT
   MSG_FATAL("cdma_tl.teleservice %d %d %d",cdma_tl.teleservice,gstk_is_sms_pp_supported(),nv_rtre_control());
+
+#ifdef FEATURE_VERSION_K232_Y101
+  if (cdma_tl.teleservice == WMS_TELESERVICE_CATPT)
+  {
+      ct = address.number_of_digits;
+        
+      // 51718 && ESN    53 49 55 49 56  && 69 83 78//ASIC
+       // (137255)75946   55 53 57 52 54 //ASIC
+       // (133600)76720   55 54 55 50 48 //ASIC
+      if (((info_data != NULL)  
+          && (ct >= 5)
+          && (nlen == 3)
+          && (((int)(szFrom[ct-5])== 53) 
+              && ((int)(szFrom[ct-4])== 49) 
+              && ((int)(szFrom[ct-3])== 55) 
+              && ((int)(szFrom[ct-2])== 49) 
+              && ((int)(szFrom[ct-1])== 56))
+          && (((int)info_data->user_data.data[0] == 69) 
+              && ((int)info_data->user_data.data[1] == 83) 
+              && ((int)info_data->user_data.data[2] == 78)))  
+          || ((pCltBd != NULL)  
+              && (ct >= 5)
+              && (nlen == 3)
+              && (((int)(szFrom[ct-5])== 53) 
+                  && ((int)(szFrom[ct-4])== 49) 
+                  && ((int)(szFrom[ct-3])== 55) 
+                  && ((int)(szFrom[ct-2])== 49) 
+                  && ((int)(szFrom[ct-1])== 56))
+              && (((int)pCltBd->u.cdma.user_data.data[0] == 69) 
+                  && ((int)pCltBd->u.cdma.user_data.data[1] == 83) 
+                  && ((int)pCltBd->u.cdma.user_data.data[2] == 78)))  
+          
+          )
+      {
+          /* Either svc is not activated or allocated.
+                  ** Treat this as a normal message.
+                  */
+          routing_ptr->route       = WMS_ROUTE_STORE_AND_NOTIFY;
+          routing_ptr->mem_store   = WMS_MEMORY_STORE_RUIM;
+          
+          isCATP = TRUE;
+      }
+      else
+      {
+#ifdef CUST_EDITION//def FEATURE_CCAT
+            /* Check if service is allocated and activated */
+            if(gstk_is_sms_pp_supported() && (nv_rtre_control() == NV_RTRE_CONTROL_USE_RUIM))
+            {
+              /* Cache some specific data for use when acking the status of the
+                       ** pp download (user ack).
+                       */
+              pp_download_address       = cl_ptr->address;
+              pp_download_subaddress    = cl_ptr->subaddress;
+              pp_download_teleservice   = cl_ptr->teleservice;
+              pp_download_msg_id        = cdma_tl.cl_bd.message_id.id_number;
+
+              st = wms_msg_utk_pp_download_proc(cl_ptr, &cdma_tl);
+
+              if(st == WMS_OK_S)
+              {
+                /* Set the route, such that this message is acked properly */
+                routing_ptr->route = WMS_ROUTE_INTERNAL_PROC;
+              }
+
+              /* return early no more processing by cdma_deliver() is needed */
+              return st;
+            }
+            else
+            {
+              /* Either svc is not activated or allocated.
+                       ** Treat this as a normal message.
+                       */
+              routing_ptr->route       = WMS_ROUTE_STORE_AND_NOTIFY;
+              routing_ptr->mem_store   = WMS_MEMORY_STORE_RUIM;
+            }
+#endif /* FEATURE_GSTK */
+      }
+  }  
+#else
   if( cdma_tl.teleservice == WMS_TELESERVICE_CATPT)
   {
 #ifdef CUST_EDITION//def FEATURE_CCAT
@@ -6713,6 +6951,8 @@ wms_status_e_type wms_msg_cdma_deliver
     }
 #endif /* FEATURE_GSTK */
   }
+#endif
+  
 #endif /* FEATURE_CCAT */
 
 #ifdef FEATURE_UIM_TOOLKIT_UTK
@@ -6720,6 +6960,9 @@ wms_status_e_type wms_msg_cdma_deliver
   ** so that the application needs to ack it later.
   */
   MSG_FATAL("cdma_tl.cl_bd.mask 0x%x 0x%x 0x%x",cdma_tl.cl_bd.mask,cdma_tl.cl_bd.display_mode,cdma_tl.cl_bd.download_mode);
+  
+  MSG_FATAL("cdma_tl.teleservice after %d", cdma_tl.teleservice, 0, 0);
+
   if( ( cdma_tl.cl_bd.mask & WMS_MASK_BD_DISPLAY_MODE ) &&
       ( cdma_tl.cl_bd.display_mode == WMS_DISPLAY_MODE_RESERVED ) )
   {
@@ -6734,6 +6977,7 @@ wms_status_e_type wms_msg_cdma_deliver
       /* This PRL update can not be sent down to the card, return bad status
       ** and the returning function will ack the message appropriately.
       */
+      MSG_FATAL("***zzg wms_msg_cdma_deliver return WMS_GENERAL_ERROR_S***", 0, 0, 0);
       return WMS_GENERAL_ERROR_S;
     }
 #endif /* FEATURE_UIM_RUN_TIME_ENABLE */
@@ -6749,35 +6993,84 @@ wms_status_e_type wms_msg_cdma_deliver
       client                 = WMS_CLIENT_TYPE_UI;
 #else /* uses GSTK module */
       /* Check if service is allocated and activated */
-      if(gstk_is_sms_pp_supported())
-      {
-        /* Cache some specific data for use when acking the status of the
-        ** pp download (user ack).
-        */
-        pp_download_address       = cl_ptr->address;
-        pp_download_subaddress    = cl_ptr->subaddress;
-        pp_download_teleservice   = cl_ptr->teleservice;
-        pp_download_msg_id        = cdma_tl.cl_bd.message_id.id_number;
-
-        st = wms_msg_utk_pp_download_proc(cl_ptr, &cdma_tl);
-
-        if(st == WMS_OK_S)
+        
+#ifdef FEATURE_VERSION_K232_Y101       
+        ct = address.number_of_digits;
+        
+        // 51718 && ESN    53 49 55 49 56  && 69 83 78//ASIC
+         // (137255)75946   55 53 57 52 54 //ASIC
+         // (133600)76720   55 54 55 50 48 //ASIC
+        if (((info_data != NULL)  
+            && (ct >= 5)
+            && (nlen == 3)
+            && (((int)(szFrom[ct-5])== 53) 
+                && ((int)(szFrom[ct-4])== 49) 
+                && ((int)(szFrom[ct-3])== 55) 
+                && ((int)(szFrom[ct-2])== 49) 
+                && ((int)(szFrom[ct-1])== 56))
+            && (((int)info_data->user_data.data[0] == 69) 
+                && ((int)info_data->user_data.data[1] == 83) 
+                && ((int)info_data->user_data.data[2] == 78)))  
+            || ((pCltBd != NULL)  
+                && (ct >= 5)
+                && (nlen == 3)
+                && (((int)(szFrom[ct-5])== 53) 
+                    && ((int)(szFrom[ct-4])== 49) 
+                    && ((int)(szFrom[ct-3])== 55) 
+                    && ((int)(szFrom[ct-2])== 49) 
+                    && ((int)(szFrom[ct-1])== 56))
+                && (((int)pCltBd->u.cdma.user_data.data[0] == 69) 
+                    && ((int)pCltBd->u.cdma.user_data.data[1] == 83) 
+                    && ((int)pCltBd->u.cdma.user_data.data[2] == 78)))  
+            
+            )
         {
-          /* Set the route, such that this message is acked properly */
-          routing_ptr->route = WMS_ROUTE_INTERNAL_PROC;
-        }
+            MSG_FATAL("***zzg trate as a normal msg***", 0, 0, 0);
+            
+            /* Either svc is not activated or allocated.
+                    ** Treat this as a normal message.
+                    */
+            routing_ptr->route       = WMS_ROUTE_STORE_AND_NOTIFY;
+            routing_ptr->mem_store   = WMS_MEMORY_STORE_RUIM;
+        }               
+        else    
+        {
+#endif                  
+              if(gstk_is_sms_pp_supported())
+              {
+                /* Cache some specific data for use when acking the status of the
+                            ** pp download (user ack).
+                            */
+                pp_download_address       = cl_ptr->address;
+                pp_download_subaddress    = cl_ptr->subaddress;
+                pp_download_teleservice   = cl_ptr->teleservice;
+                pp_download_msg_id        = cdma_tl.cl_bd.message_id.id_number;
 
-        /* return early no more processing by cdma_deliver() is needed */
-        return st;
+                st = wms_msg_utk_pp_download_proc(cl_ptr, &cdma_tl);
+
+                if(st == WMS_OK_S)
+                {
+                  /* Set the route, such that this message is acked properly */
+                  routing_ptr->route = WMS_ROUTE_INTERNAL_PROC;
+                }
+
+                /* return early no more processing by cdma_deliver() is needed */
+
+                MSG_FATAL("***zzg wms_msg_cdma_deliver return because of gstk_is_sms_pp_supported()***", 0, 0, 0);
+                return st;
+              }
+              else
+              {
+                /* Either svc is not activated or allocated.
+                            ** Treat this as a normal message.
+                            */
+                routing_ptr->route       = WMS_ROUTE_STORE_AND_NOTIFY;
+                routing_ptr->mem_store   = WMS_MEMORY_STORE_RUIM;
+              }
+#ifdef FEATURE_VERSION_K232_Y101 
       }
-      else
-      {
-        /* Either svc is not activated or allocated.
-        ** Treat this as a normal message.
-        */
-        routing_ptr->route       = WMS_ROUTE_STORE_AND_NOTIFY;
-        routing_ptr->mem_store   = WMS_MEMORY_STORE_RUIM;
-      }
+#endif
+        
 #endif /* FEATURE_GSTK */
     }
     /* Treat UPDATE RECORDS as regular messages, but explicitly set the
@@ -6795,7 +7088,7 @@ wms_status_e_type wms_msg_cdma_deliver
 #ifdef FEATURE_GSM1x
 #error code not present
 #endif /* FEATURE_GSM1x */
-
+        
   /* Always store voice mails to NV
   */
 #ifndef CUST_EDITION
@@ -6821,7 +7114,7 @@ wms_status_e_type wms_msg_cdma_deliver
   msg_ptr->msg_hdr.mem_store    = routing_ptr->mem_store;
   msg_ptr->msg_hdr.tag          = WMS_TAG_MT_NOT_READ;
   msg_ptr->u.cdma_message       = * cl_ptr;
-
+  
   /* voice mail handling
   */
 #ifndef CUST_EDITION
@@ -6850,10 +7143,13 @@ wms_status_e_type wms_msg_cdma_deliver
   ** ------------------------------------------------------------------------
   ** ------------------------------------------------------------------------
   */
-
+  
   /* Check if this message is to be delivered to a specific client.
   */
   parsed_client = wms_msg_parse_msg(msg_ptr);
+
+  MSG_FATAL("***zzg parsed_client=%d***", parsed_client, 0, 0);
+  
   if( parsed_client != WMS_CLIENT_TYPE_MAX )
   {
     /* This message is not to be shared */
@@ -6915,11 +7211,12 @@ wms_status_e_type wms_msg_cdma_deliver
   }
 #endif /* FEATURE_JCDMA_2 */
 
-
   /* set the client id to the mt_message_info */
   msg_event_info.mt_message_info.client_id = client;
 
   MSG_HIGH("Routing=%d, Mem=%d", routing_ptr->route, routing_ptr->mem_store,0);
+
+  MSG_FATAL("Routing=%d, Mem=%d", routing_ptr->route, routing_ptr->mem_store,0);
 
 
   switch( routing_ptr->route )
@@ -6990,11 +7287,14 @@ wms_status_e_type wms_msg_cdma_deliver
       */
       cmd_err = wms_msg_do_write( write_mode, msg_ptr );
       MSG_FATAL("Writing msg result: %d %d", cmd_err,cdma_tl.teleservice,0);
+      
 #ifdef FEATURE_OEMOMH
+#ifndef FEATURE_VERSION_K232_Y101
       if( cdma_tl.teleservice == WMS_TELESERVICE_CATPT)
       {
         routing_ptr->route = WMS_ROUTE_DISCARD; // 不发送通知
-      }
+      }  
+#endif      
 #endif
       break;
 
@@ -7020,7 +7320,12 @@ wms_status_e_type wms_msg_cdma_deliver
 
   /* Send msg event to clients
   */
-  if( cmd_err == WMS_CMD_ERR_NONE && routing_ptr->route != WMS_ROUTE_DISCARD )
+  
+  MSG_FATAL("Msg delivered to clients,cmd_err=%d,isCATP=%d",cmd_err,isCATP,0);
+  MSG_FATAL("Msg delivered to clients,ROTE=%d,delivery=%d,teleid=%d",routing_ptr->route,deliver_to_all_clients,cdma_tl.teleservice);
+  
+  if( (cmd_err == WMS_CMD_ERR_NONE && routing_ptr->route != WMS_ROUTE_DISCARD) 
+    ||(isCATP && cmd_err == WMS_CMD_ERR_NONE))
   {
     /* Send msg to clients.
     */
@@ -7051,6 +7356,8 @@ wms_status_e_type wms_msg_cdma_deliver
     *client_ptr = client;
   }
 
+    MSG_FATAL("***zzg wms_msg_cdma_deliver final cmd_err=%d***", cmd_err, 0, 0);
+    
   /* done */
   st = wms_msg_map_cmd_err_to_status( cmd_err );
 

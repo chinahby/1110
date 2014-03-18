@@ -593,7 +593,7 @@ uint8 wms_ts_encode_address
 )
 {
   uint8   i, pos = 0;
-
+  
   if( addr->number_of_digits > WMS_GW_ADDRESS_MAX )
   {
     MSG_ERROR("Addr len too long: %d", addr->number_of_digits,0,0);
@@ -648,6 +648,7 @@ uint8 wms_ts_encode_address
       pos ++;
     }
   }
+  
   /* done */
   return pos;
 } /* wms_ts_encode_address() */
@@ -731,7 +732,7 @@ uint8 wms_ts_decode_address
   addr->number_type = (wms_number_type_e_type) (( data[pos] & 0x70 ) >> 4);
   addr->number_plan = (wms_number_plan_e_type) (data[pos] & 0x0F);
   pos ++;
-
+  
   if (addr->number_type == WMS_NUMBER_ALPHANUMERIC )
   {
     uint8 bytes_increment=0;

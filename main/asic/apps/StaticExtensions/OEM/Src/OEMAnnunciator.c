@@ -1143,7 +1143,7 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
  
     if (!pMe->m_coreObj->cached) 
     {
-#if defined(FEATURE_VERSION_C316)								
+#if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_K232_Y101)								
 		IRUIM               *pIRUIM;
 		int nRet = 0;
 	    nRet = ISHELL_CreateInstance(pMe->m_piShell,

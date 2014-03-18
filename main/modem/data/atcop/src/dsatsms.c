@@ -1028,6 +1028,8 @@ LOCAL void sms_msg_cb_func
   dsm_item_type * ds_cmd_buff = NULL;
   dsm_watermark_type * wm_to_use = &dsat_sms_wm;
 
+  MSG_FATAL("***zzg sms_msg_cb_func event=%d***", event, 0, 0);
+
   if( event_ptr == NULL )
   {
     ERR_FATAL("Null event_ptr",0,0,0);

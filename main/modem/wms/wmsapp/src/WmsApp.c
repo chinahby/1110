@@ -3056,7 +3056,7 @@ static boolean WMSAPP_CheckCDMAFlashSMSMessage
   }
 
   if((pClientBD->mask & WMS_MASK_BD_VALID_REL)
-     && (WMSAPP_RELATIVE_VALIDITY_IMMEDIATE == 
+     || (WMSAPP_RELATIVE_VALIDITY_IMMEDIATE == 
          wms_ts_encode_relative_time(&pClientBD->validity_relative)))
   {
     ret_value = TRUE;

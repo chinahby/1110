@@ -2674,13 +2674,15 @@ wms_status_e_type wms_ts_cdma_encode_address
   uint8        digit_size;
   uint32       i;
 
+  MSG_FATAL("***zzg wms_ts_cdma_encode_address address_ptr->digit_mode=%d, address_ptr->number_mode=%d, address_ptr->number_of_digits=%d***", address_ptr->digit_mode, address_ptr->number_mode, address_ptr->number_of_digits);
+  MSG_FATAL("***zzg wms_ts_cdma_encode_address address_ptr->number_plan=%d, address_ptr->number_type=%d***", address_ptr->number_plan, address_ptr->number_type, 0);
+
   /*---- checking ---- */
   if ( address_ptr == NULL || parm_len_ptr == NULL || data == NULL)
   {
-    MSG_ERROR("wms_ts_encode_address null ptr!",0,0,0);
+    MSG_ERROR("wms_ts_cdma_encode_address null ptr!",0,0,0);
     return WMS_NULL_PTR_S;
   }
-
 
   /* Digit Mode */
   b_packb( (uint8) address_ptr->digit_mode,
@@ -2695,7 +2697,7 @@ wms_status_e_type wms_ts_cdma_encode_address
            (uint16) (bit_pos),
            1 );
   bit_pos++;
-
+  
   /* Number type */
   if( address_ptr->digit_mode == WMS_DIGIT_MODE_8_BIT )
   {
@@ -2748,8 +2750,8 @@ wms_status_e_type wms_ts_cdma_encode_address
     bit_pos += digit_size;
   }
 
-  *parm_len_ptr = (uint8) (bit_pos/8);
-
+  *parm_len_ptr = (uint8) (bit_pos/8);  
+  
   return st;
 
 } /* wms_ts_cdma_encode_address() */

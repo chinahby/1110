@@ -506,7 +506,7 @@ typedef PACKED struct _Key_pad_Cfg
 #endif
 #endif
 
-#if defined(FEATURE_VERSION_W317A)
+#if defined(FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_K232_Y101)
 #define OEMNV_DEFAULTNUMBER    			"+919211722715" 
 #elif defined(FEATURE_VERSION_C316)
 #define OEMNV_DEFAULTNUMBER    			"+919582943043" 

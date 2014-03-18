@@ -2871,7 +2871,8 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
 			    ISOUND_SetVolume(pMe->m_pSound,
 			                    GET_ISOUND_VOL_LEVEL((uint8) vol));  
                 #endif
-                #if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W208S)
+                
+#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_K232_Y101)
                 ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION/2);
                 #else
                 //ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
@@ -2923,7 +2924,12 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
 						pMe->m_iAlert = FALSE;
 					}
 #else
+
+#ifdef FEATURE_VERSION_K232_Y101
+                    ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION/2);
+#else
 					ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
+#endif
 #endif
 					
                 }
@@ -3004,7 +3010,11 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
 					pMe->m_iAlert = FALSE;
 				}
 #else
+#ifdef FEATURE_VERSION_K232_Y101
+                ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION/2);
+#else
 				ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
+#endif
 #endif
                 break;     
         
