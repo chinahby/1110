@@ -1,0 +1,15 @@
+#-------------------------------------------------------------------------------
+# FACEBOOK
+#-------------------------------------------------------------------------------
+
+vpath %.mod $(FACEBOOK)
+vpath %.mif $(FACEBOOK)
+vpath %.bar $(FACEBOOK)
+
+CONSTFILE_BIN_FILES+=\
+    facebook.mif|fs:/mif/facebook.mif \
+    facebook.mod|fs:/mod/facebook/facebook.mod \
+    fblite.bar|fs:/mod/facebook/fblite.bar
+
+
+

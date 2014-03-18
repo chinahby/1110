@@ -1,0 +1,15 @@
+#-------------------------------------------------------------------------------
+# MYMTS
+#-------------------------------------------------------------------------------
+
+vpath %.mod $(MYMTS)
+vpath %.mif $(MYMTS)
+vpath %.bar $(MYMTS)
+
+CONSTFILE_BIN_FILES+=\
+    mtsodp.mif|fs:/mif/mtsodp.mif \
+    mtsodp.bar|fs:/mod/mtsodp/mtsodp.bar \
+    mtsodp.mod|fs:/mod/mtsodp/mtsodp.mod
+
+
+
