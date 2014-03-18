@@ -4538,16 +4538,11 @@ Added Defines for Reset and Set DWA bit in Rx Filter Reg in ADIE.
 {                                                                          \
     ADIE_REFERENCE_CONTROL1_R,           ADIE_REFERENCE_CONTROL1_INIT_M,          ADIE_REFERENCE_CONTROL1_INIT_V,                                       0, \
   ADIE_REFERENCE_CONTROL2_R,           ADIE_REFERENCE_CONTROL2_INIT_M,          ADIE_REFERENCE_CONTROL2_INIT_V,                                       0, \
-  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_58P5_LEGACY_MINUS_58P5_CAPLESS_DB_V,  0, \
-  /*0xA0*/ADIE_RX_PA_CONTROL_REGISTER8_R,      ADIE_RX_PA_CONTROL_REGISTER8_INIT_M,     ADIE_RX_PA_CONTROL8_HPH_RIGHT_PA_GAIN_MINUS_58P5_LEGACY_MINUS_58P5_CAPLESS_DB_V, 0, \
   ADIE_AUX_PGA_CONTROL1_R,             ADIE_AUX_PGA_CONTROL1_INIT_M,            ADIE_AUX_PGA_CONTROL1_INIT_V,                                         0, \
   ADIE_CODEC_TX_CNTL_REGISTER1_R,      ADIE_CODEC_TX_CNTL_REGISTER1_INIT_M,     (ADIE_CODEC_TX_CNTL_REG1_TX_FE_ENA_V                                     \
                                                                                  | ADIE_CODEC_TX_CNTL_REG1_TX_FE_GAIN_24_DB_V                            \
                                                                                  | ADIE_CODEC_TX_CNTL_REG1_TX_FE_MIC1_IN_SEL_ENA_V),                  0, \
   ADIE_CODEC_TX_CNTL_REGISTER2_R,      ADIE_CODEC_TX_CNTL_REGISTER2_INIT_M,     ADIE_CODEC_TX_CNTL_REGISTER2_INIT_V,                                  0, \
- /*0x97*/ADIE_RX_PA_ENABLE_REGISTER1_R,       ADIE_RX_PA_ENABLE_REGISTER1_INIT_M,      (ADIE_RX_PA_ENA_REG1_PA_BIAS_DISTRIBUTE_ENA_V                                       \
-                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_LEFT_REF_BUFFER_ENA_V                                            \
-                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_RIGHT_REF_BUFFER_ENA_V),                                      0, \
   ADIE_CODEC_TX_ADC_REGISTER_R,        ADIE_CODEC_TX_ADC_REGISTER_INIT_M,       (ADIE_CODEC_TX_ADC_REF_ENA_V                                             \
                                                                                  | ADIE_CODEC_TX_ADC_DAC_REF_COMPENSATE_ENA_V                            \
                                                                                  | ADIE_CODEC_TX_ADC_OTA1_ENA_V                                          \
@@ -4579,42 +4574,20 @@ Added Defines for Reset and Set DWA bit in Rx Filter Reg in ADIE.
   ADIE_RX_FILTER_CONTROL_REGISTER4_R,  ADIE_RX_FILTER_CONTROL_REGISTER4_INIT_M, (ADIE_RX_FILTER_CONTROL4_DAC_REF_BUFFER_BIAS_105_UA_V                    \
                                                                                  | ADIE_RX_FILTER_CONTROL4_OTA1_BIAS_005_UA_V                            \
                                                                                  | ADIE_RX_FILTER_CONTROL4_OTA2_BIAS_05_UA_V),                        0, \
-  ADIE_RX_PA_ENABLE_REGISTER1_R,       ADIE_RX_PA_ENABLE_REGISTER1_INIT_M,      (ADIE_RX_PA_ENA_REG1_PA_BIAS_DISTRIBUTE_ENA_V                                \
-  																				 | ADIE_RX_PA_ENA_REG1_HPH_LEFT_REF_BUFFER_ENA_V                                    \
-                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_LEFT_ENA_V                                               \
-                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_RIGHT_REF_BUFFER_ENA_V                                   \
-                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_RIGHT_ENA_V),                               0, \
+  ADIE_RX_PA_ENABLE_REGISTER1_R,       ADIE_RX_PA_ENABLE_REGISTER1_INIT_M,      ADIE_RX_PA_ENA_REG1_PA_BIAS_DISTRIBUTE_ENA_V,                         0, \
   ADIE_RX_PA_ENABLE_REGISTER2_R,       ADIE_RX_PA_ENABLE_REGISTER2_INIT_M,      (ADIE_RX_PA_ENA_REG2_PMIC_LINE_OUT_LEFT_REF_BUFFER_ENA_V             \
-  																				 | ADIE_RX_PA_ENABLE_REGISTER2_INIT_V                                  \
                                                                                  | ADIE_RX_PA_ENA_REG2_PMIC_LINE_OUT_LEFT_ENA_V                      \
                                                                                  | ADIE_RX_PA_ENA_REG2_PMIC_LINE_OUT_RIGHT_REF_BUFFER_ENA_V          \
                                                                                  | ADIE_RX_PA_ENA_REG2_PMIC_LINE_OUT_RIGHT_ENA_V ),               0, \
   ADIE_RX_PA_CONTROL_REGISTER1_R,      ADIE_RX_PA_CONTROL_REGISTER1_INIT_M,     (ADIE_RX_PA_CONTROL1_RX_FILTER_TO_PMIC_LINEOUT_CONNECT_MONO_V            \
-                                                                                 | ADIE_RX_PA_CONTROL1_RX_FILTER_TO_HPH_CONNECT_MONO_V                \
-                                                                                 | ADIE_RX_PA_CONTROL1_HPH_PA_CONFIG_CAPLESS_V                        \
-																				 | MSMAUD_ADIE_RX_PA_CNTL1_HPH_PA_CNFIG_MODE),                        0, \
+                                                                                 | MSMAUD_ADIE_RX_PA_CNTL1_HPH_PA_CNFIG_MODE),                        0, \
   ADIE_RX_PA_CONTROL_REGISTER2_R,      ADIE_RX_PA_CONTROL_REGISTER2_INIT_M,     ADIE_RX_PA_CONTROL_REGISTER2_INIT_V,                                  0, \
   ADIE_RX_PA_CONTROL_REGISTER3_R,      ADIE_RX_PA_CONTROL_REGISTER3_INIT_M,     ADIE_RX_PA_CONTROL_REGISTER3_INIT_V,                                  0, \
-  ADIE_RX_PA_CONTROL_REGISTER4_R,      ADIE_RX_PA_CONTROL_REGISTER4_INIT_M,     (ADIE_RX_PA_CONTROL4_PMIC_LINEOUT_PA_OUTPUT_STAGE_BIAS_NOMINAL_V         \
-                                                                                 | ADIE_RX_PA_CONTROL4_HPH_PA_OUTPUT_STAGE_BIAS_180_UA_LEGACY_0830_UA_CAPLESS_V),      0, \
-  ADIE_RX_PA_CONTROL_REGISTER5_R,      ADIE_RX_PA_CONTROL_REGISTER5_INIT_M,     (ADIE_RX_PA_CONTROL5_LINEOUT_PA_INPUT_BIAS_12P5_UA_V                     \
-                                                                                 | ADIE_RX_PA_CONTROL5_HPH_PA_INPUT_BIAS_10P0_UA_V),                  0, \
-  ADIE_RX_PA_CONTROL_REGISTER6_R,      ADIE_RX_PA_CONTROL_REGISTER6_INIT_M,     (ADIE_RX_PA_CONTROL6_PMIC_LINEOUT_RIGHT_PA_POLARITY_INVERTED_ENA_V       \
-                                                                                 | ADIE_RX_PA_CONTROL_REGISTER6_INIT_V),                              0, \
+  ADIE_RX_PA_CONTROL_REGISTER4_R,      ADIE_RX_PA_CONTROL_REGISTER4_INIT_M,     ADIE_RX_PA_CONTROL4_PMIC_LINEOUT_PA_OUTPUT_STAGE_BIAS_NOMINAL_V,      0, \
+  ADIE_RX_PA_CONTROL_REGISTER5_R,      ADIE_RX_PA_CONTROL_REGISTER5_INIT_M,     ADIE_RX_PA_CONTROL5_LINEOUT_PA_INPUT_BIAS_12P5_UA_V,                  0, \
+  ADIE_RX_PA_CONTROL_REGISTER6_R,      ADIE_RX_PA_CONTROL_REGISTER6_INIT_M,     ADIE_RX_PA_CONTROL6_PMIC_LINEOUT_RIGHT_PA_POLARITY_INVERTED_ENA_V,    0, \
   ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL_REGISTER7_INIT_V,                                  0, \
   ADIE_RX_PA_CONTROL_REGISTER8_R,      ADIE_RX_PA_CONTROL_REGISTER8_INIT_M,     ADIE_RX_PA_CONTROL_REGISTER8_INIT_V,                                  0, \
-  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_34P5_LEGACY_MINUS_34P5_CAPLESS_DB_V,  0, \
-  /*0xA0*/ADIE_RX_PA_CONTROL_REGISTER8_R,      ADIE_RX_PA_CONTROL_REGISTER8_INIT_M,     ADIE_RX_PA_CONTROL8_HPH_RIGHT_PA_GAIN_MINUS_34P5_LEGACY_MINUS_34P5_CAPLESS_DB_V, 0, \
-  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_22P5_LEGACY_MINUS_22P5_CAPLESS_DB_V,  0, \
-  /*0xA0*/ADIE_RX_PA_CONTROL_REGISTER8_R,      ADIE_RX_PA_CONTROL_REGISTER8_INIT_M,     ADIE_RX_PA_CONTROL8_HPH_RIGHT_PA_GAIN_MINUS_22P5_LEGACY_MINUS_22P5_CAPLESS_DB_V, 0, \
-  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_16P5_LEGACY_MINUS_16P5_CAPLESS_DB_V,  0, \
-  /*0xA0*/ADIE_RX_PA_CONTROL_REGISTER8_R,      ADIE_RX_PA_CONTROL_REGISTER8_INIT_M,     ADIE_RX_PA_CONTROL8_HPH_RIGHT_PA_GAIN_MINUS_16P5_LEGACY_MINUS_16P5_CAPLESS_DB_V, 0, \
-  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_10P5_LEGACY_MINUS_10P5_CAPLESS_DB_V,  0, \
-  /*0xA0*/ADIE_RX_PA_CONTROL_REGISTER8_R,      ADIE_RX_PA_CONTROL_REGISTER8_INIT_M,     ADIE_RX_PA_CONTROL8_HPH_RIGHT_PA_GAIN_MINUS_10P5_LEGACY_MINUS_10P5_CAPLESS_DB_V, 0, \
-  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_04P5_LEGACY_MINUS_04P5_CAPLESS_DB_V,  0, \
-  /*0xA0*/ADIE_RX_PA_CONTROL_REGISTER8_R,      ADIE_RX_PA_CONTROL_REGISTER8_INIT_M,     ADIE_RX_PA_CONTROL8_HPH_RIGHT_PA_GAIN_MINUS_04P5_LEGACY_MINUS_04P5_CAPLESS_DB_V, 0, \
-  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_NONE_LEGACY_PLUS_0P0_CAPLESS_DB_V,  0, \
-  /*0xA0*/ADIE_RX_PA_CONTROL_REGISTER8_R,      ADIE_RX_PA_CONTROL_REGISTER8_INIT_M,     ADIE_RX_PA_CONTROL8_HPH_RIGHT_PA_GAIN_NONE_LEGACY_PLUS_0P0_CAPLESS_DB_V, 0, \
   /*0x83,     0xFF,   0x18,   0,*/ \
   /*0x84,     0xFF,   0x00,   0,*/ \
   /*0x86,     0xFF,   0x08,   0,*/ \
