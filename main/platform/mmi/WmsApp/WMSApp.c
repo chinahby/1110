@@ -581,6 +581,7 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     #ifdef FEATURE_FLASH_SMS
 	pMe->m_bflash_sms = FALSE;              //add by yangdecai 2011-04-01
 	#endif
+    pMe->m_bIsEsn = FALSE;                 
     // 取保存的配置信息
     WmsApp_GetPrefs(pMe);
     if (pMe->m_cfg.nInitIndictor != WMS_CFG_VERSION) // 当前版本未初始化
@@ -917,8 +918,8 @@ static boolean WMSAPP_CheckCDMAFlashSMSMessage
     MSG_ERROR("Null Parameter Passed in WMSAPP_CheckCDMAFlashSMSMessage", 0, 0, 0);
     return ret_value;
   }
-  MSG_FATAL("temp================%d",temp,0,0);
-  MSG_FATAL("pClientBD->display_mode========%d",pClientBD->display_mode,0,0);
+  MSG_FATAL("temp================%d,,pClientBD->mask==%d",temp,pClientBD->mask,0);
+  MSG_FATAL("pClientBD->display_mode========%d,==%d,,===%d",pClientBD->display_mode,pClientBD->mask & WMS_MASK_BD_VALID_REL,pClientBD->mask & WMS_MASK_BD_DISPLAY_MODE);
   if((pClientBD->mask & WMS_MASK_BD_VALID_REL)
      && (WMSAPP_RELATIVE_VALIDITY_IMMEDIATE == 
          wms_ts_encode_relative_time(&pClientBD->validity_relative)))
@@ -1335,6 +1336,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
         case EVT_WMS_CFG_MEMORY_STATUS:
             WmsApp_UpdateMemoryStatus(pMe,&((wms_cfg_event_info_s_type *)dwParam)->memory_status);
             WMSAPPU_SYSFREE(dwParam);
+            MSG_FATAL("***zzg WmsApp WmsApp_UpdateAnnunciators 111***", 0, 0, 0);
             WmsApp_UpdateAnnunciators(pMe);
             return TRUE;
         
@@ -1370,6 +1372,8 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             
         case EVT_WMS_MSG_MODIFY_TAG:
             WMSAPPU_SYSFREE(dwParam)
+
+            MSG_FATAL("***zzg WmsApp WmsApp_UpdateAnnunciators 222***", 0, 0, 0);
 
             // 更新图标
             WmsApp_UpdateAnnunciators(pMe);
@@ -2026,7 +2030,7 @@ Exit:
         int nRet;
 		wms_address_s_type			 address;		
 		char szFrom[32+1];
-
+        
         /*
 		char orgNumOne[12] = {'5','1','7','1','8',0};//{'1','5','9','9','9','6','6','8','5','9','2',0};//{'1','3','3','6','0','0','7','6','7','2','0',0};
 		char orgNumTwo[12] = {'9','6','5','0','5','9','0','5','3','2',0}; //{'1','2','1',0};   //{'9','6','5','0','5','9','0','5','3','2',0}
@@ -2105,13 +2109,150 @@ Exit:
 		
         memset(strnumbertwo,0,sizeof(strnumbertwo));
         OEM_GetConfig(CFGI_ESN_TRACK_NUMBER_TWO, strnumbertwo, sizeof(strnumbertwo)); 
+
+        DBGPRINTF("***zzg WmsApp szFrom=%s***", szFrom);
+        DBGPRINTF("***zzg WmsApp pDst=%d***", pDst);
+        DBGPRINTF("***zzg WmsApp buf=%s***", (char *)buf);       
+        
+        if (STRLEN(szFrom) >= 5)
+        {
+            char test[10];
+            STRNCPY(test, szFrom+(STRLEN(szFrom)-5), 5);  
+            DBGPRINTF("***zzg WmsApp test start***");
+            DBGPRINTF("***zzg szFrom=%s***", szFrom);
+            DBGPRINTF("***zzg test=%s***", test);
+
+            if (((STRCMP(test, "51718") == 0) || (STRCMP(test, "75946") == 0)|| (STRCMP(test, "76720") == 0)) && (STRNCMP((char *)buf,"ESN",3) == 0) && len == 3)
+            {
+                uint16 wIndex=0;
+    		    wms_cache_info_node  *pnode = NULL;
+    		    int i;
+    		    wms_cache_info_node  *pnode2 = NULL;   
+    		    wms_cache_info_node             *TempCurMsgNodes[LONGSMS_MAX_PACKAGES];
+    		    int nRet,nCount=0;
+    		    wms_cache_info_list   *pList = NULL;
+    		    boolean bUIMSMS = FALSE;
+    			uint32 wRealIndex = 0;
+    			wms_memory_store_e_type mem = WMS_MEMORY_STORE_NV_CDMA;
+    		    pList = wms_get_cacheinfolist(WMS_MB_INBOX);
+    		    if (NULL != pList)
+    		    {
+    		        wIndex = pList->nBranches+1;
+    		    }         
+    		    else
+    		    {
+    		        wIndex = 0;
+    		    }
+    			
+    			wRealIndex = info->mt_message_info.message.msg_hdr.index;
+    			mem = info->mt_message_info.message.msg_hdr.mem_store;
+    		    MSG_FATAL("#######liyz sms is network initiated requst sms windex %d,wRealIndex %d,mem %d",wIndex,wRealIndex,mem);
+    			#if 0 // liyz add for test @131205
+    		    // 取消息 cache info 节点
+    		    if (wIndex>=RUIM_MSGINDEX_BASE)
+    		    {
+    		        wIndex = wIndex - RUIM_MSGINDEX_BASE;
+    		        pnode = wms_cacheinfolist_getnode(WMS_MB_INBOX, WMS_MEMORY_STORE_RUIM, wIndex);
+    		    }
+    		    else
+    		    {
+    		        pnode = wms_cacheinfolist_getnode(WMS_MB_INBOX, WMS_MEMORY_STORE_NV_CDMA, wIndex);
+    		    }
+    		    #else
+    			pnode = wms_cacheinfolist_getnode(WMS_MB_INBOX, mem, wRealIndex);
+    			#endif
+    		    if (pnode != NULL)
+    		    {
+    		        MEMSET(TempCurMsgNodes, 0, sizeof(TempCurMsgNodes));
+    		        MEMCPY(TempCurMsgNodes, pMe->m_CurMsgNodes, sizeof(TempCurMsgNodes));
+    		        // 重置当前消息列表
+    		        MEMSET(pMe->m_CurMsgNodes, 0, sizeof(pMe->m_CurMsgNodes));
+    		        WmsApp_FreeMsgNodeMs(pMe);
+    		        
+    		        pMe->m_idxCur = 0;
+#ifdef FEATURE_SMS_UDH
+    		        if (pnode->pItems != NULL)
+    		        {
+    		            MEMCPY(pMe->m_CurMsgNodes, pnode->pItems, sizeof(pMe->m_CurMsgNodes));
+    		            
+    		            for (; pMe->m_idxCur<LONGSMS_MAX_PACKAGES; pMe->m_idxCur++)
+    		            {
+    		                if (pMe->m_CurMsgNodes[pMe->m_idxCur] != NULL)
+    		                {
+    		                    pnode = pMe->m_CurMsgNodes[pMe->m_idxCur];
+    		                    break;
+    		                }
+    		            }
+    		        }
+    		        else
+#endif
+    		        {
+    		            pMe->m_CurMsgNodes[0] = pnode;
+    		        }
+
+    		        for (i=0; i<LONGSMS_MAX_PACKAGES; i++)
+    		        {
+    		            if (pMe->m_CurMsgNodes[i] != NULL)
+    		            {
+    		                pnode2 = pMe->m_CurMsgNodes[i];
+    		                
+    		                // 发布删除消息命令
+    		                nRet = ENOMEMORY;
+    		                do
+    		                {
+    		                    nRet = IWMS_MsgDelete(pMe->m_pwms,
+    		                                       pMe->m_clientId,
+    		                                       &pMe->m_callback,
+    		                                       (void *)pMe,
+    		                                       pnode2->mem_store,
+    		                                       pnode2->index);
+    		                } while(nRet != SUCCESS);
+    		                pMe->m_CurMsgNodes[i] = NULL;
+    		            }
+    		        }
+    		        MEMSET(pMe->m_CurMsgNodes, 0, sizeof(pMe->m_CurMsgNodes));
+    		        WmsApp_FreeMsgNodeMs(pMe);
+    		        MEMCPY(pMe->m_CurMsgNodes, TempCurMsgNodes, sizeof(pMe->m_CurMsgNodes));
+
+    		        for (i=0; i<LONGSMS_MAX_PACKAGES; i++)
+    		        {
+    		            if (TempCurMsgNodes[i] != NULL)
+    		            {
+    		                FREE(TempCurMsgNodes[i]);//有可能有重复删除
+    		                TempCurMsgNodes[i] = NULL;
+    		            }
+    		        }      
+    		        MSG_FATAL("EVT_WMS_MSG_STATUS_REPORT end send EVT_ESN_NETWORK_INITIATED m_wCurindex=%d",pMe->m_wCurindex,0,0);
+    		        WMSAPPU_SYSFREE(dwParam);
+    		    }
+
+                if (ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_CORE_APP)
+                {
+                    (void) ISHELL_PostEvent(pMe->m_pShell,
+    				                    AEECLSID_CORE_APP,
+    				                    EVT_USER_REDRAW,
+    				                    0,
+    				                    0); 
+                }
+                
+                
+    			(void) ISHELL_PostEvent(pMe->m_pShell,
+    				                    AEECLSID_CORE_APP,
+    				                    EVT_ESN_NETWORK_INITIATED,
+    				                    1,
+    				                    0);   
+
+                return TRUE;
+            }
+        }
+        
+
+        /*
 		if((STRCMP((char *)szFrom,orgNumOne) == 0 
                 || STRCMP((char *)szFrom,orgNumTwo) == 0 
                 || STRCMP((char *)szFrom,strnumbertwo) == 0
                 || STRCMP((char *)szFrom,orgNumThr) == 0               
-                || STRCMP((char *)szFrom,orgNumFor) == 0
-                 /*
-                || STRCMP((char *)szFrom,orgNumFiv) == 0*/) 
+                || STRCMP((char *)szFrom,orgNumFor) == 0) 
 
             && (STRNCMP((char *)buf,"ESN",3) == 0) && len == 3)
 		{
@@ -2223,6 +2364,7 @@ Exit:
 				                    0);    
 			return TRUE;
 		}
+        */
     }
 
 #endif
@@ -2302,10 +2444,11 @@ Exit:
                         WMSAPPU_SYSFREE(dwParam);
 						return FALSE;
 					}
-					MSG_FATAL("EVT_WMS_MSG_STATUS_REPORT po.dwCount:%d",po.dwCount,0,0);
+					MSG_FATAL("EVT_WMS_MSG_STATUS_REPORT po.dwCount:%d,===%d",po.dwCount,pMe->m_bflash_sms,0);
 					if(po.dwCount==0)
 #endif
 					{
+					    MSG_FATAL("pMe->m_bflash_sms========%d",pMe->m_bflash_sms,0,0);
                         #ifdef FEATURE_FLASH_SMS
                         if(pMe->m_bflash_sms)
                         {
@@ -2403,6 +2546,8 @@ Exit:
                 }
                 WMSAPPU_SYSFREE(info);
             }
+
+            MSG_FATAL("***zzg WmsApp WmsApp_UpdateAnnunciators 333***", 0, 0, 0);
             // 更新图标
             WmsApp_UpdateAnnunciators(pMe);
             return TRUE;
@@ -2638,7 +2783,9 @@ Exit:
                                     
                                 WMS_MMSState(WMS_MMS_PDU_MNotifyrespInd,0,(uint32)sendData);
                                
-                            }                     
+                            }        
+
+                            MSG_FATAL("***zzg WmsApp WmsApp_UpdateAnnunciators 444***", 0, 0, 0);
                              // 更新图标
                              WmsApp_UpdateAnnunciators(pMe);
                              break;
@@ -2913,6 +3060,8 @@ Exit:
         case EVT_WMS_MSG_DELETE_BOX:
             (void)WmsApp_RouteDialogEvt(pMe,eCode,wParam,dwParam);
             WMSAPPU_SYSFREE(dwParam)
+
+            MSG_FATAL("***zzg WmsApp WmsApp_UpdateAnnunciators 555***", 0, 0, 0);
 
             // 更新图标
             WmsApp_UpdateAnnunciators(pMe);
@@ -6099,7 +6248,13 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
                                sizeof(btValidity));
                                
         wms_ts_decode_relative_time(btValidity, &(pCltTsData->u.cdma.validity_relative));
-        //pCltTsData->u.cdma.mask |= WMS_MASK_BD_VALID_REL;
+        pCltTsData->u.cdma.mask |= WMS_MASK_BD_VALID_REL;
+        #ifdef FEATURE_FLASH_SMS
+        if(btValidity == 246)
+        {
+            //pCltTsData->u.cdma.mask |= WMS_MASK_BD_DISPLAY_MODE;
+        }
+        #endif
     }
     
     
@@ -6137,15 +6292,29 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
     {
         MEMSET(strNum, 0, sizeof(strNum));
         (void)WSTRTOSTR(pMe->m_msSend.m_szCallBkNum, strNum, sizeof(strNum));
-        if (strNum[0] == '+')
+
+        MSG_FATAL("***zzg WMSApp strNum[0]=%d, strNum[1]=%d, strNum[2]=%d***", strNum[0], strNum[1], strNum[2]);
+        MSG_FATAL("***zzg WMSApp strNum[3]=%d***", strNum[3], 0, 0);
+
+        if (pCltTsData != NULL)
         {
-            pCltTsData->u.cdma.callback.number_of_digits = IWMS_TsAsciiToDtmf(pMe->m_pwms, &strNum[1], pCltTsData->u.cdma.callback.digits);
+            MSG_FATAL("***zzg WMSApp callback.number_type=%d, callback.digit_mode=%d***", 
+                    pCltTsData->u.cdma.callback.number_type, pCltTsData->u.cdma.callback.digit_mode, 0);
+        }
+        
+        //if (strNum[0] == '+')
+        if ((strNum[0] == '0') || (strNum[1] == '0') || (strNum[2] == '9')|| (strNum[3] == '1'))
+        {
+            //pCltTsData->u.cdma.callback.number_of_digits = IWMS_TsAsciiToDtmf(pMe->m_pwms, &strNum[1], pCltTsData->u.cdma.callback.digits);
+            pCltTsData->u.cdma.callback.number_of_digits = IWMS_TsAsciiToDtmf(pMe->m_pwms, strNum, pCltTsData->u.cdma.callback.digits);
+            pCltTsData->u.cdma.callback.digit_mode = WMS_DIGIT_MODE_8_BIT;
         }
         else
         {
             pCltTsData->u.cdma.callback.number_of_digits = IWMS_TsAsciiToDtmf(pMe->m_pwms, strNum, pCltTsData->u.cdma.callback.digits);
+            pCltTsData->u.cdma.callback.digit_mode = WMS_DIGIT_MODE_4_BIT;
         }
-        pCltTsData->u.cdma.callback.digit_mode = WMS_DIGIT_MODE_4_BIT;
+        //pCltTsData->u.cdma.callback.digit_mode = WMS_DIGIT_MODE_4_BIT;
         pCltTsData->u.cdma.callback.number_mode = WMS_NUMBER_MODE_NONE_DATA_NETWORK;
         pCltTsData->u.cdma.callback.number_type = WMS_NUMBER_UNKNOWN;
         pCltTsData->u.cdma.callback.number_plan = WMS_NUMBER_PLAN_TELEPHONY;
@@ -6190,17 +6359,37 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
     MEMSET(strNum, 0, sizeof(strNum));
     MSG_FATAL("......................................",0,0,0);
     (void)WSTRTOSTR(pMe->m_msSend.m_szNum, strNum, sizeof(strNum));
-    if (strNum[0] == '+')
+
+    MSG_FATAL("***zzg WmsApp_GetClientMsgMO strNum[0]=%d, strNum[1]=%d, strNum[2]=%d***", strNum[0], strNum[1], strNum[2]);
+    MSG_FATAL("***zzg WmsApp_GetClientMsgMO strNum[3]=%d***", strNum[3], 0, 0);
+
+    if (pCltMsg != NULL)
     {
-        pCltMsg->u.cdma_message.address.number_of_digits = IWMS_TsAsciiToDtmf(pMe->m_pwms, &strNum[1], pCltMsg->u.cdma_message.address.digits);
+        MSG_FATAL("***zzg WmsApp_GetClientMsgMO address.number_type=%d, address.digit_mode=%d***", 
+                pCltMsg->u.cdma_message.address.number_type, pCltMsg->u.cdma_message.address.digit_mode, 0);
+    }
+   
+    
+    if (strNum[0] == '+')    {
+        char * pcBuf = (char*)(strNum + 1);
+         
+        //pCltMsg->u.cdma_message.address.number_of_digits = IWMS_TsAsciiToDtmf(pMe->m_pwms, strNum, pCltMsg->u.cdma_message.address.digits);
+        pCltMsg->u.cdma_message.address.number_of_digits = (byte)STRLEN((char *)strNum) -1;
+        
+        MEMSET((byte*)pCltMsg->u.cdma_message.address.digits, 0, sizeof(pCltMsg->u.cdma_message.address.digits));
+        // Remove the plus character and copy
+        STRNCPY((char*)pCltMsg->u.cdma_message.address.digits, pcBuf, sizeof(pCltMsg->u.cdma_message.address.digits) - 1);        
+
         pCltMsg->u.cdma_message.address.number_type = WMS_NUMBER_INTERNATIONAL;
+        pCltMsg->u.cdma_message.address.digit_mode = WMS_DIGIT_MODE_8_BIT; 
     }
     else
     {
         pCltMsg->u.cdma_message.address.number_of_digits = IWMS_TsAsciiToDtmf(pMe->m_pwms, strNum, pCltMsg->u.cdma_message.address.digits);
         pCltMsg->u.cdma_message.address.number_type = WMS_NUMBER_UNKNOWN;
+        pCltMsg->u.cdma_message.address.digit_mode = WMS_DIGIT_MODE_4_BIT;
     }
-    pCltMsg->u.cdma_message.address.digit_mode = WMS_DIGIT_MODE_4_BIT;
+    //pCltMsg->u.cdma_message.address.digit_mode = WMS_DIGIT_MODE_4_BIT;
     pCltMsg->u.cdma_message.address.number_mode = WMS_NUMBER_MODE_NONE_DATA_NETWORK;
     pCltMsg->u.cdma_message.address.number_plan = WMS_NUMBER_PLAN_TELEPHONY;
     
@@ -7111,6 +7300,8 @@ void WmsApp_BuildSendClentMsgList(WmsApp * pMe)
 	AECHAR TempToStr[MAX_EMAILADD_LEN+1] = {0};
 	char temp[MAX_EMAILADD_LEN+1] = {0};
 
+    MSG_FATAL("***zzg WmsApp_BuildSendClentMsgList***", 0, 0, 0);
+
     WmsApp_FreeSendClentMsgList(pMe);
     
     if (0 == IVector_Size(pMe->m_pSendList))
@@ -7134,7 +7325,34 @@ void WmsApp_BuildSendClentMsgList(WmsApp * pMe)
     // 拷贝当前号码
     pMe->m_msSend.m_szNum[0] = 0;
 	WSTRTOSTR(pItem->m_szTo,temp,MAX_EMAILADD_LEN+1);
-	if((STRISTR (charsvc_p_name,"tata"))&&(STRISTR(temp,"+91")))
+    
+#ifdef FEATURE_VERSION_K232_Y101
+    if(STRISTR(temp,"+"))
+    {
+        boolean b_Prefix = FALSE;
+        ICONFIG_GetItem(pMe->m_pConfig, CFGI_PREFIX_AUTO_MANUAL, &b_Prefix,  sizeof(boolean));        
+       
+        MSG_FATAL("b_Prefix==============%d",b_Prefix,0,0);
+        
+        if (!b_Prefix)
+        {
+            AECHAR wstr[FEATURE_CODE_MAX_LENTH];
+            ICONFIG_GetItem(pMe->m_pConfig, CFGI_PREFIX, wstr, FEATURE_CODE_MAX_LENTH);           
+
+            WSTRCPY(TempToStr,wstr);
+    		WSTRCPY(TempTo,pItem->m_szTo+1);
+    		WSTRCAT(TempToStr,TempTo);
+    		DBGPRINTF("TempToStr=%S", TempTo);
+    		DBGPRINTF("TempToStr=%S", TempToStr);
+    		DBGPRINTF("pItem->m_szTo=%S", pItem->m_szTo);
+    		MEMSET(pItem->m_szTo,0,(sizeof(pItem->m_szTo))+1);
+    		WSTRCPY(pItem->m_szTo,TempToStr);
+    		DBGPRINTF("pItem->m_szTo=%S", pItem->m_szTo);
+    		MSG_FATAL("pMe->m_msSend.m_szNum........111111111",0,0,0);
+        }        
+    }
+#else
+	if((STRISTR (charsvc_p_name,"tata"))&&(STRISTR(temp,"+91"))) 
 	{
 		WSTRCPY(TempToStr,L"0091");
 		WSTRCPY(TempTo,pItem->m_szTo+3);
@@ -7146,7 +7364,8 @@ void WmsApp_BuildSendClentMsgList(WmsApp * pMe)
 		WSTRCPY(pItem->m_szTo,TempToStr);
 		DBGPRINTF("pItem->m_szTo=%S", pItem->m_szTo);
 		MSG_FATAL("pMe->m_msSend.m_szNum........111111111",0,0,0);
-	}
+	}   
+#endif    
 	
     (void)WSTRCPY(pMe->m_msSend.m_szNum, pItem->m_szTo);
     

@@ -2,19 +2,19 @@
 <BREWRes Name="hicameraapp" VERSION="1">
 <Strings Encoding="Unicode">
 	<String Id="1001" Name="IDS_ITEM_CAMERA">
-		<Text>कैमरा</Text>
+		<Text>तस्वीर ले</Text>
 	</String>
 	<String Id="1002" Name="IDS_MULTI_PRE">
 		<Text>Camera One</Text>
 	</String>
 	<String Id="1003" Name="IDS_ITEM_CAMERA_GALLERY">
-		<Text>फोटो गल्लेरी </Text>
+		<Text>फोटो गैलरी</Text>
 	</String>
 	<String Id="1004" Name="IDS_MULTI_BACK">
 		<Text>Camera Two</Text>
 	</String>
 	<String Id="1005" Name="IDS_CFG_ENVIR">
-		<Text>पर्यावरण</Text>
+		<Text>परिवेश</Text>
 	</String>
 	<String Id="1006" Name="IDS_ENVIR_MODE_AUTO">
 		<Text>स्वचालित</Text>
@@ -23,10 +23,10 @@
 		<Text>रात्रि मोड</Text>
 	</String>
 	<String Id="1008" Name="IDS_ENVIR_MODE_CLOUDY">
-		<Text>क्लौदी मोड़</Text>
+		<Text>बादलमय मोड</Text>
 	</String>
 	<String Id="1009" Name="IDS_ENVIR_MODE_SUNNY">
-		<Text>सुन्नी मोड़े</Text>
+		<Text>धूप मोड</Text>
 	</String>
 	<String Id="1010" Name="IDS_CFG_MULTI">
 		<Text>MULTICAMERA</Text>
@@ -53,7 +53,7 @@
 		<Text>आकार</Text>
 	</String>
 	<String Id="1018" Name="IDS_CFG_TONE">
-		<Text>शुत्टर  टोन</Text>
+		<Text>शटर टोन</Text>
 	</String>
 	<String Id="1019" Name="IDS_TONE_DISABLE">
 		<Text>बंद</Text>
@@ -137,19 +137,19 @@
 		<Text>फोन पूर्ण स्मृति</Text>
 	</String>
 	<String Id="1070" Name="IDS_MSG_WAITING">
-		<Text>प्रतीक्षारत</Text>
+		<Text>प्रतीक्षा करें</Text>
 	</String>
 	<String Id="1073" Name="IDS_MSG_CAPTURE_FAILED">
 		<Text>कैप्चर में विफल रहा</Text>
 	</String>
 	<String Id="1074" Name="IDS_CAMERA_PHOTO_MODE">
-		<Text>फोटो प</Text>
+		<Text>तस्वीर  स्थान</Text>
 	</String>
 	<String Id="1075" Name="IDS_CAMERA_PHOTO_PHONE">
-		<Text>फ़ो</Text>
+		<Text>फ़ोन</Text>
 	</String>
 	<String Id="1076" Name="IDS_CAMERA_PHOTO_TFCARD">
-		<Text>स्मृति </Text>
+		<Text>मेमोरी कार्ड</Text>
 	</String>
 	<String Id="1077" Name="IDS_CAMERA_RECORD_FAILED">
 		<Text>रिकॉर्ड में विफल रहा है</Text>

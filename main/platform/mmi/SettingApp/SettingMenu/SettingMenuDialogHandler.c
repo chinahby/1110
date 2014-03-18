@@ -130,7 +130,22 @@ static boolean  HandlePhoneInfo_SW_HW_PRL_DialogEvent(CSettingMenu *pMe,
     uint16 wParam,
     uint32 dwParam
 );
+
+static boolean  HandlePhoneGeneralInfo_DialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+
 #endif
+
+
+// 对话框 IDD_PHONE_SAR_VALUE 事件处理函数
+static boolean  HandlePhoneSarValueDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
 
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS
 // 对话框 IDD_PHONE_INFO_MENU 事件处理函数
@@ -441,7 +456,7 @@ static boolean Handle_ANSWER_MODE_DialogEveng(CSettingMenu *pMe,
     uint32 dwParam
 );
 
-#ifdef FEATURE_VERSION_K232_Y101
+#ifdef FEATURE_INTERNATIONAL_PREFIX
 static boolean Handle_Prefix_DialogEveng(CSettingMenu *pMe,
     AEEEvent eCode,
     uint16 wParam,
@@ -624,7 +639,12 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
 			
         case IDD_PHONE_INFO_MENU_PRL:
             return HandlePhoneInfo_SW_HW_PRL_DialogEvent(pMe,eCode,wParam,dwParam); 
+            
+        case IDD_PHONE_GENERAL_INFO:
+            return HandlePhoneGeneralInfo_DialogEvent(pMe,eCode,wParam,dwParam);
 #endif	
+        case IDD_PHONE_SAR_VALUE:
+            return HandlePhoneSarValueDialogEvent(pMe,eCode,wParam,dwParam); 
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS
         case IDD_SHORTCUTS_MENU:
             return HandleShortcutsMenuDialogEvent(pMe,eCode,wParam,dwParam);       
@@ -742,7 +762,7 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
         case IDD_ANSWER_MODE:
             return Handle_ANSWER_MODE_DialogEveng(pMe,eCode,wParam,dwParam);
 
-#ifdef FEATURE_VERSION_K232_Y101
+#ifdef FEATURE_INTERNATIONAL_PREFIX
         case IDD_PREFIX:
             return Handle_Prefix_DialogEveng(pMe,eCode,wParam,dwParam);
         case IDD_PREFIX_EDIT:
@@ -915,12 +935,14 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 #ifndef FEATURE_VERSION_K212_HUALU
 #ifndef FEATURE_VERSION_K232_Y100A
 #ifndef FEATURE_VERSION_GECOMSA_C204
+#ifndef FEATURE_VERSION_K232_Y101 
 #ifndef FEATURE_VERSION_K292_WSF_CN
 //#ifdef FEATURE_VERSION_K232_Y101    
             //IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_LIST_PROFILE, IDS_LIST_PROFILE, NULL, 0);
 //#else
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SCENEMODE_TITLE, IDS_SCENEMODE_TITLE, NULL, 0);
 //#endif
+#endif
 #endif
 #endif
 #endif
@@ -947,6 +969,11 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PHONE_INFO_TITLE, IDS_PHONE_INFO_TITLE, NULL, 0);
             #endif
 #endif
+
+#ifdef FEATURE_VERSION_K232_Y101
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PHONE_SAR_VALUE, IDS_PHONE_SAR_VALUE, NULL, 0);
+#endif
+
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS
 #ifndef FEATURE_VERSION_K232_Y105A
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SHORTCUTS_MENU_TITLE, IDS_SHORTCUTS_MENU_TITLE, NULL, 0);
@@ -1045,8 +1072,15 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
                     CLOSE_DIALOG(DLGRET_CALLSETTING)
                     break;
 #ifdef FEATURE_SHOW_PHONE_INFO
-                case IDS_PHONE_INFO_TITLE:                    
+                case IDS_PHONE_INFO_TITLE: 
+#ifdef FEATURE_VERSION_K232_Y101
+                    CLOSE_DIALOG(DLGRET_PHONE_GENERAL_INFO)
+#else
                     CLOSE_DIALOG(DLGRET_PHONE_INFO)
+#endif                    
+                    break;
+                case IDS_PHONE_SAR_VALUE: 
+                    CLOSE_DIALOG(DLGRET_PHONE_SAR_VALUE)
                     break;
                 case IDS_SOFTWARE_VERSION:
                     CLOSE_DIALOG(DLGRET_PHONE_INFO_SW)
@@ -1192,9 +1226,11 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_VOICE_PRIVACY, IDS_VOICE_PRIVACY, NULL, 0);
 #endif
 
-#ifdef FEATURE_VERSION_K232_Y101            
+
+#ifdef FEATURE_INTERNATIONAL_PREFIX            
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PREFIX, IDS_PREFIX, NULL, 0);
 #endif
+
 
 #ifndef FEATURE_VERSION_W208S            
             //IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_FMRADIO_OPTION_MENU_PLAY_MODLE, IDS_FMRADIO_OPTION_MENU_PLAY_MODLE, NULL, 0);
@@ -1254,7 +1290,7 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
                     CLOSE_DIALOG(DLGRET_AUTO_ANSWER_MODE)
                     break;
                     
-#ifdef FEATURE_VERSION_K232_Y101
+#ifdef FEATURE_INTERNATIONAL_PREFIX
                 case IDS_PREFIX:
                     CLOSE_DIALOG(DLGRET_PREFIX)
                     break;
@@ -1629,7 +1665,210 @@ static boolean  HandlePhoneInfo_SW_HW_PRL_DialogEvent(CSettingMenu *pMe,
     }
     return FALSE;
 } // HandlePhoneInfo_SW_HW_PRL_DialogEvent
+
+static boolean  HandlePhoneGeneralInfo_DialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+{
+    BottomBar_Param_type  BBarParam ={0};
+    AECHAR m_wstr[128]={0};    
+    AECHAR WTitle[40] ={0};
+    int n=0;
+    IDialog *p_dlg = NULL;
+    IStatic *p_stk = NULL;
+    
+    AECHAR device_name[]=L"Model: M141\n";    
+    AECHAR software_name[]=L"S/W Version: V.MTS.M141.B02\n";    
+    AECHAR binary_name[]=L"Brew Version: Brew 3.1.5\n";
+    
+    MSG_FATAL("%x, %x ,%x,HandlePhoneGeneralInfo_DialogEvent",eCode,wParam,dwParam);
+    
+    p_dlg = ISHELL_GetActiveDialog(pMe->m_pShell); 
+    if(p_dlg==NULL)
+    {
+        return FALSE;
+    }
+
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:  
+          return TRUE;
+
+        case EVT_DIALOG_START:
+            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                     AEECLSID_APP_SETTINGMENU,
+                                     EVT_USER_REDRAW,
+                                     0,
+                                     0);
+                                     
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+                 
+             p_stk = (IStatic *) IDIALOG_GetControl(p_dlg, IDC_PHONE_GENERAL_INFO);          
+ 
+             (void) ISHELL_LoadResString(pMe->m_pShell,
+                                        AEE_APPSSETTINGMENU_RES_FILE,
+                                        IDS_PHONE_INFO_TITLE,
+                                        WTitle,
+                                        sizeof(WTitle));
+             
+			 IANNUNCIATOR_SetFieldText(pMe->m_pAnn,WTitle);
+
+             WSTRCPY(m_wstr,device_name);
+             WSTRCAT(m_wstr,software_name);             
+             WSTRCAT(m_wstr,binary_name);
+          
+            BBarParam.eBBarType = BTBAR_BACK;            
+            Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+           
+            if(p_stk!=NULL)
+            {
+                 ISTATIC_SetProperties(p_stk, ST_UNDERLINE|ST_NOSCROLL|ST_CENTERTITLE|ST_GRAPHIC_BG);
+
+                 ISTATIC_SetFontColor(p_stk, RGB_BLACK);
+                 
+                 (void) ISTATIC_SetText(p_stk,
+                                   NULL,
+                                   m_wstr,
+                                   AEE_FONT_NORMAL,
+                                   AEE_FONT_NORMAL);
+                 
+                 (void) ISTATIC_Redraw(p_stk);
+            } 
+            DrawBottomBar(pMe->m_pDisplay, &BBarParam); 
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                default:
+                    break;
+            }
+            return TRUE;
+
+        
+
+        default:
+            break;
+    }
+    return FALSE;
+} // HandlePhoneInfo_SW_HW_PRL_DialogEvent
+
 #endif
+
+
+static boolean  HandlePhoneSarValueDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+
+{
+    BottomBar_Param_type  BBarParam ={0};
+    AECHAR m_wstr[256]={0};    
+    AECHAR WTitle[40] ={0};
+    int n=0;
+    IDialog *p_dlg = NULL;
+    IStatic *p_stk = NULL;
+    
+    AECHAR sar_value[]=L"SAR: 0.280W/kg\n";    
+   
+    
+    MSG_FATAL("%x, %x ,%x,HandlePhoneSarValueDialogEvent",eCode,wParam,dwParam);
+    
+    p_dlg = ISHELL_GetActiveDialog(pMe->m_pShell); 
+    
+    if(p_dlg==NULL)
+    {
+        return FALSE;
+    }
+
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:  
+          return TRUE;
+
+        case EVT_DIALOG_START:
+            ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_SETTINGMENU, EVT_USER_REDRAW, 0,0);                                     
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+                 
+             p_stk = (IStatic *) IDIALOG_GetControl(p_dlg, IDC_PHONE_SAR_VALUE);          
+ 
+             (void) ISHELL_LoadResString(pMe->m_pShell,
+                                        AEE_APPSSETTINGMENU_RES_FILE,
+                                        IDS_PHONE_SAR_VALUE,
+                                        WTitle,
+                                        sizeof(WTitle));
+             
+			 IANNUNCIATOR_SetFieldText(pMe->m_pAnn, WTitle);
+
+             WSTRCPY(m_wstr,sar_value);            
+          
+            BBarParam.eBBarType = BTBAR_BACK;            
+            Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+           
+            if(p_stk!=NULL)
+            {
+                 ISTATIC_SetProperties(p_stk, ST_UNDERLINE|ST_NOSCROLL|ST_CENTERTITLE|ST_GRAPHIC_BG);
+
+                 ISTATIC_SetFontColor(p_stk, RGB_BLACK);
+                 
+                 (void) ISTATIC_SetText(p_stk,
+                                   NULL,
+                                   m_wstr,
+                                   AEE_FONT_NORMAL,
+                                   AEE_FONT_NORMAL);
+                 
+                 (void) ISTATIC_Redraw(p_stk);
+            } 
+            DrawBottomBar(pMe->m_pDisplay, &BBarParam); 
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                default:
+                    break;
+            }
+            return TRUE;
+
+        
+
+        default:
+            break;
+    }
+    return FALSE;
+}
+
+
+
+
+
+
+
+
+
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS
 
 
@@ -1970,6 +2209,9 @@ static boolean  HandleShortcutsSelectMenuDialogEvent(CSettingMenu *pMe,
     return FALSE;
 } // HandlePhoneInfo_SW_HW_PRL_DialogEvent
 #endif
+
+
+
 
 #if  defined(FEATURE_VERSION_W317A)
 //Add by pyuangui 2013-01-04
@@ -3096,6 +3338,18 @@ static boolean  HandleDivertDialogEvent(CSettingMenu *pMe,
 				#ifdef FEATURE_VERSION_K202_LM129C //xxzhen
                 case IDS_CALLFORWARD_NOCONNECT_UNCONDITIONAL:
 				#endif
+
+#ifdef FEATURE_VERSION_K232_Y101
+                case IDS_CALLFORWARD_NOCONNECT: //未接通转移
+                    pMe->m_CFType = CALLFORWARD_ANYWAY;
+                    CLOSE_DIALOG(DLGRET_CALLFORWARDSEL)
+                    return TRUE;
+
+                case IDS_CALLFORWARD_ANYWAY:     //无条件转移
+                    pMe->m_CFType = CALLFORWARD_NOCONNECT;
+                    CLOSE_DIALOG(DLGRET_CALLFORWARDSEL)
+                    return TRUE;
+#else
                 case IDS_CALLFORWARD_NOCONNECT: //未接通转移
                     pMe->m_CFType = CALLFORWARD_NOCONNECT;
                     CLOSE_DIALOG(DLGRET_CALLFORWARDSEL)
@@ -3105,6 +3359,7 @@ static boolean  HandleDivertDialogEvent(CSettingMenu *pMe,
                     pMe->m_CFType = CALLFORWARD_ANYWAY;
                     CLOSE_DIALOG(DLGRET_CALLFORWARDSEL)
                     return TRUE;
+#endif                    
 
                 case IDS_CALLFORWARD_CANCELALL: //取消全部转移
                 {
@@ -8403,7 +8658,7 @@ static boolean Handle_ANSWER_MODE_DialogEveng(CSettingMenu *pMe,
 #endif //FEATURE_CARRIER_THAILAND_HUTCH
 
 
-#ifdef FEATURE_VERSION_K232_Y101
+#ifdef FEATURE_INTERNATIONAL_PREFIX
 static boolean Handle_Prefix_DialogEveng(CSettingMenu *pMe,
     AEEEvent eCode,
     uint16 wParam,
@@ -8441,10 +8696,9 @@ static boolean Handle_Prefix_DialogEveng(CSettingMenu *pMe,
                 uint16    ui16_return = IDS_PREFIX_MANUAL;
               
                 AECHAR    wstr[FEATURE_CODE_MAX_LENTH];
-
-                ICONFIG_GetItem(pMe->m_pConfig, CFGI_PREFIX, wstr, FEATURE_CODE_MAX_LENTH);
-                
-                if(WSTRCMP(wstr, OEMNV_PREFIX_DEFAULT) == 0)
+                boolean   b_Prefix = FALSE;
+                ICONFIG_GetItem(pMe->m_pConfig, CFGI_PREFIX_AUTO_MANUAL, &b_Prefix,  sizeof(boolean));
+                if(b_Prefix)
                 {
                     ui16_return = IDS_PREFIX_AUTO;                  
                 }
@@ -8486,22 +8740,25 @@ static boolean Handle_Prefix_DialogEveng(CSettingMenu *pMe,
 
                 switch (wParam)
                 {                      
-                    case IDS_PREFIX_MANUAL:                         
-                       CLOSE_DIALOG(DLGRET_PREFIX_EDIT)
+                    case IDS_PREFIX_MANUAL:
+                        {
+                            boolean b_Prefix = FALSE;
+                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_PREFIX_AUTO_MANUAL, &b_Prefix,  sizeof(boolean));
+                            CLOSE_DIALOG(DLGRET_PREFIX_EDIT)
+                        }
                        return TRUE;
 
                     case IDS_PREFIX_AUTO:
+                        {
+                            boolean b_Prefix = TRUE;
+                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_PREFIX_AUTO_MANUAL, &b_Prefix,  sizeof(boolean));
+                        }
+                        break;
                     default:    
-                        WSTRCPY(wstr, OEMNV_PREFIX_DEFAULT);                       
-                       (void) ICONFIG_SetItem(pMe->m_pConfig,
-                                              CFGI_PREFIX,
-                                              wstr,
-                                              FEATURE_CODE_MAX_LENTH);   
                         break;                           
                 }
                 InitMenuIcons(pMenu);
                 SetMenuIcon(pMenu, wParam, TRUE);
-                ICONFIG_SetItem(pMe->m_pConfig,CFGI_PREFIX, wstr,FEATURE_CODE_MAX_LENTH);
                 CLOSE_DIALOG(DLGRET_WARNING)
             }
             return TRUE;
@@ -8669,6 +8926,11 @@ static boolean  Handle_PrefixEdit_DialogEveng(CSettingMenu *pMe,
 
 #endif
 
+
+#ifdef FEATURE_VERSION_K232_Y101
+extern char charsvc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1];
+#endif
+
 static void SettingMenu_Process_Feature_Code(CSettingMenu *pMe,uint16 feature_code)
 {
     MSG_FATAL("SettingMenu_Process_Feature_Code Start %d",feature_code,0,0);
@@ -8748,10 +9010,14 @@ static void SettingMenu_Process_Feature_Code(CSettingMenu *pMe,uint16 feature_co
         }
         
         //Read supplement service number from RUIM Active section, if read fail or the number is wrong, then from RUIM Register section or config file
-        MEMSET(Assnum, 0x00, sizeof(Assnum));
+        MEMSET(Assnum, 0x00, sizeof(Assnum));        
+        
         if( SUCCESS == IRUIM_Get_Feature_Code(pMe->m_pIRUIM,(byte*)Assnum, Ruim_Active_code) )     
         {
             MSG_FATAL("IRUIM_Get_Feature_Code == %d %d",Ruim_Active_code,STRLEN(Assnum),0);
+
+            DBGPRINTF("IRUIM_Get_Feature_Code 111 Assnum == %s", Assnum);
+            
             //if the supplement service number is "**"(Wrong number), then read supplement service number from RUIM Register section or config file
             if ( STRNCMP(Assnum,"**",2) && STRNCMP(Assnum,"0000",4))
             {
@@ -8763,14 +9029,233 @@ static void SettingMenu_Process_Feature_Code(CSettingMenu *pMe,uint16 feature_co
         if( SUCCESS == IRUIM_Get_Feature_Code(pMe->m_pIRUIM,(byte*)Assnum, Ruim_Register_code))
         {
             MSG_FATAL("IRUIM_Get_Feature_Code == %d %d",Ruim_Active_code,STRLEN(Assnum),0);
+
+            DBGPRINTF("IRUIM_Get_Feature_Code 222 Assnum == %s", Assnum);
+            
             //if the supplement service number is "**"(Wrong number), then read supplement service number from RUIM Register section or config file
             if ( STRNCMP(Assnum,"**",2) && STRNCMP(Assnum,"0000",4))
             {
                 MEMCPY(pMe->m_callnumber, Assnum, sizeof(Assnum));
                 return;
             }
-        }
+        }                
+        
+        DBGPRINTF("SettingMenu_Process_Feature_Code STRLEN(pMe->m_callnumber)=%d",STRLEN(pMe->m_callnumber));
+
+        DBGPRINTF("SettingMenu_Process_Feature_Code feature_code=%d",feature_code);
+
+        DBGPRINTF("SettingMenu_Process_Feature_Code charsvc_p_name=%s",charsvc_p_name);
+        
+#ifdef FEATURE_VERSION_K232_Y101    
+        if (STRLEN(pMe->m_callnumber) == 0) // did not read the code from the card.
+        {            
+            if (feature_code == CFGI_CALLFORWARD_UNCONDITIONAL_DISABLE)
+            {                
+                if((STRISTR (charsvc_p_name,"Reliance"))||(STRISTR (charsvc_p_name,"reliance")))
+            	{
+        			STRCPY(pMe->m_callnumber, "*302");
+            	}	
+                else if ((STRISTR (charsvc_p_name,"Virgin"))||(STRISTR (charsvc_p_name,"virgin")))
+                {
+                    STRCPY(pMe->m_callnumber, "*73");
+            	}
+                else if ((STRISTR (charsvc_p_name,"MTS"))||(STRISTR (charsvc_p_name,"mts"))||(STRISTR (charsvc_p_name,"Mts")))
+                {
+                    STRCPY(pMe->m_callnumber, "*115");
+            	}
+                else if ((STRISTR (charsvc_p_name,"Tata"))||(STRISTR (charsvc_p_name,"tata")))
+                {
+                    STRCPY(pMe->m_callnumber, "*73");
+            	}
+                else
+                {
+                    STRCPY(pMe->m_callnumber, "*115");
+                }                
+            }
+
+            
+            if (feature_code == CFGI_CALLFORWARD_DISABLE_ALL)
+            {
+                if((STRISTR (charsvc_p_name,"Reliance"))||(STRISTR (charsvc_p_name,"reliance")))
+            	{
+        			STRCPY(pMe->m_callnumber, "*308");
+            	}	
+                else if ((STRISTR (charsvc_p_name,"Virgin"))||(STRISTR (charsvc_p_name,"virgin")))
+                {
+        			STRCPY(pMe->m_callnumber, "*73");
+            	}
+                else if ((STRISTR (charsvc_p_name,"MTS"))||(STRISTR (charsvc_p_name,"mts"))||(STRISTR (charsvc_p_name,"Mts")))
+                {
+        			STRCPY(pMe->m_callnumber, "*115");
+            	}                
+                else
+                {
+                    STRCPY(pMe->m_callnumber, "*115");
+                }
+            }
+           
+            if (feature_code == CFGI_CALLFORWARD_BUSY_ENABLE)
+            {
+                if((STRISTR (charsvc_p_name,"Reliance"))||(STRISTR (charsvc_p_name,"reliance")))
+            	{
+        			STRCPY(pMe->m_callnumber, "*305");
+            	}	
+                else if ((STRISTR (charsvc_p_name,"Virgin"))||(STRISTR (charsvc_p_name,"virgin")))
+                {
+        			STRCPY(pMe->m_callnumber, "*75");
+            	}
+                else if ((STRISTR (charsvc_p_name,"MTS"))||(STRISTR (charsvc_p_name,"mts"))||(STRISTR (charsvc_p_name,"Mts")))
+                {
+        			STRCPY(pMe->m_callnumber, "*136");
+            	}
+                else if ((STRISTR (charsvc_p_name,"Tata"))||(STRISTR (charsvc_p_name,"tata")))
+                {
+        			STRCPY(pMe->m_callnumber, "*75");
+            	}
+                else
+                {
+                    STRCPY(pMe->m_callnumber, "*136");
+                }
+            }
+
+            if (feature_code == CFGI_CALLFORWARD_BUSY_DISABLE)
+            {
+                if((STRISTR (charsvc_p_name,"Reliance"))||(STRISTR (charsvc_p_name,"reliance")))
+            	{
+        			STRCPY(pMe->m_callnumber, "*306");
+            	}	
+                else if ((STRISTR (charsvc_p_name,"Virgin"))||(STRISTR (charsvc_p_name,"virgin")))
+                {
+        			STRCPY(pMe->m_callnumber, "*65");
+            	}
+                else if ((STRISTR (charsvc_p_name,"MTS"))||(STRISTR (charsvc_p_name,"mts"))||(STRISTR (charsvc_p_name,"Mts")))
+                {
+        			STRCPY(pMe->m_callnumber, "*128");
+            	}
+                else if ((STRISTR (charsvc_p_name,"Tata"))||(STRISTR (charsvc_p_name,"tata")))
+                {
+        			STRCPY(pMe->m_callnumber, "*65");
+            	}
+                else
+                {
+                    STRCPY(pMe->m_callnumber, "*128");
+                }
+            }
+
+          
+            if (feature_code == CFGI_CALLFORWARD_NOANSWER_ENABLE)
+            {
+                if((STRISTR (charsvc_p_name,"Reliance"))||(STRISTR (charsvc_p_name,"reliance")))
+            	{
+        			STRCPY(pMe->m_callnumber, "*303");
+            	}	
+                else if ((STRISTR (charsvc_p_name,"Virgin"))||(STRISTR (charsvc_p_name,"virgin")))
+                {
+        			STRCPY(pMe->m_callnumber, "*74");
+            	}
+                else if ((STRISTR (charsvc_p_name,"MTS"))||(STRISTR (charsvc_p_name,"mts"))||(STRISTR (charsvc_p_name,"Mts")))
+                {
+        			STRCPY(pMe->m_callnumber, "*138");
+            	}
+                else if ((STRISTR (charsvc_p_name,"Tata"))||(STRISTR (charsvc_p_name,"tata")))
+                {
+        			STRCPY(pMe->m_callnumber, "*73");
+            	}
+                else
+                {
+                    STRCPY(pMe->m_callnumber, "*138");
+                }
+            }
+
+            if (feature_code == CFGI_CALLFORWARD_NOANSWER_DISABLE)
+            {
+                if((STRISTR (charsvc_p_name,"Reliance"))||(STRISTR (charsvc_p_name,"reliance")))
+            	{
+        			STRCPY(pMe->m_callnumber, "*304");
+            	}	
+                else if ((STRISTR (charsvc_p_name,"Virgin"))||(STRISTR (charsvc_p_name,"virgin")))
+                {
+        			STRCPY(pMe->m_callnumber, "*67");
+            	}
+                else if ((STRISTR (charsvc_p_name,"MTS"))||(STRISTR (charsvc_p_name,"mts"))||(STRISTR (charsvc_p_name,"Mts")))
+                {
+        			STRCPY(pMe->m_callnumber, "*130");
+            	}
+                else if ((STRISTR (charsvc_p_name,"Tata"))||(STRISTR (charsvc_p_name,"tata")))
+                {
+        			STRCPY(pMe->m_callnumber, "*67");
+            	}
+                else
+                {
+                    STRCPY(pMe->m_callnumber, "*130");
+                }
+            }
+
+           
+            if (feature_code == CFGI_CALLFORWARD_UNCONDITIONAL_ENABLE)
+            {
+                if((STRISTR (charsvc_p_name,"Reliance"))||(STRISTR (charsvc_p_name,"reliance")))
+            	{
+        			STRCPY(pMe->m_callnumber, "*301");
+            	}	
+                else if ((STRISTR (charsvc_p_name,"Virgin"))||(STRISTR (charsvc_p_name,"virgin")))
+                {
+        			STRCPY(pMe->m_callnumber, "*72");
+            	}
+                else if ((STRISTR (charsvc_p_name,"MTS"))||(STRISTR (charsvc_p_name,"mts"))||(STRISTR (charsvc_p_name,"Mts")))
+                {
+        			STRCPY(pMe->m_callnumber, "*114");
+            	}
+                else if ((STRISTR (charsvc_p_name,"Tata"))||(STRISTR (charsvc_p_name,"tata")))
+                {
+        			STRCPY(pMe->m_callnumber, "*72");
+            	}
+                else
+                {
+                    STRCPY(pMe->m_callnumber, "*114");
+                }
+            }
+
+            if (feature_code == CFGI_CALLFORWARD_UNREACHABLE_ENABLE)
+            {
+                STRCPY(pMe->m_callnumber, "*74");                
+            }
+
+            if (feature_code == CFGI_CALLFORWARD_UNREACHABLE_DISABLE)
+            {
+                STRCPY(pMe->m_callnumber, "*67");  
+            }
+
+            if (feature_code == CFGI_CALLFORWARD_WAIT_ENABLE)
+            {
+                if((STRISTR (charsvc_p_name,"Reliance"))||(STRISTR (charsvc_p_name,"reliance")))
+            	{
+        			STRCPY(pMe->m_callnumber, "*311");
+            	}	                
+                else
+                {
+                    STRCPY(pMe->m_callnumber, "*118");
+                }
+            }
+
+            if (feature_code == CFGI_CALLFORWARD_WAIT_DISABLE)
+            {
+                if((STRISTR (charsvc_p_name,"Reliance"))||(STRISTR (charsvc_p_name,"reliance")))
+            	{
+        			STRCPY(pMe->m_callnumber, "*312");
+            	}	                
+                else
+                {
+                    STRCPY(pMe->m_callnumber, "*119");
+                }
+            }            
+        }           
+           
+#endif
+
         MSG_FATAL("IRUIM_Get_Feature_Code == %d %d",feature_code,STRLEN(pMe->m_callnumber),0);
+        
+        DBGPRINTF("IRUIM_Get_Feature_Code m_callnumber == %s",pMe->m_callnumber);
     }
 #ifndef FEATURE_CALL_FORWARD_USER_INPUT    
 #ifndef FEATURE_OEMOMH

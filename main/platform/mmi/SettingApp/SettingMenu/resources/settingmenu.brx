@@ -658,6 +658,18 @@
 	<String Id="1431" Name="IDS_NETWORK_PARAMS_PASSWORD">
 		<Text>Password</Text>
 	</String>
+	<STRING Id="1500" Name="IDS_PHONE_SAR_VALUE">
+		<Text>SAR Value</Text>
+	</STRING>
+	<String Id="1501" Name="IDS_INTERNATIONAL_CALL_PREFIX">
+		<Text>International Call Prefix</Text>
+	</String>
+	<String Id="1502" Name="IDS_MANUAL">
+		<Text>Manual</Text>
+	</String>
+	<String Id="1503" Name="IDS_AUTO">
+		<Text>Auto</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">
@@ -1040,5 +1052,17 @@
 				<Items/></Text>
 		</Controls>
 	</Dialog>	
+	<DIALOG Id="6070" Name="IDD_PHONE_GENERAL_INFO" Focus="0">
+		<Controls>
+			<Static Id="7070" Name="IDC_PHONE_GENERAL_INFO" Flags="40000">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6071" Name="IDD_PHONE_SAR_VALUE" Focus="7071">
+		<Controls>
+			<Static Id="7071" Name="IDC_PHONE_SAR_VALUE">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
 </Dialogs>
 </BREWRes>

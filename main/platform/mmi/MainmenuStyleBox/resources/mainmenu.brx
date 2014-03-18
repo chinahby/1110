@@ -205,6 +205,9 @@
 	<STRING Id="1110" Name="IDS_MAIN_MENU_LEMON_TWIST">
 		<Text>Lemon twist</Text>
 	</STRING>
+	<STRING Id="1111" Name="IDS_MAIN_MENU_RECENTCALLS_Y101">
+		<Text>Call History</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="0">

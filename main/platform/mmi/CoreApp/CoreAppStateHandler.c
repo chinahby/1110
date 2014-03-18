@@ -111,6 +111,9 @@ static NextFSMAction COREST_SALES_EDIT_Handler(CCoreApp *pMe);
 // 状态 COREST_ESN_EDIT 处理函数
 static NextFSMAction COREST_ESN_EDIT_Handler(CCoreApp *pMe);
 
+// 状态 COREST_ADS_ACCOUNT_EDIT 处理函数
+static NextFSMAction COREST_ADS_ACCOUNT_EDIT_Handler(CCoreApp *pMe);
+
 
 #if defined(FEATURE_SHOW_RSSI_INFO)
 // 状态 COREST_RSSI_INFO 处理函数
@@ -291,7 +294,9 @@ NextFSMAction CoreApp_ProcessState(CCoreApp *pMe)
         case COREST_ESN_EDIT:
 			retVal = COREST_ESN_EDIT_Handler(pMe);
 			break;               
-            
+         case COREST_ADS_ACCOUNT_EDIT:
+            retVal = COREST_ADS_ACCOUNT_EDIT_Handler(pMe);
+			break;   
 #endif
 #ifdef FEATURE_SHOW_RSSI_INFO
         case COREST_RSSI_INFO:
@@ -2128,6 +2133,28 @@ static NextFSMAction COREST_ESN_EDIT_Handler(CCoreApp *pMe)
     return NFSMACTION_CONTINUE;
 }
 //#endif
+
+static NextFSMAction COREST_ADS_ACCOUNT_EDIT_Handler(CCoreApp *pMe)
+{
+	if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    MSG_FATAL("COREST_ADS_ACCOUNT_EDIT_Handler Start",0,0,0);
+    switch (pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            CoreApp_ShowDialog(pMe, IDD_ADS_ACCOUNT_EDIT);
+            return NFSMACTION_WAIT;
+            
+        case DLGRET_MSGOK:
+        default:
+            MOVE_TO_STATE(COREST_STANDBY)
+    }
+    MSG_FATAL("COREST_ADS_ACCOUNT_EDIT_Handler End",0,0,0);
+    return NFSMACTION_CONTINUE;
+}
+
 
 #ifdef FEATURE_UTK2
 /*==============================================================================

@@ -1143,7 +1143,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 	GETFSFREE(&dwTotal);
 	free = GETRAMFREE(&tot,&larg);
 	GetJulianDate(GETTIMESECONDS(), &jDate);
-    MSG_FATAL("larg=======%d,,,free==%d",larg,free,0);
+    //MSG_FATAL("larg=======%d,,,free==%d",larg,free,0);
     #ifdef FEATURE_DISP_240X320
 	if((free<260000) &&(jDate.wHour>2)&&(jDate.wHour<4))
     #else
@@ -2225,6 +2225,11 @@ case EVT_ALARM:
             // 再以 DLGRET_CREATE 关闭当前对话框
             CLOSE_DIALOG(DLGRET_CREATE)  
 			return TRUE;
+
+        case EVT_ADS_ACCOUNT_EDIT:            
+            MOVE_TO_STATE(COREST_ADS_ACCOUNT_EDIT)            
+            CLOSE_DIALOG(DLGRET_CREATE)  
+			return TRUE;    
 
 #ifdef FEATURE_SHOW_RSSI_INFO
         case EVT_RSSI_INFO:

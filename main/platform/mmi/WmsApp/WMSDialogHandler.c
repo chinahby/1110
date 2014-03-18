@@ -2946,6 +2946,7 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
             return TRUE;
 
         case EVT_DIALOG_START:
+            MSG_FATAL("***zzg WmsApp WmsApp_UpdateAnnunciators 666***", 0, 0, 0);
             WmsApp_UpdateAnnunciators(pMe);
             (void) ISHELL_PostEventEx(pMe->m_pShell, 
                                     EVTFLG_ASYNC,
@@ -6989,7 +6990,7 @@ static boolean IDD_STORAGE_Handler(void   *pUser,
                                        CFGI_WMS_MEMSTORE,
                                        &mem_store,
                                        sizeof(mem_store));
-                
+                MSG_FATAL("***zzg WmsApp WmsApp_UpdateAnnunciators 777***", 0, 0, 0);
                 // 配置短信存储空间
                 WmsApp_UpdateAnnunciators(pMe);
                 InitMenuIcons(pMenu);
@@ -17452,6 +17453,8 @@ static boolean IDD_VOICEMAIL_Handler(void   *pUser,
                                                 &(pMe->m_msCur));
                     pMe->m_msCur.mem_store = mem_store;
                     MSG_FATAL("EVT_WMS_MSG_READ",0,0,0);
+
+                    MSG_FATAL("***zzg WmsApp WmsApp_UpdateAnnunciators 888***", 0, 0, 0);
                     // 更新消息图标
                     WmsApp_UpdateAnnunciators(pMe);
                     
@@ -19556,6 +19559,7 @@ static boolean IDD_FLASHSMS_Handler(void *pUser,
 	            // 绘制底条提示
 	            // Option       Back
 	            DRAW_BOTTOMBAR(BTBAR_SAVE_BACK)
+	            MSG_FATAL("***zzg WmsApp WmsApp_UpdateAnnunciators 999***", 0, 0, 0);
         	 	WmsApp_UpdateAnnunciators(pMe);
 	            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 			}

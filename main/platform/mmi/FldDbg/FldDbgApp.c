@@ -7053,8 +7053,9 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
 	MSG_FATAL("CFieldDebug_DrawEsnScreen Start", 0, 0, 0);
     MEMSET (sTitle, 0, sizeof(sTitle));
 
-    (void)MEMSET( szBuf,(AECHAR) 0, sizeof(szBuf));   
-    #ifndef FEATURE_VERSION_K212_VHOPE
+    (void)MEMSET( szBuf,(AECHAR) 0, sizeof(szBuf)); 
+    
+#if !defined (FEATURE_VERSION_K212_VHOPE) && !defined (FEATURE_VERSION_K232_Y101)
     ret = ISHELL_LoadResString(pme->a.m_pIShell,
                                FLDDBG_RES_FILE,
                                IDS_ESN,
@@ -7094,10 +7095,10 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
    
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n';
-    #else
+#else
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n';
-    #endif
+#endif
     (void) ISHELL_LoadResString(pme->a.m_pIShell,
                                FLDDBG_RES_FILE,
                                IDS_STRING_MEID,

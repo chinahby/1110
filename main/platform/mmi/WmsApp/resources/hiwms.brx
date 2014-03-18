@@ -5,7 +5,7 @@
 		<Text>इनबॉक्स</Text>
 	</STRING>
 	<STRING Id="2" Name="IDS_WRITEMESSAGE">
-		<Text>सृजित करें</Text>
+		<Text>संदेश लिख</Text>
 	</STRING>
 	<STRING Id="3" Name="IDS_OUTBOX">
 		<Text>आउटबॉक्स</Text>
@@ -14,13 +14,13 @@
 		<Text>वॉइस मेल</Text>
 	</STRING>
 	<STRING Id="5" Name="IDS_DRAFT">
-		<Text>मसौदा</Text>
+		<Text>ड्राफ्ट्स</Text>
 	</STRING>
 	<STRING Id="6" Name="IDS_TEMPLATES">
-		<Text>प्रारूप</Text>
+		<Text>टेम्पलेट्स</Text>
 	</STRING>
 	<STRING Id="7" Name="IDS_MENSTATUS">
-		<Text>स्मृति स्थिति</Text>
+		<Text>मेमोरी स्थिति</Text>
 	</STRING>
 	<STRING Id="8" Name="IDS_DELETEMSGS">
 		<Text>संदेश मिटाएं</Text>
@@ -44,7 +44,7 @@
 		<Text>से:</Text>
 	</STRING>
 	<STRING Id="15" Name="IDS_REPLY">
-		<Text>उत्तर दें</Text>
+		<Text>जवाब दे</Text>
 	</STRING>
 	<STRING Id="16" Name="IDS_FORWARD">
 		<Text>फॉरवर्ड</Text>
@@ -68,7 +68,7 @@
 		<Text>UIM कार्ड को कॉपी करें</Text>
 	</STRING>
 	<STRING Id="23" Name="IDS_COPYTOPNONE">
-		<Text>फोन को कॉपी करें</Text>
+		<Text>फोन में कॉपी करे</Text>
 	</STRING>
 	<STRING Id="24" Name="IDS_CALL">
 		<Text>कॉल करें</Text>
@@ -95,13 +95,13 @@
 		<Text>हटा रहा है...</Text>
 	</STRING>
 	<STRING Id="32" Name="IDS_TEMPLATE1">
-		<Text>मैं व्यस्त हूँ.मुझे बाद में फोन करना.</Text>
+		<Text>मैं व्यस्त हूँ. मुझे बाद में फोन करना</Text>
 	</STRING>
 	<STRING Id="33" Name="IDS_TEMPLATE2">
 		<Text>जन्मदिन मुबारक हो!</Text>
 	</STRING>
 	<STRING Id="34" Name="IDS_TEMPLATE3">
-		<Text>कृपया एक मिनट रुको.</Text>
+		<Text>कृपया एक मिनट प्रतीक्षा करें</Text>
 	</STRING>
 	<STRING Id="35" Name="IDS_TEMPLATE4">
 		<Text>आप कहाँ हैं?</Text>
@@ -110,13 +110,13 @@
 		<Text>दिन कैसा रहा?</Text>
 	</STRING>
 	<STRING Id="37" Name="IDS_TEMPLATE6">
-		<Text>सौभाग्य!</Text>
+		<Text>गुड लक</Text>
 	</STRING>
 	<STRING Id="38" Name="IDS_TEMPLATE7">
 		<Text>कृपया मेरे घर के नंबर पर कॉल करें.</Text>
 	</STRING>
 	<STRING Id="39" Name="IDS_TEMPLATE8">
-		<Text>मैं आपको वापस फोन जल्दी ही होगा!</Text>
+		<Text>मैं जल्द ही आपको फोन करता हूँ</Text>
 	</STRING>
 	<STRING Id="40" Name="IDS_TEMPLATE9">
 		<Text>मैं माफी चाहता हूँ!</Text>
@@ -128,7 +128,7 @@
 		<Text>वरीयता</Text>
 	</STRING>
 	<STRING Id="43" Name="IDS_DELIVERYREPORTS">
-		<Text>को वितरित</Text>
+		<Text> डिलीवरी रिपोर्ट</Text>
 	</STRING>
 	<STRING Id="44" Name="IDS_STORAGE">
 		<Text>संग्रह</Text>
@@ -296,10 +296,10 @@
 		<Text>केवल भेजें</Text>
 	</STRING>
 	<STRING Id="105" Name="IDS_SAVEONLY">
-		<Text>केवल रक्षित</Text>
+		<Text>केवल सहेजें</Text>
 	</STRING>
 	<STRING Id="106" Name="IDS_SENDANDSAVE">
-		<Text>भेजें और रक्षित करें</Text>
+		<Text>भेजें और सहेजे</Text>
 	</STRING>
 	<STRING Id="107" Name="IDS_CALLBACKNUM">
 		<Text>वापस कॉल नंबर</Text>
@@ -311,7 +311,7 @@
 		<Text>UIM कार्ड को ले जाएँ</Text>
 	</STRING>
 	<STRING Id="110" Name="IDS_MOVETOPHONE">
-		<Text>फोन को ले जाएँ</Text>
+		<Text>फोन में ले जाए</Text>
 	</STRING>
 	<STRING Id="111" Name="IDS_IPCALL">
 		<Text>आइपी काल</Text>
@@ -440,7 +440,7 @@
 		<Text>प्रबंधन</Text>
 	</STRING>
 	<STRING Id="153" Name="IDS_COPYINBOX">
-		<Text>इनबॉक्स प्रतिलिपि</Text>
+		<Text>इनबॉक्स में कॉपी करे</Text>
 	</STRING>
 	<STRING Id="154" Name="IDS_MOVEINBOX">
 		<Text>इनबॉक्स ले जाएँ</Text>
@@ -533,7 +533,7 @@
 		<Text>चालू</Text>
 	</String>
 	<String Id="184" Name="IDS_SENDOPT_SAVEANDSEND_SHORT">
-		<Text>भेजें और रक्षित करें</Text>
+		<Text>भेजें और सहेजे</Text>
 	</String>
 	<String Id="185" Name="IDS_ENABLEREPORT_SHORT">
 		<Text>चालू</Text>
@@ -713,7 +713,7 @@
 		<Text>Sorry!!</Text>
 	</String>
 	<String Id="1106" Name="IDS_TEMPLATETATA6">
-		<Text>Thank you!!</Text>
+		<Text>धन्यवाद</Text>
 	</String>
 	<String Id="1107" Name="IDS_TEMPLATETATA7">
 		<Text>How was the day?</Text>

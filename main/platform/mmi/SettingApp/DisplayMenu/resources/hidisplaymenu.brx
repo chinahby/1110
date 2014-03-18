@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="displaymenu" VERSION="1">
+<BREWRes Name="hidisplaymenu" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1001" Name="IDS_DISPLAY_TITLE">
 		<Text>प्रदर्शन</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_BACKLIGHTING_TITLE">
-		<Text>पृष्ठप्रकाश समय</Text>
+		<Text>बॅकलाइट अवधि</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_ALWAYS_ON">
 		<Text>हमेशा चालू</Text>
@@ -185,7 +185,7 @@
 		<Text>नीला</Text>
 	</STRING>
 	<String Id="1070" Name="IDS_REND_MENU_TITLE">
-		<Text>प्रभाव की स्थापना</Text>
+		<Text>प्रभाव सेटिंग्स</Text>
 	</String>
 	<String Id="1071" Name="IDS_REND_EFFECT_FADE">
 		<Text>फीका करना</Text>

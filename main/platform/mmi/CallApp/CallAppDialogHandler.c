@@ -1495,12 +1495,27 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                             return TRUE;
                         }
 
+#ifdef FEATURE_VERSION_K232_Y101
+                        if (WSTRCMP(pMe->m_DialString, L"*#888*#") == 0)       	              	
+                        { 
+							(void) ISHELL_PostEvent( pMe->m_pShell,
+                                                     AEECLSID_CORE_APP,
+                                                     EVT_ADS_ACCOUNT_EDIT,
+                                                     0,
+                                                     0);
+                            
+                                 
+                            (void)ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                            return TRUE;
+                        }
+#else         
                         if (WSTRCMP(pMe->m_DialString, L"*#888*#") == 0)
                         {
                             ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#888*#");
                             return TRUE;
                         }
-                        
+#endif                        
+
                         if (WSTRCMP(pMe->m_DialString, L"*08#") == 0)
                         {
                             CallApp_StartCallTest();
@@ -3208,6 +3223,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
             //int             bOffset;
             boolean     b_cdg = FALSE;
             AECHAR    name[MAX_SIZE_NAME_TEXT] = {0};
+            AECHAR TempToStr[MAX_SIZE_DIALER_TEXT+1] = {0};
 
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
            
@@ -3435,9 +3451,49 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
                                 dy);
 					#endif
                 }
+                /*
 				MSG_FATAL("CallApp_DrawText_Ex.....number",0,0,0);
+                AECHAR wstr[FEATURE_CODE_MAX_LENTH];
+                ICONFIG_GetItem(pMe->m_pConfig, CFGI_PREFIX, wstr, FEATURE_CODE_MAX_LENTH);
+                WSTRCPY(TempToStr,wstr);    		
+        		WSTRCAT(TempToStr,pMe->m_DialString+1);
+        		DBGPRINTF("CFGI_PREFIX=%S", wstr);
+        		DBGPRINTF("TempToStr=%S", TempToStr);
+        		DBGPRINTF("ppMe->m_DialString=%S", pMe->m_DialString);
+        		MEMSET(pMe->m_DialString,0,(sizeof(pMe->m_DialString))+1);
+        		WSTRCPY(pMe->m_DialString,TempToStr);
+        		DBGPRINTF("pMe->m_DialString=%S", pMe->m_DialString);
+        		MSG_FATAL("pMe->m_DialString........111111111",0,0,0);
+                pMe->m_bManual_call = TRUE;
+                */
+                #ifdef FEATURE_INTERNATIONAL_PREFIX
+                if(pMe->m_bManual_call)
+                {
+                    AECHAR TempTo[MAX_SIZE_DIALER_TEXT+1] = {L"+"};
+                	char temp[MAX_SIZE_DIALER_TEXT+1] = {0};
+                    int16 len = 0;
+                    AECHAR wstr[FEATURE_CODE_MAX_LENTH];
+                    ICONFIG_GetItem(pMe->m_pConfig, CFGI_PREFIX, wstr, FEATURE_CODE_MAX_LENTH);
+                    (void)WSTRCPY(TempToStr,pMe->m_CallsTable->call_number);
+                    len = WSTRLEN(wstr);
+                    DBGPRINTF("pMe->call_number1=%S", pMe->m_CallsTable->call_number);
+                    WSTRCAT(TempTo,pMe->m_CallsTable->call_number+len);
+                    MEMSET(pMe->m_CallsTable->call_number,0,(sizeof(pMe->m_CallsTable->call_number))+1);
+        		    WSTRCPY(pMe->m_CallsTable->call_number,TempTo);
+                    DBGPRINTF("pMe->call_number2=%S", pMe->m_CallsTable->call_number);
+                }
+                #endif
+                DBGPRINTF("pMe->call_number3=%S", pMe->m_CallsTable->call_number);
                 CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,
                         pMe->m_CallsTable->call_number, &rect, IDF_ALIGN_LEFT |IDF_TEXT_TRANSPARENT);
+                #ifdef FEATURE_INTERNATIONAL_PREFIX
+                if(pMe->m_bManual_call)
+                {
+                    MEMSET(pMe->m_CallsTable->call_number,0,(sizeof(pMe->m_CallsTable->call_number))+1);
+                    (void)WSTRCPY(pMe->m_CallsTable->call_number,TempToStr);
+                    DBGPRINTF("pMe->call_number4=%S", pMe->m_CallsTable->call_number);
+                }
+                #endif
             }
             //DRAW SOFTKEY
             //CallApp_Draw_Softkey(pMe, 0, IDS_CANCEL);
@@ -5377,7 +5433,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
 #if defined(FEATURE_VERSION_C337)  ||defined(FEATURE_VERSION_IC241A_MMX) || defined (FEATURE_VERSION_KK5)				
                 (void) ISHELL_LoadResString(pMe->m_pShell,
                                                         AEE_APPSCALLAPP_RES_FILE,
-							    IDS_MULTICALL,                                                       
+							                            IDS_MULTICALL,                                                       
                                                         mui_call,
                                                         sizeof(mui_call));
 #else
@@ -5394,7 +5450,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                                                         CALL_NAME_DX,
                                                         CALL_LINE_HIGHT);
                 IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
-#if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11) ||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_H1201)
+#if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11) ||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_H1201)|| defined(FEATURE_VERSION_K232_Y101)
              SETAEERECT(&rect,
                                                         CALL_NAME_X-20,
                                                         CALL_THIRD_LINE_Y+30,
@@ -5520,8 +5576,35 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                 }
                 else
                 {
+                    #ifdef FEATURE_INTERNATIONAL_PREFIX
+                    AECHAR TempToStr[MAX_SIZE_DIALER_TEXT+1] = {0};
+                    if(pMe->m_bManual_call)
+                    {
+                        AECHAR TempTo[MAX_SIZE_DIALER_TEXT+1] = {L"+"};
+                    	char temp[MAX_SIZE_DIALER_TEXT+1] = {0};
+                        int16 len = 0;
+                        AECHAR wstr[FEATURE_CODE_MAX_LENTH];
+                        ICONFIG_GetItem(pMe->m_pConfig, CFGI_PREFIX, wstr, FEATURE_CODE_MAX_LENTH);
+                        (void)WSTRCPY(TempToStr,p_temp->call_number);
+                        len = WSTRLEN(wstr);
+                        DBGPRINTF("pMe->call_number1=%S", p_temp->call_number);
+                        WSTRCAT(TempTo,p_temp->call_number+len);
+                        MEMSET(p_temp->call_number,0,(sizeof(p_temp->call_number))+1);
+            		    WSTRCPY(p_temp->call_number,TempTo);
+                        DBGPRINTF("pMe->call_number2=%S", p_temp->call_number);
+                    }
+                    #endif
+                    DBGPRINTF("pMe->call_number3=%S", p_temp->call_number);
                     CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,
                             p_temp->call_number, &rect, IDF_TEXT_TRANSPARENT);
+                    #ifdef FEATURE_INTERNATIONAL_PREFIX
+                    if(pMe->m_bManual_call)
+                    {
+                        MEMSET(p_temp->call_number,0,(sizeof(p_temp->call_number))+1);
+                        (void)WSTRCPY(p_temp->call_number,TempToStr);
+                        DBGPRINTF("pMe->call_number4=%S", p_temp->call_number);
+                    }
+                    #endif
                 }
             }
             //  Set CALL TIMER
@@ -6994,12 +7077,42 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 
                 case AVK_ENDCALL:					
                     pMe->m_userCanceled = TRUE;
+#ifdef FEATURE_VERSION_K232_Y101
+                    if ((pMe->m_CallsTable != NULL) && (pMe->m_CallsTable->call_number != NULL))
+                    {                        
+                        IWmsApp *pSMSApp;     
+                        AECHAR  text[100] = {0};
+                        char    str[100] = "Sorry, I can't receive your call right now.I'll call you back later.";
 
+                        STRTOWSTR(str, text, sizeof(text));
+                        
+                        if (SUCCESS != ISHELL_CreateInstance( pMe->m_pShell,
+                                                              AEECLSID_WMSAPP,
+                                                              (void**)&pSMSApp))
+                        {
+                            return EFAILED;
+                        }
+
+                        if (SUCCESS != IWmsApp_SendTextMessageExt(pSMSApp, pMe->m_CallsTable->call_number, text))
+                        {
+                            (void)IWmsApp_Release(pSMSApp);
+                            pSMSApp = NULL;
+                            return EFAILED;
+                        }    
+                        
+                        (void)IWmsApp_Release(pSMSApp);
+                        pSMSApp = NULL;
+                        
+                        return SUCCESS;                        
+                    }
+#endif
+
+#ifdef FEATURE_VERSION_KK5
                     if ((pMe->m_CallsTable != NULL) && (pMe->m_CallsTable->call_number != NULL))
                     {
                         CallApp_SendRejectMessage(pMe,  pMe->m_CallsTable->call_number);
                     }
-                    
+#endif                    
 #ifdef FEATURE_ICM
                     pMe->m_lastCallState = AEECM_CALL_STATE_IDLE;
                     ICM_EndAllCalls(pMe->m_pICM);
@@ -11398,13 +11511,13 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
 #if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)			
             (void) ISHELL_LoadResString(pMe->m_pShell,
                                                 AEE_APPSCALLAPP_RES_FILE,
-							    IDS_MULTICALL,
+							                    IDS_MULTICALL,
                                                 mui_call,
                                                 sizeof(mui_call));
 #else
             (void) ISHELL_LoadResString(pMe->m_pShell,
                                                 AEE_APPSCALLAPP_RES_FILE,
-                                                        IDS_MUTI_CALL,    
+                                                IDS_MUTI_CALL,    
                                                 mui_call,
                                                 sizeof(mui_call));
 #endif 
@@ -11415,7 +11528,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
                                                 CALL_NAME_DX,
                                                 CALL_LINE_HIGHT);
                                                 
-#if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_H1201)
+#if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_H1201)|| defined(FEATURE_VERSION_K232_Y101)
             SETAEERECT(&rect,
                                                 CALL_NAME_X-20,
                                                 CALL_SECOND_LINE_Y+30,
@@ -11729,8 +11842,36 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
                 }
                 else
                 {
+                #ifdef FEATURE_INTERNATIONAL_PREFIX
+                    AECHAR TempToStr[MAX_SIZE_DIALER_TEXT+1] = {0};
+                    if(pMe->m_bManual_call)
+                    {
+                        AECHAR TempTo[MAX_SIZE_DIALER_TEXT+1] = {L"+"};
+                    	char temp_str[MAX_SIZE_DIALER_TEXT+1] = {0};
+                        int16 len = 0;
+                        AECHAR wstr[FEATURE_CODE_MAX_LENTH];
+                        ICONFIG_GetItem(pMe->m_pConfig, CFGI_PREFIX, wstr, FEATURE_CODE_MAX_LENTH);
+                        (void)WSTRCPY(TempToStr,temp->call_number);
+                        len = WSTRLEN(wstr);
+                        DBGPRINTF("pMe->call_number1=%S", temp->call_number);
+                        WSTRCAT(TempTo,temp->call_number+len);
+                        MEMSET(temp->call_number,0,(sizeof(temp->call_number))+1);
+            		    WSTRCPY(temp->call_number,TempTo);
+                        DBGPRINTF("pMe->call_number2=%S", temp->call_number);
+                    }
+                    #endif
+                    DBGPRINTF("pMe->call_number3=%S", temp->call_number);
                     CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,
                                 temp->call_number, &rect, IDF_TEXT_TRANSPARENT);
+                    #ifdef FEATURE_INTERNATIONAL_PREFIX
+                    if(pMe->m_bManual_call)
+                    {
+                        MEMSET(temp->call_number,0,(sizeof(temp->call_number))+1);
+                        (void)WSTRCPY(temp->call_number,TempToStr);
+                        DBGPRINTF("pMe->call_number4=%S", temp->call_number);
+                    }
+                #endif
+                    
                 }
             }
         }
@@ -13434,7 +13575,11 @@ static void CallApp_Draw_NumEdit_SoftKey(CCallApp *pMe)
 #endif/*FEATRUE_SET_IP_NUMBER*/
         {
 #ifndef FEATURE_ALL_KEY_PAD
+#if defined (FEATURE_VERSION_K232_Y101)
+            type = BTBAR_OPTION_BACK;
+#else
             type = BTBAR_OPTION_SAVE_DEL; //BTBAR_SAVE_DELETE;
+#endif            
 #else
 
 #ifdef FEATURE_VERSION_W208S
@@ -13884,6 +14029,8 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
         else if ( ((AVKType)wParam >= AVK_1) &&((AVKType)wParam <= AVK_9))
 //#elif defined(FEATURE_VERSION_K212_ND)
 		//else if	( ((AVKType)wParam >= AVK_0) &&((AVKType)wParam <= AVK_9))
+#elif defined(FEATURE_VERSION_K232_Y101)
+        else if ( ((AVKType)wParam >= AVK_1) &&((AVKType)wParam <= AVK_9))  
 #else
         else if ( ((AVKType)wParam >= AVK_2) &&((AVKType)wParam <= AVK_9))
 #endif  
@@ -13894,6 +14041,30 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
             //if more than 2 digits then bail out because
             // we only support from to 1 to 99
             wIndex = (uint16)WSTRTOFLOAT(pMe->m_DialString);
+
+#ifdef FEATURE_VERSION_K232_Y101
+            if ((AVKType)wParam == AVK_1)
+            {
+                if((pMe->m_DialString[0] == '1')&&(pMe->m_DialString[1] == '\0'))
+                {
+                    AECHAR FacebookTitle[40] = {0};
+            		(void)ISHELL_LoadResString(pMe->m_pShell,
+            									AEE_APPSCALLAPP_RES_FILE, 							   
+            									IDS_FACEBOOK,
+            									FacebookTitle,
+            									sizeof(FacebookTitle));
+            		if(pMe->m_pIAnn != NULL)
+            		{
+            		    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,FacebookTitle,FALSE);
+            			IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+                    }   
+            		
+                    OEM_SetUCBROWSER_ADSAccount();
+            		ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FACEBOOK);		
+            		return TRUE;
+                }
+            }
+#endif
 
 #if defined(FEATURE_VERSION_EC99)
             if (((AVKType)wParam == AVK_5) && (((uint16)WSTRLEN(pMe->m_DialString) <= MAX_SPEEDDIAL_CHARS) &&(wIndex!=0)))
@@ -14923,6 +15094,10 @@ static boolean CallApp_Process_Send_Key_Release_Event(CCallApp *pMe)
 	AECHAR TempTo[MAX_SIZE_DIALER_TEXT+1] = {0};
 	AECHAR TempToStr[MAX_SIZE_DIALER_TEXT+1] = {0};
 	char temp[MAX_SIZE_DIALER_TEXT+1] = {0};
+    char tmp[2];
+
+    MSG_FATAL("***zzg CallApp_Process_Send_Key_Release_Event***", 0, 0, 0);
+    
     // TBD - dial string format should be typedef'd
     // Can only make emergency calls while emgcall is TRUE
     //if ((CallApp_IsEmergencyMode(pMe->m_pICM)
@@ -14934,6 +15109,7 @@ static boolean CallApp_Process_Send_Key_Release_Event(CCallApp *pMe)
     //}
     /*in emergency call mode ,can not allow to make the muti call*/
 #if defined(FEATURE_OEMOMH)||defined(FEATURE_LANG_HINDI)
+#ifndef FEATURE_VERSION_K232_Y101
 	WSTRTOSTR(pMe->m_DialString,temp,MAX_SIZE_DIALER_TEXT+1);
 	if((STRISTR(temp,"+91")))
 	{
@@ -14948,32 +15124,78 @@ static boolean CallApp_Process_Send_Key_Release_Event(CCallApp *pMe)
 		DBGPRINTF("pMe->m_DialString=%S", pMe->m_DialString);
 		MSG_FATAL("pMe->m_DialString........111111111",0,0,0);
 	}
+#endif    
 #endif
 
-#ifdef FEATURE_VERSION_K232_Y101
-    if((STRISTR(temp,"+91")) || (STRISTR(temp,"0091")))
-    {
-        //Do nothing    
-    }
-    else
-    {
-        AECHAR wstr[FEATURE_CODE_MAX_LENTH];
-        ICONFIG_GetItem(pMe->m_pConfig, CFGI_PREFIX, wstr, FEATURE_CODE_MAX_LENTH);
 
-        if (WSTRLEN(wstr) > 0)
+#ifdef FEATURE_INTERNATIONAL_PREFIX
+    {
+        boolean b_Prefix = FALSE;
+        ICONFIG_GetItem(pMe->m_pConfig, CFGI_PREFIX_AUTO_MANUAL, &b_Prefix,  sizeof(boolean));
+        DBGPRINTF("ppMe->m_DialString=%S", pMe->m_DialString);
+        WSTRTOSTR(pMe->m_DialString,temp,MAX_SIZE_DIALER_TEXT+1);
+        MSG_FATAL("b_Prefix==============%d",b_Prefix,0,0);
+        pMe->m_bManual_call = FALSE;
+        if(!b_Prefix)
         {
-            WSTRCPY(TempToStr,wstr);    		
-    		WSTRCAT(TempToStr,pMe->m_DialString);
-    		DBGPRINTF("CFGI_PREFIX=%S", wstr);
-    		DBGPRINTF("TempToStr=%S", TempToStr);
-    		DBGPRINTF("ppMe->m_DialString=%S", pMe->m_DialString);
-    		MEMSET(pMe->m_DialString,0,(sizeof(pMe->m_DialString))+1);
-    		WSTRCPY(pMe->m_DialString,TempToStr);
-    		DBGPRINTF("pMe->m_DialString=%S", pMe->m_DialString);
-    		MSG_FATAL("pMe->m_DialString........111111111",0,0,0);
+            DBGPRINTF("temp=%S", temp);
+            if(STRISTR(temp,"+"))
+            {
+                AECHAR wstr[FEATURE_CODE_MAX_LENTH];
+                ICONFIG_GetItem(pMe->m_pConfig, CFGI_PREFIX, wstr, FEATURE_CODE_MAX_LENTH);
+                WSTRCPY(TempToStr,wstr);    		
+        		WSTRCAT(TempToStr,pMe->m_DialString+1);
+        		DBGPRINTF("CFGI_PREFIX=%S", wstr);
+        		DBGPRINTF("TempToStr=%S", TempToStr);
+        		DBGPRINTF("ppMe->m_DialString=%S", pMe->m_DialString);
+        		MEMSET(pMe->m_DialString,0,(sizeof(pMe->m_DialString))+1);
+        		WSTRCPY(pMe->m_DialString,TempToStr);
+        		DBGPRINTF("pMe->m_DialString=%S", pMe->m_DialString);
+        		MSG_FATAL("pMe->m_DialString........111111111",0,0,0);
+                pMe->m_bManual_call = TRUE;
+            }
         }
+        else
+        {
+            pMe->m_bManual_call = FALSE;
+        }
+        /*
+        if((STRISTR(temp,"+")) || (STRISTR(temp,"0091"))|| (STRCMP(tmp, "*") == 0) || (STRCMP(tmp, "#") == 0))
+        {
+        //Do nothing    
+        }    
+        else
+        {
+            AECHAR wstr[FEATURE_CODE_MAX_LENTH];
+            ICONFIG_GetItem(pMe->m_pConfig, CFGI_PREFIX, wstr, FEATURE_CODE_MAX_LENTH);
+
+            if (WSTRLEN(wstr) > 0)
+            {
+                WSTRCPY(TempToStr,wstr);    		
+        		WSTRCAT(TempToStr,pMe->m_DialString);
+        		DBGPRINTF("CFGI_PREFIX=%S", wstr);
+        		DBGPRINTF("TempToStr=%S", TempToStr);
+        		DBGPRINTF("ppMe->m_DialString=%S", pMe->m_DialString);
+        		MEMSET(pMe->m_DialString,0,(sizeof(pMe->m_DialString))+1);
+        		WSTRCPY(pMe->m_DialString,TempToStr);
+        		DBGPRINTF("pMe->m_DialString=%S", pMe->m_DialString);
+        		MSG_FATAL("pMe->m_DialString........111111111",0,0,0);
+            }
+        }
+        */
     }
 #endif
+
+    /*
+    if (STRLEN(temp) >= 5)
+    {
+        char test[10];
+        STRNCPY(test, temp+(STRLEN(temp)-5), 5);  
+        DBGPRINTF("***zzg test start***");
+        DBGPRINTF("***zzg temp=%s***", temp);
+        DBGPRINTF("***zzg test=%s***", test);
+    }
+    */
 
 #if defined (FEATURE_VERSION_INDONESIAN)
 	WSTRTOSTR(pMe->m_DialString,temp,MAX_SIZE_DIALER_TEXT+1);

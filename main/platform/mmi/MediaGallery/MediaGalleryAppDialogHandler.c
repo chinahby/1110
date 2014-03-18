@@ -5470,7 +5470,11 @@ static boolean MGAppPopupMenu_OnSelectPath(CMediaGalleryApp *pMe,
                SelItemID = IMENUCTL_GetSel(pMenuCtl);
                if(SelItemID == IDS_MG_PHONEMEMORY)
                {
-                  pDirs = MG_PHONE_ROOTDIR;
+#ifdef FEATURE_VERSION_K232_Y101
+				pDirs = MG_PHONE_ROOTDIR_PIC;
+#else
+			   	pDirs = MG_PHONE_ROOTDIR;
+#endif
                }
                else if(SelItemID == IDS_MG_CARDMEMORY)
                {
@@ -5550,7 +5554,11 @@ static boolean MGAppPopupMenu_OnSelectPath(CMediaGalleryApp *pMe,
                   SelItemID = IMENUCTL_GetSel(pMenuCtl);
                   if(SelItemID == IDS_MG_PHONEMEMORY)
                   {
-                     pDirs = MG_PHONE_ROOTDIR;
+#ifdef FEATURE_VERSION_K232_Y101
+					pDirs = MG_PHONE_ROOTDIR_PIC;
+#else
+					pDirs = MG_PHONE_ROOTDIR;
+#endif
                   }
                   else if(SelItemID == IDS_MG_CARDMEMORY)
                   {

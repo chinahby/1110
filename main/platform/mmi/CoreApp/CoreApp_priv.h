@@ -1077,6 +1077,7 @@ typedef enum _CoreAppState
   COREST_SALES_EDIT,
 #endif
   COREST_ESN_EDIT,
+  COREST_ADS_ACCOUNT_EDIT,
 #if defined(FEATURE_SHOW_RSSI_INFO)
   COREST_RSSI_INFO,
 #endif
@@ -1388,6 +1389,11 @@ typedef struct _CCoreApp
    ITextCtl       *m_pESNTrackTime;
    char           m_strEsnTrackNUM[PHONENUMBER];   
    char           m_strEsnTrackNUMTwo[PHONENUMBER];
+   ITextCtl       *m_pAdsAccountUsername;
+   ITextCtl       *m_pAdsAccountPassword;
+   //char           m_strAdsAccountUsername[MAX_STRING_LENGTH];   
+   //char           m_strAdsAccountPassword[MAX_STRING_LENGTH];
+	
    
    ITextCtl       *m_pWebParamIp;
    ITextCtl       *m_pWebParamPort;

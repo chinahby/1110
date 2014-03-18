@@ -610,7 +610,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
                             IIMAGE_Draw(image, 85, 32);
 #elif defined(FEATURE_DISP_128X160)
-#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_KK5)
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_KK5)|| defined (FEATURE_VERSION_K232_Y101)
                             IIMAGE_Draw(image, 85, 32);
                             IIMAGE_Draw(image, 85, 42);
 #else
@@ -669,7 +669,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_176X220)
                             IIMAGE_Draw(image, 118, 57);
 #elif defined(FEATURE_DISP_128X160)
-#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_KK5)
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_KK5)|| defined (FEATURE_VERSION_K232_Y101)
                             IIMAGE_Draw(image, 85, 32);
                             IIMAGE_Draw(image, 85, 42);
 #else
@@ -722,7 +722,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_176X220)
                             IIMAGE_Draw(image, 118, 0);
 #elif defined(FEATURE_DISP_128X160)
-#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_KK5)
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_KK5)|| defined (FEATURE_VERSION_K232_Y101)
                         IIMAGE_Draw(image, 85, 0);
                         IIMAGE_Draw(image, 85, 10);
 #else
@@ -1347,7 +1347,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128) || defined(FEATURE_DISP_176X220)
                             IIMAGE_Draw(image, 0, 0);
 #elif defined(FEATURE_DISP_128X160)
-#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_KK5)
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_KK5)|| defined (FEATURE_VERSION_K232_Y101)
                             IIMAGE_Draw(image, 0, 0);
                             IIMAGE_Draw(image, 0, 10);
 #else
@@ -1403,7 +1403,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_176X220)
                             IIMAGE_Draw(image, 0, 57);
 #elif defined(FEATURE_DISP_128X160)
-#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_KK5)
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_KK5)|| defined (FEATURE_VERSION_K232_Y101)
                             IIMAGE_Draw(image, 0, 32);
                             IIMAGE_Draw(image, 0, 42);
 #else
@@ -4489,19 +4489,36 @@ static void QuickTest_Vibrate(CQuickTest *pMe)
     	INCREMENT_ESCALATING_RINGER_T(vol);
         OEMALERT_SetRingerVol_t(pMe, TRUE);
         
+
+#ifdef FEATURE_VERSION_K232_Y101
+        ISOUND_Vibrate(pMe->m_pISound, 1000);
+        (void)ISHELL_SetTimer(pMe->m_pShell,
+                             1000,
+                             (PFNNOTIFY)(QuickTest_Vibrate),
+                             pMe);
+#else
         ISOUND_Vibrate(pMe->m_pISound, 3000);
         (void)ISHELL_SetTimer(pMe->m_pShell,
                              3000,
                              (PFNNOTIFY)(QuickTest_Vibrate),
                              pMe);
+#endif        
     }
     else
     {
+#ifdef FEATURE_VERSION_K232_Y101
+        ISOUND_StopVibrate(pMe->m_pISound);
+        (void)ISHELL_SetTimer(pMe->m_pShell,
+                             1000,
+                             (PFNNOTIFY)(QuickTest_Vibrate),
+                             pMe);
+#else
         ISOUND_StopVibrate(pMe->m_pISound);
         (void)ISHELL_SetTimer(pMe->m_pShell,
                              2000,
                              (PFNNOTIFY)(QuickTest_Vibrate),
                              pMe);
+#endif        
     }
 }//end QuickTest_Vibrate
 

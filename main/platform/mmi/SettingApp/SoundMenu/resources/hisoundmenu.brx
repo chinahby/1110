@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="soundmenu" VERSION="1">
+<BREWRes Name="hisoundmenu" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1001" Name="IDS_STARTUP_RINGER">
-		<Text>पावर पर रिंगटोन</Text>
+		<Text>पावर चालू ध्वनि</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_RINGER_VOLUME_TITLE">
 		<Text>रिंग</Text>
@@ -11,16 +11,16 @@
 		<Text>हैंडसैट</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_KEYBEEP_VOLUME_TITLE">
-		<Text>रिंगटोन की  कीपैड</Text>
+		<Text>कीपैड रिंगटोन</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_CALLHINT">
 		<Text>कॉल मोड चेतावनी</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_SMSHINT">
-		<Text>SMS द्वारा सचेत मोड</Text>
+		<Text>संदेश सतर्क मोड</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_PROFILE_RESTORE">
-		<Text>डीफाल्ट</Text>
+		<Text>पुनर्स्थापित करें</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_VOLUME_TITLE">
 		<Text>ध्वनि पबलता</Text>
@@ -29,7 +29,7 @@
 		<Text>घंटी-ध्वनि</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_SMSRING">
-		<Text>SMS के टोन</Text>
+		<Text>संदेश ध्वनि</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_ITEM_OFF">
 		<Text>बंद</Text>
@@ -47,7 +47,7 @@
 		<Text>रिंगटोन पवर  बंद</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_ALARMRING">
-		<Text>चेतावनी टोन</Text>
+		<Text>अलार्म टोन</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_ITEM_VIBRING">
 		<Text>पहले कंपन बाद में रिंग बजे</Text>
@@ -71,7 +71,7 @@
 		<Text>बंद</Text>
 	</STRING>
 	<STRING Id="1024" Name="IDS_MISSEDCALL_ALERT">
-		<Text>मिस कॉल चेतावनी</Text>
+		<Text>मिस कॉल सतर्क</Text>
 	</STRING>
 	<STRING Id="1025" Name="IDS_WARNING_MESSEGE">
 		<Text>ठीक है</Text>
@@ -116,7 +116,7 @@
 		<Text>कार में</Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_ACTIVATE">
-		<Text>सक्रिय करें</Text>
+		<Text>सक्रिय करे</Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_PERSONALISE">
 		<Text>संपादित करें</Text>
@@ -131,7 +131,7 @@
 		<Text>शांत</Text>
 	</STRING>
 	<STRING Id="1047" Name="IDS_POWERONOFF_ALERT">
-		<Text>बिजली पर/पर नहीं चेतावनी</Text>
+		<Text>पावर चालू/बंद साधन</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_ALERTTYPE_VIBANDRING">
 		<Text>कंपन और रिंग</Text>
@@ -167,7 +167,7 @@
 		<Text>अल्दोव्बीत</Text>
 	</STRING>
 	<STRING Id="1059" Name="IDS_DEFAULT">
-		<Text>डीफाल्ट</Text>
+		<Text>पुनर्स्थापित करें</Text>
 	</STRING>
 	<STRING Id="1060" Name="IDS_FMRADIO_OPTION_MENU_PLAY_MODLE">
 		<Text>एफएम प्ले मोड</Text>
@@ -182,7 +182,7 @@
 		<Text>संदेश टोन</Text>
 	</STRING>
 	<STRING Id="1064" Name="IDS_MSG_ALERT_MODE">
-		<Text>संदेश अलर्ट मोड</Text>
+		<Text>संदेश सतर्क मोड</Text>
 	</STRING>
 	<STRING Id="1065" Name="IDS_PROFILE_BLUETOOTH">
 		<Text>ब्लूटूथ</Text>

@@ -2,7 +2,7 @@
 <BREWRes Name="hisettingmenu" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1001" Name="IDS_APP_TITLE">
-		<Text>सेटिंगें</Text>
+		<Text>सेटिंग्स</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_CALLFORWARD_START">
 		<Text>सक्रिय करें</Text>
@@ -44,7 +44,7 @@
 		<Text>पसंदीदा होम</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_DATESETTING">
-		<Text>दिनांक प्रारूप</Text>
+		<Text>दिनांक स्वरूप</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_SOUND_TITLE">
 		<Text>ध्वनि</Text>
@@ -143,7 +143,7 @@
 		<Text>चीनी</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_ENGLISH">
-		<Text>अंग्रेजी</Text>
+		<Text>अंग्रेज़ी</Text>
 	</STRING>
 	<STRING Id="1049" Name="IDS_AUTO_REDIAL">
 		<Text>स्वत पुनःप्रयास</Text>
@@ -158,7 +158,7 @@
 		<Text>कॉल वेटिंग</Text>
 	</STRING>
 	<STRING Id="1053" Name="IDS_CALLSETTING_TITLE">
-		<Text>सेटिंग्स कॉल करें</Text>
+		<Text>कॉल सेटिंग</Text>
 	</STRING>
 	<STRING Id="1054" Name="IDS_PHONESETTING_TITLE">
 		<Text>फोन सेटिंग्स</Text>
@@ -290,7 +290,7 @@
 		<Text>स्थिति</Text>
 	</STRING>
 	<STRING Id="1097" Name="IDS_AUTO_POWER_TITLE">
-		<Text>स्वत बिजली बंद/पर</Text>
+		<Text>पावर प्रारंभ / बंद</Text>
 	</STRING>
 	<STRING Id="1098" Name="IDS_SHAKE_TITLE">
 		<Text>हिला-हिला</Text>
@@ -518,7 +518,7 @@
 		<Text>Unconditional</Text>
 	</STRING>
 	<STRING Id="1173" Name="IDS_PHONE_INFO_TITLE">
-		<Text>Phone Info</Text>
+		<Text>फोन जानकारी</Text>
 	</STRING>
 	<STRING Id="1174" Name="IDS_SOFTWARE_VERSION_TITLE">
 		<Text>SW Version</Text>
@@ -657,6 +657,18 @@
 	</String>
 	<String Id="1431" Name="IDS_NETWORK_PARAMS_PASSWORD">
 		<Text>Password</Text>
+	</String>
+	<STRING Id="1500" Name="IDS_PHONE_SAR_VALUE">
+		<Text>SAR मान</Text>
+	</STRING>
+	<String Id="1501" Name="IDS_INTERNATIONAL_CALL_PREFIX">
+		<Text>International Call Prefix</Text>
+	</String>
+	<String Id="1502" Name="IDS_MANUAL">
+		<Text>Manual</Text>
+	</String>
+	<String Id="1503" Name="IDS_AUTO">
+		<Text>Auto</Text>
 	</String>
 </Strings>
 <Dialogs>
@@ -1040,5 +1052,17 @@
 				<Items/></Text>
 		</Controls>
 	</Dialog>	
+	<DIALOG Id="6070" Name="IDD_PHONE_GENERAL_INFO" Focus="0">
+		<Controls>
+			<Static Id="7070" Name="IDC_PHONE_GENERAL_INFO" Flags="40000">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6071" Name="IDD_PHONE_SAR_VALUE" Focus="7071">
+		<Controls>
+			<Static Id="7071" Name="IDC_PHONE_SAR_VALUE">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
 </Dialogs>
 </BREWRes>

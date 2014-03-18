@@ -1900,6 +1900,7 @@ static NextFSMAction WMSST_VOICEMAIL_Handler(WmsApp *pMe)
     switch (pMe->m_eDlgReturn)
     {
         case DLGRET_CREATE:
+            MSG_FATAL("***zzg WmsApp WmsApp_UpdateAnnunciators aaa***", 0, 0, 0);
             WmsApp_UpdateAnnunciators(pMe);
             pMe->m_eMBoxType = WMS_MB_VOICEMAIL;
             MEMSET(pMe->m_msSend.m_szNum, 0, sizeof(pMe->m_msSend.m_szNum));

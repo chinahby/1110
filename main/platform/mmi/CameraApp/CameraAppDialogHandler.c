@@ -6024,10 +6024,17 @@ static boolean CameraApp_IsEnoughfMemorySpace(CCameraApp * pMe)
 {
     if ( pMe->m_isStartFromFacebook == TRUE)
 	{
+		#ifdef FEATURE_VERSION_K232_Y101
+		IFILEMGR_GetFreeSpaceEx(pMe->m_pFileMgr, 
+	                                MG_PHONE_ROOTDIR_PIC, 
+	                                &pMe->m_dwMemTotal, 
+	                                &pMe->m_dwMemFree);
+		#else
 		IFILEMGR_GetFreeSpaceEx(pMe->m_pFileMgr, 
 	                                MG_PHONE_ROOTDIR, 
 	                                &pMe->m_dwMemTotal, 
 	                                &pMe->m_dwMemFree);
+		#endif
 
         if((pMe->m_dwMemFree/(2*BYTE_SIZE) < MIN_FREE_PHONE_SPACE) 
            ||(pMe->m_dwMemFree/(2*BYTE_SIZE) == MIN_FREE_PHONE_SPACE))
@@ -6060,10 +6067,17 @@ static boolean CameraApp_IsEnoughfMemorySpace(CCameraApp * pMe)
 	    }
 	    else
 	    {
+	    	#ifdef FEATURE_VERSION_K232_Y101
+			IFILEMGR_GetFreeSpaceEx(pMe->m_pFileMgr, 
+	                                MG_PHONE_ROOTDIR_PIC, 
+	                                &pMe->m_dwMemTotal, 
+	                                &pMe->m_dwMemFree);
+			#else
 	        IFILEMGR_GetFreeSpaceEx(pMe->m_pFileMgr, 
 	                                MG_PHONE_ROOTDIR, 
 	                                &pMe->m_dwMemTotal, 
 	                                &pMe->m_dwMemFree);
+			#endif
 
 	        if((pMe->m_dwMemFree/(2*BYTE_SIZE) < MIN_FREE_PHONE_SPACE) 
 	           ||(pMe->m_dwMemFree/(2*BYTE_SIZE) == MIN_FREE_PHONE_SPACE))
@@ -6281,7 +6295,11 @@ static boolean CameraApp_GetDateForRecordFileName(CCameraApp *pMe, char * pszDes
     }
     else
     {
+    	#ifdef FEATURE_VERSION_K232_Y101
+		STRCPY(pszDest, MG_PHONE_ROOTDIR_PIC);
+		#else
         STRCPY(pszDest, MG_PHONE_ROOTDIR);
+		#endif
     }
     
     switch(fileType)
@@ -6293,7 +6311,9 @@ static boolean CameraApp_GetDateForRecordFileName(CCameraApp *pMe, char * pszDes
 		    
 		case FILE_TYPE_JPG:
 		default:
+            #ifndef FEATURE_VERSION_K232_Y101
 		    STRCAT(pszDest, FS_CARD_PICTURES_FOLDER);
+            #endif
 #ifdef FEATURE_JPEG_ENCODER
 		    SPRINTF(pszDest+STRLEN(pszDest), "%02d%02d%02d%02d.jpg", julian.wDay, julian.wHour, julian.wMinute, julian.wSecond);
 #else

@@ -17675,6 +17675,7 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
 #ifndef FEATURE_VERSION_C337
 #ifndef FEATURE_VERSION_KK5
 #ifndef FEATURE_VERSION_IC241A_MMX
+#ifndef FEATURE_VERSION_K232_Y101
 #ifndef FEATURE_VERSION_K232_Y100A
 
             // ADD RUIM Number
@@ -17707,6 +17708,7 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                 }
 #endif//WIN32                
             }
+#endif
 #endif
 #endif
 #endif

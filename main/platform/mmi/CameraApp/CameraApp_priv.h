@@ -87,7 +87,6 @@
 #include "AEECamera.h"
 #include "OEMCamera.h"
 #include "ICameraExt.h"
-
 /*==============================================================================
                                  类型定义
 ==============================================================================*/
@@ -411,11 +410,17 @@
 #endif
 
 // file path
+#ifdef FEATURE_VERSION_K232_Y101
 #define FS_EFS_DIRECTORY_STR       "fs:/hsmm/"
 #define FS_CARD_PICTURES_FOLDER    MG_PICTURES_FOLDER DIRECTORY_STR
+#define FS_EFS_PICTURES_FOLDER     FS_EFS_DIRECTORY_STR FS_CARD_PICTURES_FOLDER
+#else
+#define FS_EFS_DIRECTORY_STR       "fs:/hsmm/"
+#define FS_CARD_PICTURES_FOLDER    MG_PICTURES_FOLDER DIRECTORY_STR
+#define FS_EFS_PICTURES_FOLDER     FS_EFS_DIRECTORY_STR FS_CARD_PICTURES_FOLDER
+#endif
 #define FS_CARD_MUSIC_FOLDER       MG_MUSIC_FOLDER DIRECTORY_STR
 #define FS_CARD_VIDEOS_FOLDER      MG_VIDEOS_FOLDER DIRECTORY_STR
-#define FS_EFS_PICTURES_FOLDER     FS_EFS_DIRECTORY_STR FS_CARD_PICTURES_FOLDER
 
 // video recorder timer
 #define RUNNING_UPDATE_MSECS   1000

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="mediagallery" VERSION="1">
+<BREWRes Name="himediagallery" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1000" Name="IDS_MG_MEDIAGALLERY">
 		<Text>फाइल मेनेजर</Text>
@@ -8,10 +8,10 @@
 		<Text>फोन</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_MG_CARDMEMORY">
-		<Text>स्मृति कार्ड</Text>
+		<Text>मेमोरी कार्ड</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_MG_MEMORYSTATUS">
-		<Text>स्मृति स्थिति</Text>
+		<Text>मेमोरी स्थिति</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_MG_PICTURES">
 		<Text>तस्वीरें</Text>

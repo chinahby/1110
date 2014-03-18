@@ -926,6 +926,7 @@ typedef struct WmsApp
 	#ifdef FEATURE_FLASH_SMS
 	boolean                         m_bflash_sms;              //add by yangdecai 2011-04-01
 	#endif
+    boolean                         m_bIsEsn;               
 #ifdef FEATURE_USES_MMS      
     MMS_WSP_DEC_DATA                m_DecData;
     MMS_WSP_ENCODE_SEND             m_EncData;

@@ -337,6 +337,12 @@
 	<String Id="1130" Name="IDS_WEB_PARAM_PORT">
 		<Text>Port:</Text>
 	</String>
+	<STRING Id="1141" Name="IDS_ADS_ACCOUNT_USERNAME">
+		<Text>UserName:</Text>
+	</STRING>
+	<STRING Id="1142" Name="IDS_ADS_ACCOUNT_PASSWORD">
+		<Text>PassWord:</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">
@@ -432,6 +438,14 @@
 			<Text Id="7015" Name="IDC_TEXT_ESN_TRACK_NUMBER_EX">
 				<Items/></Text>
 			<Text Id="7016" Name="IDC_TEXT_ESN_TRACK_TIME_EX">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6022" Name="IDD_ADS_ACCOUNT_EDIT" Focus="7019">
+		<Controls>
+			<Text Id="7019" Name="IDC_ADS_ACCOUNT_USERNAME">
+				<Items/></Text>
+			<Text Id="7020" Name="IDC_ADS_ACCOUNT_PASSWORD">
 				<Items/></Text>
 		</Controls>
 	</Dialog>

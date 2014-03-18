@@ -4178,7 +4178,7 @@ wms_client_message_s_type *GetSmsTrackerSms(AECHAR *pwstrType)
     MSG_FATAL("***zzg GetSmsTrackerSms strnumber=%s***", strnumber,0,0);
 
 	//W317A  销售统计
-#if defined(FEATURE_VERSION_W317A)
+#if defined(FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_K232_Y101)
 	
 	STRCPY(pBuf, "*TRACK* MOD:ARC8c IMEI:");
 	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
@@ -4767,7 +4767,7 @@ wms_client_message_s_type *GetNetworkInitiatedEsnTrackerSms(AECHAR *pwstrType)
 #ifdef FEATURE_OEMOMH
         if (gsdi_uim_omh_cap.omh_enabled)
         {
-            STRCPY(pBuf, "ESNTRACK MTS LAVAFFFFFF M141FFFFFF PU RUIM_ID: ");
+            STRCPY(pBuf, "ESNTRACK MTS LAVAFFFFFF M141FFFFFF OT RUIM_ID: ");
 
         }
         else
@@ -4852,7 +4852,7 @@ wms_client_message_s_type *GetNetworkInitiatedEsnTrackerSms(AECHAR *pwstrType)
 #ifdef FEATURE_OEMOMH
             if (gsdi_uim_omh_cap.omh_enabled)
             {
-                STRCAT(pBuf, " V.MTS.M141.B01 V1"); 
+                STRCAT(pBuf, " V.MTS.M141.B02 V1"); 
             }
             else
 #endif
@@ -5235,7 +5235,8 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
 #ifdef FEATURE_OEMOMH
             if (gsdi_uim_omh_cap.omh_enabled)
             {
-                STRCAT(pBuf, " V.MTS.M141.B01 V1");
+            //ggg
+                STRCAT(pBuf, " V.MTS.M141.B02 V1");
             }
             else
 #endif
@@ -5401,7 +5402,6 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
 	}
 	
 	DBGPRINTF_FATAL("strnumber.............%s, strnumbertwo=%s",strnumber,strnumbertwo);
-	MSG_FATAL("22222strnumber.............%s, strnumbertwo=%s",strnumber,strnumbertwo,0);
 
     
     if (op == 2)    //TATA

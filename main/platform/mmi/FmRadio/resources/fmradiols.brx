@@ -84,16 +84,16 @@
 	</STRING>
 	<STRING Id="1028" Name="IDS_FMRADIO_OPTION_MENU_SEARCH">
 		<Text>Search</Text>
-	</STRING>	
+	</STRING>
 	<STRING Id="1029" Name="IDS_FMRADIO_CHANNEL_EDIT_TURE">
 		<Text>OK</Text>
-	</STRING>	
+	</STRING>
 	<STRING Id="1030" Name="IDS_FMRADIO_CHANNEL_EDIT_ERROR">
 		<Text>Frequency:87.5~108.0</Text>
-	</STRING>	
+	</STRING>
 	<STRING Id="1031" Name="IDS_FMRADIO_CHANNEL_EDIT_SUCCESS">
 		<Text>Add Success</Text>
-	</STRING>	
+	</STRING>
 	<STRING Id="1032" Name="IDS_FMRADIO_PROMPT_PAUSED">
 		<Text>Paused</Text>
 	</STRING>

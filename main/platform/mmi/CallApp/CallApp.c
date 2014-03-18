@@ -855,6 +855,7 @@ static int CallApp_InitAppData(CCallApp *pMe)
     pMe->m_userCanceled = FALSE;
     pMe->m_nToneCount = 0;
     pMe->m_bShowPopMenu = FALSE;
+    pMe->m_bManual_call = FALSE;
     pMe->m_toneData = NULL;
 	//pMe->m_short_hit = FALSE;
     pMe->Ispwpass=FALSE;

@@ -58,7 +58,12 @@ static NextFSMAction SettingMenu_StatePhoneInfoHWHandler(CSettingMenu *pMe);
 
 // 状态 SETTINGMENUST_PHONE_INFO_PRL 处理函数
 static NextFSMAction SettingMenu_StatePhoneInfoPRLHandler(CSettingMenu *pMe);
+
+static NextFSMAction SettingMenu_StatePhoneGeneralInfoHandler(CSettingMenu *pMe);
 #endif
+// STATE_PHONE_SAR_VALUE
+static NextFSMAction SettingMenu_StatePhoneSarValueHandler(CSettingMenu *pMe);
+
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS
 // 状态 SETTINGMENUST_PHONE_INFO 处理函数
 static NextFSMAction SettingMenu_StateShortcutsMenuHandler(CSettingMenu *pMe);
@@ -168,7 +173,7 @@ static NextFSMAction SettingMenu_StateViewDetailHandler(CSettingMenu *pMe);
 #endif
 
 static NextFSMAction SettingMenu_StateAutoAnswer_Mode(CSettingMenu *pMe);
-#ifdef FEATURE_VERSION_K232_Y101
+#ifdef FEATURE_INTERNATIONAL_PREFIX
 static NextFSMAction SettingMenu_StatePrefix(CSettingMenu *pMe);
 static NextFSMAction SettingMenu_StatePrefixEdit(CSettingMenu *pMe);
 #endif
@@ -278,7 +283,14 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
         case SETTINGMENUST_PHONE_INFO_PRL:
             retVal = SettingMenu_StatePhoneInfoPRLHandler(pMe);
             break;
+            
+        case SETTINGMENUST_PHONE_GENERAL_INFO:
+            retVal = SettingMenu_StatePhoneGeneralInfoHandler(pMe);
+            break;    
 #endif	
+        case SETTINGMENUST_PHONE_SAR_VALUE:
+            retVal = SettingMenu_StatePhoneSarValueHandler(pMe);
+            break;
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS
         case SETTINGMENUST_SHORTCUTS_MENU:
             
@@ -428,7 +440,7 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
             retVal = SettingMenu_StateAutoAnswer_Mode(pMe);
             break;
 
-#ifdef FEATURE_VERSION_K232_Y101
+#ifdef FEATURE_INTERNATIONAL_PREFIX
         case SETTINGMENUST_PREFIX:
             retVal = SettingMenu_StatePrefix(pMe);
             break;
@@ -612,6 +624,9 @@ static NextFSMAction SettingMenu_StateMainHandler(CSettingMenu *pMe)
         case DLGRET_PHONE_INFO:
             MOVE_TO_STATE(SETTINGMENUST_PHONE_INFO)
             return NFSMACTION_CONTINUE;  
+		case DLGRET_PHONE_GENERAL_INFO:
+            MOVE_TO_STATE(SETTINGMENUST_PHONE_GENERAL_INFO)
+            return NFSMACTION_CONTINUE; 	
         case DLGRET_PHONE_INFO_SW:
             MOVE_TO_STATE(SETTINGMENUST_PHONE_INFO_SW)
             return NFSMACTION_CONTINUE; 
@@ -628,6 +643,9 @@ static NextFSMAction SettingMenu_StateMainHandler(CSettingMenu *pMe)
             return NFSMACTION_CONTINUE;
 #endif
 //Add End
+        case DLGRET_PHONE_SAR_VALUE:
+            MOVE_TO_STATE(SETTINGMENUST_PHONE_SAR_VALUE)
+            return NFSMACTION_CONTINUE;
 
 #ifdef FEATURE_VERSION_W208S
         case DLGRET_SMSRESTRICT:
@@ -716,7 +734,7 @@ static NextFSMAction SettingMenu_StateCallSettingHandler(CSettingMenu *pMe)
             MOVE_TO_STATE(SETTINGMENUST_AUTO_ANSWER)
             return NFSMACTION_CONTINUE;
 
-#ifdef FEATURE_VERSION_K232_Y101
+#ifdef FEATURE_INTERNATIONAL_PREFIX
         case DLGRET_PREFIX:
             MOVE_TO_STATE(SETTINGMENUST_PREFIX)
             return NFSMACTION_CONTINUE;
@@ -963,7 +981,60 @@ static NextFSMAction SettingMenu_StatePhoneInfoPRLHandler(CSettingMenu *pMe)
 
     return NFSMACTION_WAIT;
 } // StateCallSettingHandler
+
+static NextFSMAction SettingMenu_StatePhoneGeneralInfoHandler(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    MSG_FATAL("SettingMenu_StatePhoneGeneralInfoHandler",0,0,0);
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_PHONE_GENERAL_INFO);
+            return NFSMACTION_WAIT;
+        
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(SETTINGMENUST_MAIN)
+            return NFSMACTION_CONTINUE;
+                    
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+} // StateCallSettingHandler
+
 #endif
+
+static NextFSMAction SettingMenu_StatePhoneSarValueHandler(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_PHONE_SAR_VALUE);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(SETTINGMENUST_MAIN)
+            return NFSMACTION_CONTINUE;
+                    
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+} // StateCallSettingHandler
+
 
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS
 
@@ -2347,7 +2418,7 @@ static NextFSMAction SettingMenu_StateAutoAnswer_Mode(CSettingMenu *pMe)
 
     return NFSMACTION_WAIT;
 }
-#ifdef FEATURE_VERSION_K232_Y101
+#ifdef FEATURE_INTERNATIONAL_PREFIX
 static NextFSMAction SettingMenu_StatePrefix(CSettingMenu *pMe)
 {
     if (NULL == pMe)

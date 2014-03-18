@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="contactapp" VERSION="1">
+<BREWRes Name="hicontactapp" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1" Name="IDS_APPLET">
 		<Text>संपर्क</Text>
@@ -29,7 +29,7 @@
 		<Text>देखें</Text>
 	</STRING>
 	<STRING Id="10" Name="IDS_FIND">
-		<Text>सर्च</Text>
+		<Text>खोज</Text>
 	</STRING>
 	<STRING Id="12" Name="IDS_EDIT">
 		<Text>संपादित करें</Text>
@@ -50,7 +50,7 @@
 		<Text>कॉपी</Text>
 	</STRING>
 	<STRING Id="19" Name="IDS_CHECKCAPACITY">
-		<Text>स्मृति स्थिति</Text>
+		<Text>मेमोरी स्थिति</Text>
 	</STRING>
 	<STRING Id="29" Name="IDS_FAX">
 		<Text>फैक्स</Text>
@@ -59,7 +59,7 @@
 		<Text>कोई मिलान नहीं</Text>
 	</STRING>
 	<STRING Id="37" Name="IDS_GROUP_PERSONAL">
-		<Text>स्कूल के साथी</Text>
+		<Text>सहपाठी</Text>
 	</STRING>
 	<STRING Id="38" Name="IDS_GROUP_BUSINESS">
 		<Text>व्यापार</Text>
@@ -110,7 +110,7 @@
 		<Text>सेव जब चुनें</Text>
 	</STRING>
 	<STRING Id="66" Name="IDS_CAPACITY">
-		<Text>स्मृति स्थिति</Text>
+		<Text>मेमोरी स्थिति</Text>
 	</STRING>
 	<STRING Id="67" Name="IDS_CAPACITY_PHONE">
 		<Text>फोन:%d (%d)</Text>
@@ -206,7 +206,7 @@
 		<Text>संदेश भेजें</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_SENDDIRECTORY">
-		<Text>संपर्कों को भेजें</Text>
+		<Text>संपर्क भेजे</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_SEARCHOTHERDIRECTORY">
 		<Text>सर्च</Text>
@@ -296,7 +296,7 @@
 		<Text>UIM कार्ड को कॉपी</Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_COPYONETOPNONE">
-		<Text>फोन करने के लिए कॉपी</Text>
+		<Text>फोन में कॉपी करे</Text>
 	</STRING>
 	<STRING Id="1035" Name="IDS_MSG_EMAIL_UNAVAILD">
 		<Text>गलत ई - मेल</Text>
@@ -314,13 +314,13 @@
 		<Text>संपर्क ले जाएँ</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_COPY_CONTACTS">
-		<Text>प्रतिलिपि संपर्क</Text>
+		<Text>कॉपी संपर्क</Text>
 	</STRING>
 	<STRING Id="1041" Name="IDS_DELETE_CONTACTS">
-		<Text>संपर्क हटाएँ</Text>
+		<Text>संपर्क निकालें</Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_CONTACTS_MEMORY_STUTAS">
-		<Text>स्मृति स्थिति</Text>
+		<Text>मेमोरी स्थिति</Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_PHONE_TO_UIM">
 		<Text>लिए फोन के UIM कार्ड</Text>
@@ -374,10 +374,10 @@
 		<Text>UIM कार्ड के लिए जाना</Text>
 	</STRING>
 	<STRING Id="1060" Name="IDS_COPY_TOPHONE">
-		<Text>फोन करने के लिए कॉपी</Text>
+		<Text>फोन में कॉपी करे</Text>
 	</STRING>
 	<STRING Id="1061" Name="IDS_MOVE_TOPHONE">
-		<Text>फोन करने के लिए जाना</Text>
+		<Text>फोन में ले जाएँ</Text>
 	</STRING>
 	<STRING Id="1062" Name="IDS_MSG_DELETEFAILED">
 		<Text>असफल हटाना, pls स्मृति जाँच करें</Text>
@@ -457,7 +457,7 @@
 	<String Id="1087" Name="IDS_NO_CARD">
 		<Text>नहीं UIM कार्ड</Text>
 	</String>
-	<String Id="1088" Name="IDS_EMERGENCY_CALL" Encoding="Unicode">
+	<String Id="1088" Name="IDS_EMERGENCY_CALL">
 		<Text>आपातकालीन नंबर</Text>
 	</String>
 	<String Id="1089" Name="IDS_NUM_INVALID">

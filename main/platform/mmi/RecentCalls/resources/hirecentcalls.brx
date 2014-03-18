@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="recentcalls" VERSION="1">
+<BREWRes Name="hirecentcalls" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1" Name="IDS_SAVE">
 		<Text>रक्षित करें</Text>
@@ -11,13 +11,13 @@
 		<Text>s</Text>
 	</STRING>
 	<STRING Id="4" Name="IDS_MISSED_CALLS">
-		<Text>छूटी काल</Text>
+		<Text>मिस कॉल</Text>
 	</STRING>
 	<STRING Id="5" Name="IDS_RECEIVED_CALLS">
 		<Text>प्राप्त कॉल</Text>
 	</STRING>
 	<STRING Id="6" Name="IDS_OUTGOING_CALLS">
-		<Text>डायल फोन</Text>
+		<Text>डायल कॉल</Text>
 	</STRING>
 	<STRING Id="7" Name="IDS_DELETE">
 		<Text>मिटाएं</Text>
@@ -35,7 +35,7 @@
 		<Text>समय रीसेट करें</Text>
 	</STRING>
 	<STRING Id="12" Name="IDS_DELETE_ALL">
-		<Text>रिकॉर्ड हटाएँ</Text>
+		<Text>रिकॉर्ड को हटाए</Text>
 	</STRING>
 	<STRING Id="13" Name="IDS_DELETE_Q">
 		<Text>मिटाएं</Text>
@@ -127,10 +127,10 @@
 	<STRING Id="1013" Name="IDS_COLON">
 		<Text> : </Text>
 	</STRING>
-	<String Id="1014" Name="IDS_SECURITY_TITLE" Encoding="Unicode">
+	<String Id="1014" Name="IDS_SECURITY_TITLE">
 		<Text>सुरक्षा</Text>
 	</String>
-	<String Id="1015" Name="IDS_SECURITY" Encoding="Unicode">
+	<String Id="1015" Name="IDS_SECURITY">
 		<Text>Enter password:</Text>
 	</String>
 	<STRING Id="1016" Name="IDS_RECENT_CALLS_C337">
@@ -141,6 +141,9 @@
 	</STRING>
 	<STRING Id="1018" Name="IDS_CALL_DURATION">
 		<Text>अवधि कॉल</Text>
+	</STRING>
+	<STRING Id="1019" Name="IDS_RECENT_CALLS_Y101">
+		<Text>कॉल इतिहास</Text>
 	</STRING>
 </Strings>
 <Dialogs>

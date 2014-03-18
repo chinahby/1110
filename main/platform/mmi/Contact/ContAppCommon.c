@@ -6128,7 +6128,7 @@ int CContApp_GetPrimaryNumFld(CContApp *pMe)
 Numbermatch_e_Type ContApp_NumberMatch(const AECHAR * wstrNum1, const AECHAR * wstrNum2, int *pMatchChars)
 {
 
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)|| defined(FEATURE_VERSION_K232_Y101)
     int nLen1, nLen2;
     AECHAR wstrNum1cmpbuff[MAX_INPUT_NUM + 1] = {(AECHAR)'\0'};
     AECHAR wstrNum2cmpbuff[MAX_INPUT_NUM + 1] = {(AECHAR)'\0'};

@@ -541,6 +541,12 @@ static boolean  IDD_ESN_TRACKER_EDIT_Handler(void *pUser,
 
 #endif
 
+static boolean  IDD_ADS_ACCOUNT_EDIT_Handler(void *pUser,
+								 AEEEvent   eCode,
+                                 uint16     wParam,
+                                 uint32     dwParam);
+
+
 #ifdef FEATURE_SHOW_RSSI_INFO
 // 对话框 IDD_RSSI_INFO 事件处理函?
 static boolean  IDD_RSSI_INFO_Handler(void *pUser,
@@ -630,8 +636,9 @@ static void CoreApp_Media_time_Notify(void *pUser, AEEMediaCmdNotify *pCmdNotify
 
 static void CCoreApp_LaunchApplication(CCoreApp *pMe);
 static void CCoreApp_LaunchFmRadioApp(CCoreApp *pMe);
-
-
+#if 0
+static void TEST_SoundStatus(void * pUser, AEESoundPlayerCmd  eCBType,AEESoundPlayerStatus eSPStatus,uint32 dwParam);
+#endif
 /*==============================================================================
 
                                  函数定义
@@ -785,7 +792,11 @@ void CoreApp_SetDialogHandler(CCoreApp *pMe)
 #endif            
             pMe->m_pDialogHandler = IDD_ESN_TRACKER_EDIT_Handler;
 			break;
-#endif            
+#endif           
+
+        case IDD_ADS_ACCOUNT_EDIT:
+            pMe->m_pDialogHandler = IDD_ADS_ACCOUNT_EDIT_Handler;
+			break;
 
 //#if defined(FEATURE_VERSION_W317A)
 		
@@ -2780,6 +2791,167 @@ static boolean  IDD_ESN_TRACKER_EDIT_Handler(void *pUser,
 }
 #endif
 //Add End
+
+static boolean  IDD_ADS_ACCOUNT_EDIT_Handler(void *pUser,
+								 AEEEvent   eCode,
+                                 uint16     wParam,
+                                 uint32     dwParam)
+{
+    CCoreApp *pMe = (CCoreApp *)pUser;
+	AEERect rt = {0};	
+	uint16  time = 0;
+   
+	AECHAR      wstrUsernameTitle[20]; 
+    AECHAR      wstrPasswordTitle[20];        
+    AECHAR      wstrUsernameValue[MAX_STRING_LENGTH];  
+    AECHAR      wstrPasswordValue[MAX_STRING_LENGTH]; 
+  
+    if (NULL == pMe)
+    {
+        return FALSE;
+    }
+   
+  	pMe->m_pAdsAccountUsername= (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_ADS_ACCOUNT_USERNAME);  
+    pMe->m_pAdsAccountPassword= (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_ADS_ACCOUNT_PASSWORD); 
+
+	if ((pMe->m_pAdsAccountUsername == NULL) || (pMe->m_pAdsAccountPassword == NULL))      
+    {
+        return FALSE;
+    }  
+    
+    MSG_FATAL("***zzg IDD_ADS_ACCOUNT_EDIT_Handler eCode=%x, wParam=%x, dwParam=%d***", eCode, wParam, dwParam);
+
+	switch (eCode)
+    {
+        case EVT_DIALOG_INIT:	            
+		{
+            AECHAR WTitle[2] = {0};
+            char strUser[MAX_STRING_LENGTH];
+            char strPwd[MAX_STRING_LENGTH];
+                
+            OEM_GetAdsAccount_Param(strUser, strPwd);
+            
+            SETAEERECT(&rt,0,30,128,40);
+			ITEXTCTL_SetRect(pMe->m_pAdsAccountUsername, &rt);
+			ITEXTCTL_SetProperties(pMe->m_pAdsAccountUsername, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_FIXSETRECT|TP_NOUPDATE);
+            ITEXTCTL_SetMaxSize(pMe->m_pAdsAccountUsername, MAX_STRING_LENGTH); 
+            (void)ITEXTCTL_SetTitle(pMe->m_pAdsAccountUsername, NULL,0,WTitle);
+            //设置文本
+            STRTOWSTR(strUser, wstrUsernameValue, sizeof(wstrUsernameValue));
+            (void)ITEXTCTL_SetText(pMe->m_pAdsAccountUsername, wstrUsernameValue, -1);	            
+
+            SETAEERECT(&rt,0,100,128,40);
+			ITEXTCTL_SetRect(pMe->m_pAdsAccountPassword, &rt);
+            ITEXTCTL_SetProperties(pMe->m_pAdsAccountPassword, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_FIXSETRECT|TP_NOUPDATE); 
+            ITEXTCTL_SetMaxSize(pMe->m_pAdsAccountPassword, MAX_STRING_LENGTH);     
+            (void)ITEXTCTL_SetTitle(pMe->m_pAdsAccountPassword, NULL,0,WTitle);
+            
+            STRTOWSTR(strPwd, wstrPasswordValue, sizeof(wstrPasswordValue));
+            (void)ITEXTCTL_SetText(pMe->m_pAdsAccountPassword, wstrPasswordValue, -1);			
+
+            ITEXTCTL_SetActive(pMe->m_pAdsAccountUsername, TRUE);     
+            return TRUE;
+        }
+        
+        case EVT_DIALOG_START:
+        {
+            (void) ISHELL_PostEvent(pMe->a.m_pIShell,
+                                    AEECLSID_CORE_APP,
+                                    EVT_USER_REDRAW,
+                                    0,
+                                    0);
+
+            return TRUE;
+        }    
+        
+        case EVT_USER_REDRAW:        
+        {
+            BottomBar_Param_type  BBarParam ={0};                 
+            BBarParam.eBBarType = BTBAR_OK_DELETE;				 
+                            
+            (void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                                         AEE_COREAPPRES_LANGFILE,
+                                         IDS_ADS_ACCOUNT_USERNAME,
+                                         wstrUsernameTitle,
+                                         sizeof(wstrUsernameTitle));
+
+            (void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                                         AEE_COREAPPRES_LANGFILE,
+                                         IDS_ADS_ACCOUNT_PASSWORD,
+                                         wstrPasswordTitle,
+                                         sizeof(wstrPasswordTitle));
+
+            
+             SETAEERECT(&pMe->m_rc,0,0,128,160);                 
+			 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);    
+			 
+			 IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);		             
+			 IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wstrUsernameTitle, -1, 0, 10, 0, IDF_TEXT_TRANSPARENT);         
+             IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wstrPasswordTitle, -1, 0, 80, 0, IDF_TEXT_TRANSPARENT);
+			                  
+			 IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);	             
+			               	
+             ITEXTCTL_SetActive(pMe->m_pAdsAccountUsername,TRUE);             
+             ITEXTCTL_SetActive(pMe->m_pAdsAccountPassword,FALSE); 
+
+             DrawBottomBar(pMe->m_pDisplay, &BBarParam);    
+             
+        	 // 更新显示
+        	 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
+             return TRUE;
+        }            
+            
+        case EVT_DIALOG_END:
+        {
+            CLOSE_DIALOG(DLGRET_MSGOK)  
+            return TRUE;
+        }
+
+        case EVT_KEY:
+        {
+			switch (wParam)
+            {
+            	case AVK_INFO:
+				case AVK_SELECT:
+				{      
+                    char           str1[MAS_BREWSETINT_STRING]; 
+                    char           str2[MAS_BREWSETINT_STRING]; 
+                    
+                    AECHAR *pwstrUsername  = ITEXTCTL_GetTextPtr(pMe->m_pAdsAccountUsername);  
+                    AECHAR *pwstrPassword = ITEXTCTL_GetTextPtr(pMe->m_pAdsAccountPassword);   
+                    
+					WSTRTOSTR(pwstrUsername,str1,sizeof(str1));	                    
+                    WSTRTOSTR(pwstrPassword,str2,sizeof(str2));	
+
+                    OEM_SetAdsAccount_Param(str1, str2);
+                    
+                    CLOSE_DIALOG(DLGRET_MSGOK)
+					break;
+				}
+					
+            	case AVK_CLR:
+				{
+                    CLOSE_DIALOG(DLGRET_MSGOK)
+                }
+                
+				default:					
+				{
+                    break;
+                }
+					
+			}
+            return TRUE;
+        }
+            
+        default:
+        {
+            break;
+        }
+    }
+
+    return FALSE;
+}
+
 
 #ifdef FEATURE_SHOW_RSSI_INFO
 /*==============================================================================
@@ -4784,7 +4956,33 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 
             	ISHELL_SetTimer(pMe->a.m_pIShell, 3*1000,(PFNNOTIFY)CoreApp_InitBattStatus,  pMe);                                                                                                         
             }
-#endif			
+#endif		
+#if 0//add by tianyuan for debugging the mts planet application cannot play ringtone online.
+            {
+                ISoundPlayer *sound_player = NULL;
+               // ffff
+                sound_player=ISHELL_LoadSound(pMe->a.m_pIShell,"fs:/ringers/alarm_01.mid");
+                if(sound_player)
+                {
+                    DBGPRINTF("Hi Im in soundplayer");
+                    ISOUNDPLAYER_RegisterNotify(sound_player,(PFNSOUNDPLAYERSTATUS)TEST_SoundStatus,pMe);
+                    DBGPRINTF("ISOUNDPLAYER_RegisterNotify");
+                    //B_Start_Playing_Animation();
+                    ISOUNDPLAYER_SetVolume(sound_player,AEE_MAX_VOLUME);
+                    DBGPRINTF("AEE_MAX_VOLUME");
+                    ISOUNDPLAYER_Play(sound_player);
+                    DBGPRINTF("ISOUNDPLAYER_Play");
+                }
+                else
+                {
+            //      copy_char_to_string_Ex(error_code,74,"sound_player");
+                      DBGPRINTF("get failed, soundplayer");
+                    return FALSE;
+                }
+
+            }
+#endif
+
         return TRUE;
         }
 		case EVT_USER_REDRAW:     
@@ -11730,5 +11928,17 @@ static void CoreApp_keypadtimer(void *pUser)
 #else
 	ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif
+}
+#endif
+#if 0//add by tianyuan for debugging the mts planet application cannot play ringtone online.
+
+static void TEST_SoundStatus(void * pUser, AEESoundPlayerCmd  eCBType,AEESoundPlayerStatus eSPStatus,uint32 dwParam)
+{
+   DBGPRINTF("TEST_SoundStatus,eCBType=%d,eSPStatus=%d",eCBType,eSPStatus,0);
+   if(eCBType == AEE_SOUNDPLAYER_PLAY_CB){
+      if ((eSPStatus == AEE_SOUNDPLAYER_DONE) ||
+          (eSPStatus == AEE_SOUNDPLAYER_ABORTED)) {
+      }
+   }
 }
 #endif

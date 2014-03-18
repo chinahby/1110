@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="musicplayer" VERSION="1">
+<BREWRes Name="himusicplayer" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1001" Name="IDS_PLAY">
-		<Text>प्ले करें</Text>
+		<Text>चालू करे</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_PLAYLIST">
 		<Text>प्लेलिस्ट</Text>

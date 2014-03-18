@@ -167,7 +167,46 @@ int MGExplorer_InitBuildMediaMenu(CMediaGalleryApp *pMe, PFNNOTIFY pfnNotify)
     * point to previous menu item which have been freed.*/
    MediaGalleryApp_SetCurrentNode(pMe, NULL);
    pMe->m_Explorer.m_eType = MG_DOCTYPE_DIR;
+   DBGPRINTF("pszPath=%s", pszPath);
+   MSG_FATAL("MGExplorer_InitBuildMediaMenu===%d",STRLEN(pszPath),0,0);
+//add  by tianyuan for do not show the playlist in picture floder.
+   if(STRCMP(pszPath,"fs:/shared/") == 0)
+   {
+       pMe->m_Explorer.m_eType = MG_DOCTYPE_FILE;
+       MSG_FATAL("MGExplorer_InitBuildMediaMenu,RUNHE===%d",STRLEN(pszPath),0,0);
+       if(SUCCESS != IFILEMGR_EnumInit(pMe->m_pFileMgr, pszPath, FALSE/*directory*/))
+       {
+          pMe->m_Explorer.m_eType =  MG_DOCTYPE_MAX;
+          pMe->m_nEnumeResult = MG_ENUM_FAILED;
+       
+          MG_FARF(ADDR, ("InitBuildMediaMenu failed!"));
+          CALLBACK_Init(&pMe->m_CallBack,
+                        MGExplorer_BuildMediaMenuComplete,
+                        (void *)pMe);
+          ISHELL_Resume(pMe->m_pShell, &pMe->m_CallBack);
+          return EFAILED;
+       }
 
+   }
+   else
+   {
+        
+        MSG_FATAL("MGExplorer_InitBuildMediaMenu,RUN HR===%d",STRLEN(pszPath),0,0);
+       if(SUCCESS != IFILEMGR_EnumInit(pMe->m_pFileMgr, pszPath, TRUE/*directory*/))
+       {
+          pMe->m_Explorer.m_eType =  MG_DOCTYPE_MAX;
+          pMe->m_nEnumeResult = MG_ENUM_FAILED;
+       
+          MG_FARF(ADDR, ("InitBuildMediaMenu failed!"));
+          CALLBACK_Init(&pMe->m_CallBack,
+                        MGExplorer_BuildMediaMenuComplete,
+                        (void *)pMe);
+          ISHELL_Resume(pMe->m_pShell, &pMe->m_CallBack);
+          return EFAILED;
+       }
+
+   }
+   #if 0
    if(SUCCESS != IFILEMGR_EnumInit(pMe->m_pFileMgr, pszPath, TRUE/*directory*/))
    {
       pMe->m_Explorer.m_eType =  MG_DOCTYPE_MAX;
@@ -180,6 +219,7 @@ int MGExplorer_InitBuildMediaMenu(CMediaGalleryApp *pMe, PFNNOTIFY pfnNotify)
       ISHELL_Resume(pMe->m_pShell, &pMe->m_CallBack);
       return EFAILED;
    }
+   #endif
  //  pMe->m_Explorer.m_eSortOrder = MG_SORT_NONE;
    MGExplorer_BuildMediaMenu(pMe);
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="converter" VERSION="1">
+<BREWRes Name="hiconverter" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1000" Name="IDS_CONVERTER_TITLE">
 		<Text>रूपांतरक</Text>
@@ -14,7 +14,7 @@
 		<Text>वजन</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_VOLUME_TITLE">
-		<Text>ध्वनि पबलता</Text>
+		<Text>आयतन</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_AREA_TITLE">
 		<Text>क्षेत्र</Text>

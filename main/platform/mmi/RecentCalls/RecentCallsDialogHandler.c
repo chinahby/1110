@@ -546,6 +546,12 @@ static boolean  RecentCalls_VerifyPasswordEvent(CRecentCalls *pMe,
                                             IDS_RECENT_CALLS_C337, 
                                             text,
                                             sizeof(text));
+                #elif defined (FEATURE_VERSION_K232_Y101)
+                (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                            AEE_RECENTCALLSRES_LANGFILE,
+                                            IDS_RECENT_CALLS_Y101, 
+                                            text,
+                                            sizeof(text));                
 				#else
                 (void)ISHELL_LoadResString(pMe->m_pShell, 
                                             AEE_RECENTCALLSRES_LANGFILE,
@@ -597,6 +603,12 @@ static boolean  RecentCalls_VerifyPasswordEvent(CRecentCalls *pMe,
 				(void)ISHELL_LoadResString(pMe->m_pShell, 
                                             AEE_RECENTCALLSRES_LANGFILE,
                                             IDS_RECENT_CALLS_C337, 
+                                            text,
+                                            sizeof(text));
+                #elif defined (FEATURE_VERSION_K232_Y101)
+                (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                            AEE_RECENTCALLSRES_LANGFILE,
+                                            IDS_RECENT_CALLS_Y101, 
                                             text,
                                             sizeof(text));
 				#else
@@ -896,6 +908,12 @@ static boolean RecentCalls_MainMenuEvent(CRecentCalls *pMe,
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 					                        AEE_RECENTCALLSRES_LANGFILE,                                
 					                        IDS_RECENT_CALLS_C337,
+					                        WTitle,
+					                        sizeof(WTitle));
+                #elif defined (FEATURE_VERSION_K232_Y101)
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+					                        AEE_RECENTCALLSRES_LANGFILE,                                
+					                        IDS_RECENT_CALLS_Y101,
 					                        WTitle,
 					                        sizeof(WTitle));
 				#else
@@ -1480,6 +1498,8 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                     }
 					#if defined(FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_KK5)
 					pMe->selectState = IDS_RECENT_CALLS_C337;
+                    #elif defined (FEATURE_VERSION_K232_Y101)
+                    pMe->selectState = IDS_RECENT_CALLS_Y101;
 					#else
                     pMe->selectState = IDS_RECENT_CALLS;
 					#endif
@@ -2143,6 +2163,9 @@ static boolean RecentCalls_DetailEvent(CRecentCalls *pMe,
                   #if defined(FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_KK5)
 				  (void)ISHELL_LoadResString(pMe->m_pShell, AEE_RECENTCALLSRES_LANGFILE,
                                 IDS_RECENT_CALLS_C337, wstrDevice,sizeof(wstrDevice));
+                  #elif defined (FEATURE_VERSION_K232_Y101)
+                  (void)ISHELL_LoadResString(pMe->m_pShell, AEE_RECENTCALLSRES_LANGFILE,
+                                IDS_RECENT_CALLS_Y101, wstrDevice,sizeof(wstrDevice));
 				  #else
                   (void)ISHELL_LoadResString(pMe->m_pShell, AEE_RECENTCALLSRES_LANGFILE,
                                 IDS_RECENT_CALLS, wstrDevice,sizeof(wstrDevice));
@@ -4386,6 +4409,24 @@ static void RecentCalls_GetContactName(CRecentCalls* pMe,
             }            
             ICONTAPP_NumberLookup(pContactApp, Temp_Number, &CInfo);
           }
+         #endif
+         #if defined(FEATURE_INTERNATIONAL_PREFIX)
+         {
+            boolean b_Prefix = FALSE;
+            AECHAR wstr[FEATURE_CODE_MAX_LENTH];
+            int16 size = 0;
+            ICONFIG_GetItem(pMe->m_pConfig, CFGI_PREFIX_AUTO_MANUAL, &b_Prefix,  sizeof(boolean));
+            ICONFIG_GetItem(pMe->m_pConfig, CFGI_PREFIX, wstr, FEATURE_CODE_MAX_LENTH);
+            size = WSTRLEN(wstr);    
+            if(WSTRNICMP(pwszNum,wstr,size)==0)
+            {
+                AECHAR Temp_Number[AEECM_MAX_DIGITS_LENGTH] = {L"+"};
+                WSTRCAT(Temp_Number,pwszNum+size);
+                ICONTAPP_NumberLookup(pContactApp, Temp_Number, &CInfo);
+                MEMSET(pwszNum,0,(sizeof(pwszNum))+1);
+                WSTRCPY(pwszNum,Temp_Number);
+            }
+         }
          #endif
          (void)ICONTAPP_Release(pContactApp); 
      }

@@ -142,6 +142,9 @@
 	<STRING Id="1018" Name="IDS_CALL_DURATION">
 		<Text>Call duration</Text>
 	</STRING>
+	<STRING Id="1019" Name="IDS_RECENT_CALLS_Y101">
+		<Text>Call History</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="1" Name="IDD_RMAINMENU" Focus="1">

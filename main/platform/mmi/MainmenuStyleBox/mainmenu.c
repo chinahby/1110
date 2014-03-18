@@ -15687,7 +15687,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CONTACTS;      
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_MESSAGES;      
     pMe->m_IconTitle[2]     = IDS_MAIN_MENU_USERPROFILE;   
-    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_RECENTCALLS;    
+    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_RECENTCALLS_Y101;   //IDS_MAIN_MENU_RECENTCALLS;    
     pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MY_MTS;                        
     pMe->m_IconTitle[5]     = IDS_MAIN_MENU_TOOLS;          
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_MUSICPLAYER;
@@ -17736,6 +17736,7 @@ static int StartApplet(MainMenu *pMe, int i)
 		
     case IDS_MAIN_MENU_CALL_LOGS:
 	case IDS_MAIN_MENU_RECENTCALLS_C337:	
+    case IDS_MAIN_MENU_RECENTCALLS_Y101:    
     case IDS_MAIN_MENU_RECENTCALLS:
     case IDS_MAIN_MENU_Y105A:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
@@ -18005,7 +18006,8 @@ static int StartApplet(MainMenu *pMe, int i)
         }   
 		
         OEM_SetUCBROWSER_ADSAccount();
-		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FACEBOOK);		
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FACEBOOK);
+		//Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.facebook.com"); 
 		break;
 	}
     #endif

@@ -35,19 +35,19 @@
 		<Text>बी ए एम</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_APPLICATION_TIMER">
-		<Text>घड़ी</Text>
+		<Text>टाइमर</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_APPLICATION_STOPWATCH">
-		<Text>स्टॉमवाच</Text>
+		<Text>स्टॉपवॉच</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_APPLICATION_ALARM">
 		<Text>अलार्म</Text>
 	</STRING>
 	<String Id="1015" Name="IDS_APPLICATION_CONVERTER">
-		<Text>रूपांतरक</Text>
+		<Text>परिवर्तक</Text>
 	</String>
 	<String Id="1016" Name="IDS_APPLICATION_WORLDTIME">
-		<Text>दुनिया का समय</Text>
+		<Text>विश्व घड़ी</Text>
 	</String>
 	<String Id="1017" Name="IDS_APPLICATION_RECORDER">
 		<Text>रिकार्डर</Text>

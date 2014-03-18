@@ -718,6 +718,7 @@ typedef struct _CCallApp
     int                     m_cdg_row;
     // Current number entered in the dialer dialog
     AECHAR                  m_DialString[MAX_SIZE_DIALER_TEXT];//IDLE input number ,can include 'P'  'T'
+    boolean                 m_bManual_call;
 #ifdef FEATURE_ICM
     AEECMCallState           m_lastCallState;
 #else
