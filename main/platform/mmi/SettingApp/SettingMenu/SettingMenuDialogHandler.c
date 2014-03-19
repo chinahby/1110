@@ -9046,11 +9046,11 @@ static void SettingMenu_Process_Feature_Code(CSettingMenu *pMe,uint16 feature_co
         
         DBGPRINTF("SettingMenu_Process_Feature_Code STRLEN(pMe->m_callnumber)=%d",STRLEN(pMe->m_callnumber));
 
-        DBGPRINTF("SettingMenu_Process_Feature_Code feature_code=%d",feature_code);
-
-        DBGPRINTF("SettingMenu_Process_Feature_Code charsvc_p_name=%s",charsvc_p_name);
+        DBGPRINTF("SettingMenu_Process_Feature_Code feature_code=%d",feature_code);        
         
 #ifdef FEATURE_VERSION_K232_Y101    
+        DBGPRINTF("SettingMenu_Process_Feature_Code charsvc_p_name=%s",charsvc_p_name);
+
         if (STRLEN(pMe->m_callnumber) == 0) // did not read the code from the card.
         {            
             if (feature_code == CFGI_CALLFORWARD_UNCONDITIONAL_DISABLE)

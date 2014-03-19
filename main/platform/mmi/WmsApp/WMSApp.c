@@ -2447,9 +2447,10 @@ Exit:
 					MSG_FATAL("EVT_WMS_MSG_STATUS_REPORT po.dwCount:%d,===%d",po.dwCount,pMe->m_bflash_sms,0);
 					if(po.dwCount==0)
 #endif
-					{
-					    MSG_FATAL("pMe->m_bflash_sms========%d",pMe->m_bflash_sms,0,0);
+					{					    
                         #ifdef FEATURE_FLASH_SMS
+                        MSG_FATAL("pMe->m_bflash_sms========%d",pMe->m_bflash_sms,0,0);
+                        
                         if(pMe->m_bflash_sms)
                         {
                         	if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_WMSAPP)
