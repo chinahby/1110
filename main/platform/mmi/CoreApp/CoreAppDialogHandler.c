@@ -5673,6 +5673,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
 	#elif defined (FEATURE_VERSION_M8P) || defined(FEATURE_VERSION_W027V3)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 
+	#elif defined(FEATURE_VERSION_K292_WSF_CN)
+				return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 	#elif defined(FEATURE_VERSION_HITZ181)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_K292)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_W021_CT100)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO); 
 	#elif defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_K202_LM129C)//xxzhen
