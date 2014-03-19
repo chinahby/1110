@@ -7329,6 +7329,7 @@ void WmsApp_BuildSendClentMsgList(WmsApp * pMe)
 #ifdef FEATURE_VERSION_K232_Y101
     if(STRISTR(temp,"+"))
     {
+        /*
         boolean b_Prefix = FALSE;
         ICONFIG_GetItem(pMe->m_pConfig, CFGI_PREFIX_AUTO_MANUAL, &b_Prefix,  sizeof(boolean));        
        
@@ -7350,6 +7351,19 @@ void WmsApp_BuildSendClentMsgList(WmsApp * pMe)
     		DBGPRINTF("pItem->m_szTo=%S", pItem->m_szTo);
     		MSG_FATAL("pMe->m_msSend.m_szNum........111111111",0,0,0);
         }        
+        */
+        
+        WSTRCPY(TempToStr,L"+00");
+		WSTRCPY(TempTo,pItem->m_szTo+1);
+		WSTRCAT(TempToStr,TempTo);
+		DBGPRINTF("TempToStr=%S", TempTo);
+		DBGPRINTF("TempToStr=%S", TempToStr);
+		DBGPRINTF("pItem->m_szTo=%S", pItem->m_szTo);
+		MEMSET(pItem->m_szTo,0,(sizeof(pItem->m_szTo))+1);
+		WSTRCPY(pItem->m_szTo,TempToStr);
+		DBGPRINTF("pItem->m_szTo=%S", pItem->m_szTo);
+		MSG_FATAL("pMe->m_msSend.m_szNum........111111111",0,0,0);
+          
     }
 #else
 	if((STRISTR (charsvc_p_name,"tata"))&&(STRISTR(temp,"+91"))) 
