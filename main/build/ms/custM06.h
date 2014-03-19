@@ -10,6 +10,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #define FEATURE_VERSION_C11
+#define FEATURE_VERSION_W021_DX_C11
 //#define FEATURE_VERSION_S106
 //#define FEATURE_VERSION_W516
 //#define FEATURE_VERSION_1110W516
