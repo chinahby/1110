@@ -11191,6 +11191,7 @@ static void CallApp_Draw_Connect_Time(void *pUser)
     IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
 
 #if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)  || defined (FEATURE_VERSION_KK5)
+#if !defined(FEATURE_VERSION_C192_MMX)
     MSG_FATAL("CallApp_Draw_Connect_Time m_isIncoming=%d",pMe->m_isIncoming,0,0);
     if(!pMe->m_isIncoming)
     {
@@ -11218,6 +11219,7 @@ static void CallApp_Draw_Connect_Time(void *pUser)
                     IDF_TEXT_TRANSPARENT|IDF_ALIGN_LEFT);
         IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
     }
+#endif
 #endif
 
 
@@ -11877,6 +11879,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
         }
     }
 #if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX) || defined (FEATURE_VERSION_KK5) 
+#if !defined(FEATURE_VERSION_C192_MMX)
     if(pMe->m_isIncoming)
     {
         AECHAR         szText[20];  
@@ -11911,6 +11914,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
                     &rect,
                     IDF_TEXT_TRANSPARENT|IDF_ALIGN_LEFT);		
     }
+#endif
 #endif
     IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, oldColor);
 }
