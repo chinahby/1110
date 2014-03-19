@@ -5977,7 +5977,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #elif defined (FEATURE_VERSION_S600S)
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_APP_RECENTCALL);
-#elif defined (FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K292)||defined(FEATURE_VERSION_W516_C260)
+#elif defined (FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K292)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_VERSION_C192_MMX)
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #else
                         ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
@@ -9588,6 +9588,8 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 	    eBBarType = BTBAR_MENU_CONTACTS;      
     #elif defined(FEATURE_VERSION_K232_Y101) || defined(FEATURE_VERSION_KK5)
 	    eBBarType = BTBAR_MENU_CONTACTS;
+	#elif defined(FEATURE_VERSION_C192_MMX)
+		eBBarType = BTBAR_MENU_CONTACTS;
     #else
         eBBarType = BTBAR_MESSAGES_CONTACTS; //add by yangdecai  BTBAR_MESSAGES_CONTACTS
 	#endif
