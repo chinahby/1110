@@ -73,8 +73,8 @@ static void disp_ic_mdp_scrupdate(uint32 *scr, uint32 start_row, uint32 start_co
 static void disp_ic_init(void)
 {
 
-#if defined(FEATURE_VERSION_ESIA)||defined(FEATURE_VERSION_W021_GPLUS)||defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W021_DX_POWERTEL)
-	// 这是力合3月份的玻璃参数
+#if defined(FEATURE_VERSION_ESIA)||defined(FEATURE_VERSION_W021_GPLUS)||defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W021_DX_POWERTEL)||defined(FEATURE_VERSION_W021_DX_C11)
+	// 这是力合3月份的玻璃参数//奇美
     LCD_WRITE_CMD(0x11); //Sleep out
     LCD_DELAY(120); 	            // Must Delay At Least 100 ms
     LCD_WRITE_CMD (0xB1);
