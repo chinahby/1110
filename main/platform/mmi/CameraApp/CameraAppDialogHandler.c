@@ -6316,14 +6316,25 @@ static boolean CameraApp_GetDateForRecordFileName(CCameraApp *pMe, char * pszDes
 		    break;
 		    
 		case FILE_TYPE_JPG:
-		default:
-            #ifndef FEATURE_VERSION_K232_Y101
-		    STRCAT(pszDest, FS_CARD_PICTURES_FOLDER);
-            #endif
+		default:      
+
+#ifdef  FEATURE_VERSION_K232_Y101      
+            if (pMe->m_nCameraStorage == OEMNV_CAMERA_STORAGE_MEMORY_CARD)   
+            {
+                STRCAT(pszDest, FS_CARD_PICTURES_FOLDER); 
+            }
+#ifdef FEATURE_JPEG_ENCODER
+            SPRINTF(pszDest+STRLEN(pszDest), "%02d%02d%02d%02d.jpg", julian.wDay, julian.wHour, julian.wMinute, julian.wSecond);
+#else
+            SPRINTF(pszDest+STRLEN(pszDest), "%02d%02d%02d%02d.png", julian.wDay, julian.wHour, julian.wMinute, julian.wSecond);
+#endif            
+#else                
+		    STRCAT(pszDest, FS_CARD_PICTURES_FOLDER);           
 #ifdef FEATURE_JPEG_ENCODER
 		    SPRINTF(pszDest+STRLEN(pszDest), "%02d%02d%02d%02d.jpg", julian.wDay, julian.wHour, julian.wMinute, julian.wSecond);
 #else
 		    SPRINTF(pszDest+STRLEN(pszDest), "%02d%02d%02d%02d.png", julian.wDay, julian.wHour, julian.wMinute, julian.wSecond);
+#endif
 #endif
 		    break;
    }
