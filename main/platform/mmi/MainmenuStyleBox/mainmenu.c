@@ -15621,7 +15621,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[5]     = IDS_MAIN_MENU_FILEMGR;
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_ORGANIZER;
     pMe->m_IconTitle[7]     = IDS_MAIN_MENU_INTEXZONE;
-    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_SERVICES_C316;
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_UTK;
     #else
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CONTACTS;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_MESSAGES;

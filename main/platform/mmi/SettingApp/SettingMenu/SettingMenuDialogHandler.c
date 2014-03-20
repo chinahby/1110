@@ -47,7 +47,7 @@
 
 #endif
 #include "cm.h"
-
+boolean m_Aarplne  = FALSE;
 boolean start_security_setting_by_user;
 #ifdef FEATURE_VERSION_FLEXI203
 #elif defined FEATURE_VERSION_SMART
@@ -2604,7 +2604,7 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_STR_NAVIGATION, IDS_STR_NAVIGATION, NULL, 0);
 #endif
 #endif
-#ifdef FEATURE_VERSION_K232_Y105A
+#ifdef FEATURE_VERSION_K232_Y105A1
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AIRPLANE, IDS_AIRPLANE, NULL, 0);
 #endif
 

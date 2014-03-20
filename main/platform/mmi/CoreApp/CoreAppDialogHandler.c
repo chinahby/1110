@@ -1242,7 +1242,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                         CLOSE_DIALOG(DLGRET_YES)
                         return TRUE;
                     }
-                    else if(pMe->m_MsgID == IDS_LOWBATTMSG_TEXT )
+                    else if(pMe->m_nMsgID == IDS_LOWBATTMSG_TEXT )
                     {
                         ISHELL_CancelTimer(pMe->a.m_pIShell,DialogTimeoutCallback,pMe);
                         return TRUE;

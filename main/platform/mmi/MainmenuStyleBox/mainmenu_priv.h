@@ -429,7 +429,11 @@ typedef struct _MainMenu
     #define ICON6_ANI      "fs:/image/mainmenu/file_manger.png"
     #define ICON7_ANI      "fs:/image/mainmenu/organizer.png"
     #define ICON8_ANI      "fs:/image/mainmenu/Intex_zone.png"
+    #ifdef FEATURE_VERSION_K232_Y105A
+    #define ICON9_ANI      "fs:/image/mainmenu/UTK.png"
+    #else
 	#define ICON9_ANI      "fs:/image/mainmenu/Browser.png"
+    #endif
 // add end	
 #elif defined(FEATURE_VERSION_W021_C11)
 	#define ICON_ANI_BG "fs:/image/mainmenu/qsc1100_backgroup.png"
@@ -643,7 +647,11 @@ typedef struct _MainMenu
     #define ICON6_ANI_1      "fs:/image/mainmenu/file_manger_focus.png"
     #define ICON7_ANI_1      "fs:/image/mainmenu/organizer_focus.png"
     #define ICON8_ANI_1      "fs:/image/mainmenu/Intex_zone_focus.png"
+    #ifdef FEATURE_VERSION_K232_Y105A
+    #define ICON9_ANI_1      "fs:/image/mainmenu/UTK_focus.png"
+    #else
 	#define ICON9_ANI_1      "fs:/image/mainmenu/Browser_focus.png"
+    #endif
 // add end	
 #elif defined(FEATURE_VERSION_W021_C11)
 	#define ICON1_ANI_1      "fs:/image/mainmenu/qsc1100_01_focus.png"

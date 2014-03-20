@@ -632,8 +632,8 @@ ifeq ($(USES_RESDIR),Y105A)
 	organizer_focus.png|fs:/image/mainmenu/organizer_focus.png \
 	Intex_zone.png|fs:/image/mainmenu/Intex_zone.png \
 	Intex_zone_focus.png|fs:/image/mainmenu/Intex_zone_focus.png \
-	Browser.png|fs:/image/mainmenu/Browser.png \
-	Browser_focus.png|fs:/image/mainmenu/Browser_focus.png \
+	UTK.png|fs:/image/mainmenu/UTK.png \
+	UTK_focus.png|fs:/image/mainmenu/UTK_focus.png \
 	mainbackgroud.png|fs:/image/mainmenu/mainbackgroud.png
 	else ifeq ($(USES_RESDIR),WSF_CN_P7)
 	CONSTFILE_FILES+=\
