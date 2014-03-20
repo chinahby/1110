@@ -535,6 +535,9 @@
 	<String Id="1178" Name="IDS_SOFTWARE_VERSION">
 		<Text>SW Info</Text>
 	</String>
+	<String Id="1179" Name="IDS_AIRPLANE">
+		<Text>Airplane Mode</Text>
+	</String>
 	<STRING Id="1372" Name="IDS_SHORTCUTS_MENU_TITLE">
 		<Text>Shortcuts</Text>
 	</STRING>
@@ -1064,5 +1067,12 @@
 				<Items/></Static>
 		</Controls>
 	</DIALOG>
+	<Dialog Id="6072" Name="IDD_AIRPLANE_MODE" Focus="7041">
+		<Controls>
+			<Menu Id="7041" Name="IDC_MENU_AIRPLANE">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
 </Dialogs>
 </BREWRes>

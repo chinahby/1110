@@ -1563,7 +1563,7 @@ void SoundMenu_UpdateRingerListMenu(CSoundMenu *pMe, IMenuCtl *pMenu)
 		#endif
     }
 
-    if(pMe->m_RingerType == SET_ALARMRING || pMe->m_RingerType == SET_RINGER)
+    if(pMe->m_RingerType == SET_ALARMRING || pMe->m_RingerType == SET_RINGER || pMe->m_RingerType == SET_SMSTONE)
     {
 #if !defined(FEATURE_VERSION_W021_WSF_P7)
         IMENUCTL_AddItem(pMenu, AEE_APPSSOUNDMENU_RES_FILE, IDS_GALLERY_PROFILE, DOWNLOAD_MENU, NULL, 0);

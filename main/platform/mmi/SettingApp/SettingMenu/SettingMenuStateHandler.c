@@ -72,6 +72,7 @@ static NextFSMAction SettingMenu_StateShortcutsMenuHandler(CSettingMenu *pMe);
 static NextFSMAction SettingMenu_StateShortcutsSelectMenuHandler(CSettingMenu *pMe);
 
 #endif
+static NextFSMAction SettingMenu_StateAirplaneModeHandler(CSettingMenu *pMe);
 
 #ifdef FEATURE_VERSION_W317A
 // ×´Ì¬ SETTINGMENUST_AUTOCALLRECORD ´¦Àíº¯Êý
@@ -512,6 +513,9 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
 			retVal = SettingMenu_StateSosHandler(pMe);
 			break;
 #endif
+		case SETTINGMENUST_AIRPLANE_MODE:
+            retVal = SettingMenu_StateAirplaneModeHandler(pMe);
+			break;
 #if defined(FEATURE_CALL_REJECT_AUTO_MSG)
         case SETTINGMENUST_CALL_REJECT_AUTO_MSG:
             retVal = SettingMenu_StateCall_Reject_Auto_Msg_Handler(pMe);
@@ -880,7 +884,11 @@ static NextFSMAction SettingMenu_StatePhoneInfoSWHandler(CSettingMenu *pMe)
             return NFSMACTION_WAIT;
         
         case DLGRET_CANCELED:
+            #ifdef FEATURE_VERSION_K232_Y105A
+            MOVE_TO_STATE(SETTINGMENUST_MAIN)
+            #else
             MOVE_TO_STATE(SETTINGMENUST_PHONE_INFO)
+            #endif
             return NFSMACTION_CONTINUE;
                     
         default:
@@ -1137,6 +1145,37 @@ static NextFSMAction SettingMenu_StateShortcutsSelectMenuHandler(CSettingMenu *p
 
 #endif
 
+static NextFSMAction SettingMenu_StateAirplaneModeHandler(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_AIRPLANE_MODE);
+            return NFSMACTION_WAIT;
+            
+        case DLGRET_WARNING:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            pMe->m_msg_id = IDS_DONE;
+            SettingMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
+            return NFSMACTION_WAIT;
+            
+        case DLGRET_MSGBOX_OK:    
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(SETTINGMENUST_PHONESETTING)
+            return NFSMACTION_CONTINUE;
+                    
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+}
 
 //Add by pyuangui 20130104
 #ifdef FEATURE_VERSION_W317A
@@ -1290,7 +1329,9 @@ static NextFSMAction SettingMenu_StatePhoneSettingHandler(CSettingMenu *pMe)
             MOVE_TO_STATE(SETTINGMENUST_SHORTCUTS_MENU)
             return NFSMACTION_CONTINUE;                                                        
 #endif  
-
+        case DLGRET_AIRPLANE_MODE:
+            MOVE_TO_STATE(SETTINGMENUST_AIRPLANE_MODE)
+			return NFSMACTION_CONTINUE;
 
         default:
             ASSERT_NOT_REACHABLE;

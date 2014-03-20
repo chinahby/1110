@@ -1268,7 +1268,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             Fm_Shake_Open();
             return TRUE;
 
-#if defined (FEATURE_VERSION_KK5)
+#if defined (FEATURE_VERSION_KK5)||defined(FEATURE_VERSION_K232_Y105A)
         case EVT_USER:
         {
             MSG_FATAL("***zzg FmRadio EVT_USER wParam=%x, dwParam=%x***", wParam, dwParam, 0);

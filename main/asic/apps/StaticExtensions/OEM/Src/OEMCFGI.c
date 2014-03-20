@@ -608,7 +608,7 @@ typedef struct
    boolean       mobiletracker_password_check;   // CFGI_MOBILETRACKER_PASSWORD_CHECK,  //type = boolean
    AECHAR        mobile_tracker_number_2[OEMNV_LOCKMUM_MAXLEN]; 
    AECHAR        mobile_tracker_number_3[OEMNV_LOCKMUM_MAXLEN]; 
-   AECHAR        mobile_tracker_content[OEMNV_LOCKMUM_MAXLEN*6];
+   char        mobile_tracker_content[OEMNV_LOCKMUM_MAXLEN*6];
    boolean       b_mobile_tracker_back;    //CFGI_MOBILE_TRACKER_BACK
 #endif
    byte          b_key_lock;                    //CFGI_KEY_LOCK_CHECK
@@ -2024,7 +2024,11 @@ static OEMConfigListType oemi_cache = {
    FALSE,
    {0},
    {0},
-   {L"Mobile Tracker Alert!:The sender of this SMS is using your phone."},
+   #ifdef FEATURE_VERSION_K232_Y105A
+   {"Mobile Tracker Alert! Dear Intex Mobile Customer: Your mobile is used by the sender of this SMS,"},
+   #else
+   {"Mobile Tracker Alert!:The sender of this SMS is using your phone."},
+   #endif
    FALSE,
 #endif
 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_ND)|| defined (FEATURE_VERSION_K212_HUALU) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
@@ -2772,7 +2776,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_MOBILETRACKER_PASSWORD_CHECK, sizeof(boolean)),  //type = boolean
    CFGTABLEITEM(CFGI_MOBILE_TRACKER_PHONENUMBTWO, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN),
    CFGTABLEITEM(CFGI_MOBILE_TRACKER_PHONENUMBTHREE, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN),
-   CFGTABLEITEM(CFGI_MOBILE_TRACKER_CONTECT, sizeof(uint16) * (OEMNV_LOCKMUM_MAXLEN*6)),
+   CFGTABLEITEM(CFGI_MOBILE_TRACKER_CONTECT, sizeof(char) * (OEMNV_LOCKMUM_MAXLEN*6)),
    CFGTABLEITEM(CFGI_MOBILE_TRACKER_BACK, sizeof(boolean)),  //type = boolean
 #endif
    CFGTABLEITEM(CFGI_KEY_LOCK_CHECK, sizeof(byte)),       //type = byte
@@ -3522,12 +3526,18 @@ void OEM_RestoreFactorySetting( void )
 #endif
 	#endif
 	#ifdef FEATURE_VERSION_C316
+    oemi_cache.m_onekey_lock_keypad = TRUE;							/*CFGI_ONEKEY_LOCK_KEYPAD Add by xuhui 2012/12/24*/
 	oemi_cache.b_mobiletracker_lock = FALSE;
 	oemi_cache.mobiletracker_password = OEMNV_PHONE_PASSWORD;
 	oemi_cache.mobiletracker_password_check = TRUE;
 	MEMSET(oemi_cache.mobile_tracker_number_2,0,OEMNV_LOCKMUM_MAXLEN);
 	MEMSET(oemi_cache.mobile_tracker_number_3,0,OEMNV_LOCKMUM_MAXLEN);
-	WSTRCPY(oemi_cache.mobile_tracker_content,L"Mobile Tracker Alert!:The sender of this SMS is using your phone.");
+    #ifdef FEATURE_VERSION_K232_Y105A
+    MEMSET(oemi_cache.mobile_tracker_content,0,OEMNV_LOCKMUM_MAXLEN*7+10);
+    STRCPY(oemi_cache.mobile_tracker_content,"Mobile Tracker Alert! Dear Intex Mobile Customer: Your mobile is used by the sender of this SMS,");
+    #else
+	STRCPY(oemi_cache.mobile_tracker_content,"Mobile Tracker Alert!:The sender of this SMS is using your phone.");
+    #endif
 	oemi_cache.b_mobile_tracker_back = FALSE;
 	#endif
     #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
@@ -10796,14 +10806,14 @@ static int OEMPriv_GetItem_CFGI_MOBILE_TRACKER_CONTECT(void *pBuff)
 {
 	int len = STRLEN((void*)oemi_cache.mobile_tracker_content);
 	MSG_FATAL("GetItem_CFGI_MOBILE_TRACKER_PHONENUMBTHREE,,,,,,,=%d",len,0,0);
-	MEMCPY(pBuff, oemi_cache.mobile_tracker_content, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN*6);
+	MEMCPY(pBuff, oemi_cache.mobile_tracker_content, sizeof(char) * (OEMNV_LOCKMUM_MAXLEN*6));
    return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_MOBILE_TRACKER_CONTECT(void *pBuff)
 {
 	int len = STRLEN((void*)oemi_cache.mobile_tracker_content);
 	MSG_FATAL("SetItem_CFGI_MOBILE_TRACKER_PHONENUMBTHREE,,,,,,,len==%d",len,0,0);
-	MEMCPY(oemi_cache.mobile_tracker_content, pBuff, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN*6);
+	MEMCPY(oemi_cache.mobile_tracker_content, pBuff, sizeof(char) * (OEMNV_LOCKMUM_MAXLEN*6));
     OEMPriv_WriteOEMConfigList(); 
     return SUCCESS;
 }

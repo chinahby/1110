@@ -7109,6 +7109,10 @@ static boolean IDD_WMSTIPS_Handler(void        *pUser,
             {
                 IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
             }
+#if defined(FEATURE_VERSION_K232_Y105A) 
+            IALERT_StopRingerAlert(pMe->m_pAlert);
+#endif
+            MSG_FATAL("EVT_DIALOG_END..............",0,0,0);
             return TRUE;
   
         case EVT_KEY:
@@ -7117,9 +7121,11 @@ static boolean IDD_WMSTIPS_Handler(void        *pUser,
             	case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8
                 case AVK_CLR:
                 case AVK_END:
-#ifdef FEATURE_SMSTONETYPE_MID 
+                    MSG_FATAL("AVK_END..............",0,0,0);
+#if defined(FEATURE_SMSTONETYPE_MID)||defined(FEATURE_VERSION_K232_Y105A) 
                 // 通知收音机关闭声音
                     IALERT_StopSMSAlert(pMe->m_pAlert);
+                    IALERT_StopRingerAlert(pMe->m_pAlert);
 #endif //#if defined FEATURE_SMSTONETYPE_MID		    
                     IALERT_StopMp3Alert(pMe->m_pAlert);
                     pMe->m_bsmstipscheck = FALSE;
@@ -7127,8 +7133,9 @@ static boolean IDD_WMSTIPS_Handler(void        *pUser,
                     return TRUE;
 
                 case AVK_SELECT:
-#ifdef FEATURE_SMSTONETYPE_MID                        
+#if defined(FEATURE_SMSTONETYPE_MID)||defined(FEATURE_VERSION_K232_Y105A)                       
                     IALERT_StopSMSAlert(pMe->m_pAlert);
+                    IALERT_StopRingerAlert(pMe->m_pAlert);
 #endif //#if defined FEATURE_SMSTONETYPE_MID		    
                     IALERT_StopMp3Alert(pMe->m_pAlert);
                     pMe->m_bsmstipscheck = FALSE;

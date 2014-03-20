@@ -65,6 +65,7 @@ static NextFSMAction QUICKTESTSTFMTestHandler(CQuickTest *pMe);
 
 // 状态 QUICKTESTST_SDTEST 处理函数
 static NextFSMAction QUICKTESTSTSDTestHandler(CQuickTest *pMe);
+static NextFSMAction QUICKTESTST_TORCHTESTHandler(CQuickTest *pMe);
 
 // 状态 QUICKTESTST_VERTEST 处理函数
 static NextFSMAction QUICKTESTSTVERTestHandler(CQuickTest *pMe);
@@ -223,6 +224,8 @@ NextFSMAction QuickTest_ProcessState(CQuickTest *pMe)
             break;
         case QUICKTESTST_MANUALTEST:
             retVal = QUICKTESTSTMANUALTESTTestHandler(pMe);
+        case QUICKTESTST_TORCHTEST:
+            retVal = QUICKTESTST_TORCHTESTHandler(pMe);
         default:
             break;
     }
@@ -370,7 +373,9 @@ static NextFSMAction QUICKTESTSTMainHandler(CQuickTest *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(QUICKTESTST_EXIT)
             return NFSMACTION_CONTINUE;
-
+        case DLGRET_TORCHTEST:
+            MOVE_TO_STATE(QUICKTESTST_TORCHTEST)
+            return NFSMACTION_CONTINUE;
         default:
             break;
     }
@@ -519,6 +524,8 @@ static NextFSMAction QUICKTESTSTHEADSETTestHandler(CQuickTest *pMe)
             {
 #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
             MOVE_TO_STATE(QUICKTESTST_VIBRATETEST)
+#elif defined(FEATURE_VERSION_K232_Y105A)
+            MOVE_TO_STATE(QUICKTESTST_TORCHTEST)
 #else
             MOVE_TO_STATE(QUICKTESTST_KEYTEST)
 #endif            
@@ -781,6 +788,34 @@ static NextFSMAction QUICKTESTSTCAMERATestHandler(CQuickTest *pMe)
     return NFSMACTION_WAIT;
 }//
 #endif
+
+static NextFSMAction QUICKTESTST_TORCHTESTHandler(CQuickTest *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch (pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            QuickTest_ShowDialog(pMe, IDD_TORCH);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(QUICKTESTST_KEYTEST)
+            return NFSMACTION_CONTINUE;
+
+        default:
+            break;
+    }
+
+    return NFSMACTION_WAIT;
+}
+
+
+
 /*==============================================================================
 QUICKTESTSTSDTestHandler
 
@@ -1149,7 +1184,9 @@ static NextFSMAction QUICKTESTSTMANUALTESTTestHandler(CQuickTest *pMe)
 		case DLGRET_HEADSETTEST:
 			MOVE_TO_STATE(QUICKTESTST_HEADSETTEST)
             return NFSMACTION_CONTINUE;
-            
+        case DLGRET_TORCHTEST:
+            MOVE_TO_STATE(QUICKTESTST_TORCHTEST)
+            return NFSMACTION_CONTINUE;
         case DLGRET_CANCELED:
             {
                 extern boolean bManualTest;

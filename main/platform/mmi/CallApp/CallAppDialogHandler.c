@@ -316,6 +316,7 @@ static boolean CallApp_MissedList(CCallApp *pMe);
 static int CallApp_SpeedDialCall(CCallApp *pMe, AECHAR *pSpeedDial);
 //显示听筒声音图片函数
 static void CallApp_RefreshVolBar(CCallApp *pMe);
+static void CallApp_RefreshRubgVolBar(CCallApp *pMe);
 
 #ifdef FEATURE_APP_PAUSE_TIMER
 static void  CallApp_SetTimerControl(void *pUser);
@@ -451,6 +452,8 @@ static void callApp_draw_penmove(CCallApp* pMe,int16 x,int16 y);
 static void CallApp_PlayTimeSound(CCallApp *pMe,uint16 Status);
 static void CallApp_Media_time_Notify(void *pUser, AEEMediaCmdNotify *pCmdNotify);
 #endif
+void CallApp_Incoming_HeadsetSwitchOnHandler(CCallApp *pMe);
+void CallApp_Connect_HeadsetSwitchOnHandler(CCallApp *pMe);
 
 
 /*==============================================================================
@@ -4542,7 +4545,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             // event because the softkey will hijack the EVT_KEY event.
             switch ((AVKType)wParam)
             {
-#ifdef FEATURE_VERSION_KK5
+#if defined(FEATURE_VERSION_KK5)||defined(FEATURE_VERSION_K232_Y105A)
                 case AVK_HEADSET_SWITCH:
                 {
                     pMe->keystart_time = GETUPTIMEMS();	
@@ -4676,7 +4679,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 
             switch ((AVKType)wParam)
             {
-#ifdef FEATURE_VERSION_KK5
+#if defined(FEATURE_VERSION_KK5)||defined(FEATURE_VERSION_K232_Y105A)
                 case AVK_HEADSET_SWITCH:
                 {
                     (void) ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY) CallApp_Connect_HeadsetSwitchOnHandler,pMe);  //Next                    
@@ -4897,7 +4900,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             break;
         case EVT_KEY_RELEASE:
             switch(wParam){
-#ifdef FEATURE_VERSION_KK5
+#if defined(FEATURE_VERSION_KK5)||defined(FEATURE_VERSION_K232_Y105A)
             case AVK_HEADSET_SWITCH:
             {
                 pMe->keyend_time= GETUPTIMEMS();					
@@ -6908,7 +6911,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
         case EVT_KEY_PRESS:
             switch ((AVKType)wParam)
             {
-#ifdef FEATURE_VERSION_KK5
+#if defined(FEATURE_VERSION_KK5)||defined(FEATURE_VERSION_K232_Y105A)
                 case AVK_HEADSET_SWITCH:
                 {
                     pMe->keystart_time = GETUPTIMEMS();	
@@ -6952,7 +6955,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
         case EVT_KEY_RELEASE:
             switch ((AVKType)wParam)
             {
-#ifdef FEATURE_VERSION_KK5
+#if defined(FEATURE_VERSION_KK5)||defined(FEATURE_VERSION_K232_Y105A)
                 case AVK_HEADSET_SWITCH:
                 {
                     pMe->keyend_time= GETUPTIMEMS();					
@@ -7067,7 +7070,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             
             switch ((AVKType)wParam)
             {
-#ifdef FEATURE_VERSION_KK5
+#if defined(FEATURE_VERSION_KK5)||defined(FEATURE_VERSION_K232_Y105A)
                 case AVK_HEADSET_SWITCH:
                 {
                     (void) ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY) CallApp_Incoming_HeadsetSwitchOnHandler,pMe);  //Next                    
@@ -7372,26 +7375,46 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                     if(wParam == AVK_UP || wParam == AVK_DOWN)
                     {
                         boolean  vol_add;
+                        byte byte_change;
                         if(wParam == AVK_UP)
                         {
-                            vol_add=TRUE;
+                            ICONFIG_GetItem(pMe->m_pConfig, CFGI_RINGER_VOL, &byte_change, sizeof(byte_change));
+                            if(byte_change != OEMSOUND_5TH_VOL)
+                            {
+                                byte_change ++;
+                                ICONFIG_SetItem(pMe->m_pConfig,CFGI_RINGER_VOL,&byte_change,sizeof(byte_change));
+                            }
+                           
                         }
                         else
                         {
-                            vol_add=FALSE;
+                            ICONFIG_GetItem(pMe->m_pConfig, CFGI_RINGER_VOL, &byte_change, sizeof(byte_change));
+                            if(byte_change != OEMSOUND_5TH_VOL)
+                            {
+                                byte_change --;
+                                ICONFIG_SetItem(pMe->m_pConfig,CFGI_RINGER_VOL,&byte_change,sizeof(byte_change));
+                            }
+                           
                         }               
-                        CallApp_ChangeCallVolume(pMe, vol_add);
+                        //CallApp_ChangeCallVolume(pMe, vol_add);
                     
         #if !defined( FEATURE_CALL_RECORDER)
-                        CallApp_RefreshVolBar(pMe);
+                        CallApp_RefreshRubgVolBar(pMe);
                         IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                        IALERT_StopRingerAlert(pMe->m_pAlert);
+                        IALERT_StopMp3Alert(pMe->m_pAlert);
+                        MSLEEP(400);
+                        
+                        CallApp_Play_Incoming_Tone(pMe);
                         return TRUE;
         #endif
                     }
-                   
-
-#else
+                    else
+                    {
                          CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+                    } 
+#else
+                    CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
 #endif
 
                     break;
@@ -10531,7 +10554,7 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
 	else
 	#endif
 	{
-#ifdef FEATURE_VERSION_KK5
+#if defined(FEATURE_VERSION_KK5)||defined(FEATURE_VERSION_K232_Y105A)
     if((((wParam == AVK_SEND|| wParam == AVK_HEADSET_SWITCH) && (pMe->m_anykey_answer & 0x4))
         ||(eCode == EVT_FLIP && ((boolean)wParam == TRUE)  && (pMe->m_anykey_answer & 0x2))
         ||(((wParam == AVK_USER_HEADSET) || (wParam == AVK_SEND )|| (wParam == AVK_HEADSET_SWITCH) ) && (pMe->m_anykey_answer & 0x8))
@@ -12089,6 +12112,91 @@ static boolean CallApp_MissedList(CCallApp *pMe)
 //                                                0,
 //                                                0);
 //}
+static void CallApp_RefreshRubgVolBar(CCallApp *pMe)
+{
+    //int16 img_id = 0;
+    int imageIndex = 0;
+    IImage  *pImage = NULL;
+
+#if !defined( FEATURE_CALL_RECORDER)
+    ISHELL_CancelTimer(pMe->m_pShell,
+                                                    (PFNNOTIFY)CallApp_HandleDialogTimer_Redraw,
+                                                    pMe);
+#endif
+    ICONFIG_GetItem(pMe->m_pConfig,CFGI_RINGER_VOL,&pMe->m_CallVolume,sizeof(pMe->m_CallVolume));
+
+    switch (pMe->m_CallVolume)
+    {
+       case OEMSOUND_1ST_VOL:      //音量为“1级”
+           //ui16_return = IDI_ICON_AUDIO_VOL0;
+           imageIndex = 1;
+           break;
+      
+       case OEMSOUND_2ND_VOL:      //音量为“2级”
+       default:
+           //ui16_return = IDI_ICON_AUDIO_VOL1;
+           imageIndex = 2;
+           break;
+      
+       case OEMSOUND_3RD_VOL:      //音量为“3级”
+           //ui16_return = IDI_ICON_AUDIO_VOL2;
+           imageIndex = 3;
+           break;
+      
+       case OEMSOUND_4TH_VOL:      //音量为“4级”
+           //ui16_return = IDI_ICON_AUDIO_VOL3;
+           imageIndex = 4;
+           break;
+      
+       case OEMSOUND_5TH_VOL:      //音量为“5级”
+           //ui16_return = IDI_ICON_AUDIO_VOL4;
+           imageIndex = 5;
+           break;
+      
+       case OEMSOUND_MUTE_VOL:      //音量为“关闭”
+           //ui16_return = IDI_ICON_AUDIO_VOL_OFF;
+           imageIndex = 0;
+           break;
+    }
+
+    if(pImage == NULL)
+    {
+        pImage = ISHELL_LoadImage(pMe->m_pShell, REFUI_VOLUME_IMAGE);
+        //pImage = ISHELL_LoadResImage( pMe->m_pShell,AEE_APPSCOMMONRES_IMAGESFILE, img_id);
+    }
+
+    if(pImage)
+    {
+        AEEImageInfo imageInfo;
+        AEERect rect = {0};
+        
+#ifdef FEATURE_EDITABLE_NUMBER
+        ISHELL_CancelTimer(pMe->m_pShell, CallApp_Set_Cursor_Blink, pMe);
+#endif
+        IIMAGE_SetParm(pImage, IPARM_NFRAMES, REFUI_VOLUME_LEVELS, 0);
+        IIMAGE_GetInfo(pImage, &imageInfo);
+        SETAEERECT(&rect, (pMe->m_rc.dx - imageInfo.cxFrame)/2, CALL_ANIM_IMG_Y - CALL_LINE_HIGHT, imageInfo.cxFrame, imageInfo.cy);
+        #ifdef  FEATURE_DISP_176X220
+		rect.y = rect.y+50;
+		#endif
+        Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &rect, TRUE);
+		
+        
+        IIMAGE_DrawFrame(pImage, 
+                                        imageIndex, 
+                                        rect.x, 
+                                        rect.y); 
+        IIMAGE_Release(pImage);
+        pImage = NULL;
+        // Start overall timer
+#if !defined( FEATURE_CALL_RECORDER)
+        ISHELL_SetTimer(pMe->m_pShell,
+                                                2000,
+                                                CallApp_HandleDialogTimer_Redraw,
+                                                pMe);
+#endif
+    }
+}
 
 /*==================================================================================
 FUNCTION CallApp_RefreshVolBar

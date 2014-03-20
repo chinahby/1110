@@ -144,6 +144,7 @@ typedef enum DLGRetValue
    DLGRET_RESTOREFACTORY,      //恢复出厂设置
    DLGRET_HEADSETTEST,
    DLGRET_MANUALTEST,
+   DLGRET_TORCHTEST,
 } DLGRet_Value_e_Type;
 
 /*----------------------状态机相关数据类型声明---------------------*/
@@ -169,6 +170,7 @@ typedef enum _QuickTestState
    QUICKTESTST_RESTOREFACTORY,   
    QUICKTESTST_HEADSETTEST,
    QUICKTESTST_MANUALTEST,
+   QUICKTESTST_TORCHTEST,
    QUICKTESTST_EXIT
 } QuickTestState;
 

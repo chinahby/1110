@@ -383,9 +383,14 @@ typedef enum
 
     //用于删除预约以及预约失败短信
     WMS_RSVANDRSVFAILED_DEL_ALL,
+
+    //删除常用短信息
+    WMS_TEMPLATE_DEL_ALL,
     
     // 删除全部
     WMS_BOXES_DEL_ALL,
+
+    
     
     WMS_BOX_MESSAGE_MAX
 } wms_deletebox_e_type;

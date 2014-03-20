@@ -40,6 +40,7 @@
 #endif
 #endif
 #endif
+#include "AEEBacklight.h"
 
 #ifndef WIN32
 #include "Snd.h"
@@ -124,6 +125,11 @@ static boolean  QuickTest_FMTestHandler(CQuickTest *pMe,
 
 //对话框IDD_SDTEST事件处理函数
 static boolean  QuickTest_SDTestHandler(CQuickTest *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+static boolean  QuickTest_TorchTestHandler(CQuickTest *pMe,
     AEEEvent eCode,
     uint16 wParam,
     uint32 dwParam
@@ -271,6 +277,7 @@ void QuickTest_UpdateActiveDialogInfo
         case IDD_RESTORE_FACTORY:
 		case IDD_HEADSETTEST:
         case IDD_MANUNALTEST:
+        case IDD_TORCH:
             pMe->m_pActiveDlg = (IDialog*)dwParam;
             pMe->m_pActiveDlgID = wParam;
             return;
@@ -397,6 +404,8 @@ boolean QuickTest_RouteDialogEvent(CQuickTest *pMe,
             return QuickTest_RestoreFactory_Handler(pMe,eCode,wParam,dwParam);
         case IDD_MANUNALTEST:
             return QuickTest_ManualTest_Handler(pMe,eCode,wParam,dwParam);
+        case IDD_TORCH:
+            return QuickTest_TorchTestHandler(pMe,eCode,wParam,dwParam);
         default:
             return FALSE;
     }
@@ -3105,6 +3114,107 @@ static boolean  QuickTest_FMTestHandler(CQuickTest *pMe,
     return FALSE;
 } // QuickTest_FMTestHandler
 #endif
+static boolean  QuickTest_TorchTestHandler(CQuickTest *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+{
+    AECHAR   string[MAX_STRING_LENGTH+1];
+    AEERect  dlgrc;
+    int  uim;
+    ITextCtl *pTextCtl;
+
+    PARAM_NOT_REF(dwParam)
+
+    MEMSET(string, 0, sizeof(string));
+    SETAEERECT(&dlgrc,
+               0,
+               0,
+               pMe->m_rc.dx,
+               pMe->m_rc.dy);
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+            //重新绘制标题add by xuke 2012.12.17
+            {
+                AECHAR newWTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_QUICKTEST_RES_FILE,                                
+                        IDS_QUICKTEST,
+                        newWTitle,
+                        sizeof(newWTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, newWTitle);
+            }
+            return TRUE;
+
+        case EVT_DIALOG_START:
+            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                     AEECLSID_QUICKTEST,
+                                     EVT_USER_REDRAW,
+                                     0,
+                                     0);
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            {
+                IBacklight     *m_pBacklight; 
+                ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BACKLIGHT, (void **)&m_pBacklight);
+                IBACKLIGHT_TurnOnTorch(m_pBacklight);
+                if(m_pBacklight)
+                {
+                    IBACKLIGHT_Release(m_pBacklight);
+                    m_pBacklight=NULL;
+                }
+                IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+               (void)ISHELL_LoadResString(pMe->m_pShell,
+                                           AEE_QUICKTEST_RES_FILE,
+                                           IDS_TORCH,
+                                           string,
+                                           MAX_STRING_LENGTH);
+
+                (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                                        AEE_FONT_BOLD,
+                                        string,
+                                        -1,
+                                        0,
+                                        dlgrc.dy/2-16,
+                                        &dlgrc,
+                                        IDF_ALIGN_CENTER);
+            }
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_SELECT:
+                case AVK_CLR:
+                    {
+                        IBacklight     *m_pBacklight; 
+                        ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BACKLIGHT, (void **)&m_pBacklight);
+                        IBACKLIGHT_TurnOffTorch(m_pBacklight);
+                        if(m_pBacklight)
+                        {
+                            IBACKLIGHT_Release(m_pBacklight);
+                            m_pBacklight=NULL;
+                        }
+                        CLOSE_DIALOG(DLGRET_CANCELED)
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+            return TRUE;
+
+        default:
+            break;
+    }
+    return FALSE;
+}
 
 /*==============================================================================
 函数：

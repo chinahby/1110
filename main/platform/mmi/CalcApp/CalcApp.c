@@ -784,6 +784,7 @@ typedef struct _CCalcApp {
 	boolean m_bup;
 	int16   m_i;
 #endif
+    boolean m_bDiscprip;
 } CCalcApp;
 
 
@@ -1201,6 +1202,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
 			pme->m_bup = TRUE;
 			pme->m_i = -1;
 			#endif
+            pme->m_bDiscprip = FALSE;
             Calc_Startup(pme, (AEEAppStart *) dwParam);
 			IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);   
 			//IANNUNCIATOR_SetHasTitleText(pme->m_pIAnn,FALSE);
@@ -1215,7 +1217,11 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
 				IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn,WTitle,FALSE);
             }
 			MEMSET(&BarParam, 0, sizeof(BarParam));//wlh 20090417 add 
+			#ifdef FEATURE_VERSION_K232_Y105A
+            BarParam.eBBarType = BTBAR_OPTION_BACK;      //wlh 20090417 add
+            #else
 			BarParam.eBBarType = BTBAR_BACK;      //wlh 20090417 add
+			#endif
 			DrawBottomBar(pme->a.m_pIDisplay,&BarParam);    //wlh 20090417 add
 
 			IDISPLAY_Update(pme->a.m_pIDisplay);
@@ -1292,7 +1298,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
         {
 #ifdef FEATURE_VERSION_W317A	
 			MSG_FATAL("***zzg Calc WSTRLEN(pme->m_szText)=%x***", WSTRLEN(pme->m_szText), 0, 0);
-
+            
 			if (pme->m_szText == 0)
 			{
 				MSG_FATAL("***zzg pme->m_szText == 0***", 0, 0, 0);
@@ -1305,21 +1311,31 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
 			if (WSTRLEN(pme->m_szText) != 0)
 			{
 				MEMSET(&BarParam, 0, sizeof(BarParam));
-				BarParam.eBBarType = BTBAR_DELETE;     		
+                #ifdef FEATURE_VERSION_K232_Y105A
+                BarParam.eBBarType = BTBAR_OPTION_DELETE;
+                #else
+				BarParam.eBBarType = BTBAR_DELETE;     	
+                #endif
 
 				MSG_FATAL("***zzg BarParam.eBBarType = BTBAR_DELETE***", 0, 0, 0);
 			}
 			else
 			{	
 				MEMSET(&BarParam, 0, sizeof(BarParam));
+                #ifdef FEATURE_VERSION_K232_Y105A
+                BarParam.eBBarType = BTBAR_OPTION_BACK;  
+                #else
 				BarParam.eBBarType = BTBAR_BACK;    
-
+                #endif
 				MSG_FATAL("***zzg BarParam.eBBarType = BTBAR_BACK***", 0, 0, 0);
 			}
 			DrawBottomBar(pme->a.m_pIDisplay,&BarParam); 
 			IDISPLAY_Update(pme->a.m_pIDisplay);
 #endif
-
+            if(pme->m_bDiscprip && wParam != AVK_CLR &&wParam != AVK_SOFT2)
+            {
+                return TRUE;
+            }
             switch (wParam)
             {
             	case AVK_O:
@@ -1437,6 +1453,35 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
                 case AVK_SOFT2:
                 case AVK_CLR:
 					MSG_FATAL("AVK_CLR............",0,0,0);
+                    if(pme->m_bDiscprip)
+                    {
+                        Calc_DrawScreen(pme);
+                        Calc_SetVal(pme, pme->m_TempValue, TRUE);
+                        MEMSET(&BarParam, 0, sizeof(BarParam));
+                        if (WSTRLEN(pme->m_szText) != 0)
+            			{
+            				MEMSET(&BarParam, 0, sizeof(BarParam));
+                            #ifdef FEATURE_VERSION_K232_Y105A
+                            BarParam.eBBarType = BTBAR_OPTION_DELETE;
+                            #else
+            				BarParam.eBBarType = BTBAR_DELETE;     	
+                            #endif
+            			}
+            			else
+            			{	
+            				MEMSET(&BarParam, 0, sizeof(BarParam));
+                            #ifdef FEATURE_VERSION_K232_Y105A
+                            BarParam.eBBarType = BTBAR_OPTION_BACK;  
+                            #else
+            				BarParam.eBBarType = BTBAR_BACK;    
+                            #endif
+            			}  
+			            DrawBottomBar(pme->a.m_pIDisplay,&BarParam);
+                        IDISPLAY_Update(pme->a.m_pIDisplay);
+                        pme->m_bDiscprip = FALSE;
+                    }
+                    else
+                    {
 					#ifdef FEATURE_LCD_TOUCH_ENABLE
 					ISHELL_CloseApplet( pme->a.m_pIShell, FALSE);
 					#else
@@ -1456,6 +1501,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
                     	ISHELL_CloseApplet( pme->a.m_pIShell, FALSE);
                     }
 					#endif
+                    }
                     break;
 //#if defined(FEATURE_DISP_176X220)
 //				case AVK_STAR:
@@ -1474,6 +1520,46 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
                     Calc_Reset( pme);
                     break;
 #endif
+                case AVK_SELECT:
+                    if(!pme->m_bDiscprip)
+                    {
+                        IStatic *p_stk;
+                        AECHAR szBuf[64] = {NULL};
+                        pme->m_bDiscprip = TRUE;
+                        drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND, 0, 0);
+                        if (AEE_SUCCESS != ISHELL_CreateInstance(pme->a.m_pIShell,
+                                            AEECLSID_STATIC,
+                                            (void **)&p_stk)) {
+                                    return AEE_EFAILED;
+                        }
+                        if(p_stk == NULL)
+                        {
+                            MSG_FATAL("CFieldDebug_DrawEsnScreen 2 p_stk == NULL", 0, 0, 0);
+                        }
+                        (void) ISHELL_LoadResString(pme->a.m_pIShell,
+                               AEE_CALCAPP_RES_FILE,
+                               IDS_STRING_DRC,
+                               (szBuf),
+                               sizeof(szBuf));
+                        // Set the values of the title and text strings for this control
+                        ISTATIC_SetProperties(p_stk, ST_UNDERLINE|ST_NOSCROLL|ST_CENTERTITLE);
+                        (void) ISTATIC_SetText(p_stk,
+                                               NULL,
+                                               szBuf,
+                                               AEE_FONT_NORMAL,
+                                               AEE_FONT_NORMAL);
+                        
+                        (void) ISTATIC_Redraw(p_stk);
+                        MEMSET(&BarParam, 0, sizeof(BarParam));
+				        BarParam.eBBarType = BTBAR_BACK;    
+			            DrawBottomBar(pme->a.m_pIDisplay,&BarParam);
+                        IDISPLAY_Update(pme->a.m_pIDisplay);
+                        if (p_stk) {
+                           ISTATIC_Release(p_stk);
+                           p_stk = NULL;
+                        }
+                    }
+                    break;
             } //switch (wParam)
 
             if (wParam >= AVK_0 && wParam <= AVK_9)
@@ -1825,9 +1911,12 @@ SEE ALSO:
 static void Calc_DrawScreen(CCalcApp *pme)
 {
 	BottomBar_Param_type BarParam;        //wlh 20090417 add          
-	MEMSET(&BarParam, 0, sizeof(BarParam));//wlh 20090417 add   
+	MEMSET(&BarParam, 0, sizeof(BarParam));//wlh 20090417 add  
+	#ifdef FEATURE_VERSION_K232_Y105A
+    BarParam.eBBarType = BTBAR_OPTION_BACK;      //wlh 20090417 add
+    #else
 	BarParam.eBBarType = BTBAR_BACK;      //wlh 20090417 add
-
+    #endif
 	{
 		AECHAR WTitle[40] = {0};
 		(void)ISHELL_LoadResString(pme->a.m_pIShell,
@@ -2594,7 +2683,7 @@ static int16 Calc_NumText(CCalcApp *pme,
                y = y + pme->m_valRect.dy - CALC_NUMBER_HEIGHT;
                SETAEERECT( &rect, x, y, CALC_NUMBER_WIDTH, CALC_NUMBER_HEIGHT);            
 
-#ifdef FEATURE_VERSION_EC99               
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K232_Y105A)               
                IDISPLAY_DrawText(pme->a.m_pIDisplay, AEE_FONT_LARGE, pch, 1, rect.x, rect.y, &rect, IDF_ALIGN_RIGHT|IDF_TEXT_TRANSPARENT);
 #else
                //drawImageWithOffset( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CALCAPP_DIGITS, x, y, &rect);
@@ -2730,11 +2819,19 @@ static void Calc_DrawNum( CCalcApp *pme)
          
            if(pme->m_bClearLast == FALSE && WSTRLEN( pme->m_szText) > 0)
        	   {
-             BarParam.eBBarType = BTBAR_DELETE;      
+       	     #ifdef FEATURE_VERSION_K232_Y105A
+             BarParam.eBBarType = BTBAR_OPTION_DELETE; 
+             #else
+             BarParam.eBBarType = BTBAR_DELETE; 
+             #endif
            }
            else
            {
+             #ifdef FEATURE_VERSION_K232_Y105A
+             BarParam.eBBarType = BTBAR_OPTION_BACK; 
+             #else
        	     BarParam.eBBarType = BTBAR_BACK;     
+             #endif
            }
            DrawBottomBar(pme->a.m_pIDisplay,&BarParam);
            IDISPLAY_Update(pme->a.m_pIDisplay);

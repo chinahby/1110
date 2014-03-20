@@ -2591,7 +2591,9 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
         case EVT_KEY:
             {
                 int nCount = IMENUCTL_GetItemCount(pMenu);
-				
+                #ifdef FEATURE_VERSION_K232_Y105A
+				IALERT_StopRingerAlert(pMe->m_pAlert);
+                #endif
                 switch(wParam)
                 {
                     case AVK_DOWN:
@@ -19237,6 +19239,7 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
 	                    IBITMAP_BltIn(pDevBmp, 0, 0, pMe->m_rc.dx, pMe->m_rc.dy, pTempBmp, 0, 0, AEE_RO_COPY);
 	                }
 	            }
+                IALERT_StopRingerAlert(pMe->m_pAlert);
 	            ISTATIC_Release(pStatic);
 	            pStatic = NULL;
 	            return TRUE;
@@ -19251,6 +19254,7 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
 					case AVK_CLR:
 		            case AVK_END:
 						{
+                            IALERT_StopRingerAlert(pMe->m_pAlert);
 							CLOSE_DIALOG(DLGGET_SMSNEW_OK)
                     		return TRUE;
 						}
@@ -19258,6 +19262,7 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
 					#endif	
 					case AVK_SELECT:
 						{
+                            IALERT_StopRingerAlert(pMe->m_pAlert);
 							CLOSE_DIALOG(DLGRET_SMSVIEWS)
                     		return TRUE;
 						}

@@ -109,8 +109,10 @@ when       who     what, where, why
 #define PROFILENUMBER                     5                          // 情景模式种类
 //#endif
 //默认的短信铃?
-#ifdef FEATURE_VERSION_V3CM301
+#if defined(FEATURE_VERSION_V3CM301)
 #define OEMNV_SMS_RINGER_ID 77
+#elif defined(FEATURE_VERSION_K232_Y105A)
+#define OEMNV_SMS_RINGER_ID 4
 #else
 #define OEMNV_SMS_RINGER_ID 78
 #endif

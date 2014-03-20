@@ -382,7 +382,9 @@ static const CCameraSize g_CameraSizeCFG_10[] =
     {240,320,L"240*320"}, // QVGA
 #endif    
 #if defined( FEATURE_VERSION_C316)//||defined(FEATURE_VERSION_C117_M74)
+#ifndef FEATURE_VERSION_K232_Y105A
     {300,400,L"480*640"}, // VGA
+#endif
 #elif defined (FEATURE_VERSION_C260_IC18)|| defined (FEATURE_VERSION_KK5)
     {352,464,L"352*464"}, // VGA    
 #endif

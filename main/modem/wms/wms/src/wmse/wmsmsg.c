@@ -4409,6 +4409,49 @@ void wms_msg_delete_box_proc(wms_cmd_type    *cmd_ptr)
                 msg_event_info.status_info.message.msg_hdr.message_mode = WMS_MESSAGE_MODE_CDMA;
                 break;
             }
+        case WMS_TEMPLATE_DEL_ALL:
+            for (i=PHRASE_START; i <= PHRASE_END; i++)
+            {
+                if (cfg_s_ptr->nv_cdma_tags[i] == WMS_TAG_PHRASE)
+                {
+                    ruim_data[1] =  (uint8)WMS_TAG_NONE;
+                    
+                    if (wms_nv_delete_cdma_sms(i, ruim_data) == FALSE)
+                    {
+                        cmd_err = WMS_CMD_ERR_MSG_NV_DELETE;
+                    }
+                    else
+                    {
+#if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
+                        uint8 data = cfg_s_ptr->nv_cdma_tags[i];
+                        
+                        /* Delet old Message Information Cache */
+                        wms_cfg_update_msg_info_cache(WMS_TAG_NONE,
+                                  WMS_MEMORY_STORE_NV_CDMA,
+                                  i,
+                                  &data,
+                                  1);
+#endif
+
+                        /* Update duplicate detection list */
+                        wms_cfg_delete_dup_info_cache(WMS_MEMORY_STORE_NV_CDMA, i);
+                        
+                        /* NV write was successful, update message list */
+                        cfg_s_ptr->nv_cdma_tags[i] = WMS_TAG_NONE;
+                        
+                    }
+                }
+                else
+                {
+                    continue; /* skip slots */
+                }
+            }
+            
+            if (cmd_ptr->cmd.msg_delete_box.box_deltype != WMS_TEMPLATE_DEL_ALL)
+            {
+                msg_event_info.status_info.message.msg_hdr.message_mode = WMS_MESSAGE_MODE_CDMA;
+                break;
+            }
                 
         case WMS_OUTBOX_DEL_ALL:
             for (i=OUT_START; i <= OUT_END; i++)

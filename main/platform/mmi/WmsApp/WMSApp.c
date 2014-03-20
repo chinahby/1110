@@ -1167,6 +1167,10 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                 IIMAGE_Release(pMe->m_pImage);
                 pMe->m_pImage = NULL;
             }
+            
+            #ifdef FEATURE_VERSION_K232_Y105A
+			IALERT_StopRingerAlert(pMe->m_pAlert);
+            #endif
         
             // 转为后台模式
             *((boolean *)dwParam) = FALSE;
@@ -1283,6 +1287,9 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             {
                 return TRUE;
             }
+            #ifdef FEATURE_VERSION_K232_Y105A
+			IALERT_StopRingerAlert(pMe->m_pAlert);
+            #endif
     
             (void) WmsApp_RouteDialogEvt(pMe,eCode,wParam,dwParam);
     
@@ -1318,6 +1325,10 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             {
                 return TRUE;
             }
+#endif
+            
+#ifdef FEATURE_VERSION_K232_Y105A
+			IALERT_StopRingerAlert(pMe->m_pAlert);
 #endif
             return WmsApp_RouteDialogEvt(pMe,eCode,wParam,dwParam);
             
@@ -7198,7 +7209,11 @@ void WmsApp_PlaySMSAlert(WmsApp * pMe, boolean bsmsin)
         // IALERT_StopMp3Alert(pMe->m_pAlert);
         if(MediaGallery_CheckUdiskStat())
         {
+            #ifdef FEATURE_VERSION_K232_Y105A
+            IALERT_StartRingerAlert_Ex(pMe->m_pAlert, SmsRingerID[btActiveProfile].midID);
+            #else
             (void) IALERT_StartSMSAlert(pMe->m_pAlert, SmsRingerID[btActiveProfile].midID);
+            #endif
         }
         else
         {
@@ -7215,13 +7230,21 @@ void WmsApp_PlaySMSAlert(WmsApp * pMe, boolean bsmsin)
                 if ((IALERT_StartMp3Alert(pMe->m_pAlert, SmsRingerID[btActiveProfile].szMusicname,ALERT_SMS_SND) != SUCCESS))
                 {
                 	MSG_FATAL("IALERT_StartSMSAlert::::::::::::::::::::111111111",0,0,0);
+                    #ifdef FEATURE_VERSION_K232_Y105A
+                    IALERT_StartRingerAlert_Ex(pMe->m_pAlert, SmsRingerID[btActiveProfile].midID);
+                    #else
                     (void) IALERT_StartSMSAlert(pMe->m_pAlert, SmsRingerID[btActiveProfile].midID);
+                    #endif
                 }            
             }
             else
             {
             	MSG_FATAL("IALERT_StartSMSAlert::::::::::::::::::::2222222222222222222",0,0,0);
+                #ifdef FEATURE_VERSION_K232_Y105A
+                IALERT_StartRingerAlert_Ex(pMe->m_pAlert, SmsRingerID[btActiveProfile].midID);
+                #else
                 (void) IALERT_StartSMSAlert(pMe->m_pAlert, SmsRingerID[btActiveProfile].midID);
+                #endif
             }
         }
 
@@ -8153,6 +8176,9 @@ static int CWmsApp_DeleteAllNvCdmaSms(IWmsApp *p)
                     WMS_DRAFT_DEL_ALL);        
     }
 
+    
+    
+
     // 删除预约信息
     #ifdef FEATURE_RESERVEDMSG
     if(nRet == SUCCESS)
@@ -8164,6 +8190,15 @@ static int CWmsApp_DeleteAllNvCdmaSms(IWmsApp *p)
                     WMS_RSVANDRSVFAILED_DEL_ALL);        
     }
 	#endif
+    // 删除全部信息
+    if(nRet == SUCCESS)
+    {
+        nRet = IWMS_MsgDeleteBox(pMe->m_pwms,
+                    pMe->m_clientId, 
+                    &pMe->m_callback,
+                    (void*)pMe,
+                    WMS_TEMPLATE_DEL_ALL);        
+    }
     
     return nRet;
 }

@@ -1808,6 +1808,7 @@ static boolean MobileTracker_ContentHandler(MobileTracker *pMe, AEEEvent eCode, 
 			  AECHAR WTTitle[2] = {0};
 	          AECHAR WTitle[40] = {0};
 			  AECHAR m_wstrContect[120] = {0};
+              char   m_strContext[120] = {0};
 			 (void)ISHELL_LoadResString(pMe->m_pShell,
                         MOBILETRACKER_RES_FILE_LANG,                                
                         IDS_CONTENT,
@@ -1823,8 +1824,9 @@ static boolean MobileTracker_ContentHandler(MobileTracker *pMe, AEEEvent eCode, 
 			 ITEXTCTL_SetRect(pMe->m_Content, &m_ContentRect);
 			 (void)ITEXTCTL_SetTitle( pMe->m_Content, NULL,0,WTTitle);
   			 ITEXTCTL_SetProperties(pMe->m_Content, TP_MULTILINE|TP_FRAME|TP_FOCUS_NOSEL|TP_FIXSETRECT|TP_STARKEY_SWITCH|TP_DISPLAY_COUNT|TP_GRAPHIC_BG|TP_NO_HI);
-             ITEXTCTL_SetMaxSize(pMe->m_Content, 80);
-			 OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT,&m_wstrContect,sizeof(uint16)*120);
+             ITEXTCTL_SetMaxSize(pMe->m_Content, 120);
+			 OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT,&m_strContext,sizeof(char)*120);
+             STRTOWSTR(m_strContext,m_wstrContect,sizeof(uint16)*120);
 			 ITEXTCTL_SetText(pMe->m_Content,m_wstrContect,sizeof(uint16)*120);
 	         return TRUE;
 	      }
@@ -1862,11 +1864,14 @@ static boolean MobileTracker_ContentHandler(MobileTracker *pMe, AEEEvent eCode, 
 				{
 					int len = 0;
 					uint16 wPWD=0;
-					AECHAR m_wstrContect[120] = {0};
+					AECHAR m_wstrContect[150] = {0};
+                    char   m_strContext[120] = {0};
 					AECHAR *pwsText  = ITEXTCTL_GetTextPtr(pMe->m_Content);
 					
 					WSTRCPY(m_wstrContect,pwsText);
-					OEM_SetConfig(CFGI_MOBILE_TRACKER_CONTECT,&m_wstrContect,sizeof(uint16)*120);
+                    MEMSET(m_strContext,0,sizeof(m_strContext));
+                    WSTRTOSTR(m_wstrContect,m_strContext,sizeof(m_strContext));
+					OEM_SetConfig(CFGI_MOBILE_TRACKER_CONTECT,&m_strContext,sizeof(char)*120);
 					CLOSE_DIALOG(DLGRET_CANCELED)
 					return TRUE;
 					
@@ -1943,8 +1948,8 @@ static boolean MobileTracker_ChangPassWordHandler(MobileTracker *pMe, AEEEvent e
 			 ICONTROL_SetRect((IControl*)pMe->m_cpwdword, &p_ConfirmPassWord);
   			 ITEXTCTL_SetInputMode(pMe->m_ppwdword, AEE_TM_NUMBERS);
 			 ITEXTCTL_SetInputMode(pMe->m_cpwdword, AEE_TM_NUMBERS);
-  			 ITEXTCTL_SetProperties(pMe->m_ppwdword, TP_FRAME|TP_FIXSETRECT|TP_FOCUS_NOSEL|TP_MB_PROPERTY);
-			 ITEXTCTL_SetProperties(pMe->m_cpwdword, TP_FRAME|TP_FIXSETRECT|TP_MB_PROPERTY);
+  			 ITEXTCTL_SetProperties(pMe->m_ppwdword, TP_FRAME|TP_FIXSETRECT|TP_FOCUS_NOSEL|TP_MB_PROPERTY|TP_PASSWORD);
+			 ITEXTCTL_SetProperties(pMe->m_cpwdword, TP_FRAME|TP_FIXSETRECT|TP_MB_PROPERTY|TP_PASSWORD);
              ITEXTCTL_SetMaxSize(pMe->m_ppwdword, 5);
 		     ITEXTCTL_SetMaxSize(pMe->m_cpwdword, 5);
 	         return TRUE;

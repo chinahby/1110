@@ -2086,7 +2086,6 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 				}
 			}
 			return TRUE;
-#ifndef FEATURE_VERSION_C316
 		case EVT_SALES_TRACKER:
 			{
                  MSG_FATAL("***zzg CoreApp HandleEvt EVT_SALES_TRACKER IRUIM_IsCardConnected = %d***", IRUIM_IsCardConnected(pMe->m_pIRUIM),0,0);
@@ -2131,7 +2130,6 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 					
 			}
 			return TRUE;
-#endif
 		//Add By zzg 2012_11_16	
 		case EVT_WMS_DRAFT_SAVED:
 		{

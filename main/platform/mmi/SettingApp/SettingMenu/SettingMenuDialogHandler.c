@@ -164,6 +164,11 @@ static boolean  HandleShortcutsSelectMenuDialogEvent(CSettingMenu *pMe,
     uint32 dwParam
 );
 #endif
+static boolean  HandleAirPlaneDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
 
 #if defined(FEATURE_VERSION_W317A)
 // 对话框 IDD_SETTING_CALLRECORD 事件处理函数
@@ -823,6 +828,8 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
         case IDD_CALL_REJECT_AUTO_MSG:
             return Setting_Handle_Call_Reject_Auto_Msg_DialogEvent(pMe,eCode,wParam,dwParam);
 #endif
+		case IDD_AIRPLANE_MODE:
+            return HandleAirPlaneDialogEvent(pMe,eCode,wParam,dwParam);
         default:
             return FALSE;
     }
@@ -2211,9 +2218,162 @@ static boolean  HandleShortcutsSelectMenuDialogEvent(CSettingMenu *pMe,
     return FALSE;
 } // HandlePhoneInfo_SW_HW_PRL_DialogEvent
 #endif
+static boolean  HandleAirPlaneDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+{
+    PARAM_NOT_REF(dwParam)
+    //static byte bytData = 0;
+    //static boolean isSwitch = FALSE;
+    int ret = 0;
 
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
+                                                    IDC_MENU_AIRPLANE);
+    MSG_FATAL("%x, %x ,%x,HandleTimeFontModeDialogEvent",eCode,wParam,dwParam);
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSETTINGMENU_RES_FILE,                                
+                        IDS_AIRPLANE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pAnn,WTitle,FALSE);
+            }
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_ENABLE, IDS_ENABLE, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_DISABLE, IDS_DISABLE, NULL, 0);
+            return TRUE;
 
+        case EVT_DIALOG_START:
+            {
+                uint16 wItemID;
+                byte nSelItem = 0;
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT|MP_ACTIVE_NO_REDRAW);
+                IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
+#endif
+                IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+                
+                /*
+                (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                       CFGI_IDLE_DATETIME_MODE,
+                                       &nSelItem,
+                                       sizeof(nSelItem));
+                switch (nSelItem)
+                {
+                     case TIMEFONTMODE_BIG:
+                        wItemID = IDS_ENABLE;
+                        break;
+                     case TIMEFONTMODE_MEDIUM:
+                        wItemID = IDS_DISABLE;
+                        break;
+                     default:
+                     	wItemID = IDS_ENABLE;
+                     	break;
+                }
+                */
+                if(m_Aarplne)
+                {
+                    wItemID = IDS_ENABLE;
+                }
+                else
+                {
+                    wItemID = IDS_DISABLE;
+                }
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, wItemID, TRUE);
+                IMENUCTL_SetSel(pMenu, wItemID);
+            }
+            return TRUE;
 
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                  default:
+                    break;
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+            {
+                int nReturnStatus = -1; 
+#ifdef FEATURE_ICM
+                ICM *pICM = NULL;
+#else
+                IPhoneCtl *pIPhoneCtl = NULL;
+#endif
+#ifdef FEATURE_ICM
+                nReturnStatus = ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CM, (void **) &pICM);   
+                if((pICM == NULL) || (SUCCESS != nReturnStatus))
+#else
+                nReturnStatus = ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_PHONECTL, (void **) &pIPhoneCtl);   
+                if((pIPhoneCtl == NULL) || (SUCCESS != nReturnStatus))
+#endif
+                {
+                    MSG_FATAL("HandleSimDialogEvent:::::33333 ICM cerate Failed",0,0,0);
+                    return FALSE;
+                }
+
+                switch (wParam)
+                {
+                    case  IDS_DISABLE:
+                       m_Aarplne = FALSE;
+#ifdef FEATURE_ICM
+                    ICM_SetOperatingMode(pICM, AEECM_OPRT_MODE_ONLINE);
+#else
+                    IPHONECTL_SetOperatingMode(pIPhoneCtl, AEECM_OPRT_MODE_ONLINE);
+#endif
+                       
+                       break;
+                    case IDS_ENABLE:
+                        m_Aarplne = TRUE;
+#ifdef FEATURE_ICM
+                    ICM_SetOperatingMode(pICM, AEECM_OPRT_MODE_LPM);
+#else
+                    IPHONECTL_SetOperatingMode(pIPhoneCtl, AEECM_OPRT_MODE_LPM);
+#endif
+                       break;
+                    
+                    default:
+                       ASSERT_NOT_REACHABLE;
+
+                }
+                /*
+                (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                       CFGI_IDLE_DATETIME_MODE,
+                                       &nSelItem,
+                                       sizeof(nSelItem));
+                */
+                //InitMenuIcons(pMenu);
+                //SetMenuIcon(pMenu, wParam, TRUE);
+                //(void)IMENUCTL_Redraw(pMenu);
+                CLOSE_DIALOG(DLGRET_WARNING)
+				break;
+            }
+            return TRUE;
+
+        default:
+            break;
+    }
+    return FALSE;
+}
 
 #if  defined(FEATURE_VERSION_W317A)
 //Add by pyuangui 2013-01-04
@@ -2444,7 +2604,9 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_STR_NAVIGATION, IDS_STR_NAVIGATION, NULL, 0);
 #endif
 #endif
-
+#ifdef FEATURE_VERSION_K232_Y105A
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AIRPLANE, IDS_AIRPLANE, NULL, 0);
+#endif
 
             return TRUE;
 
@@ -2569,6 +2731,9 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
                     break;
 #endif  
 #endif
+                case IDS_AIRPLANE:
+                    CLOSE_DIALOG(DLGRET_AIRPLANE_MODE)
+                    break;
 
                 default:
                     ASSERT_NOT_REACHABLE;
@@ -3343,7 +3508,7 @@ static boolean  HandleDivertDialogEvent(CSettingMenu *pMe,
                 case IDS_CALLFORWARD_NOCONNECT_UNCONDITIONAL:
 				#endif
 
-#ifdef FEATURE_VERSION_K232_Y101
+#if defined(FEATURE_VERSION_K232_Y101)||defined(FEATURE_VERSION_K232_Y105A)
                 case IDS_CALLFORWARD_NOCONNECT: //未接通转移
                     pMe->m_CFType = CALLFORWARD_ANYWAY;
                     CLOSE_DIALOG(DLGRET_CALLFORWARDSEL)
@@ -8930,8 +9095,7 @@ static boolean  Handle_PrefixEdit_DialogEveng(CSettingMenu *pMe,
 
 #endif
 
-
-#ifdef FEATURE_VERSION_K232_Y101
+#if defined(FEATURE_VERSION_K232_Y101)||defined(FEATURE_VERSION_K232_Y105A)  
 extern char charsvc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1];
 #endif
 
@@ -9047,10 +9211,9 @@ static void SettingMenu_Process_Feature_Code(CSettingMenu *pMe,uint16 feature_co
         DBGPRINTF("SettingMenu_Process_Feature_Code STRLEN(pMe->m_callnumber)=%d",STRLEN(pMe->m_callnumber));
 
         DBGPRINTF("SettingMenu_Process_Feature_Code feature_code=%d",feature_code);        
-        
-#ifdef FEATURE_VERSION_K232_Y101    
-        DBGPRINTF("SettingMenu_Process_Feature_Code charsvc_p_name=%s",charsvc_p_name);
 
+        DBGPRINTF("SettingMenu_Process_Feature_Code charsvc_p_name=%s",charsvc_p_name);
+#if defined(FEATURE_VERSION_K232_Y101)||defined(FEATURE_VERSION_K232_Y105A)    
         if (STRLEN(pMe->m_callnumber) == 0) // did not read the code from the card.
         {            
             if (feature_code == CFGI_CALLFORWARD_UNCONDITIONAL_DISABLE)

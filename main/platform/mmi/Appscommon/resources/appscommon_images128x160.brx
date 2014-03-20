@@ -106,6 +106,9 @@
 	<Object Id="5035" Name="IDB_ANNUNCIATOR_GROUD" MimeType="image/png">
 		<File>..\images\128x160\common\Annunciator\Annunciator.png</File>
 	</Object>
+	<Object Id="5036" Name="IDI_CONANT_BACKGROUNT" MimeType="image/png">
+		<File>..\images\128x160\common\IME\contantbackground.png</File>
+	</Object>
 	<Object Id="5041" Name="IDB_ERROR" MimeType="image/png">
 		<File>..\images\128x160\common\Appscommon\MessageBox\error.png</File>
 	</Object>

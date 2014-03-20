@@ -1139,9 +1139,7 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
 #ifndef FEATURE_VERSION_C337
 #ifndef FEATURE_VERSION_IC241A_MMX
 #ifndef FEATURE_VERSION_K232_Y100A
-#ifndef FEATURE_VERSION_K232_Y105A
             Sound_App_Add_Menu(pMenu,IDS_POWERONOFF_ALERT);
-#endif
 #endif
 #endif
 #endif
@@ -1215,7 +1213,7 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
 #else
                 case IDS_SMSRING:                  //消息铃声
 #endif                
-#ifdef FEATURE_SMSTONETYPE_MID                        
+#if defined(FEATURE_SMSTONETYPE_MID)||defined(FEATURE_VERSION_K232_Y105A)                        
                     pMe->m_RingerType = SET_SMSTONE;
                     {
                         CLOSE_DIALOG(DLGRET_RINGER)
@@ -1724,15 +1722,16 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
                 }
             }
 #if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
-#ifdef FEATURE_SMSTONETYPE_MID             
+#if defined(FEATURE_SMSTONETYPE_MID)||defined(FEATURE_VERSION_K232_Y105A)           
             else if(pMe->m_RingerType == SET_SMSTONE)
             {
-                ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_SMS_RINGER_ID,pMe->m_RingerID,sizeof(pMe->m_RingerID));
-
+                ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_SMS_RINGER_ID,(void*)pMe->m_RingerID,sizeof(pMe->m_RingerID));
+                pMe->m_lastRingerPlayed = pMe->m_RingerID[pMe->m_CurProfile].midID;
+                MSG_FATAL("pMe->m_lastRingerPlayed====%d",pMe->m_lastRingerPlayed,0,0);
                 if (pMe->m_RingerID[pMe->m_CurProfile].midID == 0)
                 {
-                    pMe->m_RingerID[pMe->m_CurProfile].midID = OEMNV_SMS_RINGER_ID;
-                    ICONFIG_SetItem(pMe->m_pConfig,CFGI_PROFILE_SMS_RINGER_ID,pMe->m_RingerID,sizeof(pMe->m_RingerID));
+                    pMe->m_RingerID[pMe->m_CurProfile].midID = 0;
+                    ICONFIG_SetItem(pMe->m_pConfig,CFGI_PROFILE_SMS_RINGER_ID,(void*)pMe->m_RingerID,sizeof(pMe->m_RingerID));
                 }
             }  
 #endif //#if defined FEATURE_SMSTONETYPE_MID		    
@@ -1774,8 +1773,15 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
                 }
 
             }
-
-            pMe->m_lastRingerPlayed = pMe->m_RingID[pMe->m_CurProfile];
+            if(pMe->m_RingerType == SET_SMSTONE)
+            {
+                pMe->m_lastRingerPlayed = pMe->m_RingerID[pMe->m_CurProfile].midID;
+            }
+            else
+            {
+                pMe->m_lastRingerPlayed = pMe->m_RingID[pMe->m_CurProfile];
+            }
+            MSG_FATAL("2222pMe->m_lastRingerPlayed====%d",pMe->m_lastRingerPlayed,0,0);
             pMe->m_eMakeListMode = MAKELIST_INIT;
             return TRUE;
         }
@@ -1800,14 +1806,17 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
                 pMe->m_wResID = IDS_SHUTDOWN_RINGER;
             }
 #if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
-#ifdef FEATURE_SMSTONETYPE_MID               
+#if defined(FEATURE_SMSTONETYPE_MID)||defined(FEATURE_VERSION_K232_Y105A)               
             else if(pMe->m_RingerType == SET_SMSTONE)
             {
+                ringID nNewConfigRinger[PROFILENUMBER]; 
 #ifdef FEATURE_VERSION_W317A
 				pMe->m_wResID = IDS_MSG_TONE;
 #else
                 pMe->m_wResID = IDS_SMSRING;
 #endif
+                ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewConfigRinger,sizeof(nNewConfigRinger));
+                pMe->m_lastRingerPlayed = nNewConfigRinger[pMe->m_CurProfile].midID;
             }  
 #endif //#if defined FEATURE_SMSTONETYPE_MID		    
 #endif
@@ -1835,7 +1844,19 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
             IRINGERMGR_RegisterNotify(pMe->m_pRingerMgr, NULL, NULL);
             SoundMenu_UpdateRingerListMenu(pMe, pMenu);
             InitMenuIcons(pMenu);
+            MSG_FATAL("pMe->m_lastRingerPlayed===%d",pMe->m_lastRingerPlayed,0,0);
+            #if defined(FEATURE_VERSION_K232_Y105A)
+            if(pMe->m_lastRingerPlayed ==0)
+            {
+                SetMenuIcon(pMenu, 258, TRUE);
+            }
+            else
+            {
+                SetMenuIcon(pMenu, pMe->m_lastRingerPlayed, TRUE);
+            }
+            #else
             SetMenuIcon(pMenu, pMe->m_lastRingerPlayed, TRUE);
+            #endif
             ProfileNotifyMP3PlayerAlertEvent(pMe, TRUE);
             ISHELL_PostEvent( pMe->m_pShell,AEECLSID_APP_SOUNDMENU,EVT_USER_REDRAW,0,0);
             return TRUE;
@@ -2009,7 +2030,7 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
             InitMenuIcons(pMenu);
             SetMenuIcon(pMenu, wParam, TRUE);
 
-			MSG_FATAL("***zzg HandlerRingerDialogEvent wParam=%x***", wParam, 0, 0);
+			MSG_FATAL("***zzg HandlerRingerDialogEvent wParam=%x,,dwParam==%d***", wParam, dwParam, 0);
 			
             if(wParam == DOWNLOAD_MENU)
             {
@@ -2032,6 +2053,7 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
             }
 #endif            
             //来电铃声
+            MSG_FATAL("***zzg HandlerRingerDialogEvent pMe->m_RingerType==%d***", pMe->m_RingerType, 0, 0);
             if(pMe->m_RingerType == SET_RINGER)
             {
                 if (nNewConfigRinger[pMe->m_CurProfile].midID <  NUM_OF_MAXRINGER)
@@ -2073,10 +2095,11 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
                 }
             }
 #if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
-#ifdef FEATURE_SMSTONETYPE_MID             
+#if defined(FEATURE_SMSTONETYPE_MID)||defined(FEATURE_VERSION_K232_Y105A)              
             else if(pMe->m_RingerType == SET_SMSTONE)
             {
-                if (nNewConfigRinger[pMe->m_CurProfile] < NUM_OF_MAXRINGER)
+                MSG_FATAL("nNewConfigRinger[pMe->m_CurProfile].midID==%d,==%d",nNewConfigRinger[pMe->m_CurProfile].midID,wParam,0);
+                if (nNewConfigRinger[pMe->m_CurProfile].midID < NUM_OF_MAXRINGER)
                 {
                     ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewConfigRinger,sizeof(nNewConfigRinger));
                     nNewConfigRinger[pMe->m_CurProfile].midID = (uint16)(wParam);
@@ -4383,6 +4406,7 @@ int SoundMenu_SetMp3ring(void* pv, FileNamesBuf pBuf, uint32 nBufSize)
         ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_SMS_RINGER_ID, (void*)nNewConfigRinger,sizeof(nNewConfigRinger));
         STRCPY(nNewConfigRinger[pMe->m_CurProfile].szMusicname, (char*)pBuf); 
         nNewConfigRinger[pMe->m_CurProfile].ringType = OEMNV_MP3_RINGER; 
+        nNewConfigRinger[pMe->m_CurProfile].midID = 0;
         ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewConfigRinger,sizeof(nNewConfigRinger));        
     }
     else if(pMe->m_RingerType == SET_ANOTHER)

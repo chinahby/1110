@@ -69,7 +69,7 @@
 #include "AEERUIM.h"
 #include "OEMNV.h"
 
-
+static boolean m_Aarplne  = FALSE;
 /*==============================================================================
                                  类型定义
 ==============================================================================*/
@@ -186,6 +186,7 @@ typedef enum DLGRetValue
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS
     ,DLGRET_SHORTCUTS_MENU
     ,DLGRET_SHORTCUTS_SELECT_MENU  
+	,DLGRET_AIRPLANE_MODE
 #endif	
 #ifdef FEATURE_CALL_REJECT_AUTO_MSG
     ,DLGRET_CALL_REJECT_AUTO_MSG
@@ -292,6 +293,7 @@ typedef enum _SettingMenuState
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS
    ,SETTINGMENUST_SHORTCUTS_MENU
    ,SETTINGMENUST_SHORTCUTS_SELECT_MENU
+   ,SETTINGMENUST_AIRPLANE_MODE
 #endif   
 #ifdef FEATURE_CALL_REJECT_AUTO_MSG
    ,SETTINGMENUST_CALL_REJECT_AUTO_MSG

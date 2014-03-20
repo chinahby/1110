@@ -3804,13 +3804,14 @@ wms_client_message_s_type *GetMobileTrackerSMS()
 	AECHAR	fmt_str[20];
 	AECHAR szBuf[16]={0};
 	char   strBuf[16]={0};
+    char   m_strContext[120] = {0};
 	int n = 0;
 	IShell *pIShell = AEE_GetShell();
 	AEEMobileInfo     mi;
 	GetMobileInfo(&mi);
 	
 	
-    nSize = sizeof(char)*150;
+    nSize = sizeof(char)*200;
     pBuf = (char *)sys_malloc(nSize);
     if (NULL == pBuf)
     {
@@ -3821,10 +3822,11 @@ wms_client_message_s_type *GetMobileTrackerSMS()
     tmc_get_stored_meid_me((qword *)&meid);
 	L32 = (uint32)meid;
     H32 = (uint32)(meid>>32);
-	OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT, wContent, sizeof(wContent));
-
-	WSTRTOSTR(wContent, pBuf, sizeof(char)*150);
-
+	OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT, m_strContext, sizeof(char)*120);
+    STRCPY(pBuf,m_strContext);
+	//WSTRTOSTR(wContent, pBuf, sizeof(char)*150);
+    
+    #ifndef FEATURE_VERSION_K232_Y105A
 	STRCAT(pBuf, ",MEID:");
 	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
 	n = WSTRLEN(szBuf);
@@ -3846,10 +3848,14 @@ wms_client_message_s_type *GetMobileTrackerSMS()
 	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
 	STRCAT(pBuf,strBuf);
 	STRCAT(pBuf,"\n");
-	
+	#endif
+	#ifdef FEATURE_VERSION_K232_Y105A
+    STRCAT(pBuf, " IMSI ");
+    #else
 	STRCAT(pBuf, "IMSI:");
+    #endif
 	STRCAT(pBuf, mi.szMobileID);
-	STRCAT(pBuf,"\n");
+	STRCAT(pBuf,".\n");
 	nMsgSize = STRLEN(pBuf);
 	
 	#else
@@ -3943,6 +3949,7 @@ wms_client_message_s_type *GetMobileTrackertowSms()
 		int nErr = AEE_SUCCESS;
 		uint16 wDate[20] = {0};
 		char strDate[20] = {0};
+        char m_strContext[120] = {0};
 		int len = 0;
 		wms_cdma_user_data_s_type	 *pUserdata = NULL;
 		wms_client_message_s_type	 *pCltMsg = NULL;
@@ -3955,15 +3962,17 @@ wms_client_message_s_type *GetMobileTrackertowSms()
 		IShell *pIShell = AEE_GetShell();
 		AEEMobileInfo	  mi;
 		GetMobileInfo(&mi);
-		nSize = sizeof(char)*150;
+		nSize = sizeof(char)*200;
     	pBuf = (char *)sys_malloc(nSize);
     	if (NULL == pBuf)
     	{
         	goto GETREGISTERMSG_EXIT;
     	}
-		OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT, wContent, sizeof(wContent));
-
-		WSTRTOSTR(wContent, pBuf, sizeof(char)*150);
+		//OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT, pBuf, sizeof(char)*150);
+        OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT, m_strContext, sizeof(char)*120);
+        STRCPY(pBuf,m_strContext);
+		//WSTRTOSTR(wContent, pBuf, sizeof(char)*150);
+        #ifndef FEATURE_VERSION_K232_Y105A
 		STRCAT(pBuf, ",MEID:");
 		STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
 		n = WSTRLEN(szBuf);
@@ -3985,10 +3994,14 @@ wms_client_message_s_type *GetMobileTrackertowSms()
 		WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
 		STRCAT(pBuf,strBuf);
 		STRCAT(pBuf,"\n");
-		
+		#endif
+		#ifdef FEATURE_VERSION_K232_Y105A
+        STRCAT(pBuf, " IMSI ");
+        #else
 		STRCAT(pBuf, "IMSI:");
+        #endif
 		STRCAT(pBuf, mi.szMobileID);
-		STRCAT(pBuf,"\n");
+		STRCAT(pBuf,".\n");
 		nMsgSize = STRLEN(pBuf);
 		if (nMsgSize<=0)
 	    {
@@ -4042,20 +4055,23 @@ wms_client_message_s_type *GetMobileTrackerthreeSms()
 		AECHAR	fmt_str[20];
 		AECHAR szBuf[16]={0};
 		char   strBuf[16]={0};
+        char m_strContext[120] = {0};
 		int n = 0;
 		IShell *pIShell = AEE_GetShell();
 		AEEMobileInfo	  mi;
 		GetMobileInfo(&mi);
-		nSize = sizeof(char)*150;
+		nSize = sizeof(char)*200;
     	pBuf = (char *)sys_malloc(nSize);
     	if (NULL == pBuf)
     	{
         	goto GETREGISTERMSG_EXIT;
     	}
 
-		OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT, wContent, sizeof(wContent));
+		OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT, m_strContext, sizeof(char)*120);
+        STRCPY(pBuf,m_strContext);
 
-		WSTRTOSTR(wContent, pBuf, sizeof(char)*150);
+		//WSTRTOSTR(wContent, pBuf, sizeof(char)*150);
+        #ifndef FEATURE_VERSION_K232_Y105A
 		STRCAT(pBuf,",MEID:");
 		STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
 		n = WSTRLEN(szBuf);
@@ -4077,10 +4093,14 @@ wms_client_message_s_type *GetMobileTrackerthreeSms()
 		WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
 		STRCAT(pBuf,strBuf);
 		STRCAT(pBuf,"\n");
-		
+		#endif
+        #ifdef FEATURE_VERSION_K232_Y105A
+        STRCAT(pBuf, " IMSI ");
+        #else
 		STRCAT(pBuf, "IMSI:");
+        #endif
 		STRCAT(pBuf, mi.szMobileID);
-		STRCAT(pBuf,"\n");
+		STRCAT(pBuf,".\n");
 		nMsgSize = STRLEN(pBuf);
 		if (nMsgSize<=0)
 	    {
@@ -4318,7 +4338,7 @@ wms_client_message_s_type *GetSmsTrackerSms(AECHAR *pwstrType)
 #elif defined(FEATURE_VERSION_C316)
 #ifdef FEATURE_VERSION_K232_Y105A
 	STRCPY(pBuf,"MOB  IN50C  ");
-	
+	#if 0
 	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
 	n = WSTRLEN(szBuf);
 	MSG_FATAL("n========%d",n,0,0);
@@ -4338,6 +4358,8 @@ wms_client_message_s_type *GetSmsTrackerSms(AECHAR *pwstrType)
 	MSG_FATAL("2222n========%d",n,0,0);
 	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
 	STRCAT(pBuf,strBuf);
+    #endif
+    STRCAT(pBuf, mi.szMobileID);
 #else
 	STRCPY(pBuf,"MOB  IN50PLUS  ");
 	

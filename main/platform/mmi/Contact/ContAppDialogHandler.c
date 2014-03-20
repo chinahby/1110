@@ -2617,19 +2617,22 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
             //{
                 //return TRUE;                
             //}
-            
+            #ifndef FEATURE_VERSION_K232_Y105A
             //if(wParam == AVK_SEND && ITEXTCTL_IsActive(pTextCtl) || wParam == AVK_INFO)
             if(wParam == AVK_SEND && ITEXTCTL_IsActive(pTextCtl)) //Add By zzg 2010_09_16
             {
                 ITEXTCTL_SetActive(pTextCtl, FALSE);
                 IMENUCTL_SetActive(pMenuCtl, TRUE);
             }
+            #endif
 
 		
             //if(SMART_STATE_IDD_SELECT == pMe->m_nSmartStateType &&  wParam== AVK_RIGHT)
 			if(SMART_STATE_IDD_SELECT == pMe->m_nSmartStateType &&  wParam== AVK_INFO)//Add By zzg 2010_09_16
             {
+                #ifndef FEATURE_VERSION_K232_Y105A
                 ITEXTCTL_SetActive(pTextCtl, FALSE);
+                #endif
                 IMENUCTL_SetActive(pMenuCtl, TRUE);
             }
             // Fix the bug that after delete a record
@@ -2648,8 +2651,9 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                 pMe->m_nCurrentInputMode++;
                 pMe->m_nCurrentInputMode %= 2;
                 ITEXTCTL_SetInputMode( pTextCtl, pMe->m_nInputModeTable[pMe->m_nCurrentInputMode]);
+                #ifndef FEATURE_VERSION_K232_Y105A
                 ITEXTCTL_SetActive(pTextCtl, FALSE);
-				
+				#endif
                 if(FALSE == CContApp_SetConfig( pMe,
                                           CONTTCFG_QUICKSEARCH_INPUT_MODE,
                                           &(pMe->m_nCurrentInputMode),
@@ -2664,6 +2668,7 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
 
             switch (wParam)
             {
+                #ifndef FEATURE_VERSION_K232_Y105A
                 case AVK_0:
                 case AVK_1:
                 case AVK_2:
@@ -2710,17 +2715,21 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                 }
                // if(!ITEXTCTL_IsActive(pTextCtl))
                 {
+                    #ifndef FEATURE_VERSION_K232_Y105A
                     ITEXTCTL_SetActive(pTextCtl, TRUE);
+                    #endif
                     IMENUCTL_SetActive(pMenuCtl, FALSE);
                 }
                 return TRUE;
-                
+                #endif
                 case AVK_CLR:
                     if(pMe->m_bInSmartFind == TRUE && pMe->m_bInsmartnofind == FALSE) 
                     {
                         if(!ITEXTCTL_IsActive(pTextCtl))
                         {
+                            #ifndef FEATURE_VERSION_K232_Y105A
                             ITEXTCTL_SetActive(pTextCtl, TRUE);
+                            #endif
                             IMENUCTL_SetActive(pMenuCtl, FALSE);
                         }
                     }
@@ -3009,6 +3018,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
 
             switch(wParam)
             {
+                #ifndef FEATURE_VERSION_K232_Y105A
                 case AVK_0:
                 case AVK_1:
                 case AVK_2:
@@ -3047,6 +3057,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 case AVK_M:
                 case AVK_SPACE:
                 case AVK_RWD:
+                #endif
                 case AVK_CLR:
                 case AVK_UP:
                 case AVK_DOWN:
@@ -3130,8 +3141,9 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                             pMe->m_bInSmartFind = FALSE;            
                             pMe->m_bInsmartnofind = FALSE;           
                             (void)CContApp_BuildSmartStateReturnMenu(pMe, pMenuCtl); 
-                               
+                            #ifndef FEATURE_VERSION_K232_Y105A   
                             ITEXTCTL_SetActive(pTextCtl, FALSE);
+                            #endif
                             IMENUCTL_SetActive(pMenuCtl, TRUE);
                             (void)IMENUCTL_Redraw(pMenuCtl);     
                             
@@ -3165,7 +3177,9 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                             IMENUCTL_SetActive(pMenuCtl, TRUE); // 防止在timer时间到之前安闲up或者down,menu会失去焦点
                             if(SMART_STATE_IDD_LIST == pMe->m_nSmartStateType)
                             {
+                                #ifndef FEATURE_VERSION_K232_Y105A
                                 ITEXTCTL_SetActive(pTextCtl, FALSE);
+                                #endif
                             }
                         }
                         if(!b_TextctlActive || pMe->m_bInsmartnofind)
@@ -3202,7 +3216,9 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                             //if(ITEXTCTL_IsActive(pTextCtl))
                             {
                                 IMENUCTL_SetActive(pMenuCtl, TRUE); // 让menu不失去焦点,选中条不消失
+                                #ifndef FEATURE_VERSION_K232_Y105A
                                 ITEXTCTL_SetActive(pTextCtl, TRUE);
+                                #endif
                                 //IMENUCTL_SetActive(pMenuCtl, TRUE);
                             }
                             
@@ -3280,7 +3296,9 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
 
                         if(SMART_STATE_IDD_LIST == pMe->m_nSmartStateType && IS_ZERO_REC())
                         {
+                            #ifndef FEATURE_VERSION_K232_Y105A
                             ITEXTCTL_SetActive(pTextCtl, FALSE);
+                            #endif
                             CONTAPP_DRAW_BOTTOMBAR(BTBAR_ADD_BACK);
                             CContApp_DrawNorecord(pMe, pMenuCtl);
                         }
@@ -3401,7 +3419,9 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                             else
                             {
                                 IMENUCTL_SetActive(pMenuCtl, TRUE); // 让menu不失去焦点
+                                #ifndef FEATURE_VERSION_K232_Y105A
                                 ITEXTCTL_SetActive(pTextCtl, TRUE);
+                                #endif
                                 if ( WSTRLEN(ITEXTCTL_GetTextPtr(pTextCtl)) > 0 && ITEXTCTL_GetT9End(pTextCtl) != TC_CURSORSTART )
                                 {
                                     //CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_DELETE);
@@ -3440,7 +3460,9 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                             // 这个办法不是很好。
                             if(SMART_STATE_IDD_LIST == pMe->m_nSmartStateType && IS_ZERO_REC())
                             {
+                                #ifndef FEATURE_VERSION_K232_Y105A
                                 ITEXTCTL_SetActive(pTextCtl, FALSE);
+                                #endif
                                 CONTAPP_DRAW_BOTTOMBAR(BTBAR_ADD_BACK);            
                                 CContApp_DrawNorecord(pMe, pMenuCtl);
                             }
@@ -3634,7 +3656,9 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                     {
                         if(!IMENUCTL_IsActive(pMenuCtl))
                         {
+                            #ifndef FEATURE_VERSION_K232_Y105A
                             ITEXTCTL_SetActive(pTextCtl, TRUE);
+                            #endif
                             IMENUCTL_SetActive(pMenuCtl, TRUE);
                         }
                     }
@@ -3712,8 +3736,10 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
             return TRUE;
             
         case EVT_CTL_TEXT_MODECHANGED:
+            #ifndef FEATURE_VERSION_K232_Y105A
             CContApp_DrawIMEIcon(pTextCtl, pMe->m_pDisplay);
             ITEXTCTL_SetActive(pTextCtl, TRUE);
+            #endif
             if(pMe->m_bInsmartnofind == TRUE)
             {
                 return TRUE;
@@ -3743,13 +3769,17 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
 			
             menurc = pMe->m_rc;
             //menurc.dy =  pMe->m_rc.dy- nBarHeight - inputHeight; 
+            #ifdef FEATURE_VERSION_K232_Y105A
+            menurc.dy =  pMe->m_rc.dy- nBarHeight;
+            #else
             menurc.dy =  pMe->m_rc.dy- 2*nBarHeight;
-			
+			#endif
             /*if(SMART_STATE_IDD_SELECT == pMe->m_nSmartStateType)
             {
                 menurc.dy -= nBarHeight;//在复选界面中，要显示CContApp_DisplaySelectField
             }
             */
+
             IMENUCTL_SetRect(pMenuCtl, &menurc);
             
             if(SMART_STATE_IDD_LIST == pMe->m_nSmartStateType)
@@ -3769,6 +3799,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
             /*if(SMART_STATE_IDD_SELECT == pMe->m_nSmartStateType)
                 menurc.dy += nBarHeight;//留空间给CContApp_DisplaySelectField
             */
+            #ifndef FEATURE_VERSION_K232_Y105A
             SETAEERECT(&textrc,  
                        SEARCH_IMEICON_WIDTH,   menurc.y + menurc.dy, // - 2,    
                        pMe->m_rc.dx - SEARCH_IMEICON_WIDTH, nBarHeight);
@@ -3807,6 +3838,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
 			
             ITEXTCTL_SetRect(pTextCtl, &textrc);
             CContApp_DrawIMEIcon(pTextCtl, pMe->m_pDisplay);
+            
             #if defined(FEATURE_LANG_ARABIC) ||defined(FEATURE_LANG_THAI)
     	    {
     	    	nv_language_enum_type language;
@@ -3829,10 +3861,12 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
 			#endif
 #endif
             ITEXTCTL_SetMaxSize(pTextCtl, MAX_INPUT_NAME_EN); 
-            
+            #endif
+     
             if(NULL != pMe->m_szAlpha)
             {
                 uint32    dwMask;
+                #ifndef FEATURE_VERSION_K232_Y105A
                 if(IS_ZERO_REC())
                 {
                     FREEIF(pMe->m_szAlpha);
@@ -3840,10 +3874,12 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                      MSG_FATAL("CContApp_SmartMenuHandle-----FALSE",0,0,0);
                     return FALSE;
                 }
-                
+                #endif
                 dwMask = IMENUCTL_GetProperties(pMenuCtl);
                 IMENUCTL_SetProperties(pMenuCtl, dwMask|MP_NO_REDRAW);
+                #ifndef FEATURE_VERSION_K232_Y105A
                 ITEXTCTL_SetText(pTextCtl, pMe->m_szAlpha, -1);
+                #endif
                 if(SUCCESS != CContApp_FilterSmartItems( pMe,  pMe->m_szAlpha) )
                 {
                     pMe->m_bInsmartnofind = TRUE;
@@ -4008,15 +4044,20 @@ void CContApp_SmartMenuSetFocus(void *pUser)
     if( NULL != pMe->m_pActiveDlg)
     {
         pMenuCtl = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, MenuCtlID);
+        #ifndef FEATURE_VERSION_K232_Y105A
         pTextCtl = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, TextCtlID);
+        #endif
         if(pMenuCtl)
         {
+            #ifndef FEATURE_VERSION_K232_Y105A
             ITEXTCTL_SetActive(pTextCtl, TRUE);// 加这一句可以在text为 FALSE后还保留光标
+            #endif
             IMENUCTL_SetActive(pMenuCtl, TRUE);
         }
-        
-        if(pTextCtl)                       
+        #ifndef FEATURE_VERSION_K232_Y105A
+        if(pTextCtl)     
             ITEXTCTL_SetActive(pTextCtl, FALSE);
+        #endif
 
     }
 }//CContApp_SmartMenuSetFocus
@@ -4029,6 +4070,9 @@ static void  CContApp_DrawIMEIcon(ITextCtl *pTextCtl, IDisplay *pIDisplay)
 {
     boolean     bRet = TRUE;
     IImage     *RightTopImg = NULL; 
+    #ifdef FEATURE_VERSION_K232_Y105A
+    IImage     *bageImg = NULL; 
+    #endif
     uint32      nResID=0;
     AEERect     IconRect={0};
     IShell      *pIShell =AEE_GetShell();
@@ -4052,8 +4096,26 @@ static void  CContApp_DrawIMEIcon(ITextCtl *pTextCtl, IDisplay *pIDisplay)
         return;
     
     Appscom_GetThemeParameters(&TParam);
+    #ifndef FEATURE_VERSION_K232_Y105A
     IDISPLAY_FillRect(pIDisplay, &IconRect, TParam.seltextColor);
+    #else
+    bageImg = ISHELL_LoadResImage(pIShell, AEE_APPSCOMMONRES_IMAGESFILE,IDI_CONANT_BACKGROUNT);
+    #endif
     RightTopImg = ISHELL_LoadResImage(pIShell, AEE_APPSCOMMONRES_IMAGESFILE, nResID);
+    #ifndef FEATURE_VERSION_K232_Y105A
+    if(bageImg != NULL)
+    {
+        IIMAGE_GetInfo(bageImg, &myInfo);
+        if(myInfo.cy < IconRect.dy)
+        {
+            IconRect.y += (IconRect.dy-myInfo.cy)>>1;
+        }
+        IIMAGE_Draw(bageImg, IconRect.x, IconRect.y);
+        IIMAGE_Draw(bageImg, IconRect.x, IconRect.y-2);
+        IIMAGE_Release(bageImg);
+        bageImg = NULL;
+    }
+    #endif
     if(RightTopImg != NULL)
     {
         IIMAGE_GetInfo(RightTopImg, &myInfo);
@@ -4065,6 +4127,7 @@ static void  CContApp_DrawIMEIcon(ITextCtl *pTextCtl, IDisplay *pIDisplay)
         IIMAGE_Release(RightTopImg);
         RightTopImg = NULL;
     }
+    
 }//CContApp_DrawIMEIcon
 
 /*=============================================================================
@@ -5030,15 +5093,17 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 #endif
     MSG_FATAL("CContApp_HandleListDlgEvent...........",0,0,0);
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg, IDC_LIST_MENU);
+    //#ifndef FEATURE_VERSION_K232_Y105A
     pTextCtl = (ITextCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg, IDC_LIST_TEXT);  
-   
+    //#endif
 	MSG_FATAL("CContApp_HandleListDlgEvent ITEXTCTL_GetInputMode=%x",ITEXTCTL_GetInputMode(pTextCtl,NULL),0,0);
-
+    #ifndef FEATURE_VERSION_K232_Y105A
     if(ITEXTCTL_GetInputMode(pTextCtl,NULL) == AEE_TM_SYMBOLS)
     {
         //IMENUCTL_SetActive(pMenuCtl,FALSE);
-        return ITEXTCTL_HandleEvent( pTextCtl, eCode, wParam, dwParam);
+        //return ITEXTCTL_HandleEvent( pTextCtl, eCode, wParam, dwParam);
     }
+    #endif
     pMe->m_nSmartStateType = SMART_STATE_IDD_LIST;
 	
     if(CContApp_SmartMenuHandle(pMe, pMenuCtl, pTextCtl, eCode,wParam))
@@ -5081,7 +5146,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                 pMe->m_bDelOk = FALSE;
                 pMe->m_wSelectCont = pMe->m_wDelReturnSelId;
             }
-			
+			#ifndef FEATURE_VERSION_K232_Y105A
             #ifdef FEATURE_MYANMAR_INPUT_MOD
 			ITEXTCTL_SetInputMode( pTextCtl,AEE_TM_LETTERS);
 			ITEXTCTL_SetActive(pTextCtl, FALSE);
@@ -5108,7 +5173,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
          	(void)ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_LETTERS);
 			#endif
 			#endif
-
+            #endif
             //IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);   
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,

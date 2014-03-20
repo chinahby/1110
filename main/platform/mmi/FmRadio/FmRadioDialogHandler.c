@@ -1354,7 +1354,7 @@ __handleKeyEvent_input_channel_done__:
 		}		
 #endif
 
-#ifdef FEATURE_VERSION_KK5    
+#if defined (FEATURE_VERSION_KK5)||defined(FEATURE_VERSION_K232_Y105A)   
         case AVK_LEFT:
 		case AVK_RIGHT:
 		{

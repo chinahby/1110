@@ -103,12 +103,18 @@
 	<STRING Id="1034" Name="IDS_PIN_SET">
 		<Text>PIN सेटिंग्स</Text>
 	</STRING>
+	<String Id="1035" Name="IDS_ONEKEY_LOCK_KEPAD_END">
+		<Text>अंत प्रमुख ताले कीपै</Text>
+	</String>
 	<STRING Id="1036" Name="IDS_PHONE_PASSWORD_CHANGE">
 		<Text>पासवर्ड बदलें</Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_ON">
 		<Text>चालू</Text>
 	</STRING>
+	<String Id="1038" Name="IDS_PEER_CONTROL">
+		<Text>सहकर्मी नि</Text>
+	</String>
 	<STRING Id="1039" Name="IDS_PIN_CHECK">
 		<Text>PIN सक्षम</Text>
 	</STRING>

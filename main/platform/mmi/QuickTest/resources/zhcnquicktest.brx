@@ -262,6 +262,9 @@
 	<String Id="1032" Name="IDS_FACTORY_TEST">
 		<Text>恢复出厂设置</Text>
 	</String>
+	<String Id="1033" Name="IDS_TORCH">
+		<Text>Torch test</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="1" Name="IDD_MAINMENU" Focus="7001">
@@ -322,6 +325,9 @@
 				<Items/>
 			</Menu>
 		</Controls>
+	</Dialog>
+	<Dialog Id="6003" Name="IDD_TORCH" Focus="0">
+		<Controls/>
 	</Dialog>
 </Dialogs>
 </BREWRes>

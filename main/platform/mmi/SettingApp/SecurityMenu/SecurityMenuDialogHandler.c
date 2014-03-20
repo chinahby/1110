@@ -438,7 +438,11 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
                 IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_PIN_SET, IDS_PIN_SET, NULL, 0);
             }
 #ifdef FEATURE_VERSION_C316	
+#ifdef FEATURE_VERSION_K232_Y105A
+            IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_PEER_CONTROL, IDS_PEER_CONTROL, NULL, 0);
+#else
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_DATA_PROTECTION, IDS_DATA_PROTECTION, NULL, 0);
+#endif
 #else
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_APPLICATION_LOCK, IDS_APPLICATION_LOCK, NULL, 0);
 #endif
@@ -450,14 +454,18 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
 #endif
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_PHONE_PASSWORD_CHANGE, IDS_PHONE_PASSWORD_CHANGE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_RESTORE, IDS_RESTORE, NULL, 0);
+            #ifndef FEATURE_VERSION_K232_Y105A
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_DELETE, IDS_DELETE, NULL, 0);
-            
-#if defined(FEATURE_VERSION_W317A)
+            #endif
+			#if defined(FEATURE_VERSION_W317A)
 			IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_MOBILE_TRACKER, IDS_MOBILE_TRACKER, NULL, 0);
-#endif
-
+			#endif
 #ifdef FEATURE_VERSION_C316	
+#ifdef FEATURE_VERSION_K232_Y105A
+            IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_ONEKEY_LOCK_KEPAD_END, IDS_ONEKEY_LOCK_KEPAD_END, NULL, 0);
+#else
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_ONEKEY_LOCK_KEPAD, IDS_ONEKEY_LOCK_KEPAD, NULL, 0);
+#endif
 #endif
             return TRUE;
 
@@ -506,14 +514,24 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
                     break;
 
 #ifdef FEATURE_VERSION_C316	
-                case IDS_ONEKEY_LOCK_KEPAD:           //Ò»¼üËøÆÁ
+#ifdef FEATURE_VERSION_K232_Y105A
+                    case IDS_ONEKEY_LOCK_KEPAD_END:           //Ò»¼üËøÆÁ
+                    pMe->m_lock_sel = SEC_SEL_ONE_KEY_LOCK_KEYPAD;
+                    CLOSE_DIALOG(DLGRET_ONEKEY_LOCK_KEYPAD)
+                    break;
+#else
+                   case IDS_ONEKEY_LOCK_KEPAD:           //Ò»¼üËøÆÁ
                     pMe->m_lock_sel = SEC_SEL_ONE_KEY_LOCK_KEYPAD;
                     CLOSE_DIALOG(DLGRET_ONEKEY_LOCK_KEYPAD)
                     break;
 #endif
+
+                
+#endif
 #ifdef FEATURE_VERSION_C316	
                 case IDS_DATA_PROTECTION:
 #endif
+                case IDS_PEER_CONTROL:
                 case IDS_APPLICATION_LOCK:
                     CLOSE_DIALOG(DLG_APPLICATIONLOCK)
                     break;
@@ -639,11 +657,19 @@ static boolean  SecurityApplicationLockDlgHandler(CSecurityMenu *pMe,
 			{
 				AECHAR WTitle[40] = {0};
 #ifdef FEATURE_VERSION_C316	
+#ifdef FEATURE_VERSION_K232_Y105A
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSECURITYMENU_RES_FILE,                                
+                        IDS_PEER_CONTROL,
+                        WTitle,
+                        sizeof(WTitle));  
+#else
 				(void)ISHELL_LoadResString(pMe->m_pShell,
                         AEE_APPSSECURITYMENU_RES_FILE,                                
                         IDS_DATA_PROTECTION,
                         WTitle,
-                        sizeof(WTitle));                        
+                        sizeof(WTitle));  
+#endif
 #else                        
 				(void)ISHELL_LoadResString(pMe->m_pShell,
                         AEE_APPSSECURITYMENU_RES_FILE,                                
@@ -850,7 +876,11 @@ static boolean  SecurityOneKeyLockKeypadDlgHandler(CSecurityMenu *pMe,
         case EVT_DIALOG_START:
         {
             uint16 wItemID;
+#ifdef FEATURE_VERSION_K232_Y105A
+            uint16 string_id = IDS_ONEKEY_LOCK_KEPAD_END;
+#else
             uint16 string_id = IDS_ONEKEY_LOCK_KEPAD;//IDS_PHONE_PASSWORD_CHECK_TITLE;
+#endif
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT|MP_ACTIVE_NO_REDRAW);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
