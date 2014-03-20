@@ -308,8 +308,10 @@ static const CCameraSize g_CameraSizeCFG[] =
     {640,480,L"640*480"}, // VGA      
 #elif defined(FEATURE_DISP_128X160)
     {128,160,L"128*160"}, // FULL Screen
+#ifndef FEATURE_VERSION_K232_Y101    
     {176,220,L"176*220"}, // QCIF
     {240,320,L"240*320"}, // QVGA   
+#endif    
  #if defined( FEATURE_VERSION_C316)//||defined(FEATURE_VERSION_C117_M74)
  #ifndef FEATURE_VERSION_K232_Y105A
     {300,400,L"480*640"}, // VGA
@@ -373,6 +375,7 @@ static const CCameraSize g_CameraSizeCFG_10[] =
     {320,240,L"320*240"}, // QVGA    
 #elif defined(FEATURE_DISP_128X160)
     {128,160,L"128*160"}, // FULL Screen
+#ifndef FEATURE_VERSION_K232_Y101     
     {176,220,L"176*220"}, // QCIF
 #if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180)
 //#ifdef FEATURE_VERSION_M74
@@ -381,6 +384,7 @@ static const CCameraSize g_CameraSizeCFG_10[] =
 #else
     {240,320,L"240*320"}, // QVGA
 #endif    
+#endif
 #if defined( FEATURE_VERSION_C316)//||defined(FEATURE_VERSION_C117_M74)
 #ifndef FEATURE_VERSION_K232_Y105A
     {300,400,L"480*640"}, // VGA
