@@ -612,7 +612,40 @@ CONSTFILE_FILES+=\
 	qsc1100_13_focus.png|fs:/image/mainmenu/qsc1100_13_focus.png \
 	qsc1100_14_focus.png|fs:/image/mainmenu/qsc1100_14_focus.png \
 	qsc1100_15_focus.png|fs:/image/mainmenu/qsc1100_15_focus.png 	
-
+else    
+ifeq ($(USES_RESDIR),Y102)  
+#FEATURE_VERSION_K232_Y102 #wren add for test20140319.
+CONSTFILE_FILES+=\
+    qsc1100_01.png|fs:/image/mainmenu/qsc1100_01.png \
+    qsc1100_02.png|fs:/image/mainmenu/qsc1100_02.png \
+    qsc1100_03.png|fs:/image/mainmenu/qsc1100_03.png \
+    qsc1100_04.png|fs:/image/mainmenu/qsc1100_04.png \
+    qsc1100_05.png|fs:/image/mainmenu/qsc1100_05.png \
+    qsc1100_06.png|fs:/image/mainmenu/qsc1100_06.png \
+    qsc1100_07.png|fs:/image/mainmenu/qsc1100_07.png \
+    qsc1100_08.png|fs:/image/mainmenu/qsc1100_08.png \
+    qsc1100_09.png|fs:/image/mainmenu/qsc1100_09.png \
+    qsc1100_10.png|fs:/image/mainmenu/qsc1100_10.png \
+    qsc1100_11.png|fs:/image/mainmenu/qsc1100_11.png \
+    qsc1100_12.png|fs:/image/mainmenu/qsc1100_12.png \
+    qsc1100_13.png|fs:/image/mainmenu/qsc1100_13.png \
+    qsc1100_14.png|fs:/image/mainmenu/qsc1100_14.png \
+    qsc1100_15.png|fs:/image/mainmenu/qsc1100_15.png \
+	qsc1100_01_focus.png|fs:/image/mainmenu/qsc1100_01_focus.png \
+	qsc1100_02_focus.png|fs:/image/mainmenu/qsc1100_02_focus.png \
+	qsc1100_03_focus.png|fs:/image/mainmenu/qsc1100_03_focus.png \
+	qsc1100_04_focus.png|fs:/image/mainmenu/qsc1100_04_focus.png \
+	qsc1100_05_focus.png|fs:/image/mainmenu/qsc1100_05_focus.png \
+	qsc1100_06_focus.png|fs:/image/mainmenu/qsc1100_06_focus.png \
+	qsc1100_07_focus.png|fs:/image/mainmenu/qsc1100_07_focus.png \
+	qsc1100_08_focus.png|fs:/image/mainmenu/qsc1100_08_focus.png \
+	qsc1100_09_focus.png|fs:/image/mainmenu/qsc1100_09_focus.png \
+	qsc1100_10_focus.png|fs:/image/mainmenu/qsc1100_10_focus.png \
+	qsc1100_11_focus.png|fs:/image/mainmenu/qsc1100_11_focus.png \
+	qsc1100_12_focus.png|fs:/image/mainmenu/qsc1100_12_focus.png \
+	qsc1100_13_focus.png|fs:/image/mainmenu/qsc1100_13_focus.png \
+	qsc1100_14_focus.png|fs:/image/mainmenu/qsc1100_14_focus.png \
+	qsc1100_15_focus.png|fs:/image/mainmenu/qsc1100_15_focus.png
 else	
 ifeq ($(USES_RESDIR),Y105A)
 	CONSTFILE_FILES+=\
@@ -693,6 +726,7 @@ endif
 endif
 endif
 endif	
+endif
 endif
 endif
 endif

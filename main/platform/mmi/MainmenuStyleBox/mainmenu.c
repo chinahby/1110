@@ -15685,6 +15685,23 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[7]     = IDS_MAIN_WAPBROWSER;	
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_ORGANIZER;	    
     #elif defined (FEATURE_VERSION_K232_Y101)
+    #if defined (FEATURE_VERSION_K232_Y102)//wren add for test20140319.
+    pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CONTACTS;      
+    pMe->m_IconTitle[1]     = IDS_MAIN_MENU_MESSAGES;      
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_USERPROFILE;   
+    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_RECENTCALLS_Y101;   //IDS_MAIN_MENU_RECENTCALLS;    
+    pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MY_MTS;                        
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_TOOLS;          
+    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_MEDIAGALLERY;
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_MTS_INFO;                     
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_SETTINGS;        
+    pMe->m_IconTitle[9]     = IDS_MAIN_MENU_FACEBOOK;                     
+    pMe->m_IconTitle[10]    = IDS_MAIN_MENU_CAMERA;         
+    pMe->m_IconTitle[11]    = IDS_MAIN_MENU_GAMES;
+    pMe->m_IconTitle[12]    = IDS_MAIN_MENU_MUSICPLAYER;   
+    pMe->m_IconTitle[13]    = IDS_MAIN_MENU_FMRADIO;
+    pMe->m_IconTitle[14]    = IDS_MAIN_MENU_TORCH;
+    #else
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CONTACTS;      
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_MESSAGES;      
     pMe->m_IconTitle[2]     = IDS_MAIN_MENU_USERPROFILE;   
@@ -15700,6 +15717,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[12]    = IDS_MAIN_MENU_MEDIAGALLERY;   
     pMe->m_IconTitle[13]    = IDS_MAIN_MENU_SETTINGS;
     pMe->m_IconTitle[14]    = IDS_MAIN_MENU_GAMES;
+    #endif
 	#elif defined(FEATURE_VERSION_W317A)
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CONTACTS;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_RECENTCALLS_C337;	//IDS_MAIN_MENU_RECENTCALLS;
