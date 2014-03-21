@@ -3425,11 +3425,11 @@ void Appscommon_Draw_Keyguard_Time(IDisplay *pIDisplay)
     uint16    nWeekResID = 0, nHour = 0;
     RGBVAL  nOldFontColor = RGB_WHITE;
 	BottomBar_e_Type    eBBarType = BTBAR_NONE; 
-    #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
-	nNumberWidth = 41;
-	nNumberHeight = 61;
-	nOffset = 5;
-	#endif
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+    nNumberWidth = 41;
+    nNumberHeight = 61;
+    nOffset = 5;
+#endif
     MSG_FATAL("Appscommon_Draw_Keyguard_Time......",0,0,0);
     if (NULL == pIDisplay)
     {
@@ -3516,6 +3516,37 @@ void Appscommon_Draw_Keyguard_Time(IDisplay *pIDisplay)
     nOldFontColor = IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, nOldFontColor);
     
     IDISPLAY_DrawText(pIDisplay, AEE_FONT_NORMAL, wstrDisp, -1, xStartPos, yStartPos, NULL, IDF_TEXT_TRANSPARENT);
+
+#if defined(FEATURE_VERSION_K232_Y105A)//test20140321.
+    ////////////////////show AM/PM if need.
+    // get time format
+    (void)OEM_GetConfig(CFGI_TIME_FORMAT, &bTFmt, sizeof(bTFmt));
+    if (bTFmt == OEMNV_TIMEFORM_AMPM)
+    {
+        nHour = (jDate.wHour > 12) ? (jDate.wHour - 12) : jDate.wHour;
+        
+        MEMSET(wstrDisp, 0, sizeof(wstrDisp));
+        wstrDisp[0] = (jDate.wHour >= 12)?(L'P'):(L'A');
+        wstrDisp[1] = L'M';
+        wstrDisp[2] = L'\0';
+        nTextLen = IDISPLAY_MeasureText(pIDisplay, AEE_FONT_NORMAL, wstrDisp);
+        xStartPos = (devinfo.cxScreen - nTextLen)/2;
+        yStartPos = (devinfo.cyScreen*2/5) + nNumberHeight + 2*nOffset;
+        MSG_FATAL("Appscommon_Draw_Keyguard_Time: SHOW AMPM of xStartPos=%d,yStartPos=%d",xStartPos,yStartPos,0);
+        IDISPLAY_DrawText(pIDisplay, AEE_FONT_NORMAL, wstrDisp, -1, xStartPos, yStartPos, NULL, IDF_TEXT_TRANSPARENT);
+    }
+    else
+    {
+        nHour = jDate.wHour;
+    }
+
+    //////////////////show time.eg: 07:59    
+	nTextLen = (nNumberWidth + nOffset)*4;
+    xStartPos = (devinfo.cxScreen - nTextLen)/2;
+    yStartPos = (devinfo.cyScreen*2/5);
+    MSG_FATAL("Appscommon_Draw_Keyguard_Time: SHOW TIME of xStartPos=%d,yStartPos=%d",xStartPos,yStartPos,0);
+#else
+
 #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
     nTextLen = (nNumberWidth + nOffset)*4 + nLineWidth*3;
 #else
@@ -3542,7 +3573,7 @@ void Appscommon_Draw_Keyguard_Time(IDisplay *pIDisplay)
         wstrDisp[2] = L'\0';
         nTextLen = IDISPLAY_MeasureText(pIDisplay, AEE_FONT_NORMAL, wstrDisp);
         xStartPos -= (nTextLen + nOffset)/2;
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+    #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 		if(xStartPos<0)
 		{
 			xStartPos = 5;
@@ -3558,13 +3589,14 @@ void Appscommon_Draw_Keyguard_Time(IDisplay *pIDisplay)
         nHour = jDate.wHour;
         if(nHour/10 == 1)
         {
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+            #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
             xStartPos -= (nNumberWidth - nLineWidth)/2;
 			#endif
         }
     }
+#endif
+
 #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
-	
 	 // draw hour
     SETAEERECT(&rect, xStartPos, yStartPos, nNumberWidth, nNumberHeight);
 	Appscommon_DrawDigitalNumberImage(pIDisplay, (nHour/10), nLineWidth, &rect);
@@ -3583,7 +3615,7 @@ void Appscommon_Draw_Keyguard_Time(IDisplay *pIDisplay)
     rect.x += nNumberWidth + nOffset;
     Appscommon_DrawDigitalNumberImage(pIDisplay, (jDate.wMinute%10), nLineWidth, &rect);
 	
-	#else
+#else
     // draw hour
     SETAEERECT(&rect, xStartPos, yStartPos, nNumberWidth, nNumberHeight);
     Appscommon_DrawDigitalNumber(pIDisplay, (nHour/10), nLineWidth, &rect, RGB_WHITE);
@@ -3603,11 +3635,13 @@ void Appscommon_Draw_Keyguard_Time(IDisplay *pIDisplay)
     Appscommon_DrawDigitalNumber(pIDisplay, (jDate.wMinute%10), nLineWidth, &rect, RGB_WHITE);
     
     (void)IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, nOldFontColor);
-	#endif
+#endif
+
 #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 	eBBarType = BTBAR_UNLOCK_L;
     DrawBottomBar_Ex(pShell, pIDisplay,eBBarType);
-	#endif
+#endif
+
     IDISPLAY_Update(pIDisplay);
 }
 #endif
