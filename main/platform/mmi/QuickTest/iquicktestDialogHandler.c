@@ -404,8 +404,10 @@ boolean QuickTest_RouteDialogEvent(CQuickTest *pMe,
             return QuickTest_RestoreFactory_Handler(pMe,eCode,wParam,dwParam);
         case IDD_MANUNALTEST:
             return QuickTest_ManualTest_Handler(pMe,eCode,wParam,dwParam);
+		#if defined(FEATURE_TORCH_SUPPORT)
         case IDD_TORCH:
             return QuickTest_TorchTestHandler(pMe,eCode,wParam,dwParam);
+		#endif
         default:
             return FALSE;
     }
@@ -2773,7 +2775,7 @@ static boolean  QuickTest_BackLightTestHandler(CQuickTest *pMe,
                     IBACKLIGHT_TurnOff(pMe->m_pIBacklight);
                     break;
 
-#if defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_M74) ||defined(FEATURE_VERSION_W021_DX_POWERTEL)||defined(FEATURE_VERSION_W516_C260)  
+#if defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_M74) ||defined(FEATURE_VERSION_W021_DX_POWERTEL)||defined(FEATURE_VERSION_W516_C260)||defined(FEATURE_TORCH_SUPPORT)  
 
                case AVK_3:
                     IBACKLIGHT_TurnOnTorch(pMe->m_pIBacklight);
@@ -3114,6 +3116,7 @@ static boolean  QuickTest_FMTestHandler(CQuickTest *pMe,
     return FALSE;
 } // QuickTest_FMTestHandler
 #endif
+#if defined(FEATURE_TORCH_SUPPORT)
 static boolean  QuickTest_TorchTestHandler(CQuickTest *pMe,
     AEEEvent eCode,
     uint16 wParam,
@@ -3215,7 +3218,7 @@ static boolean  QuickTest_TorchTestHandler(CQuickTest *pMe,
     }
     return FALSE;
 }
-
+#endif
 /*==============================================================================
 º¯Êý£º
        QuickTest_SDTestHandler
