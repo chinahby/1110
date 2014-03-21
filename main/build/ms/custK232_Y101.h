@@ -22,6 +22,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_SHOW_PHONE_INFO
 #define FEATURE_LANG_DEFAULT_ENGLISH
 
+#define FEATURE_FM_PAUSE
+
 #ifdef CUST_EDITION
 
 #define FEATURE_SALESTRACKER
