@@ -13578,7 +13578,7 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
             return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_END:
-#ifdef FEATURE_VERSION_EC99
+#if 1//def FEATURE_VERSION_EC99
             if (pMe->m_pImageSelectEC99 != NULL)
             {   
                  (void)IIMAGE_Release(pMe->m_pImageSelectEC99);
@@ -13907,7 +13907,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 
         case EVT_DIALOG_START:			
 			AEE_CancelTimer(Main_keypadtimer,pMe);
-			AEE_SetTimer(5*1000,Main_keypadtimer,pMe);
+			AEE_SetTimer(1.6*1000,Main_keypadtimer,pMe);
             (void) ISHELL_PostEvent( pMe->m_pShell,
                                      AEECLSID_MAIN_MENU,
                                      EVT_USER_REDRAW,
@@ -14033,6 +14033,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                 case AVK_STAR:
                     if(gbMainmenuLock)
                     {
+                        IIMAGE_Stop(pMe->m_pImageSelectEC99);
                         OEMKeyguard_SetState(TRUE);
                         ISHELL_CloseApplet(pMe->m_pShell, TRUE); 
                     }
