@@ -11752,8 +11752,9 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
 #else
                 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 #endif
+                #if !defined(FEATURE_VERSION_K232_Y105A)
                 IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc, RGB_BLACK);
-                    
+                #endif    
                 // 画标题条
                 #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 				(void)ISHELL_LoadResString(pMe->m_pShell, 
@@ -11880,9 +11881,10 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
 #else
                 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 #endif
+#if !defined(FEATURE_VERSION_K232_Y105A)
                 IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc, RGB_BLACK);
-                    
-                // 画标题条
+#endif
+               // 画标题条
                 #if defined (FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
 				(void)ISHELL_LoadResString(pMe->m_pShell, 
                                             CONTAPP_RES_FILE_LANG,
