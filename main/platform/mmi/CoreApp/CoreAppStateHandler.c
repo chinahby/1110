@@ -1269,10 +1269,14 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
 
 				//MSG_FATAL("m_bsendsalessms======%d",m_bsendsalessms,0,0);
 				MSG_FATAL("***zzg CoreAppState SaleTrackerSend bool == %d***",m_bsendsalessms,0,0);
+#if defined(FEATURE_VERSION_K232_Y102)//wren add for test20140319. for hardcode disable sales tracker function.
+                if(0)
+#else
 #if defined(FEATURE_VERSION_W021_CT100_ESN_TRACK)             
                 if(TRUE)	
 #else
                 if(!m_bsendsalessms)
+#endif
 #endif
 			    {
 			    	#if !defined(FEATURE_VERSION_W021_GD821)
