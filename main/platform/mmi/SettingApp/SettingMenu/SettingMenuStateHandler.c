@@ -513,9 +513,11 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
 			retVal = SettingMenu_StateSosHandler(pMe);
 			break;
 #endif
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
 		case SETTINGMENUST_AIRPLANE_MODE:
             retVal = SettingMenu_StateAirplaneModeHandler(pMe);
 			break;
+#endif
 #if defined(FEATURE_CALL_REJECT_AUTO_MSG)
         case SETTINGMENUST_CALL_REJECT_AUTO_MSG:
             retVal = SettingMenu_StateCall_Reject_Auto_Msg_Handler(pMe);
@@ -1144,6 +1146,7 @@ static NextFSMAction SettingMenu_StateShortcutsSelectMenuHandler(CSettingMenu *p
 } // StateCallSettingHandler
 
 #endif
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
 
 static NextFSMAction SettingMenu_StateAirplaneModeHandler(CSettingMenu *pMe)
 {
@@ -1176,7 +1179,7 @@ static NextFSMAction SettingMenu_StateAirplaneModeHandler(CSettingMenu *pMe)
 
     return NFSMACTION_WAIT;
 }
-
+#endif
 //Add by pyuangui 20130104
 #ifdef FEATURE_VERSION_W317A
 /*==============================================================================
@@ -1329,10 +1332,11 @@ static NextFSMAction SettingMenu_StatePhoneSettingHandler(CSettingMenu *pMe)
             MOVE_TO_STATE(SETTINGMENUST_SHORTCUTS_MENU)
             return NFSMACTION_CONTINUE;                                                        
 #endif  
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
         case DLGRET_AIRPLANE_MODE:
             MOVE_TO_STATE(SETTINGMENUST_AIRPLANE_MODE)
 			return NFSMACTION_CONTINUE;
-
+#endif
         default:
             ASSERT_NOT_REACHABLE;
     }

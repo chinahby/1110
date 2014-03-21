@@ -2736,10 +2736,11 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
                     break;
 #endif  
 #endif
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
                 case IDS_AIRPLANE:
                     CLOSE_DIALOG(DLGRET_AIRPLANE_MODE)
                     break;
-
+#endif
                 default:
                     ASSERT_NOT_REACHABLE;
             }
