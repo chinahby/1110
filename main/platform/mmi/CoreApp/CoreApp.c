@@ -1375,7 +1375,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             pMe->m_bSuspended = FALSE;
             pMe->m_bActive = TRUE;
 //Add by pyuangui 2013-01-08 
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5) || defined(FEATURE_VERSION_K232_Y105A) // liyz add for Y105A for test @20140321
 			if(pMe->m_bemergencymode)
 			{
 			  ICM_SetSystemPreference(pMe->m_pCM,

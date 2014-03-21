@@ -1526,6 +1526,11 @@ __handleKeyEvent_input_channel_done__:
                         moveOperationModeTo( pMe, FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST_CONFIRM);
                         return TRUE;
                     }
+					// liyz add for test @20140321
+					else if(key == AVK_DOWN)
+					{
+					   return TRUE;
+					}
                     #endif
                     
 #endif        
@@ -1577,6 +1582,11 @@ __handleKeyEvent_input_channel_done__:
                         moveOperationModeTo( pMe, FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST_CONFIRM);
                         return TRUE;
                     }
+					// liyz add for test @20140321
+					else if(key == AVK_DOWN)
+					{
+					   return TRUE;
+					}
                     #endif
 					#endif
 					
