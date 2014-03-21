@@ -1687,11 +1687,16 @@ static boolean  HandlePhoneGeneralInfo_DialogEvent(CSettingMenu *pMe,
     int n=0;
     IDialog *p_dlg = NULL;
     IStatic *p_stk = NULL;
-    
+
+#if defined(FEATURE_VERSION_K232_Y102)//test20140319.
+    AECHAR device_name[]=L"Model: M143\n";    
+    AECHAR software_name[]=L"S/W Version: V.MTS.M143.B02\n";    
+    AECHAR binary_name[]=L"Brew Version: Brew 3.1.5\n";
+#else
     AECHAR device_name[]=L"Model: M141\n";    
     AECHAR software_name[]=L"S/W Version: V.MTS.M141.B02\n";    
     AECHAR binary_name[]=L"Brew Version: Brew 3.1.5\n";
-    
+#endif    
     MSG_FATAL("%x, %x ,%x,HandlePhoneGeneralInfo_DialogEvent",eCode,wParam,dwParam);
     
     p_dlg = ISHELL_GetActiveDialog(pMe->m_pShell); 
