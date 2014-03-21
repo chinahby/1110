@@ -17025,6 +17025,7 @@ static boolean MainMenu_FlashlightMenuHandler(MainMenu *pMe, AEEEvent eCode, uin
 			}
 			break;
 #endif 
+#ifdef FEATURE_TORCH_SUPPORT
         case EVT_COMMAND:
             {
                 boolean bytNewData = 0;
@@ -17054,6 +17055,7 @@ static boolean MainMenu_FlashlightMenuHandler(MainMenu *pMe, AEEEvent eCode, uin
                                          0,
                                          0);
             }
+#endif
         default:
         	break;
 	}
