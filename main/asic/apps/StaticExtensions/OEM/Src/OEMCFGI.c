@@ -3688,7 +3688,7 @@ void OEM_RestoreFactorySetting( void )
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
    oemi_cache.camera_tone = OEMNV_CAMERA_SHUTTER_TONE_SHUTTER1;
 #else      
-#if defined(FEATURE_VERSION_K232_Y100A)
+#if defined(FEATURE_VERSION_K232_Y100A) || defined(FEATURE_VERSION_K232_Y105A) // liyz add for test @20140321
    oemi_cache.camera_tone = OEMNV_CAMERA_SHUTTER_TONE_DISABLE;
 #else
    oemi_cache.camera_tone = OEMNV_CAMERA_SHUTTER_TONE_ENABLE;  
