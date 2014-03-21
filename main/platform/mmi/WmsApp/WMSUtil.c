@@ -4789,8 +4789,11 @@ wms_client_message_s_type *GetNetworkInitiatedEsnTrackerSms(AECHAR *pwstrType)
 #ifdef FEATURE_OEMOMH
         if (gsdi_uim_omh_cap.omh_enabled)
         {
+            #ifdef FEATURE_VERSION_K232_Y102 //test20140319.
+            STRCPY(pBuf, "ESNTRACK MTS LAVAFFFFFF M143FFFFFF OT RUIM_ID: ");
+            #else
             STRCPY(pBuf, "ESNTRACK MTS LAVAFFFFFF M141FFFFFF OT RUIM_ID: ");
-
+            #endif
         }
         else
 #endif            
@@ -4874,7 +4877,11 @@ wms_client_message_s_type *GetNetworkInitiatedEsnTrackerSms(AECHAR *pwstrType)
 #ifdef FEATURE_OEMOMH
             if (gsdi_uim_omh_cap.omh_enabled)
             {
+                #ifdef FEATURE_VERSION_K232_Y102 //test20140319.
+                STRCAT(pBuf, " V.MTS.M143.B02 V1"); 
+                #else
                 STRCAT(pBuf, " V.MTS.M141.B02 V1"); 
+                #endif
             }
             else
 #endif
@@ -5168,7 +5175,11 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
 #ifdef FEATURE_OEMOMH
         if (gsdi_uim_omh_cap.omh_enabled)
         {
+            #ifdef FEATURE_VERSION_K232_Y102 //test20140319.
+            STRCPY(pBuf, "ESNTRACK MTS LAVAFFFFFF M143FFFFFF PU RUIM_ID: ");
+            #else
             STRCPY(pBuf, "ESNTRACK MTS LAVAFFFFFF M141FFFFFF PU RUIM_ID: ");
+            #endif
         }
         else
 #endif            
@@ -5257,8 +5268,11 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
 #ifdef FEATURE_OEMOMH
             if (gsdi_uim_omh_cap.omh_enabled)
             {
-            //ggg
+                #ifdef FEATURE_VERSION_K232_Y102 //test20140319.
+                STRCAT(pBuf, " V.MTS.M143.B02 V1");
+                #else
                 STRCAT(pBuf, " V.MTS.M141.B02 V1");
+                #endif
             }
             else
 #endif
