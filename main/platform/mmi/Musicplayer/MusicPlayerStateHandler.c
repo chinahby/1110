@@ -86,6 +86,11 @@ static NextFSMAction Handler_STATE_MSGLISTFULL(CMusicPlayer *pMe);
 #if defined(FEATURE_FLASHLIGHT_SUPPORT)
 static NextFSMAction Handler_STATE_FLASHLIGHT(CMusicPlayer *pMe);
 #endif
+// lizy add for data protect @20140321
+#ifdef FEATURE_VERSION_C316
+static NextFSMAction Handler_STATE_PWD(CMusicPlayer *pMe);
+#endif
+
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -100,6 +105,9 @@ static const FSMSTATE_HANDLER gFSMStateHandler[] =
 {
     Handler_STATE_NONE,
     Handler_STATE_INIT,
+#ifdef FEATURE_VERSION_C316
+	Handler_STATE_PWD,
+#endif
     Handler_STATE_PLAYMUSIC_WINDOWS,
     Handler_STATE_MAINOPTSMENU,
     Handler_STATE_PLAYLIST,
@@ -207,25 +215,44 @@ static NextFSMAction Handler_STATE_NONE(CMusicPlayer *pMe)
 ==============================================================================*/
 static NextFSMAction Handler_STATE_INIT(CMusicPlayer *pMe)
 {
+#ifdef FEATURE_VERSION_C316
+	boolean locksel;
+#endif
+
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
-
+    
+	DBGPRINTF("Handler_STATE_INIT enter here locksel %d,pwdwright %d",locksel,pMe->b_pwdWright);
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
     }
     if(pMe->m_eStartMethod==STARTMETHOD_NORMAL)
     {
-	#if defined (FEATURE_VERSION_C337)|| defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)//|| defined (FEATURE_VERSION_K212)
-		MOVE_TO_STATE(STATE_PLAYMUSIC_WINDOWS);
-	#else
-		//MOVE_TO_STATE(STATE_PLAYMUSIC_WINDOWS);
-       pMe->m_nMsgResID = IDS_MSG_WAITING;
-       pMe->m_eMsgRetState = STATE_PLAYMUSIC_WINDOWS;
-       pMe->m_eMsgType = MESSAGE_WAITING;
-       MOVE_TO_STATE(STATE_MSG);
-	#endif
+    // liyz add for test @20140321
+#ifdef FEATURE_VERSION_C316
+		OEM_GetConfig(CFGI_MULTIMEDIA_LOCK_CHECK, &locksel, sizeof( locksel));
+	    
+		DBGPRINTF("Handler_STATE_INIT enter here locksel %d,pwdwright %d",locksel,pMe->b_pwdWright);
+		if((locksel) && (!pMe->b_pwdWright))
+		{
+			MOVE_TO_STATE(STATE_PWD);
+		}
+		else
+#endif
+	    {
+	      DBGPRINTF("Handler_STATE_INIT enter here");
+		#if defined (FEATURE_VERSION_C337)|| defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)//|| defined (FEATURE_VERSION_K212)
+			MOVE_TO_STATE(STATE_PLAYMUSIC_WINDOWS);
+		#else
+			//MOVE_TO_STATE(STATE_PLAYMUSIC_WINDOWS);
+	       pMe->m_nMsgResID = IDS_MSG_WAITING;
+	       pMe->m_eMsgRetState = STATE_PLAYMUSIC_WINDOWS;
+	       pMe->m_eMsgType = MESSAGE_WAITING;
+	       MOVE_TO_STATE(STATE_MSG);
+		#endif
+	    }
 	   
     }
     else if(pMe->m_eStartMethod==STARTMETHOD_SIMPLEPLAYER)
@@ -238,6 +265,42 @@ static NextFSMAction Handler_STATE_INIT(CMusicPlayer *pMe)
     }
     return NFSMACTION_CONTINUE;
 }
+#ifdef FEATURE_VERSION_C316
+static NextFSMAction Handler_STATE_PWD(CMusicPlayer *pMe)
+{
+	MSG_FATAL("Handler_STATE_PWD....",0,0,0);
+	switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+			if(SUCCESS != CMusicPlayer_ShowDialog( pMe, IDD_PWD))
+            {
+                MOVE_TO_STATE(STATE_EXIT);
+                return NFSMACTION_CONTINUE;
+            }
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(STATE_EXIT);
+            return NFSMACTION_CONTINUE;
+
+        case MGDLGRET_PASS:    
+			DBGPRINTF("Handler_STATE_PWD MGDLGRET_PASS");
+			MOVE_TO_STATE(STATE_INIT);
+            return NFSMACTION_CONTINUE;
+
+        case MGDLGRET_FAILD:    
+			MSG_FATAL("MGDLGRET_FAILD.............",0,0,0);
+			CMusicPlayer_ShowDialog(pMe, IDD_PWD_INVAD);
+            return NFSMACTION_WAIT;
+		
+        default:
+            MOVE_TO_STATE(STATE_EXIT);
+            return NFSMACTION_CONTINUE;
+    }
+}
+
+#endif
+
 /*==============================================================================
 函数：
        Handler_STATE_PLAYMUSIC_WINDOWS

@@ -433,6 +433,10 @@ static int CMusicPlayer_InitAppData(CMusicPlayer *pMe)
 #endif
 	pMe->m_Next = TRUE;
     pMe->bFromResume = FALSE;
+	// liyz add for test @20140321
+#ifdef FEATURE_VERSION_C316
+	pMe->b_pwdWright = FALSE;
+#endif
 
 
   if(SUCCESS != ISHELL_GetPrefs(pMe->m_pShell,

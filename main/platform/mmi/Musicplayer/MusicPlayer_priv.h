@@ -1035,6 +1035,11 @@ typedef enum DLGRetValue
    DLGRET_NO,
    DLGRET_YES,
    DLGRET_MSGBOX_OK,
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316) // liyz add for test @20140321
+   MGDLGRET_PASS,
+   MGDLGRET_FAILD,
+#endif
+
    DLGRET_CANCELED
 } DLGRetValue;
 //“Ù¡øµ»º∂
@@ -1104,6 +1109,10 @@ typedef enum MP3State
 {
    STATE_NONE = 0,               // No state
    STATE_INIT,                   // Initial state.
+   // liyz add for test @20140321
+#ifdef FEATURE_VERSION_C316
+	STATE_PWD,
+#endif
    STATE_PLAYMUSIC_WINDOWS,
    STATE_MAINOPTSMENU,
    STATE_PLAYLIST,
@@ -1283,6 +1292,11 @@ typedef struct _CMusicPlayer
 #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)||defined (FEATURE_VERSION_K232_Y105A)|| defined (FEATURE_VERSION_KK5)||defined (FEATURE_VERSION_K232_Y100A)
 	uint32 keystart_time;	
     uint32 keyend_time;	
+#endif
+// liyz add for data protect @20140321
+#if defined(FEATURE_VERSION_C316)
+   char 			*m_strPhonePWD;
+   boolean			b_pwdWright;
 #endif
 	boolean      m_Next;
     uint8        m_times;

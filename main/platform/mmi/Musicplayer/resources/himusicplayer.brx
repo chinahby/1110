@@ -196,6 +196,12 @@
 	<STRING Id="1065" Name="IDS_MUSIC_PLAYER">
 		<Text>संगीत प्लेयर</Text>
 	</STRING>
+	<String Id="1071" Name="IDS_PWD_TITLE">
+		<Text>पासवर्ड दर्ज करें</Text>
+	</String>
+	<String Id="1072" Name="IDS_INVALID">
+		<Text>अमान्य पासवर्ड</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_WINDOWS" Focus="0">
@@ -269,6 +275,12 @@
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
 	<Dialog Id="6013" Name="IDD_SIMPLEPLAYER" Focus="0">
+		<Controls/>
+	</Dialog>
+ <Dialog Id="6015" Name="IDD_PWD" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="6016" Name="IDD_PWD_INVAD" Focus="0">
 		<Controls/>
 	</Dialog>
 </Dialogs>
