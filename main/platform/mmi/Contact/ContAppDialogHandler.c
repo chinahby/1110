@@ -4102,7 +4102,7 @@ static void  CContApp_DrawIMEIcon(ITextCtl *pTextCtl, IDisplay *pIDisplay)
     bageImg = ISHELL_LoadResImage(pIShell, AEE_APPSCOMMONRES_IMAGESFILE,IDI_CONANT_BACKGROUNT);
     #endif
     RightTopImg = ISHELL_LoadResImage(pIShell, AEE_APPSCOMMONRES_IMAGESFILE, nResID);
-    #ifdef FEATURE_VERSION_K232_Y105A
+    #ifndef FEATURE_VERSION_K232_Y105A
     if(bageImg != NULL)
     {
         IIMAGE_GetInfo(bageImg, &myInfo);

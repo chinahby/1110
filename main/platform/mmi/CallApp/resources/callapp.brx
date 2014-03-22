@@ -199,6 +199,9 @@
 	<String Id="1066" Name="IDS_INCOMINGCALL_TEXT_Y105A">
 		<Text>incalling</Text>
 	</String>
+	<String Id="1067" Name="IDS_SAR_Y105A">
+		<Text>0.856 W/kg 1g Head SAR    0.942 W/kg 1g Body SAR</Text>
+	</String>
 	<STRING Id="1100" Name="IDS_OPTION_RECORDER_ON">
 		<Text>Recorder on</Text>
 	</STRING>

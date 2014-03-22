@@ -3751,6 +3751,10 @@ void OEM_RestoreFactorySetting( void )
    nvi.ear_level = OEMNV_VOLUME_MAX;
    (void) OEMNV_Put( NV_EAR_LVL_I, &nvi );
    nvi_cache.handset_ear_level = OEMNV_VOLUME_MAX;
+#elif defined (FEATURE_VERSION_K232_Y105A)
+    nvi.ear_level = OEMNV_VOLUME_ESCALATING;
+    (void) OEMNV_Put( NV_EAR_LVL_I, &nvi );
+    nvi_cache.handset_ear_level = OEMNV_VOLUME_ESCALATING;
 #else
     nvi.ear_level = OEMNV_VOLUME_HIGH;
     (void) OEMNV_Put( NV_EAR_LVL_I, &nvi );

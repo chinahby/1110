@@ -550,6 +550,40 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 			}
 		}
 #endif	
+#ifdef FEATURE_VERSION_K232_Y105A
+        case EVT_KEY_HELD:
+		{					
+			if (wParam == AVK_2)
+			{
+                ICallApp  * pUICall = NULL;
+                AECHAR szVMNumber[12] = {L"112"};
+                MSG_FATAL("call........",0,0,0);
+                // 创建呼叫接口
+                if (SUCCESS == ISHELL_CreateInstance(sgpShell,
+                    AEECLSID_DIALER,
+                    (void **)&pUICall))
+                {
+                    if (pUICall != NULL)
+                    {
+                        // 调用呼叫接口函数进行呼叫
+#ifdef FEATRUE_SET_IP_NUMBER
+                        if (bIPCall)
+                        {
+                            (void)ICallApp_Make_IP_Call_F(pUICall, szVMNumber);
+                        }
+                        else
+#endif
+                        {
+                            (void)ICallApp_CallNumber(pUICall, szVMNumber);
+                        }
+                        
+                        // 释放呼叫接口
+                        (void)ICallApp_Release(pUICall);
+                    }
+                }
+            }
+        }
+#endif
 		//Add End	
         case EVT_KEY:			
             switch ((AVKType)wParam)
@@ -717,6 +751,12 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 //Add By zzg 2010_11_23
 #ifdef FEATURE_UNLOCK_KEY_SPACE		
 			case AVK_SPACE:
+			{			
+				return FALSE;					
+			}
+#endif
+#ifdef FEATURE_VERSION_K232_Y105A
+            case AVK_2:
 			{			
 				return FALSE;					
 			}
@@ -1151,7 +1191,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
     
 	boolean b = OEMKeyguard_IsEnabled() ;
 	boolean b2 = OEMPriv_IsPhoneIdle();
-	MSG_FATAL("OEMKeyguard_HandleEvent........000000",0,0,0);
+	MSG_FATAL("OEMKeyguard_HandleEvent........000000evt==%d,wParam===%d",evt,wParam,0);
 	MSG_FATAL("b====%d...b2======%d.....",b,b2,0);
 	#if defined(FEATURE_QQ_APP)&& defined(FEATURE_DISP_128X160)
     if ((OEMKeyguard_IsEnabled() && OEMPriv_IsPhoneIdle())|| (OEMKeyguard_IsEnabled() && (AEE_Active()!= AEECLSID_DIALER)))
@@ -1345,8 +1385,10 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
 #ifdef FEATURE_UNLOCK_KEY_SPACE	        
         if ((EVT_KEY_PRESS == evt) || (EVT_KEY_HELD == evt))	
 #else
-#ifdef FEATURE_LCD_TOUCH_ENABLE  //add by andrew
+#if defined(FEATURE_LCD_TOUCH_ENABLE)  //add by andrew
 		if ((EVT_POINTER_UP == evt)||(EVT_KEY_PRESS == evt)||(EVT_POINTER_DOWN == evt)||(EVT_POINTER_MOVE == evt)) 
+#elif defined(FEATURE_VERSION_K232_Y105A)
+        if((EVT_KEY_PRESS == evt) || (EVT_KEY_HELD == evt))
 #else
 		if (EVT_KEY_PRESS == evt) 
 #endif

@@ -280,6 +280,8 @@ when       who     what, where, why
 #if defined (FEATURE_VERSION_W021_CT100) || defined(FEATURE_VERSION_W021_C11)
 // ¶ú»úÒôÁ¿    
 #define OEMNV_EAR_VOL_INIT {5,3,3,4,4}  
+#elif defined (FEATURE_VERSION_K232_Y105A)
+#define OEMNV_EAR_VOL_INIT {4,3,3,4,4}  
 #else
 #define OEMNV_EAR_VOL_INIT {3,3,3,4,4}  
 #endif

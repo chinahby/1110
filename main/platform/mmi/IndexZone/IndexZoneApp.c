@@ -749,7 +749,7 @@ static boolean IndexZoneApp_ListMenuHandler(IndexZoneApp *pMe, AEEEvent eCode, u
                     
                     ISHELL_LoadResString( pMe->m_pShell,
                           INDEXZONE_RES_FILE_LANG,
-                          IDS_INDEX_ZONE_UTK + i - 1,
+                          IDS_INDEX_ZONE_GAMES + i - 1,
                           pstr,
                           sizeof(pstr));
                     
@@ -758,7 +758,7 @@ static boolean IndexZoneApp_ListMenuHandler(IndexZoneApp *pMe, AEEEvent eCode, u
 					
                     ERR("IndexZone_ListMenuHandler::%d pwsz::%s",i,pwsz,0);
                     {
-                        IMENUCTL_SetItemText(pMenu, IDS_INDEX_ZONE_UTK + i - 1, NULL, NULL, pwsz);
+                        IMENUCTL_SetItemText(pMenu, IDS_INDEX_ZONE_GAMES + i - 1, NULL, NULL, pwsz);
                     }                    
                 }                
 				

@@ -5211,31 +5211,28 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n';
 #ifdef FEATURE_VERSION_K232_Y105A
-    (void) ISHELL_LoadResString(pme->a.m_pIShell,
-                               FLDDBG_RES_FILE,
-                               IDS_BUILID_TIME,
-                               (szBuf + n),
-                               sizeof(szBuf));
-
+{
+    JulianType  jDate;
+    AECHAR      wszDate[64]= {0};
+    AECHAR      wFormat[64]= {L"%02d:%02d"};
+    AECHAR      m_wstr[64]= {0};
+    char        m_str[64]= {0}; 
+    GetJulianDate(GETTIMESECONDS(), &jDate);
+    WSTRCAT(szBuf+n,L"Build Time:");
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n'; 
-
-    //insert the SW ver. date
-    for(i=0; ver_date[i]!=0; i++)
-    {
-       szBuf[n+i] = (AECHAR)ver_date[i];
-    }
     n = WSTRLEN(szBuf);
-    
-    //insert a white sapce
+    (void) ICONFIG_GetItem(pme->m_pIConfig,
+              CFGI_BUILD_TIME,
+              (szBuf + n),
+              sizeof(szBuf));
+    n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) ' ';
     n = WSTRLEN(szBuf);
-    //insert the SW ver. time
-    for(i=0; ver_time[i]!=0; i++)
-    {
-       szBuf[n+i] = (AECHAR)ver_time[i];
-    }
-    szBuf[n++] = (AECHAR) '\n'; 
+    WSPRINTF(wszDate, sizeof(wszDate), wFormat, jDate.wHour, jDate.wMinute);
+    WSTRCAT(szBuf+n,wszDate);  
+    n = WSTRLEN(szBuf);
+}
 #endif
 
 #ifndef HWVERSION
@@ -5260,7 +5257,7 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n';
 
-
+    #ifndef FEATURE_VERSION_K232_Y105A
     n = WSTRLEN(szBuf);
     (void) ISHELL_LoadResString(pme->a.m_pIShell,
                                FLDDBG_RES_FILE,
@@ -5273,7 +5270,7 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
                           CFGI_BUILD_TIME,
                           (szBuf + n),
                           sizeof(szBuf));
-   
+    #endif
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n';
    

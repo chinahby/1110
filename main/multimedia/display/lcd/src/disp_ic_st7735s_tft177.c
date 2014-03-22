@@ -230,7 +230,7 @@ static void disp_ic_init(void)
 	LCD_WRITE_CMD (0x29); //Display on
 	LCD_WRITE_CMD(0x2c);
 #elif defined(FEATURE_VERSION_K232_Y100) ||defined(FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_K232_Y105A) ||defined(FEATURE_VERSION_K232_Y101) 
-#if 0 //ИэБъ
+#if 1 //ИэБъ
     LCD_WRITE_CMD(0x11); 
     //----------------------------------
     LCD_WRITE_CMD(0xB1); 
@@ -278,7 +278,7 @@ static void disp_ic_init(void)
      
     LCD_WRITE_CMD(0xE0); 
     LCD_WRITE_DATA(0x05); 
-    LCD_WRITE_DATA(0x1A); 
+    LCD_WRITE_DATA(0x22); 
     LCD_WRITE_DATA(0x0C); 
     LCD_WRITE_DATA(0x0E); 
     LCD_WRITE_DATA(0x3A); 
@@ -295,7 +295,7 @@ static void disp_ic_init(void)
     LCD_WRITE_DATA(0x10); 
     LCD_WRITE_CMD(0xE1); 
     LCD_WRITE_DATA(0x04); 
-    LCD_WRITE_DATA(0x1B); 
+    LCD_WRITE_DATA(0x16); 
     LCD_WRITE_DATA(0x0D); 
     LCD_WRITE_DATA(0x0E); 
     LCD_WRITE_DATA(0x2D); 

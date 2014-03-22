@@ -358,6 +358,9 @@
 	<String Id="1118" Name="IDS_MG_VHOPE_RUNUDISK">
 		<Text>U-disk running</Text>
 	</String>
+	<String Id="1119" Name="IDS_FILE_LARGE">
+		<Text>File is too large / file does not support</Text>
+	</String>
 	<STRING Id="1120" Name="IDS_MG_DISSTORAGE">
 		<Text>Mass storage is disconnected</Text>
 	</STRING>
@@ -493,7 +496,7 @@
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
 	<Dialog Id="6023" Name="IDD_MG_UDISK" Focus="7020">
-		<Controls>			
+		<Controls>
 			<Static Id="7020" Name="IDC_MG_UDISKRUN">
 				<Items/></Static>
 		</Controls>

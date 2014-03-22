@@ -1565,6 +1565,10 @@ static boolean  HandlePhoneInfo_SW_HW_PRL_DialogEvent(CSettingMenu *pMe,
         case EVT_USER_REDRAW:
            if(pMe->m_pActiveDlgID==IDD_PHONE_INFO_MENU_SW)
            {    
+                  JulianType  jDate;
+                  AECHAR      wszDate[64]= {0};
+                  AECHAR      wFormat[64]= {L"%02d:%02d"};
+                  GetJulianDate(GETTIMESECONDS(), &jDate);
                   p_stk = (IStatic *) IDIALOG_GetControl(p_dlg, IDC_SW_STAT);
                  (void) ISHELL_LoadResString(pMe->m_pShell,
                                             AEE_APPSSETTINGMENU_RES_FILE,
@@ -1583,15 +1587,19 @@ static boolean  HandlePhoneInfo_SW_HW_PRL_DialogEvent(CSettingMenu *pMe,
                 n = WSTRLEN(m_wstr);
                 m_wstr[n++] = (AECHAR) '\n'; 
                 WSTRCAT(m_wstr+n,L"Build Time:");
-
                 n = WSTRLEN(m_wstr);
                 m_wstr[n++] = (AECHAR) '\n'; 
+                n = WSTRLEN(m_wstr);
                 (void) ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_BUILD_TIME,
                           (m_wstr + n),
                           sizeof(m_wstr));
-                
-                 
+                n = WSTRLEN(m_wstr);
+                m_wstr[n++] = (AECHAR) ' ';
+                n = WSTRLEN(m_wstr);
+                WSPRINTF(wszDate, sizeof(wszDate), wFormat, jDate.wHour, jDate.wMinute);
+                WSTRCAT(m_wstr+n,wszDate);  
+                n = WSTRLEN(m_wstr);
            }                
            else if(IDD_PHONE_INFO_MENU_HW==pMe->m_pActiveDlgID)
            {              
@@ -12123,7 +12131,9 @@ static boolean  HandlePlaneModeDialogEvent(CSettingMenu *pMe,
             }
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_ON, IDS_ON, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_OFF, IDS_OFF, NULL, 0);
+            #ifndef FEATURE_VERSION_K232_Y105A
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_QUERY_PLANEMODE, IDS_QUERY_PLANEMODE, NULL, 0);
+            #endif
             return TRUE;
 
         case EVT_DIALOG_START:

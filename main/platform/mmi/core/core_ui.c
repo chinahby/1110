@@ -908,6 +908,14 @@ static void KeyHoldCB(void *pUser)
 	}		
 #endif
 #endif
+#ifdef FEATURE_VERSION_K232_Y105A
+    extern boolean OEMKeyguard_HandleEvent(AEEEvent  evt, uint16    wParam,uint32 dwParam); 
+
+	if (TRUE == (OEMKeyguard_HandleEvent(EVT_KEY_HELD, ptbl->aee_vcode,ptbl->dwparam)))
+	{
+	    return;
+    }
+#endif
 //Add End
 
 	AEE_Event(EVT_KEY_HELD, ptbl->aee_vcode, ptbl->dwparam);

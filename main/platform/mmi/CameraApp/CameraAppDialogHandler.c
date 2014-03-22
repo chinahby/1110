@@ -313,9 +313,7 @@ static const CCameraSize g_CameraSizeCFG[] =
     {240,320,L"240*320"}, // QVGA   
 #endif    
  #if defined( FEATURE_VERSION_C316)//||defined(FEATURE_VERSION_C117_M74)
- #ifndef FEATURE_VERSION_K232_Y105A
     {300,400,L"480*640"}, // VGA
- #endif
 #elif defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_KK5)
     {352,464,L"352*464"}, // VGA 
  #endif
@@ -386,9 +384,7 @@ static const CCameraSize g_CameraSizeCFG_10[] =
 #endif    
 #endif
 #if defined( FEATURE_VERSION_C316)//||defined(FEATURE_VERSION_C117_M74)
-#ifndef FEATURE_VERSION_K232_Y105A
     {300,400,L"480*640"}, // VGA
-#endif
 #elif defined (FEATURE_VERSION_C260_IC18)|| defined (FEATURE_VERSION_KK5)
     {352,464,L"352*464"}, // VGA    
 #endif
@@ -3806,7 +3802,11 @@ static void CameraApp_PopMenu_QualityInit(CCameraApp *pMe, IMenuCtl *popMenu)
 static void CameraApp_PopMenu_SizeInit(CCameraApp *pMe, IMenuCtl *popMenu)
 {
     IMENUCTL_DeleteAll(popMenu);
+    #ifdef FEATURE_VERSION_K232_Y105A
+    if(1)
+    #else
     if(pMe->m_nCameraStorage == OEMNV_CAMERA_STORAGE_MEMORY_CARD)
+    #endif
     {
         int i=0;
 

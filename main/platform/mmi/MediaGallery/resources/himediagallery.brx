@@ -355,6 +355,9 @@
 	<STRING Id="1117" Name="IDS_MG_MEDIAGALLERY_C337">
 		<Text>फाइल मेनेजर</Text>
 	</STRING>
+	<String Id="1119" Name="IDS_FILE_LARGE">
+		<Text>फ़ाइल बहुत बड़ी / फ़ाइल का समर्थन नहीं करता </Text>
+	</String>
 	<STRING Id="1120" Name="IDS_MG_DISSTORAGE">
 		<Text>Mass storage is disconnected</Text>
 	</STRING>

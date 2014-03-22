@@ -1358,7 +1358,22 @@ __handleKeyEvent_input_channel_done__:
         case AVK_LEFT:
 		case AVK_RIGHT:
 		{
+            #if defined(FEATURE_VERSION_K232_Y105A) 
+            if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
+			{
+				pMe->cfg.tuningMode = FM_RADIO_TUNNING_MODE_MANUAL;
+				if( key == AVK_LEFT)
+				{
+					changeChannelAnticlockwise( pMe);
+				}
+				else
+				{
+					changeChannelClockwise( pMe);
+				}
+			}
+            #else
 			FmRadio_HeadsetSwitchOnHandler(pMe);
+            #endif
 		}
 		return TRUE;
 #else
@@ -4138,7 +4153,14 @@ static void fmHeadsetOff(CFmRadio *pMe)
 }
 
 void FmRadio_HeadsetSwitchOnHandler(CFmRadio *pMe)
-{
+{   
+    #if defined(FEATURE_VERSION_K232_Y105A) 
+    if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
+	{
+		pMe->cfg.tuningMode = FM_RADIO_TUNNING_MODE_MANUAL;
+		changeChannelClockwise( pMe);
+	}
+    #else
     if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
 	{
 	    int i = 0;
@@ -4174,7 +4196,8 @@ void FmRadio_HeadsetSwitchOnHandler(CFmRadio *pMe)
                 }                
             }    
         }				
-	}    
+	}
+    #endif
 }
 
 

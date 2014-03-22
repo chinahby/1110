@@ -3471,7 +3471,32 @@ static boolean  QuickTest_VERTestHandler(CQuickTest *pMe,
                                               CFGI_BUILD_VERSION,
                                               (szBuf + n),
                                               sizeof(szBuf));
-
+#ifdef FEATURE_VERSION_K232_Y105A
+                        n = WSTRLEN(szBuf);
+                        szBuf[n++] = (AECHAR) '\n';
+                        {
+                            JulianType  jDate;
+                            AECHAR      wszDate[64]= {0};
+                            AECHAR      wFormat[64]= {L"%02d:%02d"};
+                            AECHAR      m_wstr[64]= {0};
+                            char        m_str[64]= {0}; 
+                            GetJulianDate(GETTIMESECONDS(), &jDate);
+                            WSTRCAT(szBuf+n,L"Build Time:");
+                            n = WSTRLEN(szBuf);
+                            szBuf[n++] = (AECHAR) '\n'; 
+                            n = WSTRLEN(szBuf);
+                            (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                      CFGI_BUILD_TIME,
+                                      (szBuf + n),
+                                      sizeof(szBuf));
+                            n = WSTRLEN(szBuf);
+                            szBuf[n++] = (AECHAR) ' ';
+                            n = WSTRLEN(szBuf);
+                            WSPRINTF(wszDate, sizeof(wszDate), wFormat, jDate.wHour, jDate.wMinute);
+                            WSTRCAT(szBuf+n,wszDate);  
+                            n = WSTRLEN(szBuf);
+                        }
+#endif
                         n = WSTRLEN(szBuf);
                         szBuf[n++] = (AECHAR) '\n';
                          

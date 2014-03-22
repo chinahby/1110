@@ -64,7 +64,7 @@ extern uint8  g_mmsDataInfoMax;
 #define CONTAPP_RES_FILE_LANG  AEE_RES_LANGDIR CONTACTAPP_RES_FILE
 
 // 发送短信动画图片文件定义
-#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)&&!defined(FEATURE_VERSION_K232_Y105A)
 #define SENDINGSMS_ANI      "fs:/image/notice/sendingsms.png"
 // 动画帧数
 #define SENDINGSMS_ANI_N    7

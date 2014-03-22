@@ -1573,7 +1573,11 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #if  defined(FEATURE_VERSION_C316)					
 						if (WSTRCMP(pMe->m_DialString, L"*#07#") == 0)       	//SAR                 	
                         { 
-							pMe->m_msg_text_id = IDS_SAR;	
+                            #ifdef FEATURE_VERSION_K232_Y105A
+                            pMe->m_msg_text_id = IDS_SAR_Y105A;	
+                            #else
+							pMe->m_msg_text_id = IDS_SAR;
+                            #endif
         					CLOSE_DIALOG(DLGRET_MSGBOX);
 							return TRUE;
                         }   
@@ -1613,7 +1617,11 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #elif defined (FEATURE_VERSION_K232_Y100A)||defined(FEATURE_VERSION_K232_Y105A) || defined (FEATURE_VERSION_K232_Y101)|| defined(FEATURE_VERSION_W021_GD821)
                         if (WSTRCMP(pMe->m_DialString, L"*#07#") == 0)       	//SAR                 	
                         { 
+                            #ifdef FEATURE_VERSION_K232_Y105A
+                            pMe->m_msg_text_id = IDS_SAR_Y105A;	
+                            #else
 							pMe->m_msg_text_id = IDS_SAR;	
+                            #endif
         					CLOSE_DIALOG(DLGRET_MSGBOX);
 							return TRUE;
                         }   
@@ -7389,7 +7397,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                         else
                         {
                             ICONFIG_GetItem(pMe->m_pConfig, CFGI_RINGER_VOL, &byte_change, sizeof(byte_change));
-                            if(byte_change != OEMSOUND_5TH_VOL)
+                            if(byte_change != OEMSOUND_MUTE_VOL)
                             {
                                 byte_change --;
                                 ICONFIG_SetItem(pMe->m_pConfig,CFGI_RINGER_VOL,&byte_change,sizeof(byte_change));
@@ -7933,6 +7941,13 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
 			#if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 			REFUI_DRAW_BOTTOMBAR(BTBAR_OK);
 			#else
+            #if defined(FEATURE_VERSION_K232_X3)||defined(FEATURE_VERSION_K232_Y105A)
+			if (OEMKeyguard_IsEnabled())
+			{
+               REFUI_DRAW_BOTTOMBAR(BTBAR_UNLOCK_L);
+		    }  
+			else
+			#endif	
             REFUI_DRAW_BOTTOMBAR(BTBAR_OK_CANCEL);
 			#endif
 			#endif
@@ -14143,6 +14158,8 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 		//else if	( ((AVKType)wParam >= AVK_0) &&((AVKType)wParam <= AVK_9))
 #elif defined(FEATURE_VERSION_K232_Y101)
         else if ( ((AVKType)wParam >= AVK_1) &&((AVKType)wParam <= AVK_9))  
+#elif defined(FEATURE_VERSION_K232_Y105A)
+        else if(((AVKType)wParam == AVK_2))
 #else
         else if ( ((AVKType)wParam >= AVK_2) &&((AVKType)wParam <= AVK_9))
 #endif  
@@ -14248,6 +14265,10 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 
             if(((uint16)WSTRLEN(pMe->m_DialString) <= MAX_SPEEDDIAL_CHARS) &&(wIndex!=0))
             {
+                #ifdef FEATURE_VERSION_K232_Y105A
+                MEMSET(pMe->m_DialString,0,sizeof(AECHAR)*MAX_SIZE_DIALER_TEXT);
+                WSTRCAT(pMe->m_DialString,L"112");
+                #endif
                 CallApp_MakeSpeedDialCall(pMe);
             }
         }

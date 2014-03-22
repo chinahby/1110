@@ -4137,15 +4137,15 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
 #if defined (FEATURE_DISP_128X160) || defined (FEATURE_DISP_240X320)
             if(pme->m_dwProps & TP_GRAPHIC_BG)
            {
-                //enterImg = ISHELL_LoadResImage(pme->m_pIShell,
-                //                  AEE_APPSCOMMONRES_IMAGESFILE,
-                //                  IDB_MMS_ENTER);
+                enterImg = ISHELL_LoadResImage(pme->m_pIShell,
+                                  AEE_APPSCOMMONRES_IMAGESFILE,
+                                  IDB_MMS_ENTER);
            }
            else
            {
-               // enterImg = ISHELL_LoadResImage(pme->m_pIShell,
-               //                   AEE_APPSCOMMONRES_IMAGESFILE,
-               //                   IDI_ENTER_BLACK);
+                enterImg = ISHELL_LoadResImage(pme->m_pIShell,
+                                  AEE_APPSCOMMONRES_IMAGESFILE,
+                                  IDI_ENTER_BLACK);
            }
             
 #else
@@ -4176,9 +4176,9 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
            }
            else
            {
-               // spaceImg = ISHELL_LoadResImage(pme->m_pIShell,
-                //                  AEE_APPSCOMMONRES_IMAGESFILE,
-               //                   IDI_SPACE_BLACK);
+                spaceImg = ISHELL_LoadResImage(pme->m_pIShell,
+                                  AEE_APPSCOMMONRES_IMAGESFILE,
+                                  IDI_SPACE_BLACK);
            }
             
 #else

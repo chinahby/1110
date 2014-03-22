@@ -621,7 +621,7 @@ static __inline void MediaGalleryApp_ShowErrorMsgBox(CMediaGalleryApp *pMe)
    MediaGalleryApp_ShowMsgBox(pMe,
                               NULL,
                               MGRES_LANGFILE,
-                              IDS_MG_FILEOPERR,
+                              IDS_FILE_LARGE,
                               MESSAGE_INFORMATION,
                               BTBAR_BACK);//Prompt success!
 }//MediaGalleryApp_ShowDoneMsgBox
@@ -2060,10 +2060,10 @@ static boolean MediaGalleryApp_MemStatDlg_HandleEvent(CMediaGalleryApp* pMe,
          rc.dy =  DevInfo.cyScreen - rc.y - GetBottomBarHeight(pMe->m_pDisplay);
 
          ISTATIC_SetRect(pStatic, &rc);
-		 #ifdef FEATURE_VERSION_K212_HUALU
+		 #if defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K232_Y105A)
          ISTATIC_SetProperties(pStatic, ST_MIDDLETEXT|ST_GRAPHIC_BG|ST_NOSCROLL);
 		 #else
-		 ISTATIC_SetProperties(pStatic, ST_MIDDLETEXT|ST_GRAPHIC_BG);
+		 ISTATIC_SetProperties(pStatic, ST_MIDDLETEXT|ST_GRAPHIC_BG|ST_NOSCROLL);
 		 #endif
 		 #ifndef FEATURE_VERSION_NO_BG
          ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND); //modified by yangdecai
@@ -3021,7 +3021,7 @@ static boolean MediaGalleryApp_OnDefaultOperate(CMediaGalleryApp* pMe,
 #endif         
       	 //add by yangdecai 2010-08-04
 		 MediaGalleryApp_ShowPromptMsgBox(pMe,
-                                          IDS_MG_FILEOPERR,
+                                          IDS_FILE_LARGE,
                                           MESSAGE_ERR,
                                           BTBAR_BACK);
 		 //add by yangdecai 2010-08-04 end
@@ -3871,7 +3871,7 @@ static int MGAppPopupMenu_OnMusicPlay(CMediaGalleryApp* pMe,
    {
    	  //Add By zzg 2010_07_28
    	  MediaGalleryApp_ShowPromptMsgBox(pMe,
-                                          IDS_MG_FILEOPERR,
+                                          IDS_FILE_LARGE,
                                           MESSAGE_ERR,
                                           BTBAR_BACK);
 	  //Add End
@@ -10830,8 +10830,12 @@ static void MGAppUtil_LoadImageNotify(void *pUser,
                                     int nErr)
 {
    CMediaGalleryApp *pMe = (CMediaGalleryApp *)pUser;
+   #ifdef FEATURE_VERSION_K232_Y105A
+   uint16 nTextResId = IDS_FILE_LARGE;
+   #else
    uint16 nTextResId = IDS_MG_FILEOPERR;
-
+   #endif
+   MSG_FATAL("MGAppUtil_LoadImageNotify ERROR!!!!!",0,0,0);
    if(!pMe || !po || !pi)
    {
       MG_FARF(ADDR, ("LoadImageNotify bad parameter!"));
@@ -11382,7 +11386,7 @@ static int MGAppUtil_HandleOperateFileError(CMediaGalleryApp* pMe,
       case EFILEEOF:
       case EOUTOFNODES:
       default:
-         nTextResId = IDS_MG_FILEOPERR;
+         nTextResId = IDS_FILE_LARGE;
          break;
    }
 

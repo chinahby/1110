@@ -539,6 +539,8 @@ static int CContApp_InitAppData(CContApp *pMe)
                         IAddrBook          *addr;      // IADDRBOOK interface for RUIM
 
                         AECHAR  name[11] = {'I', 'N', 'T', 'E', 'X', ' ', 'C', 'A', 'R', 'E', '\0'};
+                        AECHAR  name_SOS[6] = {'S', 'O', 'S', '\0'};
+                        AECHAR  Mobile_SOS[6] = {'1', '1', '2', '\0'};
 #ifdef FEATURE_VERSION_K232_Y105A
                         AECHAR Mobile[12] = {'1', '8', '6', '0', '1', '0', '8', '5', '5', '5', '5', '\0'};
 #else
@@ -546,8 +548,8 @@ static int CContApp_InitAppData(CContApp *pMe)
 						AECHAR Mobile[12] = {'1', '8', '0', '0', '1', '0', '3', '8', '8', '2', '2', '\0'};
 #endif                          
                         addr = pMe->m_pAddrPhone;
-						  pMe->m_pAddNewMobile = WSTRDUP(Mobile);	
-						  pMe->m_pAddNewName = WSTRDUP(name);	 	
+						pMe->m_pAddNewMobile = WSTRDUP(Mobile);	
+						pMe->m_pAddNewName = WSTRDUP(name);	 	
                         if(SUCCESS == IADDRBOOK_CheckSameRecord(addr, name, &sameRecord) && sameRecord == TRUE)
                         {
                             ;
@@ -558,6 +560,21 @@ static int CContApp_InitAppData(CContApp *pMe)
 						      result=CContApp_CreateCont( pMe, FALSE)	;
 							  MSG_FATAL("CContApp_CreateCont result=%d", result,0,0);
 						  }
+                        #ifdef FEATURE_VERSION_K232_Y105A
+                        addr = pMe->m_pAddrPhone;
+						pMe->m_pAddNewMobile = WSTRDUP(Mobile_SOS);	
+						pMe->m_pAddNewName = WSTRDUP(name_SOS);	 	
+                        if(SUCCESS == IADDRBOOK_CheckSameRecord(addr, name_SOS, &sameRecord) && sameRecord == TRUE)
+                        {
+                            ;
+                        }
+						  else
+						  {
+						      int result = 0;
+						      result=CContApp_CreateCont( pMe, FALSE)	;
+							  MSG_FATAL("CContApp_CreateCont result=%d", result,0,0);
+						  }  
+                       #endif
                     }
 //#endif
 #endif											

@@ -372,7 +372,7 @@ int CContApp_BuildMainMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
         return EFAILED;
     } 
-
+    #ifndef FEATURE_VERSION_K232_Y105A
     ai.wText       = IDS_SPEEDDIAL;
     ai.wItemID     = IDI_MAINMENU_MENU_SPEEDDIAL;
             
@@ -381,6 +381,7 @@ int CContApp_BuildMainMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
         return EFAILED;
     } 
+    #endif
 /*
     ai.wText       = IDS_CHECKCAPACITY;
     ai.wItemID   = IDI_MAINMENU_MENU_CHECKCAPACITY;
