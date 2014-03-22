@@ -3100,6 +3100,16 @@ void OEM_RestoreFactorySetting( void )
    //
    // NOTE: Any changes to these values should be mirrored in the
    //       initialization of the oemi_cache variable.
+   #ifdef FEATURE_SHORTCUT_IN_SETTINGS
+   oemi_cache.m_keypad_shortcuts_table[0].shortcuts_cls = AEECLSID_APP_CAMERA;
+   memset(oemi_cache.m_keypad_shortcuts_table[0].shortcuts_args,0x00,MAX_SHORTCUTS_ARGS_SIZE);
+   oemi_cache.m_keypad_shortcuts_table[1].shortcuts_cls = AEECLSID_APP_MUSICPLAYER;
+   memset(oemi_cache.m_keypad_shortcuts_table[1].shortcuts_args,0x00,MAX_SHORTCUTS_ARGS_SIZE);
+   oemi_cache.m_keypad_shortcuts_table[2].shortcuts_cls = AEECLSID_WMSAPP;
+   memset(oemi_cache.m_keypad_shortcuts_table[2].shortcuts_args,0x00,MAX_SHORTCUTS_ARGS_SIZE);
+   oemi_cache.m_keypad_shortcuts_table[3].shortcuts_cls = AEECLSID_SCHEDULEAPP;
+   memset(oemi_cache.m_keypad_shortcuts_table[3].shortcuts_args,0x00,MAX_SHORTCUTS_ARGS_SIZE);
+   #endif
 #ifdef  FEATURE_CARRIER_THAILAND_CAT     
    oemi_cache.alert_type          = OEMNV_ALERTTYPE_VIBANDRINGER;
 #else 
