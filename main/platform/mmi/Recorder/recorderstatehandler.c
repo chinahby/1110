@@ -24,11 +24,19 @@ static NextFSMActionEnum state_handler_of_state_set_as( Recorder* pme);
 static NextFSMActionEnum state_handler_of_state_play_msg( Recorder* pme);
 static NextFSMActionEnum state_handler_of_state_storage_setup( Recorder* pme);
 static NextFSMActionEnum state_handler_of_state_exit( Recorder* pme);
+// lizy add for data protect @20140321
+#ifdef FEATURE_VERSION_C316
+static NextFSMActionEnum Handler_STATE_PWD(Recorder *pMe);
+#endif
 
 static const FSMSTATE_HANDLER gFSMStateHandler[] =
 {
 	state_handler_of_state_none,
 	state_handler_of_state_init,
+	// lizy add for data protect @20140321
+#ifdef FEATURE_VERSION_C316
+	Handler_STATE_PWD,
+#endif
 	state_handler_of_state_main,
 	state_handler_of_state_record,
 	state_handler_of_state_record_list,
@@ -70,10 +78,61 @@ static NextFSMActionEnum state_handler_of_state_none( Recorder* pme)
 
 static NextFSMActionEnum state_handler_of_state_init( Recorder* pme)
 {
-
+#ifdef FEATURE_VERSION_C316
+	boolean locksel;
+#endif
+		// liyz add for test @20140321
+#ifdef FEATURE_VERSION_C316
+	OEM_GetConfig(CFGI_MULTIMEDIA_LOCK_CHECK, &locksel, sizeof( locksel));
+	
+	DBGPRINTF("Handler_STATE_INIT enter here locksel %d,pwdwright %d",locksel,pme->b_pwdWright);
+	if((locksel) && (!pme->b_pwdWright))
+	{
+		MOVE_TO_STATE(STATE_PWD);
+	}
+	else
+#endif
+   {
 	MOVE_TO_STATE( STATE_MAIN);
+   }
 	return NFSMACTION_CONTINUE;
 }
+// liyz add for test @20140322
+#ifdef FEATURE_VERSION_C316
+static NextFSMActionEnum Handler_STATE_PWD(Recorder *pme)
+{
+	MSG_FATAL("Handler_STATE_PWD....",0,0,0);
+	switch(pme->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+			if(SUCCESS != Recorder_ShowDialog(pme, IDD_PWD))
+            {
+                MOVE_TO_STATE(STATE_EXIT);
+                return NFSMACTION_CONTINUE;
+            }
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(STATE_EXIT);
+            return NFSMACTION_CONTINUE;
+
+        case MGDLGRET_PASS:    
+			DBGPRINTF("Handler_STATE_PWD MGDLGRET_PASS");
+			MOVE_TO_STATE(STATE_INIT);
+            return NFSMACTION_CONTINUE;
+
+        case MGDLGRET_FAILD:    
+			MSG_FATAL("MGDLGRET_FAILD.............",0,0,0);
+			Recorder_ShowDialog(pme, IDD_PWD_INVAD);
+            return NFSMACTION_WAIT;
+		
+        default:
+            MOVE_TO_STATE(STATE_EXIT);
+            return NFSMACTION_CONTINUE;
+    }
+}
+
+#endif
 
 static NextFSMActionEnum state_handler_of_state_main( Recorder* pme)
 {

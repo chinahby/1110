@@ -229,5 +229,11 @@
 	<STRING Id="1218" Name="IDS_RECORDER">
 		<Text>Recorder</Text>
 	</STRING>
+	<String Id="1219" Name="IDS_PWD_TITLE">
+		<Text>Enter Password</Text>
+	</String>
+	<String Id="1220" Name="IDS_INVALID">
+		<Text>Invalid password</Text>
+	</String>
 </Strings>
 </BREWRes>

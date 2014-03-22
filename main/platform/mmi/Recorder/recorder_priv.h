@@ -103,6 +103,10 @@ typedef enum
    DLGRET_NEW_RECORD,
    DLGRET_RECORD_LIST,
    DLGRET_PLAY,
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316) // liyz add for test @20140321
+   MGDLGRET_PASS,
+   MGDLGRET_FAILD,
+#endif
    DLGRET_SET_AS
    ,DLGRET_PLAY_MSG
    ,DLGRET_STORAGE_SETUP
@@ -112,6 +116,10 @@ typedef enum
 {
    STATE_NONE,
    STATE_INIT,
+    // liyz add for test @20140321
+#ifdef FEATURE_VERSION_C316
+   STATE_PWD,
+#endif
    STATE_MAIN,
    STATE_RECORD,
    STATE_RECORD_LIST,
@@ -178,7 +186,11 @@ typedef struct
 	boolean  				m_bScroll;
 	int						m_nTitleX;
 	RGBVAL					m_ThemeTextColor;
-
+	// liyz add for data protect @20140321
+#if defined(FEATURE_VERSION_C316)
+   char 			*m_strPhonePWD;
+   boolean			b_pwdWright;
+#endif
 	int						m_ptr[8];
 	AEECallback				m_cb;
     IAnnunciator        *m_pIAnn;

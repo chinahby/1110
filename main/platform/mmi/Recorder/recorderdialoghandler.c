@@ -84,6 +84,13 @@ static void recorder_Sleep( Recorder* pme);  //add by pyuangui 2013-01-07
 #endif
 extern void OEMOS_Sleep(uint32 nMSecs);
 static void recorder_out( Recorder* pme);  //add by pyuangui 2013-01-07
+#ifdef FEATURE_VERSION_C316
+static boolean Recorder_PassWordHandler(Recorder *pme, AEEEvent eCode, uint16 wParam, uint32 dwParam);
+static __inline void Recorder_DrawSoftkey(Recorder* pme,
+                                       BottomBar_e_Type eSoftkeyType);
+static boolean Recorder_PopMsgHandler(Recorder *pme, AEEEvent eCode, uint16 wParam, uint32 dwParam);
+static void Recorder_MsgBoxTimeout(void* pUser);
+#endif
 
 //-------------------------------------------------------------------------------------------------
 int Recorder_ShowDialog( Recorder* pme, uint16 dlgResId)
@@ -128,11 +135,368 @@ boolean Recorder_RouteDialogEvent( Recorder* pme, AEEEvent evt, uint16 wParam, u
 		case IDD_STORAGE_SETUP:
 			MSG_FATAL("IDD_STORAGE_SETUP.............",0,0,0);
 			return dialog_handler_of_state_storage_setup( pme, evt, wParam, dwParam);
+#ifdef FEATURE_VERSION_C316
+		case IDD_PWD:
+			return Recorder_PassWordHandler(pme, evt, wParam, dwParam);
+		case IDD_PWD_INVAD:
+			return Recorder_PopMsgHandler(pme, evt, wParam, dwParam);
+#endif        
+
 		default:
 			return FALSE;
 	}
 }
 
+// liyz add for data protect @20140321
+#ifdef FEATURE_VERSION_C316
+static void Recorder_MsgBoxTimeout(void* pUser)
+{
+   Recorder* pme = (Recorder*)pUser;
+   MSG_FATAL("MusicPlayer_MsgBoxTimeout Start",0,0,0);
+   if(NULL == pme )
+   {
+      return;
+   }
+
+
+   ISHELL_PostEvent(pme->m_pShell,
+                       AEECLSID_RECORDER,
+                       EVT_DISPLAYDIALOGTIMEOUT,
+                       0,
+                       0);
+
+}
+
+static boolean Recorder_PopMsgHandler(Recorder *pme, AEEEvent eCode, uint16 wParam, uint32 dwParam)
+{
+   PARAM_NOT_REF(dwParam)
+   uint16   nMsgBoxId;   
+   if(!pme)
+   {
+      return FALSE;
+   }
+   
+   MSG_FATAL("***Recorder_PopMsgHandler eCode=%x***", eCode, 0, 0);
+
+   switch(eCode)
+   {
+   	  case EVT_DIALOG_INIT:
+      {
+         
+         return TRUE;
+      }
+   case EVT_DIALOG_START:
+      {
+         ISHELL_PostEvent(pme->m_pShell, AEECLSID_RECORDER,
+                          EVT_USER_REDRAW, 0, 0);
+         return TRUE;
+      }
+   case EVT_USER_REDRAW:
+      {
+	  	 IStatic* pIStatic = NULL;
+         AECHAR szText[256];
+         PromptMsg_Param_type MsgParam={0};
+		 Appscommon_ResetBackgroundEx(pme->m_pDisplay, &pme->m_rc, TRUE);
+		 MSG_FATAL("***MusicPlayer_PopMsgHandler eCode=%x,%d,%d***", pme->m_rc.x, pme->m_rc.y, pme->m_rc.dy);
+         if(SUCCESS != ISHELL_CreateInstance(pme->m_pShell,
+                                             AEECLSID_STATIC,
+                                             (void **)&pIStatic))
+         {
+            return FALSE;
+         }
+
+         ISHELL_LoadResString(pme->m_pShell,
+                              AEE_RECORDER_RES_FILE,
+                              IDS_INVALID,
+                              szText,
+                              sizeof(szText));
+         MsgParam.ePMsgType = MESSAGE_INFORMATION;
+         MsgParam.pwszMsg = szText;
+         MsgParam.eBBarType = BTBAR_NONE;
+         
+        DrawPromptMessage(pme->m_pDisplay, pIStatic, &MsgParam);
+       
+        ISHELL_SetTimer(pme->m_pShell,
+                            PROMPTMSG_TIMER,
+                            Recorder_MsgBoxTimeout,
+                            pme);
+         return TRUE;
+      }
+
+   case EVT_DIALOG_END:
+      {
+		    return TRUE;
+      }
+
+   case EVT_KEY:
+      {
+		 switch(wParam)
+         {
+         case AVK_CLR:	
+		 	{
+               ISHELL_CancelTimer(pme->m_pShell,
+                                  Recorder_MsgBoxTimeout, pme);
+               CLOSE_DIALOG(DLGRET_CANCELED);
+         	}
+            break;
+
+         case AVK_SELECT:
+		 	{
+               CLOSE_DIALOG(DLGRET_CANCELED);
+         	}
+            break;
+
+         default:
+            break;
+         }
+
+         return TRUE;
+         break;
+      }
+
+
+   case EVT_DISPLAYDIALOGTIMEOUT:
+      {
+		 CLOSE_DIALOG(DLGRET_CANCELED)
+         return TRUE;
+      }
+
+   default:
+      break;
+   }
+
+   return FALSE;
+}
+
+
+static boolean Recorder_PassWordHandler(Recorder *pme, AEEEvent eCode, uint16 wParam, uint32 dwParam)
+{
+    AECHAR      wstrDisplay[OEMNV_LOCKCODE_MAXLEN+2] = {0};
+    int             nLen = 0;
+    char        strDisplay[OEMNV_LOCKCODE_MAXLEN+2] = {0};
+    MSG_FATAL("MusicPlayer_PassWordHandler....",0,0,0);
+    if (NULL == pme)
+    {
+        return FALSE;
+    }
+    
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+            if(NULL == pme->m_strPhonePWD)
+            {
+                pme->m_strPhonePWD = (char *)MALLOC((OEMNV_LOCKCODE_MAXLEN + 1)* sizeof(char));
+            }
+            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
+            return TRUE;
+            
+        case EVT_DIALOG_START:  
+            (void) ISHELL_PostEvent(pme->m_pShell,
+                                    AEECLSID_RECORDER,
+                                    EVT_USER_REDRAW,
+                                    NULL,
+                                    NULL);
+
+            return TRUE;
+            
+        case EVT_USER_REDRAW:
+            // 绘制相关信息
+            {
+                AECHAR  text[32] = {0};
+                RGBVAL nOldFontColor;
+                TitleBar_Param_type  TitleBar_Param = {0};
+                
+                Appscommon_ResetBackgroundEx(pme->m_pDisplay, &pme->m_rc, TRUE);
+                //IDISPLAY_FillRect  (pme->m_pDisplay,&pme->m_rc,RGB_BLACK);
+
+               (void)ISHELL_LoadResString(pme->m_pShell, 
+                                                AEE_RECORDER_RES_FILE,
+                                                IDS_PWD_TITLE, 
+                                                text,
+                                                sizeof(text));
+                nOldFontColor = IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+                
+                IDISPLAY_DrawText(pme->m_pDisplay, 
+                                    AEE_FONT_BOLD, 
+                                    text,
+                                    -1, 
+                                    5, 
+                                    MENUITEM_HEIGHT*1/2, 
+                                    NULL, 
+                                    IDF_TEXT_TRANSPARENT);
+                   
+                nLen = (pme->m_strPhonePWD == NULL)?(0):(STRLEN(pme->m_strPhonePWD));
+                MEMSET(strDisplay, '*', nLen);
+                strDisplay[nLen] = '|';
+                strDisplay[nLen + 1] = '\0';
+                (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+                IDISPLAY_DrawText(pme->m_pDisplay, 
+                                AEE_FONT_BOLD, 
+                                wstrDisplay,
+                                -1, 
+                                10, 
+                                MENUITEM_HEIGHT*3/2,
+                                NULL, 
+                                IDF_TEXT_TRANSPARENT);
+                (void)IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
+        
+                // 绘制底条提示
+                if (nLen > 3)
+                {// 确定-----删除
+                	#ifndef FEATURE_ALL_KEY_PAD
+					Recorder_DrawSoftkey(pme, BTBAR_OK_DELETE);                    
+                    #else
+					Recorder_DrawSoftkey(pme, BTBAR_OK_BACK);                       
+                    #endif
+                }
+                else if(nLen > 0)
+                {
+                	#ifndef FEATURE_ALL_KEY_PAD
+                    Recorder_DrawSoftkey(pme,BTBAR_DELETE);
+                    #else
+                    Recorder_DrawSoftkey(pme,BTBAR_BACK);
+                    #endif
+                }
+                else
+                {// 确定-----取消
+                    Recorder_DrawSoftkey(pme,BTBAR_CANCEL);
+                }
+				
+                // 更新显示
+                IDISPLAY_UpdateEx(pme->m_pDisplay, FALSE); 
+        
+                return TRUE;
+            }
+            
+        case EVT_DIALOG_END:
+			if(pme->m_strPhonePWD)
+			{
+				 FREEIF(pme->m_strPhonePWD);
+			}			
+			return TRUE;
+
+        case EVT_KEY:
+            {
+                char  chEnter = 0;
+                int   nLen = 0;
+                boolean bRedraw = FALSE;
+                
+                switch (wParam)
+                {
+                    case AVK_0:
+                    case AVK_1:
+                    case AVK_2:
+                    case AVK_3:
+                    case AVK_4:
+                    case AVK_5:
+                    case AVK_6:
+                    case AVK_7:
+                    case AVK_8:
+                    case AVK_9:
+                        chEnter = '0' + (wParam - AVK_0);
+                        break;
+
+                    case AVK_STAR:
+                        chEnter = '*';
+                        break;
+ 
+                    case AVK_POUND:
+                        chEnter = '#';
+                        break;
+                    //Add By zzg 2012_02_27					
+					case AVK_DEL:	 
+					{
+						chEnter = 0;
+						break;
+					}
+					//Add End	
+                    case AVK_CLR:
+                        chEnter = 0;       
+                        if (pme->m_strPhonePWD == NULL || STRLEN(pme->m_strPhonePWD) == 0)
+	                    {
+	                         CLOSE_DIALOG(DLGRET_CANCELED)
+	                         return TRUE;
+	                    }
+                        break;
+                        
+                    case AVK_SELECT:
+                    case AVK_INFO:
+                        if (pme->m_strPhonePWD == NULL || STRLEN(pme->m_strPhonePWD) < 4)
+                        {
+                            return TRUE;
+                        }
+                        else
+                        //end added
+                        {
+                            uint16 wPWD=0;
+
+                            OEM_GetConfig(CFGI_PHONE_PASSWORD, &wPWD, sizeof(wPWD));
+                        
+                            if (wPWD == EncodePWDToUint16(pme->m_strPhonePWD))
+                            {// 密码符合
+                                DBGPRINTF("CLOSE_DIALOG(MGDLGRET_PASS)");
+                            	pme->b_pwdWright = TRUE;
+                                CLOSE_DIALOG(MGDLGRET_PASS)
+                            }
+                            else
+                            {// 密码错误
+                            
+							    DBGPRINTF("CLOSE_DIALOG(MGDLGRET_FAILD)");
+                                CLOSE_DIALOG(MGDLGRET_FAILD)
+                            }
+                        }
+                        return TRUE;
+                        
+                    default:
+                        return TRUE;
+                }
+                nLen = (pme->m_strPhonePWD == NULL)?(0):(STRLEN(pme->m_strPhonePWD));
+                if (chEnter == 0)
+                {// 删除字符
+                    if (nLen > 0)
+                    {
+                        bRedraw = TRUE;
+                        pme->m_strPhonePWD[nLen-1] = chEnter;
+                    }
+                }
+                else if (nLen < OEMNV_LOCKCODE_MAXLEN)
+                {
+                    pme->m_strPhonePWD[nLen] = chEnter;
+                    nLen++;
+                    pme->m_strPhonePWD[nLen] = 0;
+                    bRedraw = TRUE;
+                }
+                
+                if (bRedraw)
+                {
+                    (void) ISHELL_PostEvent(pme->m_pShell,
+                                            AEECLSID_RECORDER,
+                                            EVT_USER_REDRAW,
+                                            NULL,
+                                            NULL);
+                }
+            }
+            return TRUE;
+            
+        default:
+            break;
+    }
+    
+    return FALSE;
+}
+
+static __inline void Recorder_DrawSoftkey(Recorder* pme,
+                                       BottomBar_e_Type eSoftkeyType)
+{
+   if(pme)
+   {
+      BottomBar_Param_type BarParam={0};
+      BarParam.eBBarType = eSoftkeyType;
+      DrawBottomBar(pme->m_pDisplay, &BarParam);
+      IDISPLAY_Update(pme->m_pDisplay);
+   }
+}
+#endif
 
 //-----------------------------------------------------------------------------------------------
 static void drawModalDialog1( IDisplay* pd, IStatic* pStatic, AECHAR* ptext, boolean confirm)

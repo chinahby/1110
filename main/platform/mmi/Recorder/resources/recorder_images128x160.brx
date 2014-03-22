@@ -88,5 +88,11 @@
 			</Menu>
 		</Controls>
 	</Dialog>
+	<Dialog Id="6007" Name="IDD_PWD" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="6008" Name="IDD_PWD_INVAD" Focus="0">
+		<Controls/>
+	</Dialog>
 </Dialogs>
 </BREWRes>

@@ -119,7 +119,10 @@ static boolean Recorder_Init( Recorder* pme)
 	}
 	pme->m_pFileManager = pme->m_Media.m_pFileManager;
 	pme->m_bLockkey		= FALSE;
-	
+	// liyz add for test @20140321
+#ifdef FEATURE_VERSION_C316
+	pme->b_pwdWright = FALSE;
+#endif
 	return TRUE;
 }
 
