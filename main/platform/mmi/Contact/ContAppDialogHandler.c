@@ -4070,9 +4070,7 @@ static void  CContApp_DrawIMEIcon(ITextCtl *pTextCtl, IDisplay *pIDisplay)
 {
     boolean     bRet = TRUE;
     IImage     *RightTopImg = NULL; 
-    #ifdef FEATURE_VERSION_K232_Y105A
     IImage     *bageImg = NULL; 
-    #endif
     uint32      nResID=0;
     AEERect     IconRect={0};
     IShell      *pIShell =AEE_GetShell();
@@ -4098,6 +4096,7 @@ static void  CContApp_DrawIMEIcon(ITextCtl *pTextCtl, IDisplay *pIDisplay)
     Appscom_GetThemeParameters(&TParam);
     #ifndef FEATURE_VERSION_K232_Y105A
     IDISPLAY_FillRect(pIDisplay, &IconRect, TParam.seltextColor);
+    bageImg = ISHELL_LoadResImage(pIShell, AEE_APPSCOMMONRES_IMAGESFILE,IDI_CONANT_BACKGROUNT);
     #else
     bageImg = ISHELL_LoadResImage(pIShell, AEE_APPSCOMMONRES_IMAGESFILE,IDI_CONANT_BACKGROUNT);
     #endif
