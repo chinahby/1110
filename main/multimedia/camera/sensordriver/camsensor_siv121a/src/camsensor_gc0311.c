@@ -169,18 +169,18 @@ static  boolean camsensor_GC0311_sensor_init(void)
 	camsensor_GC0311_ycbcr_i2c_write_byte(0x05 , 0x01);
 	camsensor_GC0311_ycbcr_i2c_write_byte(0x06 , 0x32); //Hb
 	camsensor_GC0311_ycbcr_i2c_write_byte(0x07 , 0x00);
-	camsensor_GC0311_ycbcr_i2c_write_byte(0x08 , 0x70); //VB
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x08 , 0x34); //VB
 	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe , 0x01); //VB
 	camsensor_GC0311_ycbcr_i2c_write_byte(0x29 , 0x00);
 	camsensor_GC0311_ycbcr_i2c_write_byte(0x2a , 0x3c); //step
-	camsensor_GC0311_ycbcr_i2c_write_byte(0x2b , 0x02);
-	camsensor_GC0311_ycbcr_i2c_write_byte(0x2c , 0x58); //15fps
-	camsensor_GC0311_ycbcr_i2c_write_byte(0x2d , 0x02);
-	camsensor_GC0311_ycbcr_i2c_write_byte(0x2e , 0x58); //11fps
-	camsensor_GC0311_ycbcr_i2c_write_byte(0x2f , 0x02);
-	camsensor_GC0311_ycbcr_i2c_write_byte(0x30 , 0x58); //10fps
-	camsensor_GC0311_ycbcr_i2c_write_byte(0x31 , 0x02);
-	camsensor_GC0311_ycbcr_i2c_write_byte(0x32 , 0xd0); //8fps
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x2b , 0x01);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x2c , 0xe0); //15fps
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x2d , 0x01);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x2e , 0xe0); //11fps
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x2f , 0x01);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x30 , 0xe0); //10fps
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x31 , 0x03);
+	camsensor_GC0311_ycbcr_i2c_write_byte(0x32 , 0x48); //8fps
 	camsensor_GC0311_ycbcr_i2c_write_byte(0x33 , 0x20);
 	#else
 	camsensor_GC0311_ycbcr_i2c_write_byte(0x05 , 0x02);
