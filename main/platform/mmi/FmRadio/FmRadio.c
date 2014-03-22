@@ -627,7 +627,7 @@ static void FmRadio_InitFmRadioResource(CFmRadio *pMe)
 		else
 		{
 
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)//|| defined(FEATURE_VERSION_K232_Y100A)
 
 			pMe->cfg.channel = 36;
 #else
@@ -639,7 +639,7 @@ static void FmRadio_InitFmRadioResource(CFmRadio *pMe)
 	}
 #else
 
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5) //|| defined(FEATURE_VERSION_K232_Y100A)
 
 	pMe->cfg.channel = 36;
 #else

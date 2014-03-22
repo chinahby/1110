@@ -1216,7 +1216,7 @@ __handleKeyEvent_input_channel_done__:
 				pMe->globalSearching = FALSE;
 		        stopDrawRefreshListPrompt( pMe);
 		        {
-					#ifdef FEATURE_VERSION_K232_Y100A
+					#if 0//def FEATURE_VERSION_K232_Y100A
 					sChanInfo info = { 0};
         			info.wChannel = 36;
         			WSTRCPY(info.szName, L"91.1");
@@ -2413,7 +2413,7 @@ static void refreshChannelListCB( void *pme)
         countSearchChanne = 0;
         ready = FALSE;        
     }
-#ifdef FEATURE_VERSION_K232_Y100A
+#if 0//def FEATURE_VERSION_K232_Y100A
 if( !FmRadio_FindChanListNode(36))		  //91.1
 {
 	sChanInfo info = { 0};
@@ -2423,8 +2423,8 @@ if( !FmRadio_FindChanListNode(36))		  //91.1
 	FmRadio_SaveChannelList( pMe);
 }
 #endif
-#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
-#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_KK5)
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5) //|| defined(FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)//|| defined(FEATURE_VERSION_K232_Y100A)
 
     if( !FmRadio_FindChanListNode(60))        //94.3
     {
@@ -2540,7 +2540,7 @@ __refreshChannelListCB_no_channel_found:
         pMe->globalSearching = FALSE;
         stopDrawRefreshListPrompt( pMe);
         {
-			#ifdef FEATURE_VERSION_K232_Y100A
+			#if 0//def FEATURE_VERSION_K232_Y100A
 			        sChanInfo info = { 0};
         			info.wChannel = 36;
         			WSTRCPY(info.szName, L"91.1");
