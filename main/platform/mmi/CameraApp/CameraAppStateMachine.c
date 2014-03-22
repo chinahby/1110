@@ -63,6 +63,10 @@ static NextFSMAction CameraApp_StateCameraphotomode(CCameraApp *pMe);
 
 //状态 STATE_EXIT 处理函数
 static NextFSMAction CameraApp_StateExitHandle(CCameraApp *pMe);
+// lizy add for data protect @20140321
+#ifdef FEATURE_VERSION_C316
+static NextFSMAction Handler_STATE_PWD(CCameraApp *pMe);
+#endif
 
 
 /*==============================================================================
@@ -108,7 +112,11 @@ NextFSMAction CameraApp_ProcessState(CCameraApp *pMe)
         case STATE_NULL:
             retVal = CameraApp_StateNullHandle(pMe);
             break;
-            
+#ifdef FEATURE_VERSION_C316
+		case STATE_PWD:
+			retVal = Handler_STATE_PWD(pMe);
+			break;
+#endif
         case STATE_CMAINMENU:
             retVal = CameraApp_StateMainMenuHandle(pMe);
             break;
@@ -191,11 +199,26 @@ static NextFSMAction CameraApp_StateNullHandle(CCameraApp *pMe)
 ==============================================================================*/
 static NextFSMAction CameraApp_StateMainMenuHandle(CCameraApp *pMe)
 {
+#ifdef FEATURE_VERSION_C316
+	 boolean locksel;
+#endif
+
     if(NULL == pMe)
     {
         return NFSMACTION_WAIT;
     }
-    
+		// liyz add for test @20140321
+#ifdef FEATURE_VERSION_C316
+	OEM_GetConfig(CFGI_MULTIMEDIA_LOCK_CHECK, &locksel, sizeof( locksel));
+	
+	DBGPRINTF("Handler_STATE_INIT enter here locksel %d,pwdwright %d",locksel,pMe->b_pwdWright);
+	if((locksel) && (!pMe->b_pwdWright))
+	{
+		MOVE_TO_STATE(STATE_PWD);
+	}
+	else
+#endif
+ {
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
@@ -257,7 +280,39 @@ static NextFSMAction CameraApp_StateMainMenuHandle(CCameraApp *pMe)
             break;
     }   
     return NFSMACTION_WAIT;
+  }
 }
+#ifdef FEATURE_VERSION_C316
+static NextFSMAction Handler_STATE_PWD(CCameraApp *pMe)
+{
+	MSG_FATAL("Handler_STATE_PWD....",0,0,0);
+	switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+			CameraApp_ShowDialog( pMe, IDD_PWD);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(STATE_EXIT);
+            return NFSMACTION_CONTINUE;
+
+        case MGDLGRET_PASS:    
+			DBGPRINTF("Handler_STATE_PWD MGDLGRET_PASS");
+			MOVE_TO_STATE(STATE_CMAINMENU);
+            return NFSMACTION_CONTINUE;
+
+        case MGDLGRET_FAILD:    
+			MSG_FATAL("MGDLGRET_FAILD.............",0,0,0);
+			CameraApp_ShowDialog(pMe, IDD_PWD_INVAD);
+            return NFSMACTION_WAIT;
+		
+        default:
+            MOVE_TO_STATE(STATE_EXIT);
+            return NFSMACTION_CONTINUE;
+    }
+}
+
+#endif
 
 /*==============================================================================
 函数：

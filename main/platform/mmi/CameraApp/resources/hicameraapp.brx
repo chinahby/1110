@@ -163,6 +163,12 @@
 	<String Id="1080" Name="IDS_CAMERA_SAVE_VIDEOFILE">
 		<Text>दर्ज फ़ाइल सहेजें</Text>
 	</String>
+	<String Id="1082" Name="IDS_PWD_TITLE">
+		<Text>पासवर्ड दर्ज करें</Text>
+	</String>
+	<String Id="1083" Name="IDS_INVALID">
+		<Text>अमान्य पासवर्ड</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_CMAINMENU" Focus="7001">
@@ -207,6 +213,12 @@
 	<Dialog Id="6009" Name="IDD_POPMSG" Focus="0">
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+ <Dialog Id="6010" Name="IDD_PWD" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="6011" Name="IDD_PWD_INVAD" Focus="0">
+		<Controls/>
 	</Dialog>
 </Dialogs>
 </BREWRes>

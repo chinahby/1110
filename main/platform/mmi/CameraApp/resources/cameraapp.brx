@@ -166,6 +166,12 @@
 	<String Id="1081" Name="IDS_ITEM_CAMERA1">
 		<Text>Camera</Text>
 	</String>
+	<String Id="1082" Name="IDS_PWD_TITLE">
+		<Text>Enter Password</Text>
+	</String>
+	<String Id="1083" Name="IDS_INVALID">
+		<Text>Invalid password</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_CMAINMENU" Focus="7001">
@@ -210,6 +216,12 @@
 	<Dialog Id="6009" Name="IDD_POPMSG" Focus="0">
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6010" Name="IDD_PWD" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="6011" Name="IDD_PWD_INVAD" Focus="0">
+		<Controls/>
 	</Dialog>
 </Dialogs>
 </BREWRes>

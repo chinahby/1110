@@ -252,6 +252,14 @@ static int CameraApp_SavePhoto(CCameraApp *pMe);
 static int CameraApp_UpdateInit(CCameraApp *pMe);
 static int CameraApp_Update(CCameraApp *pMe);
 #endif
+#ifdef FEATURE_VERSION_C316
+static boolean CameraApp_PassWordHandler(CCameraApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
+static __inline void CameraApp_DrawSoftkey(CCameraApp* pMe,
+                                       BottomBar_e_Type eSoftkeyType);
+static boolean CameraApp_PopMsgHandler(CCameraApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
+static void CameraApp_MsgBoxTimeout(void* pUser);
+#endif
+
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -599,11 +607,367 @@ boolean CameraApp_RouteDialogEvent(CCameraApp *pMe, AEEEvent eCode, uint16 wPara
 
         case IDD_CAMERA_PHOTO_MODE:
             return CameraApp_CameraPhotoModeHandleEvent(pMe,eCode,wParam,dwParam);
-                           
+#ifdef FEATURE_VERSION_C316
+		case IDD_PWD:
+			return CameraApp_PassWordHandler(pMe, eCode, wParam, dwParam);
+		case IDD_PWD_INVAD:
+			return CameraApp_PopMsgHandler(pMe, eCode, wParam, dwParam);
+#endif        
         default:
             return FALSE;
     }
 }
+// liyz add for test @20140321
+#ifdef FEATURE_VERSION_C316
+static void CameraApp_MsgBoxTimeout(void* pUser)
+{
+   CCameraApp* pMe = (CCameraApp*)pUser;
+   MSG_FATAL("MusicPlayer_MsgBoxTimeout Start",0,0,0);
+   if(NULL == pMe )
+   {
+      return;
+   }
+
+
+   ISHELL_PostEvent(pMe->m_pShell,
+                       AEECLSID_APP_CAMERA,
+                       EVT_DISPLAYDIALOGTIMEOUT,
+                       0,
+                       0);
+
+}
+
+static boolean CameraApp_PopMsgHandler(CCameraApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
+{
+   PARAM_NOT_REF(dwParam)
+   uint16   nMsgBoxId;   
+   if(!pMe)
+   {
+      return FALSE;
+   }
+   
+   MSG_FATAL("***MusicPlayer_PopMsgHandler eCode=%x***", eCode, 0, 0);
+
+   switch(eCode)
+   {
+   	  case EVT_DIALOG_INIT:
+      {
+         
+         return TRUE;
+      }
+   case EVT_DIALOG_START:
+      {
+         ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA,
+                          EVT_USER_REDRAW, 0, 0);
+         return TRUE;
+      }
+   case EVT_USER_REDRAW:
+      {
+	  	 IStatic* pIStatic = NULL;
+         AECHAR szText[256];
+         PromptMsg_Param_type MsgParam={0};
+		 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+		 MSG_FATAL("***MusicPlayer_PopMsgHandler eCode=%x,%d,%d***", pMe->m_rc.x, pMe->m_rc.y, pMe->m_rc.dy);
+         if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+                                             AEECLSID_STATIC,
+                                             (void **)&pIStatic))
+         {
+            return FALSE;
+         }
+
+         ISHELL_LoadResString(pMe->m_pShell,
+                              AEE_APPSCAMERAAPP_RES_FILE,
+                              IDS_INVALID,
+                              szText,
+                              sizeof(szText));
+         MsgParam.ePMsgType = MESSAGE_INFORMATION;
+         MsgParam.pwszMsg = szText;
+         MsgParam.eBBarType = BTBAR_NONE;
+         
+        DrawPromptMessage(pMe->m_pDisplay, pIStatic, &MsgParam);
+       
+        ISHELL_SetTimer(pMe->m_pShell,
+                            PROMPTMSG_TIMER,
+                            CameraApp_MsgBoxTimeout,
+                            pMe);
+         return TRUE;
+      }
+
+   case EVT_DIALOG_END:
+      {
+		    return TRUE;
+      }
+
+   case EVT_KEY:
+      {
+		 switch(wParam)
+         {
+         case AVK_CLR:	
+		 	{
+               ISHELL_CancelTimer(pMe->m_pShell,
+                                  CameraApp_MsgBoxTimeout, pMe);
+               CLOSE_DIALOG(DLGRET_CANCELED);
+         	}
+            break;
+
+         case AVK_SELECT:
+		 	{
+               CLOSE_DIALOG(DLGRET_CANCELED);
+         	}
+            break;
+
+         default:
+            break;
+         }
+
+         return TRUE;
+         break;
+      }
+
+
+   case EVT_DISPLAYDIALOGTIMEOUT:
+      {
+		 CLOSE_DIALOG(DLGRET_CANCELED)
+         return TRUE;
+      }
+
+   default:
+      break;
+   }
+
+   return FALSE;
+}
+
+
+static boolean CameraApp_PassWordHandler(CCameraApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
+{
+    AECHAR      wstrDisplay[OEMNV_LOCKCODE_MAXLEN+2] = {0};
+    int             nLen = 0;
+    char        strDisplay[OEMNV_LOCKCODE_MAXLEN+2] = {0};
+    MSG_FATAL("MusicPlayer_PassWordHandler....",0,0,0);
+    if (NULL == pMe)
+    {
+        return FALSE;
+    }
+    
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+            if(NULL == pMe->m_strPhonePWD)
+            {
+                pMe->m_strPhonePWD = (char *)MALLOC((OEMNV_LOCKCODE_MAXLEN + 1)* sizeof(char));
+            }
+            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
+            return TRUE;
+            
+        case EVT_DIALOG_START:  
+            (void) ISHELL_PostEvent(pMe->m_pShell,
+                                    AEECLSID_APP_CAMERA,
+                                    EVT_USER_REDRAW,
+                                    NULL,
+                                    NULL);
+
+            return TRUE;
+            
+        case EVT_USER_REDRAW:
+            // 绘制相关信息
+            {
+                AECHAR  text[32] = {0};
+                RGBVAL nOldFontColor;
+                TitleBar_Param_type  TitleBar_Param = {0};
+                
+                Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+                //IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc,RGB_BLACK);
+
+               (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                                AEE_APPSCAMERAAPP_RES_FILE,
+                                                IDS_PWD_TITLE, 
+                                                text,
+                                                sizeof(text));
+                nOldFontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+                
+                IDISPLAY_DrawText(pMe->m_pDisplay, 
+                                    AEE_FONT_BOLD, 
+                                    text,
+                                    -1, 
+                                    5, 
+                                    MENUITEM_HEIGHT*1/2, 
+                                    NULL, 
+                                    IDF_TEXT_TRANSPARENT);
+                   
+                nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
+                MEMSET(strDisplay, '*', nLen);
+                strDisplay[nLen] = '|';
+                strDisplay[nLen + 1] = '\0';
+                (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+                IDISPLAY_DrawText(pMe->m_pDisplay, 
+                                AEE_FONT_BOLD, 
+                                wstrDisplay,
+                                -1, 
+                                10, 
+                                MENUITEM_HEIGHT*3/2,
+                                NULL, 
+                                IDF_TEXT_TRANSPARENT);
+                (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
+        
+                // 绘制底条提示
+                if (nLen > 3)
+                {// 确定-----删除
+                	#ifndef FEATURE_ALL_KEY_PAD
+					CameraApp_DrawSoftkey(pMe, BTBAR_OK_DELETE);                    
+                    #else
+					CameraApp_DrawSoftkey(pMe, BTBAR_OK_BACK);                       
+                    #endif
+                }
+                else if(nLen > 0)
+                {
+                	#ifndef FEATURE_ALL_KEY_PAD
+                    CameraApp_DrawSoftkey(pMe,BTBAR_DELETE);
+                    #else
+                    CameraApp_DrawSoftkey(pMe,BTBAR_BACK);
+                    #endif
+                }
+                else
+                {// 确定-----取消
+                    CameraApp_DrawSoftkey(pMe,BTBAR_CANCEL);
+                }
+				
+                // 更新显示
+                IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE); 
+        
+                return TRUE;
+            }
+            
+        case EVT_DIALOG_END:
+			if(pMe->m_strPhonePWD)
+			{
+				 FREEIF(pMe->m_strPhonePWD);
+			}			
+			return TRUE;
+
+        case EVT_KEY:
+            {
+                char  chEnter = 0;
+                int   nLen = 0;
+                boolean bRedraw = FALSE;
+                
+                switch (wParam)
+                {
+                    case AVK_0:
+                    case AVK_1:
+                    case AVK_2:
+                    case AVK_3:
+                    case AVK_4:
+                    case AVK_5:
+                    case AVK_6:
+                    case AVK_7:
+                    case AVK_8:
+                    case AVK_9:
+                        chEnter = '0' + (wParam - AVK_0);
+                        break;
+
+                    case AVK_STAR:
+                        chEnter = '*';
+                        break;
+ 
+                    case AVK_POUND:
+                        chEnter = '#';
+                        break;
+                    //Add By zzg 2012_02_27					
+					case AVK_DEL:	 
+					{
+						chEnter = 0;
+						break;
+					}
+					//Add End	
+                    case AVK_CLR:
+                        chEnter = 0;       
+                        if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+	                    {
+	                         CLOSE_DIALOG(DLGRET_CANCELED)
+	                         return TRUE;
+	                    }
+                        break;
+                        
+                    case AVK_SELECT:
+                    case AVK_INFO:
+                        if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) < 4)
+                        {
+                            return TRUE;
+                        }
+                        else
+                        //end added
+                        {
+                            uint16 wPWD=0;
+
+                            OEM_GetConfig(CFGI_PHONE_PASSWORD, &wPWD, sizeof(wPWD));
+                        
+                            if (wPWD == EncodePWDToUint16(pMe->m_strPhonePWD))
+                            {// 密码符合
+                                DBGPRINTF("CLOSE_DIALOG(MGDLGRET_PASS)");
+                            	pMe->b_pwdWright = TRUE;
+                                CLOSE_DIALOG(MGDLGRET_PASS)
+                            }
+                            else
+                            {// 密码错误
+                            
+							    DBGPRINTF("CLOSE_DIALOG(MGDLGRET_FAILD)");
+                                CLOSE_DIALOG(MGDLGRET_FAILD)
+                            }
+                        }
+                        return TRUE;
+                        
+                    default:
+                        return TRUE;
+                }
+                nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
+                if (chEnter == 0)
+                {// 删除字符
+                    if (nLen > 0)
+                    {
+                        bRedraw = TRUE;
+                        pMe->m_strPhonePWD[nLen-1] = chEnter;
+                    }
+                }
+                else if (nLen < OEMNV_LOCKCODE_MAXLEN)
+                {
+                    pMe->m_strPhonePWD[nLen] = chEnter;
+                    nLen++;
+                    pMe->m_strPhonePWD[nLen] = 0;
+                    bRedraw = TRUE;
+                }
+                
+                if (bRedraw)
+                {
+                    (void) ISHELL_PostEvent(pMe->m_pShell,
+                                            AEECLSID_APP_CAMERA,
+                                            EVT_USER_REDRAW,
+                                            NULL,
+                                            NULL);
+                }
+            }
+            return TRUE;
+            
+        default:
+            break;
+    }
+    
+    return FALSE;
+}
+
+static __inline void CameraApp_DrawSoftkey(CCameraApp* pMe,
+                                       BottomBar_e_Type eSoftkeyType)
+{
+   if(pMe)
+   {
+      BottomBar_Param_type BarParam={0};
+      BarParam.eBBarType = eSoftkeyType;
+      DrawBottomBar(pMe->m_pDisplay, &BarParam);
+      IDISPLAY_Update(pMe->m_pDisplay);
+   }
+}
+#endif
+
 
 /*==============================================================================
 函数：

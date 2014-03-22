@@ -527,6 +527,10 @@ typedef enum DLGRetValue
     DLGRET_POPMSG,
     DLGRET_CAMERAPHOTOMODE,
     DLGRET_CANCELED,
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316) // liyz add for test @20140321
+    MGDLGRET_PASS,
+    MGDLGRET_FAILD,
+#endif
     DLGRET_EXIT 
 } DLGRetValue;
 
@@ -535,6 +539,10 @@ typedef enum DLGRetValue
 typedef enum
 {
     STATE_NULL,
+	// liyz add for test @20140321
+#ifdef FEATURE_VERSION_C316
+	STATE_PWD,
+#endif
     STATE_CMAINMENU,
     STATE_CPREVIEW,
     STATE_CCAMERACFG,
@@ -678,6 +686,12 @@ typedef struct _CCameraApp
 #ifdef FEATURE_USES_MMS
     boolean              m_isFormMMS;
 #endif
+// liyz add for data protect @20140321
+#if defined(FEATURE_VERSION_C316)
+   char 			*m_strPhonePWD;
+   boolean			b_pwdWright;
+#endif
+
 } CCameraApp;
 
 /*==============================================================================                         

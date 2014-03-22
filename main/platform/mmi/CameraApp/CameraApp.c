@@ -552,6 +552,11 @@ static int CameraApp_InitAppData(CCameraApp *pMe)
 #endif
 	pMe->m_bIsbackMed = FALSE;
     pMe->m_sensor_model = -1;
+	// liyz add for test @20140321
+#ifdef FEATURE_VERSION_C316
+	pMe->b_pwdWright = FALSE;
+#endif
+
     MEMSET(&pMe->m_CallBack, 0, sizeof(AEECallback));
 
     if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
