@@ -9109,7 +9109,7 @@ static boolean  Handle_PrefixEdit_DialogEveng(CSettingMenu *pMe,
 
 #endif
 
-#if defined(FEATURE_VERSION_K232_Y101)||defined(FEATURE_VERSION_K232_Y105A)  
+#if defined(FEATURE_VERSION_K232_Y101)||defined(FEATURE_VERSION_K232_Y105A) ||defined(FEATURE_VERSION_K232_Y100A)  
 extern char charsvc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1];
 #endif
 
