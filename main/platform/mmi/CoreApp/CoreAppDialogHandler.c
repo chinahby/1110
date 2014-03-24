@@ -540,13 +540,14 @@ static boolean  IDD_ESN_TRACKER_EDIT_Handler(void *pUser,
                                  uint32     dwParam);
 
 #endif
+#if defined(FEATURE_OEMOMH)
 
 static boolean  IDD_ADS_ACCOUNT_EDIT_Handler(void *pUser,
 								 AEEEvent   eCode,
                                  uint16     wParam,
                                  uint32     dwParam);
 
-
+#endif
 #ifdef FEATURE_SHOW_RSSI_INFO
 // 对话框 IDD_RSSI_INFO 事件处理函?
 static boolean  IDD_RSSI_INFO_Handler(void *pUser,
@@ -793,11 +794,12 @@ void CoreApp_SetDialogHandler(CCoreApp *pMe)
             pMe->m_pDialogHandler = IDD_ESN_TRACKER_EDIT_Handler;
 			break;
 #endif           
+#if defined(FEATURE_OEMOMH)
 
         case IDD_ADS_ACCOUNT_EDIT:
             pMe->m_pDialogHandler = IDD_ADS_ACCOUNT_EDIT_Handler;
 			break;
-
+#endif
 //#if defined(FEATURE_VERSION_W317A)
 		
 //#endif
@@ -2791,7 +2793,7 @@ static boolean  IDD_ESN_TRACKER_EDIT_Handler(void *pUser,
 }
 #endif
 //Add End
-
+#if defined(FEATURE_OEMOMH)
 static boolean  IDD_ADS_ACCOUNT_EDIT_Handler(void *pUser,
 								 AEEEvent   eCode,
                                  uint16     wParam,
@@ -2951,7 +2953,7 @@ static boolean  IDD_ADS_ACCOUNT_EDIT_Handler(void *pUser,
 
     return FALSE;
 }
-
+#endif
 
 #ifdef FEATURE_SHOW_RSSI_INFO
 /*==============================================================================
