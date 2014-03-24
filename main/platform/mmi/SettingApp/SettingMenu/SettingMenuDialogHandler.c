@@ -1566,6 +1566,8 @@ static boolean  HandlePhoneInfo_SW_HW_PRL_DialogEvent(CSettingMenu *pMe,
            if(pMe->m_pActiveDlgID==IDD_PHONE_INFO_MENU_SW)
            {    
                   JulianType  jDate;
+                  extern const char ver_time[];
+                  int i;
                   AECHAR      wszDate[64]= {0};
                   AECHAR      wFormat[64]= {L"%02d:%02d"};
                   GetJulianDate(GETTIMESECONDS(), &jDate);
@@ -1598,7 +1600,11 @@ static boolean  HandlePhoneInfo_SW_HW_PRL_DialogEvent(CSettingMenu *pMe,
                 m_wstr[n++] = (AECHAR) ' ';
                 n = WSTRLEN(m_wstr);
                 WSPRINTF(wszDate, sizeof(wszDate), wFormat, jDate.wHour, jDate.wMinute);
-                WSTRCAT(m_wstr+n,wszDate);  
+                //WSTRCAT(m_wstr+n,wszDate);  
+                for(i=0; ver_time[i]!=0; i++)
+                {
+                    m_wstr[n+i] = (AECHAR)ver_time[i];
+                } 
                 n = WSTRLEN(m_wstr);
            }                
            else if(IDD_PHONE_INFO_MENU_HW==pMe->m_pActiveDlgID)

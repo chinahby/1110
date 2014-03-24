@@ -3476,6 +3476,8 @@ static boolean  QuickTest_VERTestHandler(CQuickTest *pMe,
                         szBuf[n++] = (AECHAR) '\n';
                         {
                             JulianType  jDate;
+                            extern const char ver_time[];
+                            int i;
                             AECHAR      wszDate[64]= {0};
                             AECHAR      wFormat[64]= {L"%02d:%02d"};
                             AECHAR      m_wstr[64]= {0};
@@ -3493,7 +3495,10 @@ static boolean  QuickTest_VERTestHandler(CQuickTest *pMe,
                             szBuf[n++] = (AECHAR) ' ';
                             n = WSTRLEN(szBuf);
                             WSPRINTF(wszDate, sizeof(wszDate), wFormat, jDate.wHour, jDate.wMinute);
-                            WSTRCAT(szBuf+n,wszDate);  
+                            for(i=0; ver_time[i]!=0; i++)
+                            {
+                                szBuf[n+i] = (AECHAR)ver_time[i];
+                            } 
                             n = WSTRLEN(szBuf);
                         }
 #endif
