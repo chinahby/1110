@@ -372,7 +372,7 @@ int CContApp_BuildMainMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
         return EFAILED;
     } 
-    #ifndef FEATURE_VERSION_K232_Y105A
+    //#ifndef FEATURE_VERSION_K232_Y105A
     ai.wText       = IDS_SPEEDDIAL;
     ai.wItemID     = IDI_MAINMENU_MENU_SPEEDDIAL;
             
@@ -381,7 +381,7 @@ int CContApp_BuildMainMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
         return EFAILED;
     } 
-    #endif
+    //#endif
 /*
     ai.wText       = IDS_CHECKCAPACITY;
     ai.wItemID   = IDI_MAINMENU_MENU_CHECKCAPACITY;
@@ -1627,6 +1627,8 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
 
 #if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
     for( i = CONTCFG_ONEDIAL1; i <= CONTCFG_ONEDIAL9; i++)	
+#elif defined(FEATURE_VERSION_K232_Y105A)
+    for( i = CONTCFG_ONEDIAL3; i <= CONTCFG_ONEDIAL9; i++)	//CONTCFG_ONEDIAL1
 #else
     for( i = CONTCFG_ONEDIAL2; i <= CONTCFG_ONEDIAL9; i++)	//CONTCFG_ONEDIAL1
 #endif    
