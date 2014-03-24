@@ -4651,7 +4651,10 @@ void CoreApp_HandleTorch(CCoreApp *pMe)
     }
 }
 #endif
-
+// liyz add for test @20140324
+#ifdef FEATURE_VERSION_C316
+extern boolean isMultiMediaProtectPass;
+#endif
 static boolean  IDD_IDLE_Handler(void       *pUser,
                                  AEEEvent   eCode,
                                  uint16     wParam,
@@ -4690,6 +4693,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
               //  IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);//返回待机界面时，要把显示titlebar标志还原成TRUE
               //  #endif
 	        }
+			// liyz add for test @20140324
+#ifdef FEATURE_VERSION_C316
+	      isMultiMediaProtectPass = FALSE;
+#endif
           //Add by pyuangui 20121220
           #if defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_W021_C11) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_V3CM301)
            if (NULL == pStatic)
