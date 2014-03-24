@@ -5,7 +5,7 @@
 		<Text>多媒体</Text>
 	</String>
 	<String Id="1002" Name="IDS_MULTIMEDIA_MEDIAGALLERY">
-		<Text>文件管理器</Text>
+		<Text>多媒体文件夹</Text>
 	</String>
 	<STRING Id="1011" Name="IDS_MULTIMEDIA_CAMERA">
 		<Text>照相机</Text>
