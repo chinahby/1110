@@ -7752,6 +7752,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
         }
         else
 #endif        
+		rc.y -= 5;
         rc.x = (128 - str_lenth)/2;
         rc.dx = str_lenth;
         (void)DrawTextWithProfile(pMe->a.m_pIShell,
