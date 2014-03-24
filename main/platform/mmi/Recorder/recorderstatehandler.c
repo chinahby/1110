@@ -80,13 +80,14 @@ static NextFSMActionEnum state_handler_of_state_init( Recorder* pme)
 {
 #ifdef FEATURE_VERSION_C316
 	boolean locksel;
+    extern boolean isMultiMediaProtectPass;
 #endif
 		// liyz add for test @20140321
 #ifdef FEATURE_VERSION_C316
 	OEM_GetConfig(CFGI_MULTIMEDIA_LOCK_CHECK, &locksel, sizeof( locksel));
 	
 	DBGPRINTF("Handler_STATE_INIT enter here locksel %d,pwdwright %d",locksel,pme->b_pwdWright);
-	if((locksel) && (!pme->b_pwdWright))
+	if((locksel) && (!pme->b_pwdWright) && !isMultiMediaProtectPass)
 	{
 		MOVE_TO_STATE(STATE_PWD);
 	}

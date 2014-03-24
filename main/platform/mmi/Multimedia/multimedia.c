@@ -886,6 +886,7 @@ static NextFSMAction MANINPWD_INPUTPWDINVAD_Handler(Multimed *pMe)
 
 */
 #ifdef FEATURE_VERSION_C316
+extern boolean isMultiMediaProtectPass;
 static NextFSMAction MANINPWD_INPUTPWD_Handler(Multimed *pMe)
 {
 	MSG_FATAL("MANINPWD_INPUTPWD_Handler....",0,0,0);
@@ -901,6 +902,8 @@ static NextFSMAction MANINPWD_INPUTPWD_Handler(Multimed *pMe)
 
         case MGDLGRET_PASS:            
 			MOVE_TO_STATE(MULTIMEDIAST_MAIN);
+			// liyz add for test @20140324
+            isMultiMediaProtectPass = TRUE;
             return NFSMACTION_CONTINUE;
 
         case MGDLGRET_FAILD:    

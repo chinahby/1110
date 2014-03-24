@@ -217,6 +217,7 @@ static NextFSMAction Handler_STATE_INIT(CMusicPlayer *pMe)
 {
 #ifdef FEATURE_VERSION_C316
 	boolean locksel;
+    extern boolean isMultiMediaProtectPass;
 #endif
 
 #if defined(AEE_STATIC)
@@ -235,7 +236,7 @@ static NextFSMAction Handler_STATE_INIT(CMusicPlayer *pMe)
 		OEM_GetConfig(CFGI_MULTIMEDIA_LOCK_CHECK, &locksel, sizeof( locksel));
 	    
 		DBGPRINTF("Handler_STATE_INIT enter here locksel %d,pwdwright %d",locksel,pMe->b_pwdWright);
-		if((locksel) && (!pMe->b_pwdWright))
+		if((locksel) && (!pMe->b_pwdWright) && !isMultiMediaProtectPass)
 		{
 			MOVE_TO_STATE(STATE_PWD);
 		}
