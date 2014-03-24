@@ -166,6 +166,10 @@ typedef struct {
 static int m_row = 0;
 static StartInfo start_info;	
 boolean m_main_avk_star = FALSE;
+// liyz add for test @20140324
+#ifdef FEATURE_VERSION_C316
+boolean isMultiMediaProtectPass = FALSE;
+#endif
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 #define PARAM_NOT_REF(x)
 /*==============================================================================
@@ -16256,6 +16260,10 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
         case EVT_DIALOG_INIT:
             pMe->m_pActiveIDlg = (IDialog*)dwParam;
             pMe->m_pActivedlgID = wParam;
+				// liyz add for test @20140324
+#ifdef FEATURE_VERSION_C316
+		isMultiMediaProtectPass = FALSE;
+#endif
             return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:
