@@ -14158,8 +14158,6 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 		//else if	( ((AVKType)wParam >= AVK_0) &&((AVKType)wParam <= AVK_9))
 #elif defined(FEATURE_VERSION_K232_Y101)
         else if ( ((AVKType)wParam >= AVK_1) &&((AVKType)wParam <= AVK_9))  
-#elif defined(FEATURE_VERSION_K232_Y105A)
-        else if(((AVKType)wParam == AVK_2))
 #else
         else if ( ((AVKType)wParam >= AVK_2) &&((AVKType)wParam <= AVK_9))
 #endif  
@@ -14266,8 +14264,11 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
             if(((uint16)WSTRLEN(pMe->m_DialString) <= MAX_SPEEDDIAL_CHARS) &&(wIndex!=0))
             {
                 #ifdef FEATURE_VERSION_K232_Y105A
-                MEMSET(pMe->m_DialString,0,sizeof(AECHAR)*MAX_SIZE_DIALER_TEXT);
-                WSTRCAT(pMe->m_DialString,L"112");
+                if((AVKType)wParam == AVK_2)
+                {
+                    MEMSET(pMe->m_DialString,0,sizeof(AECHAR)*MAX_SIZE_DIALER_TEXT);
+                    WSTRCAT(pMe->m_DialString,L"112");
+                }
                 #endif
                 CallApp_MakeSpeedDialCall(pMe);
             }
