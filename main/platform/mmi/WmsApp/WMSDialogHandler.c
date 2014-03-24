@@ -7914,7 +7914,11 @@ static boolean IDD_SENDING_Handler(void *pUser,
                             IDF_TEXT_TRANSPARENT|IDF_ALIGN_CENTER);
                 
                 wszTitle[0] = 0;
+				#if defined(FEATURE_DISP_128X128)
+                y += (nLineHeight + WMS_PIXELS_BETWEEN_LINE - 3);
+				#else
                 y += (nLineHeight + WMS_PIXELS_BETWEEN_LINE);
+				#endif
                 
                 pItem = (CMultiSendItemInfo *)IVector_ElementAt(pMe->m_pSendList, 0);
                 
