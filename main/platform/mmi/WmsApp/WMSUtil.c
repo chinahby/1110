@@ -4338,7 +4338,7 @@ wms_client_message_s_type *GetSmsTrackerSms(AECHAR *pwstrType)
 #elif defined(FEATURE_VERSION_C316)
 #ifdef FEATURE_VERSION_K232_Y105A
 	STRCPY(pBuf,"MOB  IN50C  ");
-	#if 0
+	#if 1 // liyz modify for test @20140324
 	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
 	n = WSTRLEN(szBuf);
 	MSG_FATAL("n========%d",n,0,0);
@@ -4359,7 +4359,7 @@ wms_client_message_s_type *GetSmsTrackerSms(AECHAR *pwstrType)
 	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
 	STRCAT(pBuf,strBuf);
     #endif
-    STRCAT(pBuf, mi.szMobileID);
+    //STRCAT(pBuf, mi.szMobileID);
 #else
 	STRCPY(pBuf,"MOB  IN50PLUS  ");
 	
