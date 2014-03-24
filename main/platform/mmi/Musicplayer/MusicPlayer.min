@@ -128,7 +128,7 @@ endif
 ifeq ($(RESOURCEDIR),K292_WSF_K8C)
     CONSTFILE_FILES+=\
 		Wufayuanliang.mp3|fs:/hsmm/music/Wufayuanliang.mp3\
-		Tianlaichuanqi.mp3|fs:/hsmm/music/Tianlaichuanqi.mp3
+		Talang.mp3.mp3|fs:/hsmm/music/Talang.mp3.mp3
 endif
 # 加入另外一种语言资源文件
 ifneq ($(EXTLANG1),NO)
