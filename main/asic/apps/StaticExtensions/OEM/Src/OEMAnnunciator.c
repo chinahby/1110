@@ -777,7 +777,11 @@ static OEMAnnun_data Annunciators[] =
     {ANNUN_FIELD_RINGTONE,         ANNUN_ICON_POSITION_8,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
     {ANNUN_FIELD_BATT,             ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
 #else
+#if defined(FEATURE_DISP_128X128)
+	{ANNUN_FIELD_ALARM, 			  ANNUN_ICON_POSITION_2,	  ROW1_Y,  IMG_WIDTH,	   IMG_HEIGHT,	&alarm_content},
+#else
   {ANNUN_FIELD_ALARM,               ANNUN_ICON_POSITION_8,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
+#endif
 #if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_K232_JST)&&!defined(FEATURE_VERSION_K232_X3)&&!defined(FEATURE_VERSION_K212_BH)
   {ANNUN_FIELD_MMS,                 ANNUN_ICON_POSITION_9,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
 #else
