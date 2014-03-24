@@ -283,6 +283,9 @@ typedef struct _CRecentCalls
 #ifdef FEATURE_VERSION_K212_ND
 #define PIXELS_TO_EDGE          (2)
 #define BETWEEN_LINE_PIXELS    (0)
+#elif defined(FEATURE_DISP_128X128)
+#define BETWEEN_LINE_PIXELS (1)
+#define PIXELS_TO_EDGE          (6)
 #else
 #define BETWEEN_LINE_PIXELS (3)
 #define PIXELS_TO_EDGE          (6)
