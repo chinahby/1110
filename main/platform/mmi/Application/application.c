@@ -1583,7 +1583,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                 MEMSET(AppLabel, 0x00, sizeof(AppLabel));
 #endif
 //#ifndef FEATURE_VERSION_C337
-#if  !(defined FEATURE_VERSION_C337) && !(defined FEATURE_VERSION_IC241A_MMX)
+#if  !(defined FEATURE_VERSION_C337) && !(defined FEATURE_VERSION_IC241A_MMX)&&!(defined FEATURE_VERSION_K232_Y100A)//test20140325.
                 (void)STRTOWSTR("%d. ",wsFmt,sizeof(wsFmt));
                 for (i=0;i<IMENUCTL_GetItemCount(pMenu);i++)
                 {
