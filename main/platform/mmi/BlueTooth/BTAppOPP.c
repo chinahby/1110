@@ -678,7 +678,7 @@ void BTApp_OPPBuildClientMenu( CBTApp* pMe )
   {
     szStatus[ 3 ] = 'C';
 	
-	#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5
+	#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 	ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_BT_TITLE, 
                           pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
 	#else
@@ -717,7 +717,7 @@ void BTApp_OPPBuildClientMenu( CBTApp* pMe )
 	{
 		AECHAR WTitle[20] = {0};
 
-		#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5
+		#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 		ISHELL_LoadResString(pMe->m_pShell,
 		                     AEE_APPSBTAPP_RES_FILE,                                
 		                     IDS_BT_TITLE,
@@ -818,7 +818,7 @@ void BTApp_OPPBuildSendFileClientMenu( CBTApp* pMe )
   {
     szStatus[ 3 ] = 'C';
 
-	#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5
+	#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 	ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_BT_TITLE, 
                           pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
 	#else
@@ -857,7 +857,7 @@ void BTApp_OPPBuildSendFileClientMenu( CBTApp* pMe )
 	{
 		AECHAR WTitle[20] = {0};
 
-		#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5
+		#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 		ISHELL_LoadResString(pMe->m_pShell,
 		                     AEE_APPSBTAPP_RES_FILE,                                
 		                     IDS_BT_TITLE,
@@ -932,7 +932,7 @@ void BTApp_OPPSettingClientMenu( CBTApp* pMe )
   {
     szStatus[ 3 ] = 'C';
 
-	#if defined (FEATURE_VERSION_W317A) ||  defined (FEATURE_VERSION_C337) ||  defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5
+	#if defined (FEATURE_VERSION_W317A) ||  defined (FEATURE_VERSION_C337) ||  defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 	ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_BT_TITLE, 
                           pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
 	#else
@@ -971,7 +971,7 @@ void BTApp_OPPSettingClientMenu( CBTApp* pMe )
 	{
 		AECHAR WTitle[20] = {0};
 
-		#if defined (FEATURE_VERSION_W317A) ||  defined (FEATURE_VERSION_C337) ||  defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5
+		#if defined (FEATURE_VERSION_W317A) ||  defined (FEATURE_VERSION_C337) ||  defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 		ISHELL_LoadResString(pMe->m_pShell,
 		                     AEE_APPSBTAPP_RES_FILE,                                
 		                     IDS_BT_TITLE,

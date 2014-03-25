@@ -3329,7 +3329,7 @@ static boolean HandleMyInfoOpitionDialogEvent(CBTApp *pMe,
   			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_EDIT_NAME, IDS_EDIT_NAME, NULL, 0);
 #endif
             
-			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5
+			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
             #else
 			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_EDIT_SHORT_NAME, IDS_EDIT_SHORT_NAME, NULL, 0);			
             IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_EDIT_MANU_DATA, IDS_EDIT_MANU_DATA, NULL, 0);
@@ -7466,7 +7466,7 @@ static boolean HandleSendFileDialogEvent(CBTApp *pMe,
 		{			
 			AECHAR 		WTitle[40] = {0};			
 
-			#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5
+			#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_KK5)
 			(void)ISHELL_LoadResString(pMe->m_pShell,
 				                       AEE_APPSBTAPP_RES_FILE,                                
 				                       IDS_BT_TITLE,
