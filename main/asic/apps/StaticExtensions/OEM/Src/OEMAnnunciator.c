@@ -1204,7 +1204,11 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
                    (int)Annunciators[nAnnunID].y_pos,
                    nWidth, nHeight, pBmp, 0, 0, AEE_RO_COPY);
         	IDISPLAY_SetDestination(pMe->m_coreObj->m_piDisplay, NULL); // restore the destination 
-
+            if(pBmp)// liyz add for test @20140325
+            {
+              IBITMAP_Release(pBmp);
+              pBmp = NULL;
+            }
             if(bUpdate)
             {
                 //DBGPRINTF("IAnnunciator_DrawImageField");ANNUN_STATE_RSSI_NO_SERV
