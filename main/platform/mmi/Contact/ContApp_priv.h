@@ -129,7 +129,7 @@ extern sSelectFieldListNode* pCurSelectFieldNode;
 #if defined(FEATURE_DISP_160X128)
 #define MAX_NUM_MENUPOP                 (5) //(6)
 #elif defined(FEATURE_DISP_128X160)
-#ifdef FEATURE_VERSION_K232_Y105A
+#if 0 //def FEATURE_VERSION_K232_Y105A
 #define MAX_NUM_MENUPOP                 (8) //(6)
 #else
 #define MAX_NUM_MENUPOP                 (7) //(6)
