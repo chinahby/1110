@@ -2227,7 +2227,12 @@ case EVT_ALARM:
         case EVT_ADS_ACCOUNT_EDIT:            
             MOVE_TO_STATE(COREST_ADS_ACCOUNT_EDIT)            
             CLOSE_DIALOG(DLGRET_CREATE)  
-			return TRUE;    
+			return TRUE;  
+
+        case EVT_PROXY_PARAMS_EDIT:  
+            MOVE_TO_STATE(COREST_PROXY_PARAMS_EDIT)            
+            CLOSE_DIALOG(DLGRET_CREATE)  
+			return TRUE; 
 
 #ifdef FEATURE_SHOW_RSSI_INFO
         case EVT_RSSI_INFO:

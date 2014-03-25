@@ -1078,6 +1078,7 @@ typedef enum _CoreAppState
 #endif
   COREST_ESN_EDIT,
   COREST_ADS_ACCOUNT_EDIT,
+  COREST_PROXY_PARAMS_EDIT,
 #if defined(FEATURE_SHOW_RSSI_INFO)
   COREST_RSSI_INFO,
 #endif
