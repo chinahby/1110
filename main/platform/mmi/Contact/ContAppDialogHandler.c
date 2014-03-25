@@ -4095,18 +4095,17 @@ static void  CContApp_DrawIMEIcon(ITextCtl *pTextCtl, IDisplay *pIDisplay)
     
     Appscom_GetThemeParameters(&TParam);
     #ifdef FEATURE_DISP_128X160
-    #if 1//ndef FEATURE_VERSION_K232_Y105A
-    IDISPLAY_FillRect(pIDisplay, &IconRect, TParam.seltextColor);
+    #ifdef FEATURE_VERSION_K232_Y105A
     bageImg = ISHELL_LoadResImage(pIShell, AEE_APPSCOMMONRES_IMAGESFILE,IDI_CONANT_BACKGROUNT);
     #else
-    bageImg = ISHELL_LoadResImage(pIShell, AEE_APPSCOMMONRES_IMAGESFILE,IDI_CONANT_BACKGROUNT);
+    IDISPLAY_FillRect(pIDisplay, &IconRect, TParam.seltextColor);
     #endif
     #else
     IDISPLAY_FillRect(pIDisplay, &IconRect, TParam.seltextColor);
     #endif
     RightTopImg = ISHELL_LoadResImage(pIShell, AEE_APPSCOMMONRES_IMAGESFILE, nResID);
     #ifdef FEATURE_DISP_128X160
-    #if 1//ndef FEATURE_VERSION_K232_Y105A
+    #ifdef FEATURE_VERSION_K232_Y105A
     if(bageImg != NULL)
     {
         IIMAGE_GetInfo(bageImg, &myInfo);
