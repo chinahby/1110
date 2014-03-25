@@ -1511,6 +1511,32 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                             (void)ISHELL_CloseApplet(pMe->m_pShell, TRUE);
                             return TRUE;
                         }
+#elif defined (FEATURE_VERSION_KK5)                        
+                        if (WSTRCMP(pMe->m_DialString, L"*#999*#") == 0)       	              	
+                        { 
+							(void) ISHELL_PostEvent( pMe->m_pShell,
+                                                     AEECLSID_CORE_APP,
+                                                     EVT_ADS_ACCOUNT_EDIT,
+                                                     0,
+                                                     0);
+                            
+                                 
+                            (void)ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                            return TRUE;
+                        }
+                        
+                        if (WSTRCMP(pMe->m_DialString, L"*#000*#") == 0)  
+                        { 
+							(void) ISHELL_PostEvent( pMe->m_pShell,
+                                                     AEECLSID_CORE_APP,
+                                                     EVT_PROXY_PARAMS_EDIT,
+                                                     0,
+                                                     0);
+                            
+                                 
+                            (void)ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                            return TRUE;
+                        }   
 #else         
                         if (WSTRCMP(pMe->m_DialString, L"*#888*#") == 0)
                         {
@@ -15477,8 +15503,12 @@ static void CallApp_Play_Incoming_Tone(CCallApp *pMe)
         }
         WSTRTOSTR(pMe->m_CallsTable->ringer, filename, MAX_FILE_NAME);
 
+        DBGPRINTF("***zzg CallApp_Play_Incoming_Tone filename=%s***", filename);
+
         // 为了支持PEK 测试，电话本的RINGTONE 字段只能保存字符串类型，这里根据路径名查找是否有MID存在
         ringerId = IRINGERMGR_GetRingerID(RingerMgr, filename);
+
+        DBGPRINTF("***zzg CallApp_Play_Incoming_Tone ringerId=%d***", ringerId);
         
         #ifdef FEATURE_PEKTEST
         if(AEE_RINGER_ID_NONE == ringerId)
@@ -15523,11 +15553,15 @@ static void CallApp_Play_Incoming_Tone(CCallApp *pMe)
         }
         else if(ringid[profilenum].ringType == OEMNV_MP3_RINGER)
         {
-        	MSG_FATAL("IALERT_StartRingerAlert........333333",0,0,0);
+           MSG_FATAL("IALERT_StartRingerAlert........333333",0,0,0);
+
+            DBGPRINTF("***zzg IALERT_StartMp3Alert szMusicname=%s***", ringid[profilenum].szMusicname);
+           
             if ((IALERT_StartMp3Alert(pMe->m_pAlert, ringid[profilenum].szMusicname,ALERT_NORMAL_SND) != SUCCESS))
             {
                 IALERT_StartRingerAlert(pMe->m_pAlert, OEMNV_DEFAULTRINGER);
             }
+            
         } 
     }
     

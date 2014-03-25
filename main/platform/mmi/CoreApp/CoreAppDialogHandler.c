@@ -547,6 +547,10 @@ static boolean  IDD_ADS_ACCOUNT_EDIT_Handler(void *pUser,
                                  uint16     wParam,
                                  uint32     dwParam);
 
+static boolean  IDD_PROXY_PARAMS_EDIT_Handler(void *pUser,
+								 AEEEvent   eCode,
+                                 uint16     wParam,
+                                 uint32     dwParam);
 #endif
 #ifdef FEATURE_SHOW_RSSI_INFO
 // 对话框 IDD_RSSI_INFO 事件处理函?
@@ -800,6 +804,10 @@ void CoreApp_SetDialogHandler(CCoreApp *pMe)
             pMe->m_pDialogHandler = IDD_ADS_ACCOUNT_EDIT_Handler;
 			break;
 #endif
+        case IDD_PROXY_PARAMS_EDIT:
+            pMe->m_pDialogHandler = IDD_PROXY_PARAMS_EDIT_Handler;
+			break;    
+
 //#if defined(FEATURE_VERSION_W317A)
 		
 //#endif
@@ -2820,6 +2828,9 @@ static boolean  IDD_ADS_ACCOUNT_EDIT_Handler(void *pUser,
     {
         return FALSE;
     }  
+
+    MSG_FATAL("***zzg IDD_ADS_ACCOUNT_EDIT_Handler m_pAdsAccountUsername=%x, m_pAdsAccountPassword=%x***", 
+                        pMe->m_pAdsAccountUsername, pMe->m_pAdsAccountPassword, 0);
     
     MSG_FATAL("***zzg IDD_ADS_ACCOUNT_EDIT_Handler eCode=%x, wParam=%x, dwParam=%d***", eCode, wParam, dwParam);
 
@@ -2835,7 +2846,7 @@ static boolean  IDD_ADS_ACCOUNT_EDIT_Handler(void *pUser,
             
             SETAEERECT(&rt,0,30,128,40);
 			ITEXTCTL_SetRect(pMe->m_pAdsAccountUsername, &rt);
-			ITEXTCTL_SetProperties(pMe->m_pAdsAccountUsername, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_FIXSETRECT|TP_NOUPDATE);
+			ITEXTCTL_SetProperties(pMe->m_pAdsAccountUsername, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_FIXSETRECT|TP_NOUPDATE|TP_NOSYMBOL);
             ITEXTCTL_SetMaxSize(pMe->m_pAdsAccountUsername, MAX_STRING_LENGTH); 
             (void)ITEXTCTL_SetTitle(pMe->m_pAdsAccountUsername, NULL,0,WTitle);
             //设置文本
@@ -2844,7 +2855,7 @@ static boolean  IDD_ADS_ACCOUNT_EDIT_Handler(void *pUser,
 
             SETAEERECT(&rt,0,100,128,40);
 			ITEXTCTL_SetRect(pMe->m_pAdsAccountPassword, &rt);
-            ITEXTCTL_SetProperties(pMe->m_pAdsAccountPassword, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_FIXSETRECT|TP_NOUPDATE); 
+            ITEXTCTL_SetProperties(pMe->m_pAdsAccountPassword, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_FIXSETRECT|TP_NOUPDATE|TP_NOSYMBOL); 
             ITEXTCTL_SetMaxSize(pMe->m_pAdsAccountPassword, MAX_STRING_LENGTH);     
             (void)ITEXTCTL_SetTitle(pMe->m_pAdsAccountPassword, NULL,0,WTitle);
             
@@ -2908,7 +2919,7 @@ static boolean  IDD_ADS_ACCOUNT_EDIT_Handler(void *pUser,
             CLOSE_DIALOG(DLGRET_MSGOK)  
             return TRUE;
         }
-
+        
         case EVT_KEY:
         {
 			switch (wParam)
@@ -2954,6 +2965,175 @@ static boolean  IDD_ADS_ACCOUNT_EDIT_Handler(void *pUser,
     return FALSE;
 }
 #endif
+
+
+static boolean  IDD_PROXY_PARAMS_EDIT_Handler(void *pUser,
+								 AEEEvent   eCode,
+                                 uint16     wParam,
+                                 uint32     dwParam)
+{
+    CCoreApp *pMe = (CCoreApp *)pUser;
+	AEERect rt = {0};	
+	uint16  time = 0;
+   
+	AECHAR      wstrIpTitle[20]; 
+    AECHAR      wstrPortTitle[20];        
+    AECHAR      wstrIpValue[MAX_STRING_LENGTH];  
+    AECHAR      wstrPortValue[MAX_STRING_LENGTH]; 
+
+    ITextCtl       *m_pProxyParamIp;
+    ITextCtl       *m_pProxyParamPort;
+  
+    if (NULL == pMe)
+    {
+        return FALSE;
+    }
+  
+   
+  	m_pProxyParamIp = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_IP_EDIT);  
+    m_pProxyParamPort= (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDD_PORT_EDIT); 
+
+	if ((m_pProxyParamIp == NULL) || (m_pProxyParamPort == NULL))      
+    {
+        return FALSE;
+    }  
+
+    MSG_FATAL("***zzg IDD_PROXY_PARAMS_EDIT_Handler m_pProxyParamIp=%x, m_pProxyParamPort=%x***", 
+                                    m_pProxyParamIp, m_pProxyParamPort, 0);
+                        
+    MSG_FATAL("***zzg IDD_PROXY_PARAMS_EDIT_Handler eCode=%x, wParam=%x, dwParam=%d***", eCode, wParam, dwParam);
+
+	switch (eCode)
+    {
+        case EVT_DIALOG_INIT:	            
+		{
+            AECHAR WTitle[2] = {0};
+            char strIp[MAX_STRING_LENGTH];
+            char strPort[MAX_STRING_LENGTH];
+                
+            OEM_GetProxy_Param(strIp, strPort);
+            
+            SETAEERECT(&rt,0,30,128,40);
+			ITEXTCTL_SetRect(m_pProxyParamIp, &rt);
+			ITEXTCTL_SetProperties(m_pProxyParamIp, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_FIXSETRECT|TP_NOUPDATE|TP_NOSYMBOL);
+            ITEXTCTL_SetMaxSize(m_pProxyParamIp, MAX_STRING_LENGTH); 
+            (void)ITEXTCTL_SetTitle(m_pProxyParamIp, NULL,0,WTitle);
+            //设置文本
+            STRTOWSTR(strIp, wstrIpValue, sizeof(wstrIpValue));
+            (void)ITEXTCTL_SetText(m_pProxyParamIp, wstrIpValue, -1);	            
+
+            SETAEERECT(&rt,0,100,128,40);
+			ITEXTCTL_SetRect(m_pProxyParamPort, &rt);
+            ITEXTCTL_SetProperties(m_pProxyParamPort, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_FIXSETRECT|TP_NOUPDATE|TP_NOSYMBOL); 
+            ITEXTCTL_SetMaxSize(m_pProxyParamPort, MAX_STRING_LENGTH);     
+            (void)ITEXTCTL_SetTitle(m_pProxyParamPort, NULL,0,WTitle);
+            
+            STRTOWSTR(strPort, wstrPortValue, sizeof(wstrPortValue));
+            (void)ITEXTCTL_SetText(m_pProxyParamPort, wstrPortValue, -1);	
+
+            ITEXTCTL_SetActive(m_pProxyParamIp, TRUE);     
+            return TRUE;
+        }
+        
+        case EVT_DIALOG_START:
+        {
+            (void) ISHELL_PostEvent(pMe->a.m_pIShell,
+                                    AEECLSID_CORE_APP,
+                                    EVT_USER_REDRAW,
+                                    0,
+                                    0);
+
+            return TRUE;
+        }    
+        
+        case EVT_USER_REDRAW:        
+        {
+            BottomBar_Param_type  BBarParam ={0};                 
+            BBarParam.eBBarType = BTBAR_OK_DELETE;				 
+                            
+            (void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                                         AEE_COREAPPRES_LANGFILE,
+                                         IDS_WEB_PARAM_IP,
+                                         wstrIpValue,
+                                         sizeof(wstrIpValue));
+
+            (void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                                         AEE_COREAPPRES_LANGFILE,
+                                         IDS_WEB_PARAM_PORT,
+                                         wstrPortValue,
+                                         sizeof(wstrPortValue));
+
+            
+             SETAEERECT(&pMe->m_rc,0,0,128,160);                 
+			 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);    
+			 
+			 IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);		             
+			 IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wstrIpValue, -1, 0, 10, 0, IDF_TEXT_TRANSPARENT);         
+             IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wstrPortValue, -1, 0, 80, 0, IDF_TEXT_TRANSPARENT);
+			                  
+			 IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);	  
+
+             ITEXTCTL_SetActive(m_pProxyParamIp,TRUE);             
+             ITEXTCTL_SetActive(m_pProxyParamPort,FALSE); 
+
+             DrawBottomBar(pMe->m_pDisplay, &BBarParam);    
+             
+        	 // 更新显示
+        	 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
+             return TRUE;
+        }            
+            
+        case EVT_DIALOG_END:
+        {
+            CLOSE_DIALOG(DLGRET_MSGOK)  
+            return TRUE;
+        }
+        case EVT_KEY:
+        {
+			switch (wParam)
+            {
+            	case AVK_INFO:
+				case AVK_SELECT:
+				{      
+                    char           str1[MAS_BREWSETINT_STRING]; 
+                    char           str2[MAS_BREWSETINT_STRING]; 
+                    
+                    AECHAR *pwstrIp  = ITEXTCTL_GetTextPtr(m_pProxyParamIp);  
+                    AECHAR *pwstrPort = ITEXTCTL_GetTextPtr(m_pProxyParamPort);   
+                    
+					WSTRTOSTR(pwstrIp,str1,sizeof(str1));	                    
+                    WSTRTOSTR(pwstrPort,str2,sizeof(str2));	
+
+                    OEM_SetProxy_Param(str1, str2);
+                    
+                    CLOSE_DIALOG(DLGRET_MSGOK)
+					break;
+				}
+					
+            	case AVK_CLR:
+				{
+                    CLOSE_DIALOG(DLGRET_MSGOK)
+                }
+                
+				default:					
+				{
+                    break;
+                }
+					
+			}
+            return TRUE;
+        }
+            
+        default:
+        {
+            break;
+        }
+    }
+
+    return FALSE;
+}
+
+
 
 #ifdef FEATURE_SHOW_RSSI_INFO
 /*==============================================================================
@@ -4997,7 +5177,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 		case EVT_USER_REDRAW:     
         case EVT_UPDATEIDLE:
         {   
-			
 			//Add By zzg 2012_10_29
 			#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_K232_Y101)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K212_HUALU)||defined (FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_K232_Y105A)|| defined (FEATURE_VERSION_KK5))
 		    if (pMe->pFileMgr)

@@ -317,6 +317,7 @@ typedef enum _MediaDialogStat
 #define MG_FNSHOP_NULL   0X00000000 /*Do default handle*/
 #define MG_FNSHOP_DONE   0X00000001 /*Show Done message*/
 #define MG_FNSHOP_ERROR  0X00000010
+#define MG_FNSHOP_TOO_LONG 0x00000020
 /*message box ID*/
 typedef enum _MediaDialogMsgID
 {
@@ -491,6 +492,10 @@ struct  _CMediaGalleryApp{
    char              *m_strPhonePWD;
 #endif
    uint16             m_option_sel;
+
+#ifdef FEATURE_VERSION_KK5
+   boolean           m_PreviewFailed;
+#endif
 } ;
 
 /*===========================================================================

@@ -114,6 +114,8 @@ static NextFSMAction COREST_ESN_EDIT_Handler(CCoreApp *pMe);
 // 状态 COREST_ADS_ACCOUNT_EDIT 处理函数
 static NextFSMAction COREST_ADS_ACCOUNT_EDIT_Handler(CCoreApp *pMe);
 
+// 状态 COREST_PROXY_PARAMS_EDIT 处理函数
+static NextFSMAction COREST_PROXY_PARAMS_EDIT_Handler(CCoreApp *pMe);
 
 #if defined(FEATURE_SHOW_RSSI_INFO)
 // 状态 COREST_RSSI_INFO 处理函数
@@ -154,6 +156,10 @@ extern boolean   IsRunAsFactoryTestMode(void);
 #endif
 static int CoreSecurity_VerifyPIN(CCoreApp * pMe, uint8 byPinID);
 static int CoreSecurity_VerifyPUK(CCoreApp * pMe, uint8 byPinID);
+
+
+
+static void CoreSecurity_ShowPowerOn(CCoreApp * pMe);
 
 /*==============================================================================
 
@@ -296,6 +302,9 @@ NextFSMAction CoreApp_ProcessState(CCoreApp *pMe)
 			break;               
          case COREST_ADS_ACCOUNT_EDIT:
             retVal = COREST_ADS_ACCOUNT_EDIT_Handler(pMe);
+			break;  
+         case COREST_PROXY_PARAMS_EDIT:
+            retVal = COREST_PROXY_PARAMS_EDIT_Handler(pMe);
 			break;   
 #endif
 #ifdef FEATURE_SHOW_RSSI_INFO
@@ -1522,7 +1531,15 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
 #endif
                 pMe->m_bemergencymode = FALSE;
             }
+
+#ifdef FEATURE_VERSION_KK5            
+            (void) ISHELL_SetTimer(pMe->a.m_pIShell,
+                                         3000,
+                                         (PFNNOTIFY)CoreSecurity_ShowPowerOn,
+                                         (void*)pMe);
+#else
             CoreApp_ShowDialog(pMe, IDD_STARTUPANI);
+#endif
             return NFSMACTION_WAIT;
             
         case DLGRET_OK:
@@ -1535,6 +1552,12 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
     MSG_FATAL("COREST_STARTUPANI_Handler End",0,0,0);
     return NFSMACTION_WAIT;
 } // COREST_STARTUPANI_Handler
+
+
+static void CoreSecurity_ShowPowerOn(CCoreApp * pMe)
+{
+    CoreApp_ShowDialog(pMe, IDD_STARTUPANI);
+}
 
 /*==============================================================================
 函数:
@@ -2159,6 +2182,26 @@ static NextFSMAction COREST_ADS_ACCOUNT_EDIT_Handler(CCoreApp *pMe)
     return NFSMACTION_CONTINUE;
 }
 
+static NextFSMAction COREST_PROXY_PARAMS_EDIT_Handler(CCoreApp *pMe)
+{
+	if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    MSG_FATAL("COREST_PROXY_PARAMS_EDIT_Handler Start",0,0,0);
+    switch (pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            CoreApp_ShowDialog(pMe, IDD_PROXY_PARAMS_EDIT);
+            return NFSMACTION_WAIT;
+            
+        case DLGRET_MSGOK:
+        default:
+            MOVE_TO_STATE(COREST_STANDBY)
+    }
+    MSG_FATAL("COREST_PROXY_PARAMS_EDIT_Handler End",0,0,0);
+    return NFSMACTION_CONTINUE;
+}
 
 #ifdef FEATURE_UTK2
 /*==============================================================================

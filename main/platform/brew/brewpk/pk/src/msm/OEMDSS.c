@@ -1128,6 +1128,13 @@ void OEMDSS_SetPPPAccount(int nProfile, uint32 uAppType)
             {
                 DBGPRINTF(";put NV_PPP_USER_ID_I failed");
             }
+
+            (void)STRCPY((char *)nvi.pap_password.password, (char *)passwd_info);
+            nvi.pap_password.password_len = STRLEN((char *)passwd_info);
+            if(OEMNV_Put(NV_PPP_PASSWORD_I, &nvi) != NV_DONE_S)
+            {
+                DBGPRINTF(";put NV_PPP_PASSWORD_I failed");
+            }
         }
         else
         {

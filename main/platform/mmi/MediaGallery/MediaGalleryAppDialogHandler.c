@@ -626,6 +626,22 @@ static __inline void MediaGalleryApp_ShowErrorMsgBox(CMediaGalleryApp *pMe)
                               BTBAR_BACK);//Prompt success!
 }//MediaGalleryApp_ShowDoneMsgBox
 
+
+static __inline void MediaGalleryApp_ShowPathTooLongMsgBox(CMediaGalleryApp *pMe)
+{
+   if(!pMe)
+      return;
+
+   MGAppUtil_SetMediaDlgStat(pMe, MG_DLGSTAT_MESSAGEBOX);
+   MediaGalleryApp_SetMsgBoxID(pMe, MG_MSGID_DONE);
+   MediaGalleryApp_ShowMsgBox(pMe,
+                              NULL,
+                              MGRES_LANGFILE,
+                              IDS_MSG_PATH_TOO_LONG,
+                              MESSAGE_INFORMATION,
+                              BTBAR_BACK);
+}
+
 static __inline void MediaGalleryApp_ShowProgressBox(CMediaGalleryApp *pMe,
                                                       uint16 nMsgBoxID)
 {
@@ -6283,6 +6299,10 @@ static __inline int MGAppPopupMenu_OperationDone(CMediaGalleryApp *pMe,
 	{
 		MediaGalleryApp_ShowErrorMsgBox(pMe);
 	}
+    else if(nType == MG_FNSHOP_TOO_LONG)
+	{
+		MediaGalleryApp_ShowPathTooLongMsgBox(pMe);
+	}
    else
    {
       MediaGalleryApp_SetOps(pMe, MG_OPS_DEFAULT, MG_OP_NULL);
@@ -7388,6 +7408,23 @@ static boolean MediaGalleryApp_SoundSettingDlg_HandleEvent(CMediaGalleryApp *pMe
             MGAppUtil_UpdateSelItemCheck(pMe);
             szName = MediaGalleryApp_GetCurrentNodeName(pMe);
             DBGPRINTF("szName=%s",szName);
+
+            MSG_FATAL("***zzg strlen(szName)=%d***", STRLEN(szName), 0, 0);
+
+#ifdef FEATURE_VERSION_KK5
+            if (STRLEN(szName) > AEE_MAX_FILE_NAME)
+            {
+                MGAppPopupMenu_OperationDone(pMe, MG_FNSHOP_TOO_LONG);
+                return;
+            }
+                
+            if (pMe->m_PreviewFailed == TRUE)
+            {
+                MGAppPopupMenu_OperationDone(pMe, MG_FNSHOP_ERROR);
+                return;     
+            }
+#endif
+            
             if(SUCCESS ==
                MediaGallery_DoExplorerAddCB((FileNamesBuf)szName, 1))
             {
@@ -7644,6 +7681,8 @@ static void MGAppUtil_PreviewRingtone(void *po)
    if(!pMe)
       return;
 
+   MSG_FATAL("***zzg MGAppUtil_PreviewRingtone***", 0, 0, 0);
+
    MGAppUtil_GetMediaMenuSelectItem((void *)pMe);
 
    pCurNode = MediaGalleryApp_GetCurrentNode(pMe);
@@ -7819,7 +7858,9 @@ static int MGAppUtil_BuildPopupMenuItems(CMediaGalleryApp* pMe,
             (eMimeBase == MG_MIME_VOICEREC) || (eMimeBase == MG_MIME_CALLREC))
       {
          MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_PLAY);
+#ifndef FEATURE_VERSION_KK5         
          MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_SETAS);
+#endif
          MGMENU_ADDITEM(*ppPopupMenu, IDS_MSG_SAVEPLAYLIST);
       }
       else if(MG_BETWEEN(eMimeBase, MG_MIME_VIDEOBASE, MG_MIME_VIDEOMAX))
@@ -10902,6 +10943,19 @@ static void MGAppUtil_LoadMediaNotify(void * pUser,
       return;
    }
 
+   MSG_FATAL("***zzg MGAppUtil_LoadMediaNotify nStatus=%x***", pCmdNotify->nStatus, 0, 0);
+
+#ifdef FEATURE_VERSION_KK5
+   if (pCmdNotify->nStatus == MM_STATUS_ABORT)
+   {
+        pMe->m_PreviewFailed = TRUE;        
+   }
+   else
+   {
+        pMe->m_PreviewFailed = FALSE;
+   }
+#endif
+
    switch(pCmdNotify->nStatus)
    {
    case MM_STATUS_SEEK_FAIL:
@@ -10913,6 +10967,8 @@ static void MGAppUtil_LoadMediaNotify(void * pUser,
    default:
       break;
    }
+
+   MSG_FATAL("***zzg MGAppUtil_LoadMediaNotify pCmdNotify->nCmd=%x***", pCmdNotify->nCmd, 0, 0);
 
    switch(pCmdNotify->nCmd)
    {
@@ -10938,6 +10994,7 @@ static void MGAppUtil_LoadMediaNotify(void * pUser,
 
    case MM_CMD_GETMEDIAPARM://after IMedia_RegisterNotify, call IMedia_GetMediaParm
       {
+        MSG_FATAL("***zzg MGAppUtil_LoadMediaNotify pCmdNotify->nStatus=%x***", pCmdNotify->nStatus, 0, 0);
          switch (pCmdNotify->nStatus)
          {
          case MM_STATUS_MEDIA_SPEC:

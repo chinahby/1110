@@ -5941,7 +5941,10 @@ void CMusicPlayer_MediaNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify)
                     pMe->m_bPaused = FALSE;
                     pMe->m_bPlaying = FALSE;
                     pMe->m_nCurrentTime = 0;
+
+#ifndef FEATURE_VERSION_KK5                    
                     IBACKLIGHT_Enable(pMe->m_pBackLight);
+#endif                    
                     if(SUCCESS != IFILEMGR_Test(pMe->m_pFileMgr,pMe->m_PlayingMusiclist[pMe->m_MusicPlayerCfg.lastPlayMusicID].pMusicName+1))
                     {
                        (void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER, EVT_POPMSGDIALOG, IDS_MSG_FILE_NOEXIT, 0);
@@ -7494,7 +7497,7 @@ static void MP3_Build_MainOpts_Menu(CMusicPlayer *pMe,IMenuCtl *pMenuCtl)
 	#if !defined(FEATURE_VERSION_W021_WSF_P7)
     MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST_ADDMUSIC);
 	#endif
-#if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
+#if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_KK5)
     MP3MENU_ADDITEM(pMenuCtl,IDS_SET_AS_RINGTONE);
 #endif
     MP3MENU_ADDITEM(pMenuCtl,IDS_SETTINGS);

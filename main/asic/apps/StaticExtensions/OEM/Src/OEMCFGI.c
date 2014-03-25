@@ -745,6 +745,10 @@ typedef struct
    
    byte   brewsetings_usename[MAS_BREWSETINT_STRING];
    byte   brewsetings_password[MAS_BREWSETINT_STRING];
+   
+   byte   proxy_params_ip[MAS_BREWSETINT_STRING];
+   byte   proxy_params_port[MAS_BREWSETINT_STRING];
+   
    boolean brew_laguagefalgs;//uint16
 #ifdef FEATURE_ANALOG_TV
    uint32 tv_or_camera;
@@ -1204,6 +1208,10 @@ static int OEMPriv_SetItem_CFGI_BREWSET_USENAME(void* pBuff);
 static int OEMPriv_GetItem_CFGI_BREWSET_USENAME(void* pBuff);
 static int OEMPriv_SetItem_CFGI_BREWSET_PASSWORD(void* pBuff);
 static int OEMPriv_GetItem_CFGI_BREWSET_PASSWORD(void* pBuff);
+static int OEMPriv_SetItem_CFGI_PROXY_PARAMS_IP(void* pBuff);
+static int OEMPriv_GetItem_CFGI_PROXY_PARAMS_IP(void* pBuff);
+static int OEMPriv_SetItem_CFGI_PROXY_PARAMS_PORT(void* pBuff);
+static int OEMPriv_GetItem_CFGI_PROXY_PARAMS_PORT(void* pBuff);
 static int OEMPriv_SetItem_CFGI_LANGUAGE_MOD(void *pBuff);
 static int OEMPriv_GetItem_CFGI_LANGUAGE_MOD(void *pBuff);
 static int OEMPriv_GetItem_CFGI_FM_PLAY_MODE(void *pBuff);
@@ -2208,6 +2216,8 @@ static OEMConfigListType oemi_cache = {
 #endif //CUST_EDITION
    ,{DEFAULT_BREW_USERNAME}  //CFGI_BREWSET_USENAME
    ,{DEFAULT_BREW_PASSWORD}  //CFGI_BREWSET_PASSWORD
+   ,"10.239.221.6"      //CFGI_PROXY_PARAMS_IP
+   ,"8080"              //CFGI_PROXY_PARAMS_PORT
    ,FALSE    //CFGI_LANGUAGE_MOD
 #ifdef FEATURE_ANALOG_TV
    ,0
@@ -2878,6 +2888,8 @@ static ConfigItemTableEntry const customOEMItemTable[] =
 #endif//FEATURE_TOUCHPAD
    CFGTABLEITEM(CFGI_BREWSET_USENAME,sizeof(byte)*MAS_BREWSETINT_STRING),
    CFGTABLEITEM(CFGI_BREWSET_PASSWORD,sizeof(byte)*MAS_BREWSETINT_STRING),
+   CFGTABLEITEM(CFGI_PROXY_PARAMS_IP,sizeof(byte)*MAS_BREWSETINT_STRING),
+   CFGTABLEITEM(CFGI_PROXY_PARAMS_PORT,sizeof(byte)*MAS_BREWSETINT_STRING),
    CFGTABLEITEM(CFGI_LANGUAGE_MOD,sizeof(boolean)),
 #ifdef FEATURE_ANALOG_TV
    CFGTABLEITEM(CFGI_TV_OR_CAMERA,sizeof(uint32)),
@@ -3214,8 +3226,13 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.disable_in_call_disp = FALSE;
    oemi_cache.disable_bg_image = FALSE;
    oemi_cache.manual_plmn_sel_allowed = TRUE;
+   
    STRCPY((char *)oemi_cache.brewsetings_usename,DEFAULT_BREW_USERNAME);
    STRCPY((char *)oemi_cache.brewsetings_password,DEFAULT_BREW_PASSWORD);
+
+   STRCPY((char *)oemi_cache.proxy_params_ip,"10.239.221.6");
+   STRCPY((char *)oemi_cache.proxy_params_port,"8080");
+   
 #ifdef CUST_EDITION
 #ifdef FEATURE_KEYGUARD	 
 
@@ -12646,6 +12663,37 @@ static int OEMPriv_SetItem_CFGI_BREWSET_PASSWORD(void *pBuff)
     OEMPriv_WriteOEMConfigList(); 
     return SUCCESS;
 }
+
+static int OEMPriv_GetItem_CFGI_PROXY_PARAMS_IP(void *pBuff)
+{
+	 MEMCPY(pBuff, (void*) &oemi_cache.proxy_params_ip, sizeof(byte) * MAS_BREWSETINT_STRING);
+     DBGPRINTF("CFGI_PROXY_PARAMS_IP %s",oemi_cache.proxy_params_ip);
+     return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PROXY_PARAMS_IP(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.proxy_params_ip, pBuff, sizeof(byte) * MAS_BREWSETINT_STRING);
+    DBGPRINTF("CFGI_PROXY_PARAMS_IP %s",oemi_cache.proxy_params_ip);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_PROXY_PARAMS_PORT(void *pBuff)
+{
+	MEMCPY(pBuff, (void*) &oemi_cache.proxy_params_port, sizeof(byte) * MAS_BREWSETINT_STRING);
+    DBGPRINTF("CFGI_PROXY_PARAMS_PORT %s",oemi_cache.proxy_params_port);
+    return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PROXY_PARAMS_PORT(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.proxy_params_port, pBuff, sizeof(byte) * MAS_BREWSETINT_STRING);
+    DBGPRINTF("CFGI_PROXY_PARAMS_PORT %s",oemi_cache.proxy_params_port);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
 static int OEMPriv_SetItem_CFGI_IDLE_DATETIME_MODE(void *pBuff)
 {
 	MEMCPY((void*) &oemi_cache.Idle_datetime_mode, pBuff, sizeof(byte));
@@ -13267,27 +13315,6 @@ extern char charsvc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1];
 void OEM_SetUCBROWSER_ADSAccount(void)
 {
 #ifndef WIN32
-
-#ifdef FEATURE_VERSION_K232_Y101
-    nv_item_type nvi;
-    char username[MAS_BREWSETINT_STRING] = {0};
-    char password[MAS_BREWSETINT_STRING] = {0};
-
-    OEMPriv_GetItem_CFGI_BREWSET_USENAME((void*)username);
-    OEMPriv_GetItem_CFGI_BREWSET_PASSWORD((void*)password);
-    
-    DBGPRINTF("OEM_SetBROWSER_ADSAccount username=%s ",username);
-    DBGPRINTF("OEM_SetBROWSER_ADSAccoun passwordt=%s",password);
-    
-    // ’À∫≈
-    (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)username);
-    nvi.pap_user_id.user_id_len = STRLEN((char *)username);
-    (void)OEMNV_Put(NV_PPP_USER_ID_I, &nvi);
-    // ’À∫≈√‹¬Î
-    (void)STRCPY((char *)nvi.pap_password.password, (char *)password);
-    nvi.pap_password.password_len = STRLEN((char *)password);
-    (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
-#else
     if(!gsdi_uim_omh_cap.omh_enabled)
     {
         nv_item_type nvi;
@@ -13308,7 +13335,6 @@ void OEM_SetUCBROWSER_ADSAccount(void)
         nvi.pap_password.password_len = STRLEN((char *)password);
         (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
     }
-#endif
 #endif
 } /* OEM_SetBAM_ADSAccount */
 //*************
@@ -13341,6 +13367,29 @@ void OEM_GetAdsAccount_Param(char* username, char* password)
     DBGPRINTF("OEM_GetAdsAccount_Param username=%s",username);
     DBGPRINTF("OEM_GetAdsAccount_Param passwordt=%s",password); 
 }
+
+
+void OEM_SetProxy_Param(char* ip, char* port)
+{
+    nv_item_type nvi;
+
+    OEMPriv_SetItem_CFGI_PROXY_PARAMS_IP((void*)ip);
+    OEMPriv_SetItem_CFGI_PROXY_PARAMS_PORT((void*)port);
+    
+    DBGPRINTF("OEM_SetProxy_Param username=%s",ip);
+    DBGPRINTF("OEM_SetProxy_Param passwordt=%s",port);   
+}
+
+void OEM_GetProxy_Param(char* ip, char* port)
+
+{   
+    OEMPriv_GetItem_CFGI_PROXY_PARAMS_IP((void*)ip);   
+    OEMPriv_GetItem_CFGI_PROXY_PARAMS_PORT((void*)port);  
+    
+    DBGPRINTF("OEM_GetProxy_Param username=%s",ip);
+    DBGPRINTF("OEM_GetProxy_Param passwordt=%s",port); 
+}
+
 
 //*************
 

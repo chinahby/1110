@@ -3055,6 +3055,12 @@ RETURN VALUE
 SIDE EFFECTS
   Each call to 'nv_get' results in a Wait and watchdog kicking
 ===========================================================================*/
+
+#include "OEMSVC.h"
+#include "AEERUIM.h"
+#include "ds707_data_session_profile.h"
+extern char charsvc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1];
+
 void is707_get_ppp_auth_info_from_nv
 (
   ppp_dev_opts_type *ppp_config,
@@ -3080,7 +3086,7 @@ void is707_get_ppp_auth_info_from_nv
 #ifdef FEATURE_DS_MULTIPLE_PROFILES
        && (num_valid_profiles > 0)
 #endif
-     )
+     )     
   {
     /*-------------------------------------------------------------------------
       Read the active profile from NV. 
@@ -3184,6 +3190,37 @@ void is707_get_ppp_auth_info_from_nv
     {
       passwd_read_failed = TRUE; /* PPP Password NV was never written */
     }	
+
+#ifdef CUST_EDITION
+    MSG_FATAL("***zzg is707_get_ppp_auth_info_from_nv charsvc_p_name[0]=%d,charsvc_p_name[1]=%d,charsvc_p_name[2]=%d***", charsvc_p_name[0], charsvc_p_name[1], charsvc_p_name[2]);
+    //reliance Reliance
+    if ((((int)charsvc_p_name[0] == 82) || ((int)charsvc_p_name[0] == 72))
+        && ((int)charsvc_p_name[1] == 101) && ((int)charsvc_p_name[2] == 108)
+        )
+    {
+        MSG_FATAL("***zzg is707_get_ppp_auth_info_from_nv charsvc_p_name=reliance***", 0, 0, 0);
+        /*-------------------------------------------------------------------------
+              Read the PPP password from NV. 
+            -------------------------------------------------------------------------*/
+       nv_status = nv_get( NV_PPP_PASSWORD_I, &nv_item );
+
+        /*-------------------------------------------------------------------------
+              If NV read succeeded, load the password into the provided ppp config
+            -------------------------------------------------------------------------*/
+        if( nv_status == NV_DONE_S)
+        {
+          ppp_config->auth_info.passwd_len = nv_item.ppp_password.password_len;
+          memcpy( ppp_config->auth_info.passwd_info,
+                  (char *)nv_item.ppp_password.password,
+                  ppp_config->auth_info.passwd_len );
+        }
+        else
+        {
+          passwd_read_failed = TRUE; /* PPP Password NV was never written */
+        }
+    }        
+#endif
+
   }
   else
   {

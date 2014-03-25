@@ -18125,6 +18125,8 @@ int SetBrowserArrEx_Main(MainMenu *pMe, char *purl)
 	int Result = EUNSUPPORTED;
 	char urlCan[1024] = {0};
 
+    char proxy[1024] = {0};
+
     char strip[64] = {0};
     char strport[64] = {0};
     char tmp[128] = {0};
@@ -18134,6 +18136,8 @@ int SetBrowserArrEx_Main(MainMenu *pMe, char *purl)
     MSG_FATAL("***zzg SetBrowserArrEx_Main***", 0, 0, 0);
     
 	DBGPRINTF("svc_p_name %s %d",charsvc_p_name,charsvc_p_name[0],0);
+ 
+    STRCPY(proxy, "Proxy:");
 	
 	if(purl && STRLEN(purl)>1)
 	{
@@ -18145,28 +18149,85 @@ int SetBrowserArrEx_Main(MainMenu *pMe, char *purl)
 		STRCPY(urlCan,"useragent:BREW-Applet/0x20068888 (BREW/3.1.5.20; DeviceId: 8976509865757e; Lang: hi; Profile/MIDP-2.0_Configuration/CLDC-1.1) ucweb-squid\2\3");
 	}
    
-#ifdef FEATURE_VERSION_KK5
+#ifdef FEATURE_VERSION_KK5    
     if(STRISTR (charsvc_p_name,"mts"))
 	{
 		MSG_FATAL("mst................",0,0,0);
         STRCAT(urlCan,"access_point:proxy_is:10.50.5.140:8080");
-	}
+
+        STRCAT(proxy,"access_point:proxy_is:10.50.5.140:8080");	}
 	else if(STRISTR (charsvc_p_name,"tata"))
 	{
         MSG_FATAL("tata................",0,0,0);
         STRCAT(urlCan,"access_point:proxy_is:172.23.252.15:9401");
+        
+        STRCAT(proxy,"access_point:proxy_is:172.23.252.15:9401");
 	}
 	else if(STRISTR (charsvc_p_name,"reliance"))
 	{
-        MSG_FATAL("reliance................",0,0,0);
+	    MSG_FATAL("reliance................",0,0,0);
+
         //STRCAT(urlCan,"access_point:proxy_is:97.253.98.33:8080");
-        STRCAT(urlCan,"access_point:proxy_is:10.239.221.6:8080");
+	    STRCAT(urlCan,"access_point:proxy_is:10.239.221.6:8080");
+
+        STRCAT(proxy,"access_point:proxy_is:10.239.221.6:8080");
+	    /*
+	    char strIp[64];
+        char strPort[64];
+            
+        OEM_GetProxy_Param(strIp, strPort);
+            
+        MSG_FATAL("reliance................",0,0,0);
+        
+        //STRCAT(urlCan,"access_point:proxy_is:97.253.98.33:8080");
+        //STRCAT(urlCan,"access_point:proxy_is:10.239.221.6:8080");
+
+        DBGPRINTF("***zzg strIp=%s, strPort=%s***", strIp, strPort);
+        
+        STRCAT(urlCan,"access_point:proxy_is:");        
+        STRCAT(urlCan,strIp);
+        STRCAT(urlCan,":");
+        STRCAT(urlCan,strPort);
+
+        STRCAT(proxy,"access_point:proxy_is:");        
+        STRCAT(proxy,strIp);
+        STRCAT(proxy,":");
+        STRCAT(proxy,strPort);
+        */
 	}
 	else if(STRISTR (charsvc_p_name,"vmi"))
 	{
         MSG_FATAL("vmi................",0,0,0);
         STRCAT(urlCan,"access_point:proxy_is:172.23.142.15:9401");
+
+        STRCAT(proxy,"access_point:proxy_is:172.23.142.15:9401");
 	}
+        
+/*    
+	{
+	    char strIp[64];
+        char strPort[64];
+            
+        OEM_GetProxy_Param(strIp, strPort);
+            
+        MSG_FATAL("reliance................",0,0,0);
+        
+        //STRCAT(urlCan,"access_point:proxy_is:97.253.98.33:8080");
+        //STRCAT(urlCan,"access_point:proxy_is:10.239.221.6:8080");
+
+        DBGPRINTF("***zzg strIp=%s, strPort=%s***", strIp, strPort);
+        
+        STRCAT(urlCan,"access_point:proxy_is:");        
+        STRCAT(urlCan,strIp);
+        STRCAT(urlCan,":");
+        STRCAT(urlCan,strPort);
+
+        STRCAT(proxy,"access_point:proxy_is:");        
+        STRCAT(proxy,strIp);
+        STRCAT(proxy,":");
+        STRCAT(proxy,strPort);
+	}
+*/
 #else
 	if(STRISTR (charsvc_p_name,"mts"))
 	{
@@ -18191,6 +18252,8 @@ int SetBrowserArrEx_Main(MainMenu *pMe, char *purl)
 #endif    
     	
 	DBGPRINTF("urlCan==%s", urlCan);
+    DBGPRINTF("proxy==%s", proxy);
+
     
     if(urlCan[0])
     {

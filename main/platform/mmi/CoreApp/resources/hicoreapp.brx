@@ -449,5 +449,13 @@
 				<Items/></Text>
 		</Controls>
 	</Dialog>
+	<Dialog Id="6023" Name="IDD_PROXY_PARAMS_EDIT" Focus="7021">
+		<Controls>
+			<Text Id="7021" Name="IDC_IP_EDIT">
+				<Items/></Text>
+			<Text Id="7022" Name="IDD_PORT_EDIT">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
 </Dialogs>
 </BREWRes>

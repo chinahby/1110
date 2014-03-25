@@ -391,6 +391,9 @@
 	<STRING Id="1129" Name="IDS_MG_OPTION">
 		<Text>Option</Text>
 	</STRING>
+	<STRING Id="1130" Name="IDS_MSG_PATH_TOO_LONG">
+		<Text>The file path is too long!</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_MG_MAINMENU" Focus="7001">
