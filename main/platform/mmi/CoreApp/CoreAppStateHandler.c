@@ -149,7 +149,9 @@ static boolean CoreApp_Start_Alarm(CCoreApp *pMe);
 #if defined( FEATURE_IDLE_LOCK_RUIM)&&defined(FEATURE_UIM)
 void static isAllowIMSI(CCoreApp *pMe,boolean *lockFlg);
 #endif
-
+#if defined(FEATURE_LOCK_GD821) && defined(FEATURE_UIM)
+void static isAllowSidNid(CCoreApp *pMe,boolean *lockFlg);
+#endif 
 #ifdef USES_MMI
 extern boolean   IsRunAsUIMVersion(void);
 extern boolean   IsRunAsFactoryTestMode(void);
@@ -968,7 +970,16 @@ static NextFSMAction COREST_UIMERR_Handler(CCoreApp *pMe)
             	boolean Is_NetLockclose = TRUE;
 			#endif
                 pMe->bunlockuim = TRUE;
-                MOVE_TO_STATE( COREST_STARTUPANI)
+                 #if defined(FEATURE_LOCK_GD821) && defined(FEATURE_UIM)
+                if(pMe->b_bisStarton)
+                {
+                    MOVE_TO_STATE(COREST_POWERONAPPSDATAINIT)
+                }
+                else
+                #endif
+                {
+                    MOVE_TO_STATE( COREST_STARTUPANI)
+                }
 				#ifdef FEATURE_LONG_NETLOCK
 				(void)OEM_SetConfig( CFGI_NET_LOCK_FLAGS,
 									 &Is_NetLockclose,
@@ -1426,6 +1437,7 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
                 }
             }
 #endif //defined( FEATURE_IDLE_LOCK_RUIM)&&defined(FEATURE_UIM)
+
 #ifdef FEATURE_NET_LOCK
 {
 			nv_item_type    nviOldSimChoice;
@@ -1543,6 +1555,24 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
             return NFSMACTION_WAIT;
             
         case DLGRET_OK:
+            pMe->b_bisStarton = TRUE;
+ #if defined(FEATURE_LOCK_GD821) && defined(FEATURE_UIM)
+        if (!pMe->bunlockuim && IRUIM_IsCardConnected(pMe->m_pIRUIM))
+        {
+             boolean lockFlg = TRUE;    
+             isAllowSidNid(pMe,&lockFlg);
+             if (lockFlg)
+             {
+                    AEEDeviceInfo devinfo;
+                    ISHELL_GetDeviceInfo(pMe->a.m_pIShell, &devinfo);
+                 // 卡不符合运营商要求，卡无效
+                 pMe->m_eUIMErrCode = UIMERR_LOCKED;
+                 MSG_FATAL("COREST_UIMERR..........................4444==%d",devinfo.dwPlatformID,0,0);
+                 MOVE_TO_STATE(COREST_UIMERR)
+                 return NFSMACTION_CONTINUE;
+             }
+        }
+#endif
             MOVE_TO_STATE(COREST_POWERONAPPSDATAINIT)
             return NFSMACTION_CONTINUE;
             
@@ -2327,6 +2357,67 @@ void static isAllowIMSI(CCoreApp *pMe,boolean *lockFlg)
 }
 #endif //defined( FEATURE_IDLE_LOCK_RUIM)&&defined(FEATURE_UIM)
 
+#if defined(FEATURE_LOCK_GD821) && defined(FEATURE_UIM)
+void static isAllowSidNid(CCoreApp *pMe,boolean *lockFlg)
+{
+    
+	static const unsigned short SID_SP[] = 
+    {
+        14554,
+        14555,
+        14556,
+        14557,
+        14558,
+        14559,
+        14560,
+        14561,
+        14562,
+        14563,
+        14564,
+        14565,
+        14566,
+        14567,
+        14568,
+        14569,
+        14570,
+        14571,
+        14572,
+        14573,
+    };   
+    char SPName[36] = {"MTS"}; 
+    AECHAR WSPName[36] = {0};
+    int i,size = sizeof(SID_SP)/sizeof(unsigned short);
+    db_items_value_type sid;
+    db_items_value_type nid;
+    db_get(DB_SID, &sid);
+    db_get(DB_NID, &nid);
+    CoreApp_GetSPN(pMe);
+    STRTOWSTR(SPName,WSPName,36);
+    //sid.sid = 14556;
+    MSG_FATAL("sid.sid=======%d,nid.nid===%d",sid.sid,nid.nid,0);
+    //WSTRCPY(pMe->svc_p_name,WSPName);
+    if(WSTRCMP(pMe->svc_p_name,WSPName)==0)
+    {
+        for(i=0; i<size; i++)
+        {
+            if(sid.sid == SID_SP[i] || ((sid.sid == 14844) && (nid.nid == 0)))
+            {
+                *lockFlg = FALSE; 
+                break; 
+            }
+            else
+            {
+               *lockFlg = TRUE;  
+            }
+        }
+    }
+    else
+    {
+        *lockFlg = TRUE; 
+    }
+    
+}
+#endif 
 
 /*===========================================================================
 FUNCTION PINVerify_cb

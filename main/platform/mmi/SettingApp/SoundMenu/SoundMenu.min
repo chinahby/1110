@@ -982,7 +982,6 @@ else
             blues.mid|fs:/ringers/blues.mid \
             blue_load.mid|fs:/ringers/blue_load.mid \
             champagne.mid|fs:/ringers/champagne.mid \
-            clock.mid|fs:/ringers/clock.mid \
             dance_craze.mid|fs:/ringers/dance_craze.mid \
             green_line.mid|fs:/ringers/green_line.mid \
             jumping.mid|fs:/ringers/jumping.mid \
@@ -990,7 +989,8 @@ else
             street_tale.mid|fs:/ringers/street_tale.mid \
             techno_meto.mid|fs:/ringers/techno_meto.mid \
             poweron.mid|fs:/ringers/poweron.mid \
-            poweroff.mid|fs:/ringers/poweroff.mid
+            poweroff.mid|fs:/ringers/poweroff.mid \
+            ring.mp3|fs:/ringers/ring.mp3
 	else ifeq ($(USES_RESDIR),WSF_CN_FM)
 		    CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \

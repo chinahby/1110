@@ -18,6 +18,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_VERSION_M74
 //#define FEATURE_VERSION_W0216A_T18 //xxzhen
 #define FEATURE_VERSION_W021_GD821
+#define FEATURE_LOCK_GD821
 
 //#define FEATURE_OEMOMH
 //#define FEATURE_NO_VIBRATE

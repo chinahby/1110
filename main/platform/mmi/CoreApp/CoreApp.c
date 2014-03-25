@@ -577,6 +577,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_bChargFull = FALSE;
     pMe->m_bBatteryActive=FALSE;
 	pMe->m_IsEanbleBatAlarm=TRUE;
+    pMe->b_bisStarton = FALSE;
 // Add by pyuangui	
 #if defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_W021_C11) || defined(FEATURE_VERSION_SKY) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)   
     pMe->m_keyinfoheld=FALSE;

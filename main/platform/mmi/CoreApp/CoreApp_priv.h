@@ -1411,6 +1411,7 @@ typedef struct _CCoreApp
 #endif
 //#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K212_HUALU))
    IFileMgr *pFileMgr ;
+   boolean b_bisStarton;
 //#endif
 
 #if defined (FEATURE_VERSION_K232_Y101)||defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y105A)|| defined (FEATURE_VERSION_KK5)
