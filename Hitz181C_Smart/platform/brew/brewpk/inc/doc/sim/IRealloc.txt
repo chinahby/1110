@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IRealloc simulation
-
-IRealloc is simulated.
-==========================
-*/ 

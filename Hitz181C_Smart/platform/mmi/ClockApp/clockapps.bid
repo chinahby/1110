@@ -1,6 +1,0 @@
-#ifndef ALARMCLOCK_BID
-#define ALARMCLOCK_BID
-
-#define AEECLSID_ALARMCLOCK        0x01006118
-
-#endif //ALARMCLOCK_BID

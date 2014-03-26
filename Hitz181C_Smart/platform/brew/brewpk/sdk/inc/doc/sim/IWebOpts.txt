@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IWebOpts simulation
-
-IWebOpts is simulated.
-==========================
-*/ 
