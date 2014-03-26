@@ -1,4 +1,0 @@
-// Microsoft Developer Studio generated Help ID include file.
-// Used by SunnyCat.rc
-//
-#define HIDC_CHECK_SHOWWND              0x8270042f    // IDD_DIALOG_SYSSET
