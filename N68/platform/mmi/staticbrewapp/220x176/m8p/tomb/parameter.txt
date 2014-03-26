@@ -1,4 +1,0 @@
-hightestScore=0;
-main_item_ypos=140;
-xLeafNum=4;
-yLeafNum=5;

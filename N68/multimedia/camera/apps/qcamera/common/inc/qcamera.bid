@@ -1,6 +1,0 @@
-#ifndef QCAMERA_BID
-#define QCAMERA_BID
-
-#define AEECLSID_QCAMERA    	0x01011b9a
-
-#endif //QCAMCORDER_BID

@@ -1,9 +1,0 @@
-
-# HTMLWidget extension as const files
-CONSTFILE_FILES+=\
-	htmlwidget.mif|fs:/mif/htmlwidget.mif \
-	htmlwidget.mod|fs:/mod/htmlwidget/htmlwidget.mod 
-	
-# ADS12ARM7	
-vpath %.mif $(BUIW)
-vpath %.mod $(BUIW)/htmlwidget/mod/ADS12_ARM7 

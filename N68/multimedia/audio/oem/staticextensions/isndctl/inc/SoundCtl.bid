@@ -1,6 +1,0 @@
-#ifndef SOUNDCTL_BID
-#define SOUNDCTL_BID
-
-#define AEECLSID_SOUNDCTL    	0x0102cd01
-
-#endif //SOUNDCTL_BID

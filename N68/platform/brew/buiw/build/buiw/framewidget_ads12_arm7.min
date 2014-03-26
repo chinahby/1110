@@ -1,9 +1,0 @@
-
-# FrameWidget extension as const files
-CONSTFILE_FILES+=\
-	framewidget.mif|fs:/mif/framewidget.mif \
-	framewidget.mod|fs:/mod/framewidget/framewidget.mod 
-	
-# ADS12ARM7	
-vpath %.mif $(BUIW)
-vpath %.mod $(BUIW)/framewidget/mod/ADS12_ARM7 

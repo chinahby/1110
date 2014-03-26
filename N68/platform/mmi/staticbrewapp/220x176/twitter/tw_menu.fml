@@ -1,8 +1,0 @@
-0|1|0|Home|images/home_enable.png|images/home_disable.png|3|http://flexiportal.telkomflexi.com/twitter/home.php?i=__IMSI__&p=idx&v=2|
-0|2|0|Profile|images/profile_enable.png|images/profile_disable.png|3|http://flexiportal.telkomflexi.com/twitter/home.php?i=__IMSI__&p=prof&v=2|
-0|3|0|Follower|images/follower_enable.png|images/follower_disable.png|3|http://flexiportal.telkomflexi.com/twitter/home.php?i=__IMSI__&p=flr&v=2|
-0|4|0|Following|images/following_enable.png|images/following_disable.png|3|http://flexiportal.telkomflexi.com/twitter/home.php?i=__IMSI__&p=flg&v=2|
-0|5|0|Direct Message|images/directmsg_enable.png|images/directmsg_disable.png|3|http://flexiportal.telkomflexi.com/twitter/home.php?i=__IMSI__&p=msg&v=2|
-0|6|0|Mention|images/trending_enable.png|images/trending_disable.png|3|http://flexiportal.telkomflexi.com/twitter/home.php?i=__IMSI__&p=mnt&v=2|
-0|7|0|Search|images/search_enable.png|images/search_disable.png|3|http://flexiportal.telkomflexi.com/twitter/home.php?i=__IMSI__&p=src&v=2|
-0|8|0|Logout|images/logout_enable.png|images/logout_disable.png|3|__EXIT__|

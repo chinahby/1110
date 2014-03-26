@@ -1,8 +1,0 @@
-#ifndef AEECLSID_QOSBUNDLE_BID
-#define AEECLSID_QOSBUNDLE_BID
-
-#include "../../inc/AEEQoSBundle.bid"
-   
-#define AEECLSID_QOSBUNDLE AEECLSID_QoSBundle
-
-#endif //AEECLSID_QOSBUNDLE_BID
