@@ -1,1 +1,0 @@
-./build/ms/bin/W021L/all.mbn
