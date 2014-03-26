@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IThread simulation
-
-IThread is simulated.
-==========================
-*/ 

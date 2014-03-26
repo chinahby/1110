@@ -1,9 +1,0 @@
-/* 
-===========================
-Simulator Support DOCUMENTATION
-============================
-IAppHistory simulation
-
-IAppHistory is simulated.
-==========================  
-*/

@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IResourceCtl simulation
-
-IResourceCtl is simulated.
-==========================
-*/ 

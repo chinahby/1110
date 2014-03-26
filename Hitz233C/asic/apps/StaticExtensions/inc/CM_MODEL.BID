@@ -1,7 +1,0 @@
-#ifndef CM_MODEL_BID
-#define CM_MODEL_BID
-
-#define AEECLSID_CM_MODEL    	0x0102db7b
-
-#endif //CM_MODEL_BID
-

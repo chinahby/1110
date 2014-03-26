@@ -1,8 +1,0 @@
-#ifndef DNSCONFIG2_BID
-#define DNSCONFIG2_BID
-   
-#include "../../inc/AEEDNSConfig2.bid"
-   
-#define AEECLSID_DNSCONFIG2   AEECLSID_DNSConfig2
-  
-#endif //DNSCONFIG2_BID
