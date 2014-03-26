@@ -1,7 +1,0 @@
-#ifndef ALARM_MODEL_BID
-#define ALARM_MODEL_BID
-
-#define AEECLSID_ALARM_MODEL    	0x0102da8f
-
-#endif //ALARM_MODEL_BID
-

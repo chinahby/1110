@@ -1,7 +1,0 @@
-#ifndef ALARM_BID
-#define ALARM_BID
-
-#define AEECLSID_ALARM    	0x0102c943
-
-#endif //ALARM_BID
-

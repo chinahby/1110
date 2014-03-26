@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IControl simulation
-
-IControl is simulated.
-==========================
-*/ 
