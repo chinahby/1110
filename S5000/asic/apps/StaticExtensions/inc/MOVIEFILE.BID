@@ -1,6 +1,0 @@
-#ifndef MOVIEFILE_BID
-#define MOVIEFILE_BID
-
-#define AEECLSID_MOVIEFILE    	0x010127d8
-
-#endif //MOVIEFILE_BID

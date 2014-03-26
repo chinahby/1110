@@ -1,3 +1,0 @@
-do erasechip.cmm
-cd ..\..\build\ms
-do jf S5000

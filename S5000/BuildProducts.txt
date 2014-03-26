@@ -1,1 +1,0 @@
-./build/ms/bin/S5000/all.mbn

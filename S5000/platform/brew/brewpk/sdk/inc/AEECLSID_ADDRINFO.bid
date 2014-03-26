@@ -1,8 +1,0 @@
-#ifndef AEECLSID_ADDRINFO_BID
-#define AEECLSID_ADDRINFO_BID  
-
-#include "../../inc/AEEAddrInfo.bid"   
-
-#define AEECLSID_ADDRINFO AEECLSID_AddrInfo   
-
-#endif /* #ifndef AEECLSID_ADDRINFO_BID */

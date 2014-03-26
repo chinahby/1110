@@ -1,7 +1,0 @@
-#ifndef CARD_BID
-#define CARD_BID
-
-#define AEECLSID_CARD    	0x01011811
-
-#endif //CARD_BID
-
