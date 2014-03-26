@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-PhoneNotifier simulation
-
-PhoneNotifier is simulated.
-==========================
-*/ 

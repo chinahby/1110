@@ -1,9 +1,0 @@
-/* 
-===========================
-Simulator Support DOCUMENTATION
-============================
-IBase simulation
-
-IBase is simumated.
-==========================  
-*/

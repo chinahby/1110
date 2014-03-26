@@ -1,6 +1,0 @@
-<left>Di menu Ramalan kamu bisa cari tahu peruntungan kamu melalui :<br>
-- Shio : Cek peruntungan kamu tahun ini melalui 12 macam Shio.<br>
-- Horoscop : Cek ramalan keuangan, karir, asmara serta  astrologi mu disini.<br>
-- Fengshui : Panduan kamu dalam menentukan keseimbangan hidup. Dapatkan juga kata-kata penyemangat yang terdapat di Fortune Cookies.<br>
-<br>
-Untuk berhenti berlangganan, silahkan masuk ke dalam "Menu" dari konten ramalan yang sudah kamu pilih.</left>

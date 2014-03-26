@@ -1,6 +1,0 @@
-#ifndef CONVERTER_BID
-#define CONVERTER_BID
-
-#define AEECLSID_CONVERTER        0x01006129
-
-#endif //CONVERTER_BID

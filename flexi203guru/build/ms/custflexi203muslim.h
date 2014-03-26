@@ -1,9 +1,0 @@
-#ifndef CUSTSFLEXI203MUSLIM_H
-#define CUSTSFLEXI203MUSLIM_H
-#define FEATURE_OLD_ROTLCD
-#define SOFTWARE_VER04
-//#define FEATURE_GURU
-#include "custflexi203.h"
-
-#endif /* CUSTSFLEXI203MUSLIM_H*/
-

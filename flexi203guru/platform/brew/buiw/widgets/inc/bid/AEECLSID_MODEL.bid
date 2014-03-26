@@ -1,6 +1,0 @@
-#ifndef AEECLSID_MODEL_BID
-#define AEECLSID_MODEL_BID
-
-#define AEECLSID_MODEL    	0x01028e3b
-
-#endif //AEECLSID_MODEL_BID

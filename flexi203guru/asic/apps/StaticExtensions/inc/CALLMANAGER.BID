@@ -1,6 +1,0 @@
-#ifndef CALLMANAGER_BID
-#define CALLMANAGER_BID
-
-#define AEECLSID_CM    0x01011810
-
-#endif //CALLMANAGER_BID

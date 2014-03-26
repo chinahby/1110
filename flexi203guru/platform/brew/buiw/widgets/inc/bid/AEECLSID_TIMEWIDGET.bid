@@ -1,6 +1,0 @@
-#ifndef TIMEWIDGET_BID
-#define TIMEWIDGET_BID
-
-#define AEECLSID_TIMEWIDGET    	0x0102bad1
-
-#endif //TIMEWIDGET_BID

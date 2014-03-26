@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IBitmapFX simulation
-
-IBitmapFX is simulated.
-==========================
-*/ 
