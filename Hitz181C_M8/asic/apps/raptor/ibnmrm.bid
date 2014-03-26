@@ -1,7 +1,0 @@
-#ifndef IBNMRM_BID
-#define IBNMRM_BID
-
-#define AEECLSID_IBNMRM    	0x01012eff
-
-#endif //IBNMRM_BID
-
