@@ -1,8 +1,0 @@
-#ifndef AEECLSID_QOSSPEC_BID
-#define AEECLSID_QOSSPEC_BID
-#include "../../inc/AEEQoSSpec.bid"
-   
-#define AEECLSID_QOSSPEC AEECLSID_QoSSpec
-  
-#endif //AEECLSID_QOSSPEC_BID
-   

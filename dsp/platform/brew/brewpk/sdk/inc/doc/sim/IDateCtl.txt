@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IDateCtl simulation
-
-IDateCtl is simulated.
-==========================
-*/ 

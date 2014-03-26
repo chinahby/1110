@@ -1,6 +1,0 @@
-#ifndef AEEIID_HFONT_BID
-#define AEEIID_HFONT_BID
-
-#define AEEIID_HFONT    	0x0102ef8e
-
-#endif //AEEIID_HFONT_BID

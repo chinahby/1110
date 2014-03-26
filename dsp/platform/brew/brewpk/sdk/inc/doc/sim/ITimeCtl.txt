@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-ITimeCtl simulation
-
-ITimeCtl is simulated.
-==========================
-*/ 

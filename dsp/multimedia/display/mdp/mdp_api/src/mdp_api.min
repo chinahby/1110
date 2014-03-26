@@ -1,9 +1,0 @@
-#-------------------------------------------------------------------------------
-# DRVLIB - mdp_api_drv 
-#-------------------------------------------------------------------------------
-MDP_API_SOURCES=\
-        mdp_api_proc.c \
-        mdp_layer_proc.c
-
-MDP_API_OBJS :=  $(addprefix $(TARGETDIR)/, $(MDP_API_SOURCES:%.c=%.o))
-vpath %.c $(MDP_API_SRC)
