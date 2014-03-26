@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-ITAPI simulation
-
-ITAPI is simulated.
-==========================
-*/ 

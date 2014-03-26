@@ -1,7 +1,0 @@
-[menu][Daftar Lagu][http://karaoke-brew.smart-telecom.co.id/brew/moka/getmoka.php?ID=2]
-[menu][Laguku][karaoke]
-[menu][Download Ulang][http://karaoke-brew.smart-telecom.co.id/brew/moka/getmoka.php?ID=3]
-[menu][Gallery][gallery]
-[text][Info Produk][aboutmoka.txt]
-[text][Bantuan][helpmoka.txt]
-

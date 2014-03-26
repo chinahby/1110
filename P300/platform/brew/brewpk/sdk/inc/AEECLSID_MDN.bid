@@ -1,6 +1,0 @@
-#ifndef MDN_BID
-#define MDN_BID
-
-#define AEECLSID_MDN        0x0101b3aD
-
-#endif //MDN_BID

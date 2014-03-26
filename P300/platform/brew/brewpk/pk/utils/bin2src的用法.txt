@@ -1,6 +1,0 @@
-Usage: bin2src -s<In File> -d<EFS Path> [-o<Output File>] [-f]
-
-例如，在“E:\1100\platform\brew\brewpk\pk\utils”目录下有一张图片poon001.bmp(R:5,G:6, B:5格式)，想得到这张图片对应的编码数组。则可用下面的命令：
-bin2src -spoon001.bmp -dfs:/ -opoon001.c
-
-我们要用这图片数组时，一般还要将这数组的图片格式头给去掉

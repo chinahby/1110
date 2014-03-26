@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-ITextCtl simulation
-
-ITextCtl is simulated.
-==========================
-*/ 

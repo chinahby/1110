@@ -1,6 +1,0 @@
-#ifndef AEEIID_FORM_BID
-#define AEEIID_FORM_BID
-
-#define AEEIID_FORM    	0x01013603
-
-#endif //AEEIID_FORM_BID

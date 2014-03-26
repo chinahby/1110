@@ -1,9 +1,0 @@
-/* 
-===========================
-Simulator Support DOCUMENTATION
-============================
-IMediaSVG simulation
-
-IMediaSVG is not simulated
-==========================  
-*/
