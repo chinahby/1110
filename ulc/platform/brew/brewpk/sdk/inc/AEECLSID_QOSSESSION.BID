@@ -1,7 +1,0 @@
-#ifndef AEECLSID_QOSSESSION_BID
-#define AEECLSID_QOSSESSION_BID
-#include "../../inc/AEEQoSSession.bid"
-   
-#define AEECLSID_QOSSESSION AEECLSID_QoSSession
- 
-#endif //AEECLSID_QOSSESSION_BID
