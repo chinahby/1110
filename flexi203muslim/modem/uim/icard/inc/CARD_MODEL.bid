@@ -1,7 +1,0 @@
-#ifndef CARD_MODEL_BID
-#define CARD_MODEL_BID
-
-#define AEECLSID_CARD_MODEL    	0x0102cbb9
-
-#endif //CARD_MODEL_BID
-

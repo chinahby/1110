@@ -1,8 +1,0 @@
-#ifndef AEECLSID_QOSFILTER_BID
-#define AEECLSID_QOSFILTER_BID
-#include "../../inc/AEEQoSFilter.bid"
-   
-#define AEECLSID_QOSFILTER AEECLSID_QoSFilter
-  
-#endif //AEECLSID_QOSFILTER_BID
-   

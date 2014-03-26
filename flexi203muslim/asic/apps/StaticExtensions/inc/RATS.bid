@@ -1,6 +1,0 @@
-#ifndef RATS_BID
-#define RATS_BID
-
-#define AEECLSID_RATS    	0x0101e818
-
-#endif //RATS_BID
