@@ -1,6 +1,0 @@
-#ifndef QALBUM_BID
-#define QALBUM_BID
-
-#define AEECLSID_QALBUM    	0x01029ceb
-
-#endif //QALBUM_BID

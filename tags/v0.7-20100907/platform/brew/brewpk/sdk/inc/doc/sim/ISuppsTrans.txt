@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-ISuppsTrans simulation
-
-ISuppsTrans is not simulated.
-==========================
-*/ 

@@ -1,9 +1,0 @@
-#-------------------------------------------------------------------------------
-# MDSP (DSP images) aka MODEM DSP (mDSP)
-#-------------------------------------------------------------------------------
-
-MDSP_SOURCES=\
-        mdspext.c
-
-MDSP_OBJS :=  $(addprefix $(TARGETDIR)/, $(MDSP_SOURCES:%.c=%.o))
-vpath %.c $(MDSPBUILD)/src

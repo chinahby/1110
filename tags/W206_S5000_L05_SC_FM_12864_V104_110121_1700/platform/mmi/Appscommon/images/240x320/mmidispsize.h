@@ -1,4 +1,0 @@
-#ifndef MMIDISPSIZE_H_
-#define MMIDISPSIZE_H_
-#define FEATURE_DISP_240X320
-#endif //MMIDISPSIZE_H_

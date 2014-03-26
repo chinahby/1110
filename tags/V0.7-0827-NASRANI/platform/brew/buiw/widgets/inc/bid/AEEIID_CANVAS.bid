@@ -1,6 +1,0 @@
-#ifndef AEEIID_CANVAS_BID
-#define AEEIID_CANVAS_BID
-
-#define AEEIID_CANVAS    	0x0101e3f2
-
-#endif //AEEIID_CANVAS_BID

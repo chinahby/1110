@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IPhoneNotifier simulation
-
-IPhoneNotifier is simulated
-==========================
-*/ 

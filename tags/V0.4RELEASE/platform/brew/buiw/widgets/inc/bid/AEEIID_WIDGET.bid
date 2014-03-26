@@ -1,6 +1,0 @@
-#ifndef AEEIID_WIDGET_BID
-#define AEEIID_WIDGET_BID
-
-#define AEEIID_WIDGET    	0x01015952
-
-#endif //AEEIID_WIDGET_BID

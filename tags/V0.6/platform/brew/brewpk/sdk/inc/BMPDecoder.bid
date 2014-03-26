@@ -1,7 +1,0 @@
-#ifndef  BMPDECODER_BID
-#define  BMPDECODER_BID
-
-#define AEECLSID_BMPDECODER 0x01026e21
-
-#endif /* BMPDECODER_BID */
-

@@ -1,6 +1,0 @@
-#ifndef QPLAYER_BID
-#define QPLAYER_BID
-
-#define AEECLSID_QPLAYER    	0x0103d184
-
-#endif //QPLAYER_BID

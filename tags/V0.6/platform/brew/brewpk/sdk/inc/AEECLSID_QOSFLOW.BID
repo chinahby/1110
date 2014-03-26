@@ -1,8 +1,0 @@
-#ifndef AEECLSID_QOSFLOW_BID
-#define AEECLSID_QOSFLOW_BID
-#include "../../inc/AEEQoSFlow.bid"
-   
-#define AEECLSID_QOSFLOW AEECLSID_QoSFlow
-  
-#endif //AEECLSID_QOSFLOW_BID
-   

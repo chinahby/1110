@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IModel simulation
-
-IModel is simulated.
-==========================
-*/ 

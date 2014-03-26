@@ -1,6 +1,0 @@
-#ifndef QUICKTEST_BID
-#define QUICKTEST_BID
-
-#define AEECLSID_QUICKTEST        0xADA23423
-
-#endif //QUICKTEST_BID

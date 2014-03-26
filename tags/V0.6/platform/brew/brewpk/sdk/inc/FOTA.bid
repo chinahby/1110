@@ -1,6 +1,0 @@
-#ifndef FOTA_BID
-#define FOTA_BID
-
-#define AEECLSID_FOTA 0x0101f53d
-
-#endif /* FOTA_BID */

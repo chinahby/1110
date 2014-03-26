@@ -1,7 +1,0 @@
-#ifndef CATAPP_BID
-#define CATAPP_BID
-
-#define AEECLSID_CATAPP    	0x01011812
-
-#endif //CATAPP_BID
-

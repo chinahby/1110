@@ -1,6 +1,0 @@
-#ifndef AEEBTAGEX_BID
-#define AEEBTAGEX_BID
-
-#define AEECLSID_IBTAGEX    	0x01091e49
-
-#endif //AEEBTAGEX_BID

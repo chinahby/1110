@@ -1,6 +1,0 @@
-#ifndef BNMAPP_BID
-#define BNMAPP_BID
-
-#define AEECLSID_BNMAPP    	0x010131fb
-
-#endif //BNMAPP_BID

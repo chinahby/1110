@@ -1,6 +1,0 @@
-#ifndef STOPWATCH_BID
-#define STOPWATCH_BID
-
-#define AEECLSID_STOPWATCH        0x0DDDD455
-
-#endif //STOPWATCH_BID

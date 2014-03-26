@@ -1,8 +1,0 @@
-#ifndef STK_BID
-#define STK_BID
-
-#define AEECLSID_STK    	0x2101178f
-#define AEECLSID_STKNOTIFIER	0x21011790
-
-#endif //STK_BID
-

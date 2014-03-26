@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IQoSList simulation
-
-IQoSList is simulated.
-==========================
-*/ 

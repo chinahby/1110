@@ -1,7 +1,0 @@
-#ifndef  PNGDECODER_BID
-#define  PNGDECODER_BID
-
-#define AEECLSID_PNGDECODER 0x01026e23
-
-#endif /* PNGDECODER_BID */
-

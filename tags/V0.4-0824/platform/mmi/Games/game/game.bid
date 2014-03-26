@@ -1,6 +1,0 @@
-#ifndef GAME_BID
-#define GAME_BID
-
-#define AEECLSID_GAME        0x01006504
-
-#endif //GAME_BID

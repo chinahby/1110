@@ -1,7 +1,0 @@
-#ifndef CALLOPTS_BID
-#define CALLOPTS_BID
-
-#define AEECLSID_CALLOPTS    	0x01014f2d
-
-#endif //CALLOPTS_BID
-

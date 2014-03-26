@@ -1,3 +1,0 @@
-$Header: //source/qcom/qct/core/storage/hfat/main/latest/src/VU_CORE_STORAGE_HFAT.01.01.29.txt#1 $
-$DateTime: 2009/07/06 19:13:17 $
-This tag file reflects the VU label for HFAT

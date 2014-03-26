@@ -1,6 +1,0 @@
-#ifndef CAT_BID
-#define CAT_BID
-
-#define AEECLSID_CAT            0x0101178f
-
-#endif //CAT_BID

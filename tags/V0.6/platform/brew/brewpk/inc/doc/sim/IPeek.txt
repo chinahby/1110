@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IPeek simulation
-
-IPeek is simulated.
-==========================
-*/ 

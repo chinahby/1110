@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IDialog simulation
-
-IDialog is simulated.
-==========================
-*/ 

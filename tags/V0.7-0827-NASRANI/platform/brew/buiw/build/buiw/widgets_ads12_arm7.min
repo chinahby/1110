@@ -1,9 +1,0 @@
-
-# BREW UI Widgets extension as const files
-CONSTFILE_FILES+=\
-	widgets.mif|fs:/mif/widgets.mif \
-	widgets.mod|fs:/mod/widgets/widgets.mod 
-	
-# ADS12ARM7	
-vpath %.mif $(BUIW)
-vpath %.mod $(BUIW)/widgets/mod/ADS12_ARM7 

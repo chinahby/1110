@@ -1,7 +1,0 @@
-#ifndef SUPPSVC_BID
-#define SUPPSVC_BID
-
-#define AEECLSID_SUPPSVC    	0x0101317e
-
-#endif //SUPPSVC_BID
-

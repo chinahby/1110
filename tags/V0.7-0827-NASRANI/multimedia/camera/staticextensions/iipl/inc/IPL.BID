@@ -1,7 +1,0 @@
-#ifndef IPL_BID
-#define IPL_BID
-
-#define AEECLSID_IPL    	0x0102c116
-
-#endif //IPL_BID
-

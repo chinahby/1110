@@ -1,6 +1,0 @@
-#ifndef ALERT_BID
-#define ALERT_BID
-
-#define AEECLSID_ALERT    	0x01016105
-
-#endif //ALERT_BID

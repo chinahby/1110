@@ -1,7 +1,0 @@
-#ifndef AVRCP_EXT_BID
-#define AVRCP_EXT_BID
-
-#define AEECLSID_AEEAVRCPTG_Priv_Ext    	0x010722ab
-
-#endif //AVRCP_EXT_BID
-

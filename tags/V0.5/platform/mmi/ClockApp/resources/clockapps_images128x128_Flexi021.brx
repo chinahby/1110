@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="clockapps_images128x128_Flexi021" VERSION="1">
-<Objects MimeType="image/png">
-	<Object Id="5001" Name="IDI_ALARMCLOCK">
-		<File>..\..\Appscommon\images\128x128\Flexi021\alarmclock\alarmclock.png</File>
-	</Object>
-</Objects>
-</BREWRes>

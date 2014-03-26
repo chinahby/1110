@@ -1,8 +1,0 @@
-#ifndef AEECLSID_AEECADDRINFOCACHE_BID
-#define AEECLSID_AEECADDRINFOCACHE_BID
-
-#include "../../inc/AEEAddrInfoCache.bid"   
-
-#define AEECLSID_ADDRINFOCACHE AEECLSID_AddrInfoCache 
-   
-#endif /* #ifndef AEECLSID_AEECADDRINFOCACHE_BID */

@@ -1,6 +1,0 @@
-#ifndef AEEIID_LOCALE_BID
-#define AEEIID_LOCALE_BID
-
-#define AEEIID_LOCALE    	0x0102c14c
-
-#endif //AEEIID_LOCALE_BID

@@ -1,1 +1,0 @@
-make -C ../../tools/headergen -f pboot_utils.mak all

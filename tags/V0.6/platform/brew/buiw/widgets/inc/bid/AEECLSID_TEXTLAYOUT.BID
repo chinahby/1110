@@ -1,7 +1,0 @@
-#ifndef TEXTLAYOUT_BID
-#define TEXTLAYOUT_BID
-
-#define AEECLSID_TEXTLAYOUT    	0x0103bd08
-
-#endif //TEXTLAYOUT_BID
-

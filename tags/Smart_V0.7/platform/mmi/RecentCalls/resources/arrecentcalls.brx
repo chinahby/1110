@@ -1,145 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="arrecentcalls" VERSION="1">
-<Strings Encoding="Unicode">
-	<STRING Id="1" Name="IDS_SAVE">
-		<Text>حفظ</Text>
-	</STRING>
-	<STRING Id="2" Name="IDS_MIN">
-		<Text>M</Text>
-	</STRING>
-	<STRING Id="3" Name="IDS_SEC">
-		<Text>ث</Text>
-	</STRING>
-	<STRING Id="4" Name="IDS_MISSED_CALLS">
-		<Text>المكالمات الفائتة</Text>
-	</STRING>
-	<STRING Id="5" Name="IDS_RECEIVED_CALLS">
-		<Text>المكالمات المستلمة</Text>
-	</STRING>
-	<STRING Id="6" Name="IDS_OUTGOING_CALLS">
-		<Text>المكالمات الصادرة</Text>
-	</STRING>
-	<STRING Id="7" Name="IDS_DELETE">
-		<Text>حذف</Text>
-	</STRING>
-	<STRING Id="8" Name="IDS_SEND_SMS">
-		<Text>إرسال رسالة</Text>
-	</STRING>
-	<STRING Id="9" Name="IDS_CALL_TIME">
-		<Text>وقت المكالمة</Text>
-	</STRING>
-	<STRING Id="10" Name="IDS_ALL_CALLS">
-		<Text>جميع المكالمات</Text>
-	</STRING>
-	<STRING Id="11" Name="IDS_RESET_TIME">
-		<Text>إعادة تعيين الوقت</Text>
-	</STRING>
-	<STRING Id="12" Name="IDS_DELETE_ALL">
-		<Text>حذف الكل</Text>
-	</STRING>
-	<STRING Id="13" Name="IDS_DELETE_Q">
-		<Text>مسح المكالمة ؟</Text>
-	</STRING>
-	<STRING Id="14" Name="IDS_RESET_TIME_Q">
-		<Text>إعادة ضبط الوقت</Text>
-	</STRING>
-	<STRING Id="15" Name="IDS_NO_CALLS">
-		<Text>لاتوجد مكالمات</Text>
-	</STRING>
-	<STRING Id="16" Name="IDS_DURATION">
-		<Text>عداد الوقت</Text>
-	</STRING>
-	<STRING Id="17" Name="IDS_DELETE_OK">
-		<Text>تم الحذف!</Text>
-	</STRING>
-	<STRING Id="18" Name="IDS_TIME_RESETED">
-		<Text>تمت إعادة تعيين الوقت!</Text>
-	</STRING>
-	<STRING Id="19" Name="IDS_UNKNOWN_NUMBER">
-		<Text>رقم غير معروف!</Text>
-	</STRING>
-	<STRING Id="20" Name="IDS_DETAIL">
-		<Text>تفاصيل</Text>
-	</STRING>
-	<STRING Id="21" Name="IDS_CALLCOUNT">
-		<Text>حساب</Text>
-	</STRING>
-	<STRING Id="22" Name="IDS_MAKE_CALL">
-		<Text>ضبط المكالمات</Text>
-	</STRING>
-	<STRING Id="23" Name="IDS_MAKE_IPCALL">
-		<Text>مكالمة IP</Text>
-	</STRING>
-	<STRING Id="24" Name="IDS_SEND_CONTACT">
-		<Text>إرسال جهة اتصال</Text>
-	</STRING>
-	<STRING Id="25" Name="IDS_RECENT_CALLS">
-		<Text>آخر المكالمات</Text>
-	</STRING>
-	<STRING Id="26" Name="IDS_PASSWORD">
-		<Text>‏‏أدخ�?كلمة المرور</Text>
-	</STRING>
-	<STRING Id="27" Name="IDS_MSG_INPUTINVALID">
-		<Text>‏‏كلم�?مرور غير صالحة</Text>
-	</STRING>
-</Strings>
-<Dialogs>
-	<DIALOG Id="1" Name="IDD_RMAINMENU" Focus="1">
-		<Controls>
-			<Menu Id="1" Name="IDC_MAIN_CATEGORY_MENU">
-				<TitleID>IDS_RECENT_CALLS</TitleID>
-				<Items/>
-			</Menu>
-		</Controls>
-	</DIALOG>
-	<DIALOG Id="2" Name="IDD_RLISTRECORD" Focus="7001">
-		<Controls>
-			<Menu Id="7001" Name="IDC_RLISTRECORD">
-				<TitleID>IDS_MISSED_CALLS</TitleID>
-				<Items/>
-			</Menu>
-		</Controls>
-	</DIALOG>
-	<DIALOG Id="3" Name="IDD_RTIME_MENU" Focus="7002">
-		<Controls>
-			<Menu Id="7002" Name="IDC_RTIME_MENU">
-				<TitleID>IDS_CALL_TIME</TitleID>
-				<Items/>
-			</Menu>
-		</Controls>
-	</DIALOG>
-	<DIALOG Id="4" Name="IDD_RDEL_MENU" Focus="7003">
-		<Controls>
-			<Menu Id="7003" Name="IDC_RDEL_MENU">
-				<TitleID>IDS_DELETE_ALL</TitleID>
-				<Items/>
-			</Menu>
-		</Controls>
-	</DIALOG>
-	<DIALOG Id="5" Name="IDD_RDEAL_RECORD" Focus="7004">
-		<Controls>
-			<Menu Id="7004" Name="IDC_RDEAL_RECORD">
-				<Items/>
-			</Menu>
-		</Controls>
-		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
-	</DIALOG>
-	<DIALOG Id="6" Name="IDD_RWARN" Focus="0">
-		<Controls/>
-		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
-	</DIALOG>
-	<DIALOG Id="7" Name="IDD_RTIME" Focus="0">
-		<Controls/>
-	</DIALOG>
-	<DIALOG Id="8" Name="IDD_DETAIL" Focus="0">
-		<Controls/>
-	</DIALOG>
-	<DIALOG Id="9" Name="IDD_VERIFY_PASSWORD" Focus="0">
-		<Controls/>
-	</DIALOG>
-	<DIALOG Id="10" Name="IDD_MSGBOX" Focus="0">
-		<Controls/>
-		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
-	</DIALOG>
-</Dialogs>
-</BREWRes>

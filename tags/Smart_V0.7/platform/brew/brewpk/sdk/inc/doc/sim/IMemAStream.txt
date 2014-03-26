@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IMemAStream simulation
-
-IMemAStream is simulated.
-==========================
-*/ 

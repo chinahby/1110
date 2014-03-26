@@ -1,6 +1,0 @@
-#ifndef AEECLSID_FORM_BID
-#define AEECLSID_FORM_BID
-
-#define AEECLSID_FORM    	0x01028e47
-
-#endif //AEECLSID_FORM_BID

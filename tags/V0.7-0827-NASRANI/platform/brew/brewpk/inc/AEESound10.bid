@@ -1,7 +1,0 @@
-#ifndef AEECSOUND_10_BID
-#define AEECSOUND_10_BID
-
-#define AEECLSID_Sound10 (0x01000000 + 0x1000 + 11)
-
-#endif /* AEECSOUND_10_BID */
-
