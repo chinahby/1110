@@ -1,6 +1,0 @@
-#ifndef CONTACT_BID
-#define CONTACT_BID
-
-#define AEECLSID_APP_CONTACT        0x0100611a
-
-#endif //QUICKTEST_BID

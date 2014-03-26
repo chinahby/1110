@@ -1,6 +1,0 @@
-#ifndef UIMPRIV_GID_BID
-#define UIMPRIV_GID_BID
-
-#define AEECLSID_UIMPRIV_GID    	0x010280cc
-
-#endif //UIMPRIV_GID_BID

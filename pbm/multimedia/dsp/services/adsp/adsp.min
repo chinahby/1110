@@ -1,9 +1,0 @@
-#-------------------------------------------------------------------------------
-# DSP (Vocoder DSP images) aka Application DSP (aDSP)
-#-------------------------------------------------------------------------------
-
-ADSP_SOURCES=\
-        qdspext.c
-        
-ADSP_OBJS :=  $(addprefix $(TARGETDIR)/, $(ADSP_SOURCES:%.c=%.o))
-vpath %.c $(ADSP)
