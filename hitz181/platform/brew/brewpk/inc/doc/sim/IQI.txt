@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IQI simulation
-
-IQI is simulated.
-==========================
-*/ 

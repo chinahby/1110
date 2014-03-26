@@ -1,6 +1,0 @@
-#ifndef TVAPP_BID
-#define TVAPP_BID
-
-#define AEECLSID_TVAPP        0x01006602
-
-#endif //TVAPP_BID

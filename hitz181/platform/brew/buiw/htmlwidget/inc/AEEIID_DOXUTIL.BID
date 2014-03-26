@@ -1,6 +1,0 @@
-#ifndef DOXUTIL_BID
-#define DOXUTIL_BID
-
-#define AEEIID_DOXUTIL    	0x0102e887
-
-#endif //DOXUTIL_BID

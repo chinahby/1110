@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IDLS simulation
-
-IDLS is not simulated.
-==========================
-*/ 
